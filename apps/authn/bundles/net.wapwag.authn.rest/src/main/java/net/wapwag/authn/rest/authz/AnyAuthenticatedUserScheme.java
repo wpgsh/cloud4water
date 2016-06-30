@@ -1,5 +1,7 @@
 package net.wapwag.authn.rest.authz;
 
+import java.lang.annotation.Annotation;
+
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -16,7 +18,7 @@ import net.wapwag.authn.rest.ErrorResponse;
 public class AnyAuthenticatedUserScheme implements AuthorizationScheme {
 
 	@Override
-	public void authorize(ContainerRequestContext requestContext) throws AuthorizationException {
+	public void authorize(Annotation __, ContainerRequestContext requestContext) throws AuthorizationException {
 		if (requestContext.getSecurityContext() == null || 
 			requestContext.getSecurityContext().getAuthenticationScheme() == null ||
 		    !requestContext.getSecurityContext().isSecure()) {
