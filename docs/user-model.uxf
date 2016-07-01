@@ -106,14 +106,17 @@ m2=0..1</panel_attributes>
       <x>470</x>
       <y>280</y>
       <w>180</w>
-      <h>100</h>
+      <h>150</h>
     </coordinates>
     <panel_attributes>AccessTokens
 --
 - user_id
 - client_id
 - handle: string
-- scope: set&lt;SCOPE&gt;</panel_attributes>
+- scope: set&lt;SCOPE&gt;
+
+- authorization_code
+- ac_expiration: long</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -132,12 +135,42 @@ m2=m</panel_attributes>
     <id>Relation</id>
     <coordinates>
       <x>360</x>
-      <y>370</y>
+      <y>420</y>
       <w>230</w>
-      <h>140</h>
+      <h>90</h>
     </coordinates>
     <panel_attributes>m1=1
 m2=m</panel_attributes>
-    <additional_attributes>10.0;110.0;200.0;110.0;200.0;10.0</additional_attributes>
+    <additional_attributes>10.0;60.0;200.0;60.0;200.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLNote</id>
+    <coordinates>
+      <x>660</x>
+      <y>280</y>
+      <w>330</w>
+      <h>320</h>
+    </coordinates>
+    <panel_attributes>*Semantics of AccessToken fields*
+
+--
+*Authorization Code Request*
+
+Precondition: successful user authorization
+
+1) If Access Token exists for (user, client)
+    and no new scopes requested then create 
+    new authorizatio_code (AC) and write it 
+    here. Send back the new AC
+2) Otherwise ask the user for authz consent 
+    and initialize the AccessToken entity. Send
+    back the new AC
+--
+*Access Token Request*
+
+1) Verify AC macthes and is not expired
+2) Expire the AC
+3) Return the access token handle    </panel_attributes>
+    <additional_attributes/>
   </element>
 </diagram>
