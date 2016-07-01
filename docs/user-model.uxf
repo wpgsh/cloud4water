@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.2">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>80</x>
+      <y>40</y>
+      <w>290</w>
+      <h>340</h>
+    </coordinates>
+    <panel_attributes>User
+--
+- id: long
+- enabled: boolean
+
+- username: string
+- password_hash: string (opt)
+- password_salt: string (opt)
+
+- homepage: url
+- name: string
+- title: string
+- avatar: image_url
+- avatarId
+- phone1: string
+- phone2: string
+
+- email: string
+- email_verified: boolean
+- email_verification_token: string
+- email_verification_expiration: boolean</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>360</x>
+      <y>70</y>
+      <w>130</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+m2=0..n</panel_attributes>
+    <additional_attributes>10.0;10.0;110.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>470</x>
+      <y>40</y>
+      <w>180</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>ConnectedAccount
+--
+- service: string
+- accountId: string</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>470</x>
+      <y>150</y>
+      <w>180</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>Image
+--
+- id: string
+- image: blob</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>360</x>
+      <y>150</y>
+      <w>130</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+m2=0..1</panel_attributes>
+    <additional_attributes>10.0;10.0;110.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>80</x>
+      <y>460</y>
+      <w>290</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>RegisteredClients
+--
+- id: long
+- clientId: string
+- clientSecret: string
+- redirectURI: string</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>470</x>
+      <y>280</y>
+      <w>180</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>AccessTokens
+--
+- user_id
+- client_id
+- handle: string
+- scope: set&lt;SCOPE&gt;</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>360</x>
+      <y>280</y>
+      <w>130</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>m1=1
+m2=m</panel_attributes>
+    <additional_attributes>10.0;10.0;110.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>360</x>
+      <y>370</y>
+      <w>230</w>
+      <h>140</h>
+    </coordinates>
+    <panel_attributes>m1=1
+m2=m</panel_attributes>
+    <additional_attributes>10.0;110.0;200.0;110.0;200.0;10.0</additional_attributes>
+  </element>
+</diagram>
