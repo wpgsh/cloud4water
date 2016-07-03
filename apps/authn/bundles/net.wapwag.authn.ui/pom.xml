@@ -1,6 +1,6 @@
 <project>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>net.wapwag.authn.dao</artifactId>
+  <artifactId>net.wapwag.authn.ui</artifactId>
   <packaging>bundle</packaging>
 
   <parent>
@@ -12,24 +12,36 @@
 
   <dependencies>
     <dependency>
+      <groupId>net.wapwag.authn</groupId>
+      <artifactId>net.wapwag.authn</artifactId>
+      <version>${project.version}</version>
+      <type>bundle</type>
+    </dependency>
+
+    <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>osgi.cmpn</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.hibernate.javax.persistence</groupId>
-      <artifactId>hibernate-jpa-2.1-api</artifactId>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.thingswise.appframework</groupId>
+      <artifactId>http-utils</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.ops4j.pax.web</groupId>
+      <artifactId>pax-web-api</artifactId>
     </dependency>    
     <dependency>
-      <groupId>org.hibernate.javax.persistence</groupId>
-      <artifactId>hibernate-jpa-2.1-api</artifactId>
-    </dependency>    
+      <groupId>org.ops4j.pax.web</groupId>
+      <artifactId>pax-web-jsp</artifactId>
+	</dependency>    
+
     <dependency>
-      <groupId>org.apache.aries.jpa</groupId>
-      <artifactId>org.apache.aries.jpa.api</artifactId>
-    </dependency>    
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
     </dependency>
   </dependencies>
 
@@ -44,7 +56,6 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
-            <Import-Package>org.hibernate.proxy,javassist.util.proxy,*</Import-Package>
           </instructions>
         </configuration>
       </plugin>

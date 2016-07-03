@@ -32,6 +32,12 @@
       <version>${project.version}</version>
       <type>bundle</type>
     </dependency>
+    <dependency>
+      <groupId>net.wapwag.authn</groupId>
+      <artifactId>net.wapwag.authn.ui</artifactId>
+      <version>${project.version}</version>
+      <type>bundle</type>
+    </dependency>
   </dependencies>
 
   <build>

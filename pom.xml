@@ -63,6 +63,7 @@
     <javax.ws.rs.version>2.0</javax.ws.rs.version>
     <aries.jpa.version>2.3.0</aries.jpa.version>
     <appframework.version>0.1.0-SNAPSHOT</appframework.version>
+    <pax.web.version>4.2.4</pax.web.version>
     <tw.build.ext></tw.build.ext>
   </properties>
 
@@ -133,10 +134,27 @@
         <version>${aries.jpa.version}</version>
         <scope>provided</scope>
       </dependency>
+      <dependency>
+        <groupId>org.ops4j.pax.web</groupId>
+        <artifactId>pax-web-api</artifactId>
+        <version>${pax.web.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.ops4j.pax.web</groupId>
+        <artifactId>pax-web-jsp</artifactId>
+        <version>${pax.web.version}</version>
+        <scope>provided</scope>
+      </dependency>
 
       <dependency>
         <groupId>com.thingswise.appframework</groupId>
         <artifactId>jaxrs-utils</artifactId>
+        <version>${appframework.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.thingswise.appframework</groupId>
+        <artifactId>http-utils</artifactId>
         <version>${appframework.version}</version>
       </dependency>
 
@@ -190,7 +208,7 @@
           <groupId>org.kuali.maven.wagons</groupId>
           <artifactId>maven-s3-wagon</artifactId>
           <version>${maven.s3.wagon.version}</version>
-        </plugin>                
+        </plugin>
       </plugins>
     </pluginManagement>
     <extensions>
