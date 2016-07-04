@@ -152,12 +152,6 @@
         <artifactId>jaxrs-utils</artifactId>
         <version>${appframework.version}</version>
       </dependency>
-      <dependency>
-        <groupId>com.thingswise.appframework</groupId>
-        <artifactId>http-utils</artifactId>
-        <version>${appframework.version}</version>
-      </dependency>
-
 
       <dependency>
         <groupId>junit</groupId>

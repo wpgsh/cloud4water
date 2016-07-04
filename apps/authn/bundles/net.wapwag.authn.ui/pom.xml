@@ -27,10 +27,6 @@
       <artifactId>javax.servlet-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.thingswise.appframework</groupId>
-      <artifactId>http-utils</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.ops4j.pax.web</groupId>
       <artifactId>pax-web-api</artifactId>
     </dependency>    
@@ -56,6 +52,9 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
+            <_wab>src/main/webapp/</_wab>
+            <Web-ContextPath>/authn</Web-ContextPath>          
+            <Webapp-Context>authn</Webapp-Context>
           </instructions>
         </configuration>
       </plugin>
