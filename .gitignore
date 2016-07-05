@@ -1,9 +1,10 @@
 .settings
 .gradle
-build/
 .idea
+build/
 target/
 .classpath
+*.iml
 .project
 *.class
 # Mobile Tools for Java (J2ME)

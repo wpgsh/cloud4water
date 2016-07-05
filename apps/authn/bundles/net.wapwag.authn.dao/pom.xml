@@ -20,10 +20,6 @@
       <artifactId>hibernate-jpa-2.1-api</artifactId>
     </dependency>    
     <dependency>
-      <groupId>org.hibernate.javax.persistence</groupId>
-      <artifactId>hibernate-jpa-2.1-api</artifactId>
-    </dependency>    
-    <dependency>
       <groupId>org.apache.aries.jpa</groupId>
       <artifactId>org.apache.aries.jpa.api</artifactId>
     </dependency>    
@@ -44,6 +40,7 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
+            <Export-Package>net.wapwag.authn.dao.*</Export-Package>
             <Import-Package>org.hibernate.proxy,javassist.util.proxy,*</Import-Package>
           </instructions>
         </configuration>
