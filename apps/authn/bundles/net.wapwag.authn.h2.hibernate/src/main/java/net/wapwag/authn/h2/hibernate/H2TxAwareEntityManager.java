@@ -21,22 +21,60 @@ public class H2TxAwareEntityManager implements TxAwareEntityManager {
 	
 	private static final ImmutableList<String> ddl =
 		ImmutableList.of(
+                //Reinitial database.
+				"drop table users",
+                "drop table access_tokens",
+                "drop table registered_client",
 			// 0
 			"create table if not exists users("
+            + "  enabled varchar(1),"
+            + "  username varchar(20),"
+            + "  password_hash varchar(32),"
+            + "  password_salt varchar(32),"
+            + "  homepage varchar(50),"
+            + "  name varchar(50),"
+            + "  title varchar(50),"
+            + "  avatar varchar(50),"
+            + "  avatar_id bigint,"
+            + "  phone1 varchar(50),"
+            + "  phone2 varchar(50),"
+            + "  email varchar(50),"
+            + "  email_verified varchar(1),"
+            + "  email_verification_token varchar(32),"
+            + "  email_verification_expiration varchar(1),"
 			+ "  id bigint primary key"
 			+ ")",
 			// 1
-			"merge into users(id) values(1)",
+            "merge into users(id, enabled, username, password_hash, password_salt, homepage, name, title, avatar, avatar_id, phone1, phone2, email, email_verified, email_verification_token, email_verification_expiration) values("
+            + "1, '1', 'test', 'dfdf', 'dfdfd', 'http://www.baidu.com', 'test', 'title', 'sds', 1, '121212', '121212', '1163525902@qq.com', '1', 'dfdf', '1')",
 			// 2
-			"create table if not exists access_tokens("
-		    + "  user_id bigint,"
-		    + "  client_id varchar(32),"
-		    + "  expiration bigint,"
-		    + "  handle varchar(16) primary key"
-		    + ")",
+            "create table if not exists access_tokens("
+            + "  client_id bigint,"
+            + "  user_id bigint,"
+            + "  handle varchar(32) primary key,"
+            + "  scope varchar(100),"
+            + "  authorization_code varchar(32),"
+            + "  ac_expiration bigint,"
+            + ")",
 		    // 3
-		    "merge into access_tokens(user_id, client_id, expiration, handle) values(1, 'client1', 9223372036854775807, 'token1')");
-		
+		    "merge into access_tokens(user_id, client_id, authorization_code, handle, ac_expiration, scope) values(1, 1, 'dsfjdjfk23skjdsds1','8ae675a177544f97869d078d56821a44', 9223372036854775807, '1,2,3,4')",
+		    "merge into access_tokens(user_id, client_id, authorization_code, handle, ac_expiration, scope) values(1, 2, 'dsfjdjfk23skjdsds2','token2', 9223372036854775807, '1,2,3,4')",
+		    "merge into access_tokens(user_id, client_id, authorization_code, handle, ac_expiration, scope) values(1, 3, 'dsfjdjfk23skjdsds3','token3', 9223372036854775807, '1,2,3,4')",
+		    "merge into access_tokens(user_id, client_id, authorization_code, handle, ac_expiration, scope) values(1, 4, 'dsfjdjfk23skjdsds4','token4', 9223372036854775807, '1,2,3,4')",
+            //4
+            "create table if not exists registered_client("
+            + "  id bigint primary key,"
+            + "  client_id varchar(32),"
+            + "  client_secret varchar(32),"
+            + "  redirect_uri varchar(100)"
+            + ")",
+            //5
+            "merge into registered_client(id, client_id, client_secret, redirect_uri) values(1, 'client1', 'dfdjfjkdkj23klaa1', 'http://www.baidu.com1')",
+            "merge into registered_client(id, client_id, client_secret, redirect_uri) values(2, 'client2', 'dfdjfjkdkj23klaa2', 'http://www.baidu.com2')",
+            "merge into registered_client(id, client_id, client_secret, redirect_uri) values(3, 'client3', 'dfdjfjkdkj23klaa3', 'http://www.baidu.com3')",
+            "merge into registered_client(id, client_id, client_secret, redirect_uri) values(4, 'client4', 'dfdjfjkdkj23klaa4', 'http://www.baidu.com4')"
+        );
+
 	@Reference(target="(osgi.unit.name=user-jpa)")
 	protected JpaTemplate jpa;
 	

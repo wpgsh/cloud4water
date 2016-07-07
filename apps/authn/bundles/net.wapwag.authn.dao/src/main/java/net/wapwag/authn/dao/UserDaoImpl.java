@@ -2,7 +2,12 @@ package net.wapwag.authn.dao;
 
 
 import javax.persistence.EntityManager;
+import javax.persistence.OrderColumn;
+import javax.persistence.Tuple;
+import javax.persistence.criteria.*;
+import javax.swing.text.StringContent;
 
+import net.wapwag.authn.dao.model.RegisteredClient;
 import org.apache.aries.jpa.template.EmFunction;
 import org.apache.aries.jpa.template.JpaTemplate;
 import org.osgi.service.component.annotations.Activate;
@@ -12,12 +17,18 @@ import org.osgi.service.component.annotations.Reference;
 
 import net.wapwag.authn.dao.model.AccessToken;
 import net.wapwag.authn.dao.model.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Arrays;
 
 @Component
 public class UserDaoImpl implements UserDao {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserDaoImpl.class);
+
 	@Reference(target="(osgi.name=user)")
-	protected TxAwareEntityManager entityManager;
+	private TxAwareEntityManager entityManager;
 	
 	@Activate
 	protected void init() throws Exception {
@@ -57,4 +68,54 @@ public class UserDaoImpl implements UserDao {
 		}
 	}
 
+	@Override
+	public RegisteredClient getRegisteredClient(final String clientId) throws UserDaoException {
+		try {
+            return entityManager.txExpr(new EmFunction<RegisteredClient>() {
+                @Override
+                public RegisteredClient apply(EntityManager em) {
+                    CriteriaBuilder cb = em.getCriteriaBuilder();
+                    CriteriaQuery<RegisteredClient> cq = cb.createQuery(RegisteredClient.class);
+                    Root<RegisteredClient> root = cq.from(RegisteredClient.class);
+                    Predicate p = cb.equal(root.get("clientId"), clientId);
+                    return em.createQuery(cq.where(p)).getSingleResult();
+                }
+            });
+        } catch (Exception e) {
+            throw new UserDaoException("Cannot add access token", e);
+        }
+	}
+
+	@Override
+	public long saveAccessToken(final AccessToken accessToken) throws UserDaoException {
+        try {
+            return entityManager.txExpr(new EmFunction<Long>() {
+                @Override
+                public Long apply(EntityManager em) {
+                    em.merge(accessToken);
+                    return 1L;
+                }
+            });
+        } catch (Exception e) {
+            throw new UserDaoException("Cannot add access token", e);
+        }
+	}
+
+    @Override
+    public AccessToken getAccessToken(final AccessToken accessToken) throws UserDaoException {
+        try {
+            return entityManager.txExpr(new EmFunction<AccessToken>() {
+                @Override
+                public AccessToken apply(EntityManager em) {
+                    return em.createQuery(
+                            "select at from AccessToken at where at.user.id = :userId and at.registeredClient.clientId = :clientId", AccessToken.class)
+                            .setParameter("userId", accessToken.getUser().getId())
+                            .setParameter("clientId", accessToken.getRegisteredClient().getClientId())
+                            .getSingleResult();
+                }
+            });
+        } catch (Exception e) {
+            throw new UserDaoException("cannot find access token", e);
+        }
+    }
 }

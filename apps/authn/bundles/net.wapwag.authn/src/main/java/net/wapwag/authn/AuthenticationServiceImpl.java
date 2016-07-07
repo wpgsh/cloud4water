@@ -1,20 +1,27 @@
 package net.wapwag.authn;
 
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-
 import net.wapwag.authn.Ids.UserId;
 import net.wapwag.authn.dao.UserDao;
 import net.wapwag.authn.dao.UserDaoException;
+import net.wapwag.authn.dao.model.RegisteredClient;
 import net.wapwag.authn.dao.model.User;
 import net.wapwag.authn.model.AccessToken;
 import net.wapwag.authn.model.UserProfile;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Set;
+import java.util.UUID;
 
 @Component
 public class AuthenticationServiceImpl implements AuthenticationService {
-	
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthenticationServiceImpl.class);
+
 	@Reference
-	protected UserDao userDao;
+	private UserDao userDao;
 
 	@Override
 	public UserProfile getUserProfile(UserId uid) throws AuthenticationServiceException {
@@ -36,7 +43,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	public AccessToken lookupToken(String handle) throws AuthenticationServiceException {
 		net.wapwag.authn.dao.model.AccessToken accessToken;
 		try {
+            logger.info(handle);
 			accessToken = userDao.lookupAccessToken(handle);
+            logger.info(accessToken.toString());
 		} catch (UserDaoException e) {
 			throw new AuthenticationServiceException("Cannot get access token", e);
 		}
@@ -44,11 +53,69 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			return new AccessToken(
 					accessToken.getUser().getId(), 
 					accessToken.getExpiration(), 
-					accessToken.getClientId(), 
+					accessToken.getRegisteredClient().getClientId(),
 					accessToken.getHandle());
 		} else {
 			return null;
 		}
 	}
 
+	@Override
+	public String getAccessToken(String clientId, String clientSecret, String code, String redirectURI) throws AuthenticationServiceException {
+        RegisteredClient registeredClient = null;
+        net.wapwag.authn.dao.model.AccessToken accessToken = null;
+        try {
+            registeredClient = userDao.getRegisteredClient(clientId);
+            logger.info("get access token register client------->>>>>" + registeredClient.toString());
+
+            //valid clientSecret.
+            if (clientSecret != null && clientSecret.equals(registeredClient.getClientSecret())) {
+                accessToken = new net.wapwag.authn.dao.model.AccessToken();
+                accessToken.setUser(userDao.getUser(1));
+                accessToken.setRegisteredClient(registeredClient);
+                accessToken = userDao.getAccessToken(accessToken);
+                logger.info("get access token------->>>>>" + accessToken.toString());
+                //valid authorization code.
+                if (code.equals(accessToken.getAuthrizationCode())) {
+                    return accessToken.getHandle();
+                }
+            }
+        } catch (UserDaoException e) {
+            throw new AuthenticationServiceException("Cannot get access token", e);
+        }
+        return null;
+	}
+
+	@Override
+	public String getAuthorizationCode(String clientId, String redirectURI, Set<String> scope) throws AuthenticationServiceException {
+		RegisteredClient registeredClient = null;
+        net.wapwag.authn.dao.model.AccessToken accessToken = null;
+        long result = 0;
+        try {
+            registeredClient = userDao.getRegisteredClient(clientId);
+            if (registeredClient != null) {
+                accessToken = new net.wapwag.authn.dao.model.AccessToken();
+                accessToken.setUser(userDao.getUser(1));
+                accessToken.setRegisteredClient(registeredClient);
+                accessToken = userDao.getAccessToken(accessToken); //find accessToken by clientId and userId
+                if (accessToken != null) {
+                    //generate authorization code
+                    accessToken.setAuthrizationCode(UUID.randomUUID().toString().replaceAll("-", ""));
+                    accessToken.setExpiration(9223372036854775807L);
+                }
+                //update authorization code
+                result = userDao.saveAccessToken(accessToken);
+                logger.info(accessToken.toString());
+            }
+            logger.info(registeredClient.toString());
+            logger.info(result + "");
+        } catch (UserDaoException e) {
+            throw new AuthenticationServiceException("Cannot get register client", e);
+        }
+
+        if (result > 0) {
+            return accessToken.getAuthrizationCode();
+        }
+		return null;
+	}
 }

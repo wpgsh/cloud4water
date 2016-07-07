@@ -1,12 +1,10 @@
 package net.wapwag.authn.rest.oauth2;
 
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-
 import com.thingswise.appframework.jaxrs.utils.TokenHandler;
-
 import net.wapwag.authn.AuthenticationService;
 import net.wapwag.authn.Ids;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 @Component
 public class UsersTokenHandler implements TokenHandler {
@@ -14,7 +12,7 @@ public class UsersTokenHandler implements TokenHandler {
 	public static final String NAME = "users";
 	
 	@Reference
-	protected AuthenticationService service;
+	private AuthenticationService service;
 
 	@Override
 	public String getName() {
@@ -31,7 +29,7 @@ public class UsersTokenHandler implements TokenHandler {
 					accessToken.clientId,
 					accessToken.handle);
 		} else {
-			return null;
+            return null;
 		}
 	}
 
