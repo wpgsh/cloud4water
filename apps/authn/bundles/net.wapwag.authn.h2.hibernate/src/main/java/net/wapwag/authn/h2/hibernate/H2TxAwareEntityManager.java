@@ -57,7 +57,7 @@ public class H2TxAwareEntityManager implements TxAwareEntityManager {
             + "  ac_expiration bigint,"
             + ")",
 		    // 3
-		    "merge into access_tokens(user_id, client_id, authorization_code, handle, ac_expiration, scope) values(1, 1, 'dsfjdjfk23skjdsds1','8ae675a177544f97869d078d56821a44', 9223372036854775807, '1,2,3,4')",
+		    "merge into access_tokens(user_id, client_id, authorization_code, handle, ac_expiration, scope) values(1, 1, 'dsfjdjfk23skjdsds1','token1', 9223372036854775807, '1,2,3,4')",
 		    "merge into access_tokens(user_id, client_id, authorization_code, handle, ac_expiration, scope) values(1, 2, 'dsfjdjfk23skjdsds2','token2', 9223372036854775807, '1,2,3,4')",
 		    "merge into access_tokens(user_id, client_id, authorization_code, handle, ac_expiration, scope) values(1, 3, 'dsfjdjfk23skjdsds3','token3', 9223372036854775807, '1,2,3,4')",
 		    "merge into access_tokens(user_id, client_id, authorization_code, handle, ac_expiration, scope) values(1, 4, 'dsfjdjfk23skjdsds4','token4', 9223372036854775807, '1,2,3,4')",
