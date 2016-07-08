@@ -43,13 +43,13 @@ public class UserDaoImpl implements UserDao {
 	@Override
 	public User getUser(final long uid) throws UserDaoException {
 		try {
-			return entityManager.txExpr(new EmFunction<User>() {
+            return entityManager.txExpr(new EmFunction<User>() {
 				@Override
 				public User apply(EntityManager em) {
 					return em.find(User.class, uid);
-				}				
-			});			
-		} catch (Exception e) {
+				}
+			});
+        } catch (Exception e) {
 			throw new UserDaoException("Cannot get user entity", e);
 		}
 	}
@@ -116,6 +116,20 @@ public class UserDaoImpl implements UserDao {
             });
         } catch (Exception e) {
             throw new UserDaoException("cannot find access token", e);
+        }
+    }
+
+    @Override
+    public User saveUser(final User user) throws UserDaoException {
+        try {
+            return entityManager.txExpr(new EmFunction<User>() {
+                @Override
+                public User apply(EntityManager em) {
+                    return em.merge(user);
+                }
+            });
+        } catch (Exception e) {
+            throw new UserDaoException("Cannot add user", e);
         }
     }
 }

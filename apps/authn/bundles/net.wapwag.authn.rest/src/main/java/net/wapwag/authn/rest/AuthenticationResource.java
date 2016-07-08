@@ -1,11 +1,11 @@
 package net.wapwag.authn.rest;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
+import net.wapwag.authn.dao.model.User;
+import net.wapwag.authn.rest.dto.UserRequest;
+import net.wapwag.authn.rest.dto.UserResponse;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -49,5 +49,54 @@ public class AuthenticationResource {
 		
 		return response;
 	}
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Authorization @AnyAuthenticatedUser
+    public UserResponse addUser(@BeanParam UserRequest userRequest) throws Exception {
+        try {
+            //Get the userRequest and convert it to User so the service layer could operate it.
+            User user = new User();
+            user.setId(userRequest.getId());
+            user.setUsername(userRequest.getUsername());
+            user.setPasswordHash(userRequest.getPasswordHash());
+            user.setPasswordSalt(userRequest.getPasswordSalt());
+            user.setEnabled(userRequest.getEnabled());
+            user.setAvartarId(userRequest.getAvartarId());
+            user.setAvatar(userRequest.getAvatar());
+            user.setEmail(userRequest.getEmail());
+            user.setEnabled(userRequest.getEnabled());
+            user.setHomepage(userRequest.getHomepage());
+            user.setName(userRequest.getName());
+            user.setPhone1(userRequest.getPhone1());
+            user.setPhone2(userRequest.getPhone2());
+            user.setEmail(userRequest.getEmail());
+
+            user = authnService.saveUser(user);
+            UserResponse userResponse = new UserResponse();
+
+            //Get the user from service and convert it to UserResponse so the browser could read the json response.
+            userResponse.setId(user.getId());
+            userResponse.setId(user.getId());
+            userResponse.setUsername(user.getUsername());
+            userResponse.setPasswordHash(user.getPasswordHash());
+            userResponse.setPasswordSalt(user.getPasswordSalt());
+            userResponse.setEnabled(user.getEnabled());
+            userResponse.setAvartarId(user.getAvartarId());
+            userResponse.setAvatar(user.getAvatar());
+            userResponse.setEmail(user.getEmail());
+            userResponse.setEnabled(user.getEnabled());
+            userResponse.setHomepage(user.getHomepage());
+            userResponse.setName(user.getName());
+            userResponse.setPhone1(user.getPhone1());
+            userResponse.setPhone2(user.getPhone2());
+            userResponse.setEmail(user.getEmail());
+
+            return userResponse;
+        } catch (Exception e) {
+            throw new ResourceNotFoundException("Can not add user: " + userRequest.toString());
+        }
+
+    }
 
 }

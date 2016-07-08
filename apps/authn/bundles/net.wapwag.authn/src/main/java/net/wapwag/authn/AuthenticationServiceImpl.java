@@ -118,4 +118,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 		return null;
 	}
+
+    @Override
+    public User saveUser(User user) throws AuthenticationServiceException {
+        try {
+            user = userDao.saveUser(user);
+        } catch (UserDaoException e) {
+            throw new AuthenticationServiceException("cannot add user");
+        }
+        return user;
+    }
 }

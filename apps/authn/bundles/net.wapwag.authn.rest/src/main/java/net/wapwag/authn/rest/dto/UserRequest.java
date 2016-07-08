@@ -1,68 +1,55 @@
-package net.wapwag.authn.dao.model;
+package net.wapwag.authn.rest.dto;
 
-import java.util.Set;
+import javax.ws.rs.FormParam;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+public class UserRequest {
 
-/**
- * User data model.
- * Updated by Lee on 2016/7/8.
- */
-@Entity
-@Table(name="users")
-public class User {
-
-	@Id
-	@Column(name = "id")
+	@FormParam("id")
 	private long id;
 
-    @Column(name = "enabled")
+    @FormParam("enabled")
     private String enabled;
 
-    @Column(name = "username")
+    @FormParam("username")
     private String username;
 
-    @Column(name = "password_hash")
+    @FormParam("password_hash")
     private String passwordHash;
 
-    @Column(name = "password_salt")
+    @FormParam("password_salt")
     private String passwordSalt;
 
-    @Column(name = "homepage")
+    @FormParam("homepage")
     private String homepage;
 
-    @Column(name = "name")
+    @FormParam("name")
     private String name;
 
-    @Column(name = "title")
+    @FormParam("title")
     private String title;
 
-    @Column(name = "avatar")
+    @FormParam("avatar")
     private String avatar;
 
-    @Column(name = "avatar_id")
+    @FormParam("avatar_id")
     private long avartarId;
 
-    @Column(name = "phone1")
+    @FormParam("phone1")
     private String phone1;
 
-    @Column(name = "phone2")
+    @FormParam("phone2")
     private String phone2;
 
-    @Column(name = "email")
+    @FormParam("email")
     private String email;
 
-    @Column(name = "email_verified")
+    @FormParam("email_verified")
     private String emailVerified;
 
-    @Column(name = "email_verification_token")
+    @FormParam("email_verification_token")
     private String emailVerifiedToken;
 
-    @Column(name = "email_verification_expiration")
+    @FormParam("email_verification_expiration")
     private String emailVerifiedExpiration;
 
     public long getId() {

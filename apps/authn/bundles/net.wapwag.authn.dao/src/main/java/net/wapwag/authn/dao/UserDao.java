@@ -8,6 +8,8 @@ public interface UserDao {
 
 	User getUser(long uid) throws UserDaoException;
 
+	User saveUser(User user) throws UserDaoException;
+
 	RegisteredClient getRegisteredClient(String clientId) throws UserDaoException;
 
 	AccessToken getAccessToken(AccessToken accessToken) throws UserDaoException;

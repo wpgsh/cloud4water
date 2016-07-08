@@ -1,68 +1,57 @@
-package net.wapwag.authn.dao.model;
+package net.wapwag.authn.rest.dto;
 
-import java.util.Set;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+@XmlRootElement
+public class UserResponse {
 
-/**
- * User data model.
- * Updated by Lee on 2016/7/8.
- */
-@Entity
-@Table(name="users")
-public class User {
-
-	@Id
-	@Column(name = "id")
+	@XmlElement(name = "id")
 	private long id;
 
-    @Column(name = "enabled")
+    @XmlElement(name = "enabled")
     private String enabled;
 
-    @Column(name = "username")
+    @XmlElement(name = "username")
     private String username;
 
-    @Column(name = "password_hash")
+    @XmlElement(name = "password_hash")
     private String passwordHash;
 
-    @Column(name = "password_salt")
+    @XmlElement(name = "password_salt")
     private String passwordSalt;
 
-    @Column(name = "homepage")
+    @XmlElement(name = "homepage")
     private String homepage;
 
-    @Column(name = "name")
+    @XmlElement(name = "name")
     private String name;
 
-    @Column(name = "title")
+    @XmlElement(name = "title")
     private String title;
 
-    @Column(name = "avatar")
+    @XmlElement(name = "avatar")
     private String avatar;
 
-    @Column(name = "avatar_id")
+    @XmlElement(name = "avatar_id")
     private long avartarId;
 
-    @Column(name = "phone1")
+    @XmlElement(name = "phone1")
     private String phone1;
 
-    @Column(name = "phone2")
+    @XmlElement(name = "phone2")
     private String phone2;
 
-    @Column(name = "email")
+    @XmlElement(name = "email")
     private String email;
 
-    @Column(name = "email_verified")
+    @XmlElement(name = "email_verified")
     private String emailVerified;
 
-    @Column(name = "email_verification_token")
+    @XmlElement(name = "email_verification_token")
     private String emailVerifiedToken;
 
-    @Column(name = "email_verification_expiration")
+    @XmlElement(name = "email_verification_expiration")
     private String emailVerifiedExpiration;
 
     public long getId() {
