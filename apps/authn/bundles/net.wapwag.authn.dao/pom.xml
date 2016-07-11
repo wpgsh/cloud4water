@@ -40,8 +40,7 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
-            <Export-Package>net.wapwag.authn.dao.*</Export-Package>
-            <Import-Package>org.hibernate.proxy,javassist.util.proxy,*</Import-Package>
+            <Import-Package>org.hibernate.proxy;version="4.3.0",javassist.util.proxy,*</Import-Package>
           </instructions>
         </configuration>
       </plugin>

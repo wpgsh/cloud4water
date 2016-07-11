@@ -40,8 +40,7 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <extensions>true</extensions>
         <configuration>
-          <instructions>
-            <Export-Package>net.wapwag.authn.*</Export-Package>
+          <instructions>            
           </instructions>
         </configuration>
       </plugin>

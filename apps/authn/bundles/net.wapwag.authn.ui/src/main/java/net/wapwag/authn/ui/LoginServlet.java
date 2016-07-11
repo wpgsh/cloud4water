@@ -23,7 +23,7 @@ import org.osgi.service.component.annotations.Reference;
  * Definition of a servlet. Use the following annotations so that
  * OPS4J PAX Web Whiteboard Extended can hook it up into the Jetty server:
  * 
- *   @Component(service=HttpServlet.class, property={ "httpContext.id=<http-context" })
+ *   @Component(service=HttpServlet.class, property={ "httpContext.id=<http-context>" })
  *   @WebServlet(urlPatterns=<path>, name=<name>)
  *   
  * Other SCR annotations can be used to configure injection

@@ -2,21 +2,27 @@
 <features>
   <feature name="net.wapwag.base">
 
-    <feature>scr</feature>
+    <feature prerequisite="true">http</feature>
+    <feature prerequisite="true">pax-http</feature>
+    <feature prerequisite="true">pax-jetty</feature>
+    <feature prerequisite="true">pax-http-jetty</feature>
+    <feature prerequisite="true">pax-http-whiteboard</feature>
+
+    <feature prerequisite="true">scr</feature>
 
     <!-- JTA -->
-    <feature version="1.3.0">transaction</feature>
+    <feature version="1.3.0"  prerequisite="true">transaction</feature>
 
     <!-- JPA -->
-    <feature>pax-jdbc-config</feature>
-    <feature>pax-jdbc-h2</feature>
-    <feature>pax-jdbc-mysql</feature>
+    <feature prerequisite="true">pax-jdbc-config</feature>
+    <feature prerequisite="true">pax-jdbc-h2</feature>
+    <feature prerequisite="true">pax-jdbc-mysql</feature>
     <!-- <feature>pax-jdbc-pool-dbcp2</feature> -->
-    <feature version="2.3.0">jpa</feature>
-    <feature version="4.3.6.Final">hibernate</feature>
+    <feature version="2.3.0" prerequisite="true">jpa</feature>
+    <feature version="4.3.6.Final" prerequisite="true">hibernate</feature>
 
   	<!-- JNDI -->
 
-    <feature>jndi</feature>
+    <feature prerequisite="true">jndi</feature>
   </feature>
 </features>

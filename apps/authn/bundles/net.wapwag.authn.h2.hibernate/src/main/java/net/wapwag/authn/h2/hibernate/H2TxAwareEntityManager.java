@@ -21,10 +21,10 @@ public class H2TxAwareEntityManager implements TxAwareEntityManager {
 	
 	private static final ImmutableList<String> ddl =
 		ImmutableList.of(
-                //Reinitial database.
-				"drop table users",
-                "drop table access_tokens",
-                "drop table registered_client",
+            //Reinitialize database
+			"drop table if exists users",
+            "drop table if exists access_tokens",
+            "drop table if exists registered_clients",
 			// 0
 			"create table if not exists users("
             + "  enabled varchar(1),"
@@ -62,17 +62,17 @@ public class H2TxAwareEntityManager implements TxAwareEntityManager {
 		    "merge into access_tokens(user_id, client_id, authorization_code, handle, ac_expiration, scope) values(1, 3, 'dsfjdjfk23skjdsds3','token3', 9223372036854775807, '1,2,3,4')",
 		    "merge into access_tokens(user_id, client_id, authorization_code, handle, ac_expiration, scope) values(1, 4, 'dsfjdjfk23skjdsds4','token4', 9223372036854775807, '1,2,3,4')",
             //4
-            "create table if not exists registered_client("
+            "create table if not exists registered_clients("
             + "  id bigint primary key,"
             + "  client_id varchar(32),"
             + "  client_secret varchar(32),"
             + "  redirect_uri varchar(100)"
             + ")",
             //5
-            "merge into registered_client(id, client_id, client_secret, redirect_uri) values(1, 'client1', 'dfdjfjkdkj23klaa1', 'http://www.baidu.com1')",
-            "merge into registered_client(id, client_id, client_secret, redirect_uri) values(2, 'client2', 'dfdjfjkdkj23klaa2', 'http://www.baidu.com2')",
-            "merge into registered_client(id, client_id, client_secret, redirect_uri) values(3, 'client3', 'dfdjfjkdkj23klaa3', 'http://www.baidu.com3')",
-            "merge into registered_client(id, client_id, client_secret, redirect_uri) values(4, 'client4', 'dfdjfjkdkj23klaa4', 'http://www.baidu.com4')"
+            "merge into registered_clients(id, client_id, client_secret, redirect_uri) values(1, 'client1', 'dfdjfjkdkj23klaa1', 'http://www.baidu.com1')",
+            "merge into registered_clients(id, client_id, client_secret, redirect_uri) values(2, 'client2', 'dfdjfjkdkj23klaa2', 'http://www.baidu.com2')",
+            "merge into registered_clients(id, client_id, client_secret, redirect_uri) values(3, 'client3', 'dfdjfjkdkj23klaa3', 'http://www.baidu.com3')",
+            "merge into registered_clients(id, client_id, client_secret, redirect_uri) values(4, 'client4', 'dfdjfjkdkj23klaa4', 'http://www.baidu.com4')"
         );
 
 	@Reference(target="(osgi.unit.name=user-jpa)")

@@ -74,11 +74,14 @@ public class UserDaoImpl implements UserDao {
             return entityManager.txExpr(new EmFunction<RegisteredClient>() {
                 @Override
                 public RegisteredClient apply(EntityManager em) {
-                    CriteriaBuilder cb = em.getCriteriaBuilder();
-                    CriteriaQuery<RegisteredClient> cq = cb.createQuery(RegisteredClient.class);
-                    Root<RegisteredClient> root = cq.from(RegisteredClient.class);
-                    Predicate p = cb.equal(root.get("clientId"), clientId);
-                    return em.createQuery(cq.where(p)).getSingleResult();
+//                    CriteriaBuilder cb = em.getCriteriaBuilder();
+//                    CriteriaQuery<RegisteredClient> cq = cb.createQuery(RegisteredClient.class);
+//                    Root<RegisteredClient> root = cq.from(RegisteredClient.class);
+//                    Predicate p = cb.equal(root.get("clientId"), clientId);
+//                    return em.createQuery(cq.where(p)).getSingleResult();
+                    
+                    return em.createQuery("from RegisteredClient r where r.clientId = :clientId", RegisteredClient.class).
+                    		setParameter("clientId", clientId).getSingleResult();
                 }
             });
         } catch (Exception e) {
