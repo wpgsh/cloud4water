@@ -24,6 +24,9 @@ public class RegisteredClient {
     @Column(name = "redirect_uri")
     private String redirectURI;
 
+    @OneToMany
+    private Set<AccessToken> accessTokenList;
+
     public long getId() {
         return id;
     }
@@ -56,6 +59,14 @@ public class RegisteredClient {
         this.redirectURI = redirectURI;
     }
 
+    public Set<AccessToken> getAccessTokenList() {
+        return accessTokenList;
+    }
+
+    public void setAccessTokenList(Set<AccessToken> accessTokenList) {
+        this.accessTokenList = accessTokenList;
+    }
+
     @Override
     public String toString() {
         return "RegisteredClient{" +
@@ -63,6 +74,7 @@ public class RegisteredClient {
                 ", clientId='" + clientId + '\'' +
                 ", clientSecret='" + clientSecret + '\'' +
                 ", redirectURI='" + redirectURI + '\'' +
+                ", accessTokenList=" + accessTokenList +
                 '}';
     }
 }

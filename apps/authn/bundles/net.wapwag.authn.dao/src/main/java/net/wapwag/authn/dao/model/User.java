@@ -1,12 +1,7 @@
 package net.wapwag.authn.dao.model;
 
+import javax.persistence.*;
 import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 /**
  * User data model.
@@ -64,6 +59,9 @@ public class User {
 
     @Column(name = "email_verification_expiration")
     private String emailVerifiedExpiration;
+
+    @OneToMany
+    private Set<AccessToken> accessTokenList;
 
     public long getId() {
         return id;
@@ -193,11 +191,19 @@ public class User {
         this.emailVerifiedExpiration = emailVerifiedExpiration;
     }
 
+    public Set<AccessToken> getAccessTokenList() {
+        return accessTokenList;
+    }
+
+    public void setAccessTokenList(Set<AccessToken> accessTokenList) {
+        this.accessTokenList = accessTokenList;
+    }
+
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", enabled=" + enabled +
+                ", enabled='" + enabled + '\'' +
                 ", username='" + username + '\'' +
                 ", passwordHash='" + passwordHash + '\'' +
                 ", passwordSalt='" + passwordSalt + '\'' +
@@ -209,9 +215,10 @@ public class User {
                 ", phone1='" + phone1 + '\'' +
                 ", phone2='" + phone2 + '\'' +
                 ", email='" + email + '\'' +
-                ", emailVerified=" + emailVerified +
+                ", emailVerified='" + emailVerified + '\'' +
                 ", emailVerifiedToken='" + emailVerifiedToken + '\'' +
-                ", emailVerifiedExpiration=" + emailVerifiedExpiration +
+                ", emailVerifiedExpiration='" + emailVerifiedExpiration + '\'' +
+                ", accessTokenList=" + accessTokenList +
                 '}';
     }
 }
