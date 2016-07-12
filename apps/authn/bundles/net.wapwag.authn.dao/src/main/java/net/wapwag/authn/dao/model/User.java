@@ -60,7 +60,7 @@ public class User {
     @Column(name = "email_verification_expiration")
     private String emailVerifiedExpiration;
 
-    @OneToMany
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private Set<AccessToken> accessTokenList;
 
     public long getId() {
@@ -199,26 +199,4 @@ public class User {
         this.accessTokenList = accessTokenList;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", enabled='" + enabled + '\'' +
-                ", username='" + username + '\'' +
-                ", passwordHash='" + passwordHash + '\'' +
-                ", passwordSalt='" + passwordSalt + '\'' +
-                ", homepage='" + homepage + '\'' +
-                ", name='" + name + '\'' +
-                ", title='" + title + '\'' +
-                ", avatar='" + avatar + '\'' +
-                ", avartarId=" + avartarId +
-                ", phone1='" + phone1 + '\'' +
-                ", phone2='" + phone2 + '\'' +
-                ", email='" + email + '\'' +
-                ", emailVerified='" + emailVerified + '\'' +
-                ", emailVerifiedToken='" + emailVerifiedToken + '\'' +
-                ", emailVerifiedExpiration='" + emailVerifiedExpiration + '\'' +
-                ", accessTokenList=" + accessTokenList +
-                '}';
-    }
 }

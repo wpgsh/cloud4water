@@ -66,9 +66,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         net.wapwag.authn.dao.model.AccessToken accessToken = null;
         try {
             registeredClient = userDao.getRegisteredClient(clientId);
-            // ERROR: can NOT access any fields of a lazy object outside JPA session --
-            //   one of the dangers of using DAO model OUTSIDE DAO
-            // logger.info("get access token register client------->>>>>" + registeredClient.toString());
 
             //valid clientSecret.
             if (clientSecret != null && clientSecret.equals(registeredClient.getClientSecret())) {
@@ -76,9 +73,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 accessToken.setUser(userDao.getUser(1));
                 accessToken.setRegisteredClient(registeredClient);
                 accessToken = userDao.getAccessToken(accessToken);
-                // ERROR: can NOT access any fields of a lazy object outside JPA session --
-                //   one of the dangers of using DAO model OUTSIDE DAO
-                // logger.info("get access token------->>>>>" + accessToken.toString());
                 //valid authorization code.
                 if (code.equals(accessToken.getAuthrizationCode())) {
                     return accessToken.getHandle();
@@ -109,11 +103,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 }
                 //update authorization code
                 result = userDao.saveAccessToken(accessToken);
-                // ERROR: can NOT access any fields of a lazy object outside JPA session --
-                //   one of the dangers of using DAO model OUTSIDE DAO
-                // logger.info(accessToken.toString());
             }
-            // logger.info(registeredClient.toString());
             logger.info(result + "");
         } catch (UserDaoException e) {
             throw new AuthenticationServiceException("Cannot get register client", e);

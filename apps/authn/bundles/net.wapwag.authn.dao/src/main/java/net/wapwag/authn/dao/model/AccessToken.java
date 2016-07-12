@@ -84,15 +84,4 @@ public class AccessToken {
         this.authrizationCode = authrizationCode;
     }
 
-    @Override
-    public String toString() {
-        return "AccessToken{" +
-                "user=" + user +
-                ", registeredClient=" + registeredClient +
-                ", handle='" + handle + '\'' +
-                ", scope='" + scope + '\'' +
-                ", authrizationCode='" + authrizationCode + '\'' +
-                ", expiration=" + expiration +
-                '}';
-    }
 }

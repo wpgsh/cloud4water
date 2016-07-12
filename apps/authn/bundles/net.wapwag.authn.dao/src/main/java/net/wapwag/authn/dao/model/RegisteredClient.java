@@ -24,7 +24,7 @@ public class RegisteredClient {
     @Column(name = "redirect_uri")
     private String redirectURI;
 
-    @OneToMany
+    @OneToMany(mappedBy = "registeredClient", fetch = FetchType.EAGER)
     private Set<AccessToken> accessTokenList;
 
     public long getId() {
@@ -67,14 +67,4 @@ public class RegisteredClient {
         this.accessTokenList = accessTokenList;
     }
 
-    @Override
-    public String toString() {
-        return "RegisteredClient{" +
-                "id=" + id +
-                ", clientId='" + clientId + '\'' +
-                ", clientSecret='" + clientSecret + '\'' +
-                ", redirectURI='" + redirectURI + '\'' +
-                ", accessTokenList=" + accessTokenList +
-                '}';
-    }
 }
