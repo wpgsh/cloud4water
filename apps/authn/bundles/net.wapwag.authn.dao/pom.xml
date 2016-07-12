@@ -40,7 +40,7 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
-            <Import-Package>org.hibernate.proxy;version="4.3.0",javassist.util.proxy,*</Import-Package>
+            <Import-Package>org.hibernate.proxy;version="5.0.5",javassist.util.proxy,*</Import-Package>
           </instructions>
         </configuration>
       </plugin>

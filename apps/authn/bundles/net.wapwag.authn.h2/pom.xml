@@ -13,11 +13,6 @@
   </parent>
 
   <dependencies>
-    <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-      <version>1.4.192</version>
-    </dependency>
   </dependencies>
 
   <build>
@@ -31,6 +26,7 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
+            <Import-Package>org.h2.jdbcx,javax.sql</Import-Package>
           </instructions>
         </configuration>
       </plugin>
