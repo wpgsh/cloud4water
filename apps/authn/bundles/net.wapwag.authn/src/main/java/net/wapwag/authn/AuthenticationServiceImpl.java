@@ -7,6 +7,7 @@ import net.wapwag.authn.dao.model.RegisteredClient;
 import net.wapwag.authn.dao.model.User;
 import net.wapwag.authn.model.AccessToken;
 import net.wapwag.authn.model.UserProfile;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -124,4 +125,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
         return user;
     }
+
+    @Override
+	public User getUserByName(String userName)
+			throws AuthenticationServiceException {
+		User user;
+		try {
+			System.out.println("in service");
+			user = userDao.getUserByName(userName);
+        } catch (UserDaoException e) {
+            throw new AuthenticationServiceException("cannot add user");
+        }
+        return user;
+	}
 }

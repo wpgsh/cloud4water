@@ -8,6 +8,7 @@ import javax.persistence.criteria.*;
 import javax.swing.text.StringContent;
 
 import net.wapwag.authn.dao.model.RegisteredClient;
+
 import org.apache.aries.jpa.template.EmFunction;
 import org.apache.aries.jpa.template.JpaTemplate;
 import org.osgi.service.component.annotations.Activate;
@@ -17,6 +18,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import net.wapwag.authn.dao.model.AccessToken;
 import net.wapwag.authn.dao.model.User;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -129,4 +131,24 @@ public class UserDaoImpl implements UserDao {
             throw new UserDaoException("Cannot add user", e);
         }
     }
+
+    @Override
+	public User getUserByName(final String userName) throws UserDaoException {
+		try {
+            return entityManager.txExpr(new EmFunction<User>() {
+                @Override
+                public User apply(EntityManager em) {
+                	String queryUser = "select * from users where username ='"+userName+"' ";
+                	Query query = em.createNativeQuery(queryUser,User.class);
+                	List<User> result = query.getResultList();
+                	if (result.size() >= 1) {
+                		return result.get(0);
+					}
+                	return null;
+                }
+            });
+        } catch (Exception e) {
+            throw new UserDaoException("Cannot find user by username", e);
+        }
+	}
 }

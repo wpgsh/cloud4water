@@ -35,5 +35,7 @@ public interface AuthenticationService {
 	AccessToken lookupToken(String handle) throws AuthenticationServiceException;
 
     User saveUser(User user) throws AuthenticationServiceException;
+    
+    User getUserByName(String userName) throws AuthenticationServiceException;
 
 }
