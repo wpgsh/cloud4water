@@ -1,28 +1,22 @@
 package net.wapwag.authn.dao;
 
 
-import javax.persistence.EntityManager;
-import javax.persistence.OrderColumn;
-import javax.persistence.Tuple;
-import javax.persistence.criteria.*;
-import javax.swing.text.StringContent;
+import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
+import net.wapwag.authn.dao.model.AccessToken;
 import net.wapwag.authn.dao.model.RegisteredClient;
+import net.wapwag.authn.dao.model.User;
 
 import org.apache.aries.jpa.template.EmFunction;
-import org.apache.aries.jpa.template.JpaTemplate;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
-
-import net.wapwag.authn.dao.model.AccessToken;
-import net.wapwag.authn.dao.model.User;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Arrays;
 
 @Component
 public class UserDaoImpl implements UserDao {
