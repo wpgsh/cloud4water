@@ -108,10 +108,111 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		return null;
 	}
 
+	@Override
+	public User getUser(long uid) throws AuthenticationServiceException {
+		User user;
+		try {
+			user = userDao.getUser(uid);
+		} catch (UserDaoException e) {
+			throw new AuthenticationServiceException("Cannot get user", e);
+		}
+
+		if (user != null) {
+			return new User();
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public User saveUser(User user) throws AuthenticationServiceException {
+		try {
+			user = userDao.saveUser(user);
+		} catch (UserDaoException e) {
+			throw new AuthenticationServiceException("cannot add user");
+		}
+		return user;
+	}
+
+	@Override
+	public User removeUser(long uid) throws AuthenticationServiceException {
+		User user;
+		try {
+			user = userDao.removeUser(uid);
+		} catch (UserDaoException e) {
+			throw new AuthenticationServiceException("cannot remove user");
+		}
+		return null;
+	}
+
+	@Override
+	public User updateUser(long uid) throws AuthenticationServiceException {
+		User user;
+		try {
+			user = userDao.updateUser(uid);
+		} catch (UserDaoException e) {
+			throw new AuthenticationServiceException("cannot add user");
+		}
+		return user;
+	}
+
+	@Override
+	public User getUserAvatar(long uid) throws AuthenticationServiceException {
+		User user;
+		try {
+			user = userDao.getUserAvatar(uid);
+		} catch (UserDaoException e) {
+			throw new AuthenticationServiceException("Cannot get user", e);
+		}
+
+		if (user != null) {
+			return new User();
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public User saveUserAvatar(User user) throws AuthenticationServiceException {
+		try {
+			user = userDao.saveUserAvatar(user);
+		} catch (UserDaoException e) {
+			throw new AuthenticationServiceException("cannot add user");
+		}
+		return user;
+	}
+
+	@Override
+	public User removeUserAvatar(long uid)
+			throws AuthenticationServiceException {
+		User user;
+		try {
+			user = userDao.removeUserAvatar(uid);
+		} catch (UserDaoException e) {
+			throw new AuthenticationServiceException("cannot remove user");
+		}
+		return null;
+	}
+
+	@Override
+	public User updateUserAvatar(long uid)
+			throws AuthenticationServiceException {
+		User user;
+		try {
+			user = userDao.updateUserAvatar(uid);
+		} catch (UserDaoException e) {
+			throw new AuthenticationServiceException("cannot add user");
+		}
+		return user;
+	}
+
     @Override
-    public User saveUser(User user) throws AuthenticationServiceException {
-        try {
-            user = userDao.saveUser(user);
+	public User getUserByName(String userName)
+			throws AuthenticationServiceException {
+		User user;
+		try {
+			System.out.println("in service");
+			user = userDao.getUserByName(userName);
         } catch (UserDaoException e) {
             throw new AuthenticationServiceException("cannot add user");
         }

@@ -10,12 +10,27 @@ public interface UserDao {
 
 	User saveUser(User user) throws UserDaoException;
 
-	RegisteredClient getRegisteredClient(String clientId) throws UserDaoException;
+	User removeUser(long uid) throws UserDaoException;
+
+	User updateUser(long uid) throws UserDaoException;
+
+	User getUserAvatar(long id) throws UserDaoException;
+
+	User saveUserAvatar(User user) throws UserDaoException;
+
+	User removeUserAvatar(long id) throws UserDaoException;
+
+	User updateUserAvatar(long id) throws UserDaoException;
+
+	RegisteredClient getRegisteredClient(String clientId)
+			throws UserDaoException;
 
 	AccessToken getAccessToken(AccessToken accessToken) throws UserDaoException;
 
-    long saveAccessToken(AccessToken accessToken) throws UserDaoException;
-	
+	long saveAccessToken(AccessToken accessToken) throws UserDaoException;
+
 	AccessToken lookupAccessToken(String handle) throws UserDaoException;
+	
+	User getUserByName(String userName)throws UserDaoException;
 
 }
