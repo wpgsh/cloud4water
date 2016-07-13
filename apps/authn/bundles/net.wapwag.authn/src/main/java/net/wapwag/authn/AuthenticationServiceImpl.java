@@ -225,4 +225,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		return user;
 	}
 
+    @Override
+	public User getUserByName(String userName)
+			throws AuthenticationServiceException {
+		User user;
+		try {
+			System.out.println("in service");
+			user = userDao.getUserByName(userName);
+        } catch (UserDaoException e) {
+            throw new AuthenticationServiceException("cannot add user");
+        }
+        return user;
+	}
 }

@@ -43,11 +43,9 @@ public interface AuthenticationService {
 	String getAccessToken(String clientId, String clientSecret, String code,
 			String redirectURI) throws AuthenticationServiceException;
 
-	UserProfile getUserProfile(UserId uid)
-			throws AuthenticationServiceException;
+	UserProfile getUserProfile(UserId uid) throws AuthenticationServiceException;
 
-	AccessToken lookupToken(String handle)
-			throws AuthenticationServiceException;
+	AccessToken lookupToken(String handle) throws AuthenticationServiceException;
 
 	User getUser(long uid) throws AuthenticationServiceException;
 
@@ -64,5 +62,7 @@ public interface AuthenticationService {
 	User removeUserAvatar(long uid) throws AuthenticationServiceException;
 
 	User updateUserAvatar(long uid) throws AuthenticationServiceException;
+    
+    User getUserByName(String userName) throws AuthenticationServiceException;
 
 }

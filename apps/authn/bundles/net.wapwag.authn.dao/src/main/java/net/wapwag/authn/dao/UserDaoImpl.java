@@ -2,6 +2,9 @@ package net.wapwag.authn.dao;
 
 import javax.persistence.EntityManager;
 
+import java.util.List;
+import javax.persistence.Query;
+
 import net.wapwag.authn.dao.model.AccessToken;
 import net.wapwag.authn.dao.model.RegisteredClient;
 import net.wapwag.authn.dao.model.User;
@@ -226,4 +229,23 @@ public class UserDaoImpl implements UserDao {
 		}
 	}
 
+    @Override
+	public User getUserByName(final String userName) throws UserDaoException {
+		try {
+            return entityManager.txExpr(new EmFunction<User>() {
+                @Override
+                public User apply(EntityManager em) {
+                	String queryUser = "select * from users where username ='"+userName+"' ";
+                	Query query = em.createNativeQuery(queryUser,User.class);
+                	List<User> result = query.getResultList();
+                	if (result.size() >= 1) {
+                		return result.get(0);
+					}
+                	return null;
+                }
+            });
+        } catch (Exception e) {
+            throw new UserDaoException("Cannot find user by username", e);
+        }
+	}
 }
