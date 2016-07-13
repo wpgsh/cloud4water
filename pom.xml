@@ -198,11 +198,6 @@
           <artifactId>maven-assembly-plugin</artifactId>
           <version>${maven.assembly.plugin.version}</version>
         </plugin>
-        <plugin>
-          <groupId>org.kuali.maven.wagons</groupId>
-          <artifactId>maven-s3-wagon</artifactId>
-          <version>${maven.s3.wagon.version}</version>
-        </plugin>
       </plugins>
     </pluginManagement>
     <extensions>

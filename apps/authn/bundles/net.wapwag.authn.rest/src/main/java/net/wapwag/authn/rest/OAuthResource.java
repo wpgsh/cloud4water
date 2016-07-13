@@ -4,14 +4,13 @@ import net.wapwag.authn.AuthenticationService;
 import net.wapwag.authn.rest.dto.AccessTokenRequest;
 import net.wapwag.authn.rest.dto.AccessTokenResponse;
 import net.wapwag.authn.rest.dto.AuthorizeRequest;
-import net.wapwag.authn.rest.dto.AuthorizeResponse;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.*;
 
 /**
  * Authentification resource.
@@ -22,6 +21,12 @@ import javax.ws.rs.core.MediaType;
 public class OAuthResource {
 
     private static final Logger logger = LoggerFactory.getLogger(OAuthResource.class);
+
+    /**
+     * Jersey built-in request uri information model.
+     */
+    @Context
+    private UriInfo uriInfo;
 
     @Reference
     private AuthenticationService authnService;
@@ -35,14 +40,21 @@ public class OAuthResource {
     @GET
     @Path("/authorize")
     @Produces(MediaType.APPLICATION_JSON)
-    public AuthorizeResponse getAuthorizationCode(@BeanParam AuthorizeRequest authorizeRequest) throws Exception {
-        logger.info(authorizeRequest.toString());
+    public Response getAuthorizationCode(@BeanParam AuthorizeRequest authorizeRequest) throws Exception {
+        logger.info("/authorize ----->" + authorizeRequest.toString());
         String code = authnService.getAuthorizationCode(
                 authorizeRequest.getClientId(),
                 authorizeRequest.getRedirectURI(),
                 authorizeRequest.getScope()
         );
-        return new AuthorizeResponse(code);
+
+//        UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder().queryParam("code", code);
+        CacheControl cacheControl = new CacheControl();
+        cacheControl.setNoCache(true);
+        return Response.seeOther(UriBuilder.fromUri(authorizeRequest.getRedirectURI()).queryParam("code", code).build())
+                .cacheControl(cacheControl)
+                .header("Pragma", "no-cache")
+                .build();
     }
 
     /**

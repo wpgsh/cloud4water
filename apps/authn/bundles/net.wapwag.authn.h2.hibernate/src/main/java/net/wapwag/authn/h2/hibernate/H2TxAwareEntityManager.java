@@ -1,7 +1,7 @@
 package net.wapwag.authn.h2.hibernate;
 
-import javax.persistence.EntityManager;
-
+import com.google.common.collect.ImmutableList;
+import net.wapwag.authn.dao.TxAwareEntityManager;
 import org.apache.aries.jpa.template.EmConsumer;
 import org.apache.aries.jpa.template.EmFunction;
 import org.apache.aries.jpa.template.JpaTemplate;
@@ -10,9 +10,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableList;
-
-import net.wapwag.authn.dao.TxAwareEntityManager;
+import javax.persistence.EntityManager;
 
 @Component(property="osgi.name=user")
 public class H2TxAwareEntityManager implements TxAwareEntityManager {
@@ -46,7 +44,9 @@ public class H2TxAwareEntityManager implements TxAwareEntityManager {
 			+ ")",
 			// 1
             "merge into users(id, enabled, username, password_hash, password_salt, homepage, name, title, avatar, avatar_id, phone1, phone2, email, email_verified, email_verification_token, email_verification_expiration) values("
-            + "1, '1', 'test', 'dfdf', 'dfdfd', 'http://www.baidu.com', 'test', 'title', 'sds', 1, '121212', '121212', '1163525902@qq.com', '1', 'dfdf', '1')",
+            + "1, '1', 'test1', 'dfdf', 'dfdfd', 'http://www.baidu.com', 'test', 'title', 'sds', 1, '121212', '121212', '1163525902@qq.com', '1', 'dfdf', '1')",
+			"merge into users(id, enabled, username, password_hash, password_salt, homepage, name, title, avatar, avatar_id, phone1, phone2, email, email_verified, email_verification_token, email_verification_expiration) values("
+            + "2, '1', 'test2', 'dfdf', 'dfdfd', 'http://www.baidu.com', 'test', 'title', 'sds', 1, '121212', '121212', '1163525902@qq.com', '1', 'dfdf', '1')",
 			// 2
             "create table if not exists access_tokens("
             + "  client_id bigint,"
@@ -58,7 +58,7 @@ public class H2TxAwareEntityManager implements TxAwareEntityManager {
             + ")",
 		    // 3
 		    "merge into access_tokens(user_id, client_id, authorization_code, handle, ac_expiration, scope) values(1, 1, 'dsfjdjfk23skjdsds1','token1', 9223372036854775807, '1,2,3,4')",
-		    "merge into access_tokens(user_id, client_id, authorization_code, handle, ac_expiration, scope) values(1, 2, 'dsfjdjfk23skjdsds2','token2', 9223372036854775807, '1,2,3,4')",
+		    "merge into access_tokens(user_id, client_id, authorization_code, handle, ac_expiration, scope) values(2, 1, 'dsfjdjfk23skjdsds2','token2', 9223372036854775807, '1,2,3,4')",
 		    "merge into access_tokens(user_id, client_id, authorization_code, handle, ac_expiration, scope) values(1, 3, 'dsfjdjfk23skjdsds3','token3', 9223372036854775807, '1,2,3,4')",
 		    "merge into access_tokens(user_id, client_id, authorization_code, handle, ac_expiration, scope) values(1, 4, 'dsfjdjfk23skjdsds4','token4', 9223372036854775807, '1,2,3,4')",
             //4

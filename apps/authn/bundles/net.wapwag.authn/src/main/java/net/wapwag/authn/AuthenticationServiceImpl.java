@@ -49,27 +49,21 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		} catch (UserDaoException e) {
 			throw new AuthenticationServiceException("Cannot get access token", e);
 		}
-		if (accessToken != null) {
-			return new AccessToken(
-					accessToken.getUser().getId(), 
-					accessToken.getExpiration(), 
-					accessToken.getRegisteredClient().getClientId(),
-					accessToken.getHandle());
-		} else {
-			return null;
-		}
+        return new AccessToken(
+                accessToken.getUser().getId(),
+                accessToken.getExpiration(),
+                accessToken.getRegisteredClient().getClientId(),
+                accessToken.getHandle());
 	}
 
 	@Override
 	public String getAccessToken(String clientId, String clientSecret, String code, String redirectURI) throws AuthenticationServiceException {
-        RegisteredClient registeredClient = null;
-        net.wapwag.authn.dao.model.AccessToken accessToken = null;
         try {
-            registeredClient = userDao.getRegisteredClient(clientId);
+            RegisteredClient registeredClient = userDao.getRegisteredClient(clientId);
 
             //valid clientSecret.
             if (clientSecret != null && clientSecret.equals(registeredClient.getClientSecret())) {
-                accessToken = new net.wapwag.authn.dao.model.AccessToken();
+                net.wapwag.authn.dao.model.AccessToken accessToken = new net.wapwag.authn.dao.model.AccessToken();
                 accessToken.setUser(userDao.getUser(1));
                 accessToken.setRegisteredClient(registeredClient);
                 accessToken = userDao.getAccessToken(accessToken);
@@ -86,11 +80,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 	@Override
 	public String getAuthorizationCode(String clientId, String redirectURI, Set<String> scope) throws AuthenticationServiceException {
-		RegisteredClient registeredClient = null;
         net.wapwag.authn.dao.model.AccessToken accessToken = null;
         long result = 0;
         try {
-            registeredClient = userDao.getRegisteredClient(clientId);
+            RegisteredClient registeredClient = userDao.getRegisteredClient(clientId);
             if (registeredClient != null) {
                 accessToken = new net.wapwag.authn.dao.model.AccessToken();
                 accessToken.setUser(userDao.getUser(1));
