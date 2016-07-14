@@ -64,6 +64,9 @@
     <aries.jpa.version>2.3.0</aries.jpa.version>
     <appframework.version>0.1.0-SNAPSHOT</appframework.version>
     <pax.web.version>4.2.4</pax.web.version>
+    <apache.httpclient.version>4.5.2</apache.httpclient.version>
+    <apache.httpclient.3x.version>3.1.0</apache.httpclient.3x.version>
+    <apache.httpcore.version>4.4.4</apache.httpcore.version>
     <tw.build.ext></tw.build.ext>
   </properties>
 
@@ -145,6 +148,16 @@
         <artifactId>pax-web-jsp</artifactId>
         <version>${pax.web.version}</version>
         <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpclient-osgi</artifactId>
+        <version>${apache.httpclient.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpcore-osgi</artifactId>
+        <version>${apache.httpcore.version}</version>
       </dependency>
 
       <dependency>
