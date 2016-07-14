@@ -12,6 +12,11 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableSet;
+
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
 
@@ -53,7 +58,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 accessToken.getUser().getId(),
                 accessToken.getExpiration(),
                 accessToken.getRegisteredClient().getClientId(),
-                accessToken.getHandle());
+                accessToken.getHandle(),
+                ImmutableSet.copyOf(
+                		Optional.fromNullable(accessToken.getScope()).
+                		transform(String::trim).
+                		transform(s -> s.split(" ")).
+                		or(new String[0])));
 	}
 
 	@Override
