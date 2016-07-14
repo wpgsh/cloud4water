@@ -22,8 +22,9 @@ public interface UserDao {
 
 	User updateUserAvatar(long id) throws UserDaoException;
 
-	RegisteredClient getRegisteredClient(String clientId)
-			throws UserDaoException;
+	RegisteredClient getClientByClientId(long clientId) throws UserDaoException;
+
+	RegisteredClient getClientByRedirectURI(String redirectURI) throws UserDaoException;
 
 	AccessToken getAccessToken(AccessToken accessToken) throws UserDaoException;
 

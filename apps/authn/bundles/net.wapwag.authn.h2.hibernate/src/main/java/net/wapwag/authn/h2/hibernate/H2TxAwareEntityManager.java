@@ -57,7 +57,7 @@ public class H2TxAwareEntityManager implements TxAwareEntityManager {
             + "  ac_expiration bigint,"
             + ")",
 		    // 3
-		    "merge into access_tokens(user_id, client_id, authorization_code, handle, ac_expiration, scope) values(1, 1, 'dsfjdjfk23skjdsds1','token1', 9223372036854775807, '1,2,3,4')",
+//		    "merge into access_tokens(user_id, client_id, authorization_code, handle, ac_expiration, scope) values(1, 1, 'dsfjdjfk23skjdsds1','token1', 9223372036854775807, '1,2,3,4')",
 		    "merge into access_tokens(user_id, client_id, authorization_code, handle, ac_expiration, scope) values(2, 1, 'dsfjdjfk23skjdsds2','token2', 9223372036854775807, '1,2,3,4')",
 		    "merge into access_tokens(user_id, client_id, authorization_code, handle, ac_expiration, scope) values(1, 3, 'dsfjdjfk23skjdsds3','token3', 9223372036854775807, '1,2,3,4')",
 		    "merge into access_tokens(user_id, client_id, authorization_code, handle, ac_expiration, scope) values(1, 4, 'dsfjdjfk23skjdsds4','token4', 9223372036854775807, '1,2,3,4')",
@@ -69,7 +69,7 @@ public class H2TxAwareEntityManager implements TxAwareEntityManager {
             + "  redirect_uri varchar(100)"
             + ")",
             //5
-            "merge into registered_clients(id, client_id, client_secret, redirect_uri) values(1, 'client1', 'dfdjfjkdkj23klaa1', 'http://www.baidu.com1')",
+            "merge into registered_clients(id, client_id, client_secret, redirect_uri) values(1, 'client1', 'dfdjfjkdkj23klaa1', 'http://www.baidu.com')",
             "merge into registered_clients(id, client_id, client_secret, redirect_uri) values(2, 'client2', 'dfdjfjkdkj23klaa2', 'http://www.baidu.com2')",
             "merge into registered_clients(id, client_id, client_secret, redirect_uri) values(3, 'client3', 'dfdjfjkdkj23klaa3', 'http://www.baidu.com3')",
             "merge into registered_clients(id, client_id, client_secret, redirect_uri) values(4, 'client4', 'dfdjfjkdkj23klaa4', 'http://www.baidu.com4')"

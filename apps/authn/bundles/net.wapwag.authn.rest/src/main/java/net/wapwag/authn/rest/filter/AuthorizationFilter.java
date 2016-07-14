@@ -36,10 +36,6 @@ public class AuthorizationFilter implements ContainerResponseFilter {
      */
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
-        logger.info("filter------->" + requestContext.getHeaders().toString());
-        logger.info("filter------->" + requestContext.getHeaders().toString());
-        logger.info("filter------->" + responseContext.getHeaders().toString());
-        logger.info("filter------->" + requestContext.getSecurityContext().isSecure());
         responseContext.getHeaders().add("X-Powered-By", "Jersey");
     }
 }

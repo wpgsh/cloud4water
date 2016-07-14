@@ -1,14 +1,8 @@
 package net.wapwag.authn.dao;
 
-import javax.persistence.EntityManager;
-
-import java.util.List;
-import javax.persistence.Query;
-
 import net.wapwag.authn.dao.model.AccessToken;
 import net.wapwag.authn.dao.model.RegisteredClient;
 import net.wapwag.authn.dao.model.User;
-
 import org.apache.aries.jpa.template.EmFunction;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -16,6 +10,10 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import java.util.List;
 
 @Component
 public class UserDaoImpl implements UserDao {
@@ -65,17 +63,32 @@ public class UserDaoImpl implements UserDao {
 		}
 	}
 
-	@Override
-	public RegisteredClient getRegisteredClient(final String clientId)
+    @Override
+    public RegisteredClient getClientByRedirectURI(final String redirectURI) throws UserDaoException {
+        try {
+            return entityManager.txExpr(new EmFunction<RegisteredClient>() {
+                @Override
+                public RegisteredClient apply(EntityManager em) {
+                    return em.createQuery("select r from RegisteredClient r where r.redirectURI = :redirectURI",
+                            RegisteredClient.class)
+                            .setParameter("redirectURI", redirectURI)
+                            .getSingleResult();
+                }
+            });
+        } catch (Exception e) {
+            throw new UserDaoException("Cannot get client by redirect_uri", e);
+        }
+    }
+
+    @Override
+	public RegisteredClient getClientByClientId(final long clientId)
 			throws UserDaoException {
 		try {
 			return entityManager.txExpr(new EmFunction<RegisteredClient>() {
 				@Override
 				public RegisteredClient apply(EntityManager em) {
-					return em
-							.createQuery(
-									"select r from RegisteredClient r where r.clientId = :clientId",
-									RegisteredClient.class)
+					return em.createQuery("select r from RegisteredClient r where r.id = :clientId",
+                            RegisteredClient.class)
 							.setParameter("clientId", clientId)
 							.getSingleResult();
 				}
@@ -101,29 +114,25 @@ public class UserDaoImpl implements UserDao {
 		}
 	}
 
-	@Override
-	public AccessToken getAccessToken(final AccessToken accessToken)
-			throws UserDaoException {
-		try {
-			return entityManager.txExpr(new EmFunction<AccessToken>() {
-				@Override
-				public AccessToken apply(EntityManager em) {
-					return em
-							.createQuery(
-									"select at from AccessToken at where at.user.id = :userId and at.registeredClient.clientId = :clientId",
-									AccessToken.class)
-							.setParameter("userId",
-									accessToken.getUser().getId())
-							.setParameter(
-									"clientId",
-									accessToken.getRegisteredClient()
-											.getClientId()).getSingleResult();
-				}
-			});
-		} catch (Exception e) {
-			throw new UserDaoException("cannot find access token", e);
-		}
-	}
+    @Override
+    public AccessToken getAccessToken(final AccessToken accessToken) throws UserDaoException {
+        try {
+            return entityManager.txExpr(new EmFunction<AccessToken>() {
+                @Override
+                public AccessToken apply(EntityManager em) {
+                    return em.createQuery(
+                            "select at from AccessToken at where at.user.id = :userId and at.registeredClient.id = :clientId",
+                            AccessToken.class)
+                            .setParameter("userId", accessToken.getUser().getId())
+                            .setParameter("clientId", accessToken.getRegisteredClient().getId())
+                            .getSingleResult();
+                }
+            });
+        } catch (Exception e) {
+            return null;
+//            throw new UserDaoException("cannot find access token", e);
+        }
+    }
 
 	@Override
 	public User saveUser(final User user) throws UserDaoException {

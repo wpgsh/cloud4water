@@ -57,14 +57,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	}
 
 	@Override
-	public String getAccessToken(String clientId, String clientSecret, String code, String redirectURI) throws AuthenticationServiceException {
+	public String getAccessToken(long userId, long clientId, String clientSecret, String code, String redirectURI)
+			throws AuthenticationServiceException {
         try {
-            RegisteredClient registeredClient = userDao.getRegisteredClient(clientId);
+            RegisteredClient registeredClient = userDao.getClientByClientId(clientId);
 
             //valid clientSecret.
             if (clientSecret != null && clientSecret.equals(registeredClient.getClientSecret())) {
                 net.wapwag.authn.dao.model.AccessToken accessToken = new net.wapwag.authn.dao.model.AccessToken();
-                accessToken.setUser(userDao.getUser(1));
+                accessToken.setUser(userDao.getUser(userId));
                 accessToken.setRegisteredClient(registeredClient);
                 accessToken = userDao.getAccessToken(accessToken);
                 //valid authorization code.
@@ -79,18 +80,25 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	}
 
 	@Override
-	public String getAuthorizationCode(String clientId, String redirectURI, Set<String> scope) throws AuthenticationServiceException {
+	public String getAuthorizationCode(long userId, long clientId, String redirectURI, Set<String> scope)
+            throws AuthenticationServiceException {
         net.wapwag.authn.dao.model.AccessToken accessToken = null;
         long result = 0;
         try {
-            RegisteredClient registeredClient = userDao.getRegisteredClient(clientId);
+            RegisteredClient registeredClient = userDao.getClientByClientId(clientId);
             if (registeredClient != null) {
                 accessToken = new net.wapwag.authn.dao.model.AccessToken();
-                accessToken.setUser(userDao.getUser(1));
+                accessToken.setUser(userDao.getUser(userId));
                 accessToken.setRegisteredClient(registeredClient);
-                accessToken = userDao.getAccessToken(accessToken); //find accessToken by clientId and userId
-                if (accessToken != null) {
+
+                //find accessToken by clientId and userId
+                if (userDao.getAccessToken(accessToken) != null) {
+                    accessToken = userDao.getAccessToken(accessToken);
                     //generate authorization code
+                    accessToken.setAuthrizationCode(UUID.randomUUID().toString().replaceAll("-", ""));
+                    accessToken.setExpiration(9223372036854775807L);
+                } else {
+                    accessToken.setHandle(UUID.randomUUID().toString().replaceAll("-", ""));
                     accessToken.setAuthrizationCode(UUID.randomUUID().toString().replaceAll("-", ""));
                     accessToken.setExpiration(9223372036854775807L);
                 }
@@ -106,6 +114,25 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             return accessToken.getAuthrizationCode();
         }
 		return null;
+	}
+
+	/**
+	 * Check the client is a valid wpg client.
+	 * <b>NOTE:</b>some client frameworks don't supply client_id and reply on redirect_uri
+	 * as the key,so use redirect_uri as a client identifier.
+	 *
+	 * @param redirectURI client identifier.
+	 * @return return the registered client model.
+	 * @throws AuthenticationServiceException
+	 */
+	@Override
+	public RegisteredClient getClient(String redirectURI) throws AuthenticationServiceException {
+        RegisteredClient registeredClient = null;
+		try {
+            return registeredClient = userDao.getClientByRedirectURI(redirectURI);
+        } catch (UserDaoException e) {
+            throw new AuthenticationServiceException("Cannot get register client by redirect_uri", e);
+        }
 	}
 
 	@Override
