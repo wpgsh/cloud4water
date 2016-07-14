@@ -29,7 +29,6 @@ import com.google.gson.Gson;
  * Other SCR annotations can be used to configure injection
  * 
  */
-@Component(service = HttpServlet.class, property = { "httpContext.id=authn" })
 @WebServlet(urlPatterns = "/login", name = "LoginServlet")
 public class LoginServlet extends HttpServlet {
 
