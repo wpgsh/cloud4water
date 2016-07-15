@@ -1,8 +1,14 @@
 package net.wapwag.authn.ui;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.function.Consumer;
+import net.wapwag.authn.AuthenticationService;
+import net.wapwag.authn.AuthenticationServiceException;
+import net.wapwag.authn.dao.model.RegisteredClient;
+import net.wapwag.authn.exception.ResourceNotFoundException;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,22 +16,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.ServiceReference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import net.wapwag.authn.AuthenticationService;
-import net.wapwag.authn.AuthenticationServiceException;
-import net.wapwag.authn.dao.model.RegisteredClient;
-import net.wapwag.authn.exception.ResourceNotFoundException;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.function.Consumer;
 
 /**
  * Authorization servlet.
  */
-@WebServlet(urlPatterns="/authorize", name="AuthorizationServlet")
+@WebServlet(urlPatterns = "/authorize", name = "AuthorizationServlet")
 public class AuthorizationServlet extends HttpServlet {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthorizationServlet.class);
