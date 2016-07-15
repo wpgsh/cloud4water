@@ -20,6 +20,7 @@
 <script> 
 jQuery(document).ready(function() {
 	$("#submit").click(function() {
+		var windowUrl = window.location.search;
 		var userName = $('input[name="userName"]').val();
 		var passWord = $('input[name="passWord"]').val();
 		var checkCode = $('input[name="checkCode"]').val();
@@ -68,6 +69,14 @@ jQuery(document).ready(function() {
 				if("0" == errorCode){
 					window.location="index.jsp";  
 				}
+				if("000000" == errorCode){
+					if(!isEmp(windowUrl) && windowUrl.indexOf("client_id") > 0 && windowUrl.indexOf("redirect_uri") > 0 ){
+						window.location=data.errorMsg;
+					}else{
+						window.location="index.jsp";
+					}
+					 
+				}
 				refulsCodeImg();
 			},
 			error:function(data)
@@ -106,7 +115,7 @@ function refulsCodeImg(){
 <div class="log">
 	<div class="content1">
 		<h2>Sign In Form</h2>
-		<form id="form" action="/authn/login" method="post">
+		<form id="form" action="/authn/loginServlet" method="post">
 			<input type="text" name="userName" value="" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = '';}">
 			<p class="p-container" id="userNameMsg"></p>
 			<input type="password" name="passWord" value="" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = '';}">
