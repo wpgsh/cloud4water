@@ -1,8 +1,14 @@
 package net.wapwag.authn.dao;
 
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
 import net.wapwag.authn.dao.model.AccessToken;
 import net.wapwag.authn.dao.model.RegisteredClient;
 import net.wapwag.authn.dao.model.User;
+
 import org.apache.aries.jpa.template.EmFunction;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -10,10 +16,6 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import java.util.List;
 
 @Component
 public class UserDaoImpl implements UserDao {
@@ -37,6 +39,9 @@ public class UserDaoImpl implements UserDao {
 	@Override
 	public User getUser(final long uid) throws UserDaoException {
 		try {
+			/*return entityManager.txExpr((em -> {
+				return em.find(User.class, uid);
+			}));*/
 			return entityManager.txExpr(new EmFunction<User>() {
 				@Override
 				public User apply(EntityManager em) {
@@ -135,13 +140,12 @@ public class UserDaoImpl implements UserDao {
     }
 
 	@Override
-	public User saveUser(final User user) throws UserDaoException {
+	public int saveUser(final User user) throws UserDaoException {
 		try {
-			return entityManager.txExpr(new EmFunction<User>() {
-				@Override
-				public User apply(EntityManager em) {
-					return em.merge(user);
-				}
+			return entityManager.txExpr(em -> {
+					 em.merge(user);
+					 return 1;
+				
 			});
 		} catch (Exception e) {
 			throw new UserDaoException("Cannot add user", e);
@@ -149,35 +153,19 @@ public class UserDaoImpl implements UserDao {
 	}
 
 	@Override
-	public User removeUser(final long uid) throws UserDaoException {
+	public int removeUser(final long uid) throws UserDaoException {
 		try {
-			return entityManager.txExpr(new EmFunction<User>() {
-				@Override
-				public User apply(EntityManager em) {
-					User user = em.find(User.class, uid);
-					em.remove(user);
-					return user;
-				}
+			return entityManager.txExpr(em -> {
+				User user = em.find(User.class, uid);
+				em.remove(user);
+				return 1;
 			});
 		} catch (Exception e) {
 			throw new UserDaoException("Cannot add user", e);
 		}
 	}
 
-	@Override
-	public User updateUser(final long uid) throws UserDaoException {
-		try {
-			return entityManager.txExpr(new EmFunction<User>() {
-				@Override
-				public User apply(EntityManager em) {
-					User user = new User();
-					return em.merge(user);
-				}
-			});
-		} catch (Exception e) {
-			throw new UserDaoException("Cannot add user", e);
-		}
-	}
+	
 
 	@Override
 	public User getUserAvatar(final long uid) throws UserDaoException {
@@ -194,13 +182,12 @@ public class UserDaoImpl implements UserDao {
 	}
 
 	@Override
-	public User saveUserAvatar(final User user) throws UserDaoException {
+	public int saveUserAvatar(final User user) throws UserDaoException {
 		try {
-			return entityManager.txExpr(new EmFunction<User>() {
-				@Override
-				public User apply(EntityManager em) {
-					return em.merge(user);
-				}
+			return entityManager.txExpr(em -> {
+				em.merge(user);
+				return 1;
+
 			});
 		} catch (Exception e) {
 			throw new UserDaoException("Cannot add user", e);
@@ -208,35 +195,18 @@ public class UserDaoImpl implements UserDao {
 	}
 
 	@Override
-	public User removeUserAvatar(final long uid) throws UserDaoException {
+	public int removeUserAvatar(final long uid) throws UserDaoException {
 		try {
-			return entityManager.txExpr(new EmFunction<User>() {
-				@Override
-				public User apply(EntityManager em) {
-					User user = em.find(User.class, uid);
-					em.remove(user);
-					return user;
-				}
+			return entityManager.txExpr(em -> {
+				User user = em.find(User.class, uid);
+				em.remove(user);
+				return 1;
 			});
 		} catch (Exception e) {
 			throw new UserDaoException("Cannot add user", e);
 		}
 	}
 
-	@Override
-	public User updateUserAvatar(final long uid) throws UserDaoException {
-		try {
-			return entityManager.txExpr(new EmFunction<User>() {
-				@Override
-				public User apply(EntityManager em) {
-					User user = new User();
-					return em.merge(user);
-				}
-			});
-		} catch (Exception e) {
-			throw new UserDaoException("Cannot add user", e);
-		}
-	}
 
     @Override
 	public User getUserByName(final String userName) throws UserDaoException {

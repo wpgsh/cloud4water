@@ -54,20 +54,16 @@ public interface AuthenticationService {
 
 	User getUser(long uid) throws AuthenticationServiceException;
 
-	User saveUser(User user) throws AuthenticationServiceException;
+	int saveUser(User user) throws AuthenticationServiceException;
 
-	User removeUser(long uid) throws AuthenticationServiceException;
-
-	User updateUser(long uid) throws AuthenticationServiceException;
+	int removeUser(long uid) throws AuthenticationServiceException;
 
 	User getUserAvatar(long uid) throws AuthenticationServiceException;
 
-	User saveUserAvatar(User user) throws AuthenticationServiceException;
+	int saveUserAvatar(User user) throws AuthenticationServiceException;
 
-	User removeUserAvatar(long uid) throws AuthenticationServiceException;
+	int removeUserAvatar(long uid) throws AuthenticationServiceException;
 
-	User updateUserAvatar(long uid) throws AuthenticationServiceException;
-    
     User getUserByName(String userName) throws AuthenticationServiceException;
 
 }

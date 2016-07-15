@@ -8,19 +8,15 @@ public interface UserDao {
 
 	User getUser(long uid) throws UserDaoException;
 
-	User saveUser(User user) throws UserDaoException;
+	int saveUser(User user) throws UserDaoException;
 
-	User removeUser(long uid) throws UserDaoException;
-
-	User updateUser(long uid) throws UserDaoException;
+	int removeUser(long uid) throws UserDaoException;
 
 	User getUserAvatar(long id) throws UserDaoException;
 
-	User saveUserAvatar(User user) throws UserDaoException;
+	int saveUserAvatar(User user) throws UserDaoException;
 
-	User removeUserAvatar(long id) throws UserDaoException;
-
-	User updateUserAvatar(long id) throws UserDaoException;
+	int removeUserAvatar(long id) throws UserDaoException;
 
 	RegisteredClient getClientByClientId(long clientId) throws UserDaoException;
 

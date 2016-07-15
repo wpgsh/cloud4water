@@ -152,35 +152,22 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	}
 
 	@Override
-	public User saveUser(User user) throws AuthenticationServiceException {
+	public int saveUser(User user) throws AuthenticationServiceException {
 		try {
-			user = userDao.saveUser(user);
+			return userDao.saveUser(user);
 		} catch (UserDaoException e) {
 			throw new AuthenticationServiceException("cannot add user");
 		}
-		return user;
 	}
 
 	@Override
-	public User removeUser(long uid) throws AuthenticationServiceException {
-		User user;
+	public int removeUser(long uid) throws AuthenticationServiceException {
 		try {
-			user = userDao.removeUser(uid);
+			return userDao.removeUser(uid);
 		} catch (UserDaoException e) {
 			throw new AuthenticationServiceException("cannot remove user");
 		}
-		return null;
-	}
-
-	@Override
-	public User updateUser(long uid) throws AuthenticationServiceException {
-		User user;
-		try {
-			user = userDao.updateUser(uid);
-		} catch (UserDaoException e) {
-			throw new AuthenticationServiceException("cannot add user");
-		}
-		return user;
+		
 	}
 
 	@Override
@@ -200,37 +187,22 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	}
 
 	@Override
-	public User saveUserAvatar(User user) throws AuthenticationServiceException {
+	public int saveUserAvatar(User user) throws AuthenticationServiceException {
 		try {
-			user = userDao.saveUserAvatar(user);
+			return  userDao.saveUserAvatar(user);
 		} catch (UserDaoException e) {
 			throw new AuthenticationServiceException("cannot add user");
 		}
-		return user;
 	}
 
 	@Override
-	public User removeUserAvatar(long uid)
+	public int removeUserAvatar(long uid)
 			throws AuthenticationServiceException {
-		User user;
 		try {
-			user = userDao.removeUserAvatar(uid);
+			return userDao.removeUserAvatar(uid);
 		} catch (UserDaoException e) {
 			throw new AuthenticationServiceException("cannot remove user");
 		}
-		return null;
-	}
-
-	@Override
-	public User updateUserAvatar(long uid)
-			throws AuthenticationServiceException {
-		User user;
-		try {
-			user = userDao.updateUserAvatar(uid);
-		} catch (UserDaoException e) {
-			throw new AuthenticationServiceException("cannot add user");
-		}
-		return user;
 	}
 
     @Override
