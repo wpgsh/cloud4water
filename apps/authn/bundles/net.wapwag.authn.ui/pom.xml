@@ -23,6 +23,10 @@
       <artifactId>osgi.cmpn</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>osgi.core</artifactId>
+    </dependency>
+    <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
     </dependency>
@@ -40,14 +44,17 @@
       <artifactId>slf4j-api</artifactId>
     </dependency>
     <dependency>
-		<groupId>com.google.code.gson</groupId>
-		<artifactId>gson</artifactId>
+	  <groupId>com.google.code.gson</groupId>
+	  <artifactId>gson</artifactId>
 	</dependency>
-	<dependency>
-    	<groupId>commons-httpclient</groupId>
-    	<artifactId>commons-httpclient</artifactId>
-    	<version>3.1</version>
-	</dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient-osgi</artifactId>
+    </dependency>     
+    <dependency>    
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpcore-osgi</artifactId>
+    </dependency>     
   </dependencies>
 
   <build>

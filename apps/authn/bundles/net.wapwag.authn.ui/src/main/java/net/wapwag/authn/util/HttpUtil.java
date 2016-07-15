@@ -1,37 +1,41 @@
 package net.wapwag.authn.util;
 
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.ContentType;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 
 public class HttpUtil {
 	 
 	public static String httpSendPOST(String reqXml , String httpUrl)
 	  {
-	    HttpClient client = new HttpClient();
+	    HttpClient client = HttpClientBuilder.create().
+	    		setDefaultRequestConfig(RequestConfig.custom().setConnectTimeout(30000).build()).
+	    	build();
 
-	    client.getHttpConnectionManager().getParams().setConnectionTimeout(Integer.parseInt("30000"));
-
-	    PostMethod method = new PostMethod(httpUrl);
+	    HttpPost method = new HttpPost(httpUrl);
 
 	    String respXml = "";
 	    try
 	    {
-	      RequestEntity requestEntity = new ByteArrayRequestEntity(reqXml.getBytes(), "UTF-8");
-	      method.setRequestEntity(requestEntity);
-
+	      ByteArrayEntity requestEntity = new ByteArrayEntity(reqXml.getBytes(), ContentType.APPLICATION_XML);
+	      requestEntity.setContentEncoding("utf-8");
+	      method.setEntity(requestEntity);
+	      
 	      //method.setRequestHeader("Accept", "application/xml");
 	      //method.setRequestHeader("Content-Type", "application/xml; charset=UTF-8");
 	      //method.setRequestHeader("Authorization", authorization.toString());
 
-	      int responseCode = client.executeMethod(method);
+	      HttpResponse response = client.execute(method);
 
-	      if (200 == responseCode)
+	      if (response.getStatusLine().getStatusCode() == 200)
 	      {
-	          respXml = method.getResponseBodyAsString();
+	    	  respXml = EntityUtils.toString(response.getEntity());
 	      }
 	    }
 	    catch (Exception e)
@@ -48,20 +52,20 @@ public class HttpUtil {
 	
 	public static String httpSendGET(String httpUrl)
 	  {
-	    HttpClient client = new HttpClient();
+	    HttpClient client = HttpClientBuilder.create().
+	    		setDefaultRequestConfig(RequestConfig.custom().setConnectTimeout(30000).build()).
+	    	build();
 
-	    client.getHttpConnectionManager().getParams().setConnectionTimeout(Integer.parseInt("30000"));
-
-	    GetMethod method = new GetMethod(httpUrl);
+	    HttpGet method = new HttpGet(httpUrl);
 
 	    String respXml = "";
 	    try
 	    {
-	      int responseCode = client.executeMethod(method);
+	      HttpResponse response = client.execute(method);
 
-	      if (200 == responseCode)
+	      if (response.getStatusLine().getStatusCode() == 200)
 	      {
-	    	  respXml = method.getResponseBodyAsString();
+	    	  respXml = EntityUtils.toString(response.getEntity());
 	      }
 	    }
 	    catch (Exception e)

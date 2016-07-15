@@ -23,14 +23,13 @@ import org.osgi.service.component.annotations.Component;
  * Other SCR annotations can be used to configure injection
  * 
  */
-@Component(service = HttpServlet.class, property = { "httpContext.id=authn" })
 @WebServlet(urlPatterns = "/checkCode", name = "CheckCodeServlet")
 public class CheckCodeServlet extends HttpServlet {
-	// Í¼Æ¬¿í¶È
+	// Í¼Æ¬ï¿½ï¿½ï¿½
 	int width = 140;
-	// Í¼Æ¬¸ß¶È
+	// Í¼Æ¬ï¿½ß¶ï¿½
 	int height = 44;
-	// Í¼Æ¬ÉÏËæ»ú×Ö·û¸öÊý
+	// Í¼Æ¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½
 	int randomStrNum = 4;
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -42,30 +41,30 @@ public class CheckCodeServlet extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
-		// »ñÈ¡HttpSession¶ÔÏó
+		// ï¿½ï¿½È¡HttpSessionï¿½ï¿½ï¿½ï¿½
 		HttpSession session = request.getSession();
-		// »ñÈ¡Ëæ»ú×Ö·û´®
+		// ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½
 		String randomStr = RandomImageGenerator.random(randomStrNum);
 		if (null != session) {
-			// ÉèÖÃ²ÎÊý
+			// ï¿½ï¿½ï¿½Ã²ï¿½ï¿½ï¿½
 			session.setAttribute("randomStr", randomStr);
-			// ÉèÖÃÏìÓ¦ÀàÐÍ,Êä³öÍ¼Æ¬¿Í»§¶Ë²»»º´æ
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½Í¼Æ¬ï¿½Í»ï¿½ï¿½Ë²ï¿½ï¿½ï¿½ï¿½ï¿½
 			response.setDateHeader("Expires", 1L);
 			response.setHeader("Cache-Control", "no-cache, no-store, max-age=0");
 			response.addHeader("Pragma", "no-cache");
 			response.setContentType("image/jpeg");
-			// Êä³öµ½Ò³Ãæ
+			// ï¿½ï¿½ï¿½ï¿½ï¿½Ò³ï¿½ï¿½
 			RandomImageGenerator.render(randomStr, response.getOutputStream(),
 					width, height);
 		}
 	}
 
 	public void init() throws ServletException {
-		// »ñÈ¡¿í¶È
+		// ï¿½ï¿½È¡ï¿½ï¿½ï¿½
 		//width = Integer.parseInt(this.getInitParameter("width"));
-		// »ñÈ¡¸ß¶È
+		// ï¿½ï¿½È¡ï¿½ß¶ï¿½
 		//height = Integer.parseInt(this.getInitParameter("height"));
-		// »ñÈ¡¸öÊý
+		// ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½
 		//randomStrNum = Integer.parseInt(this.getInitParameter("num"));
 	}
 }

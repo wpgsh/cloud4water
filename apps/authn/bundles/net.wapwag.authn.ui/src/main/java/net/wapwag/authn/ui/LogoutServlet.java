@@ -21,7 +21,6 @@ import org.osgi.service.component.annotations.Component;
  * Other SCR annotations can be used to configure injection
  * 
  */
-@Component(service=HttpServlet.class, property={ "httpContext.id=authn" })
 @WebServlet(urlPatterns="/logout", name="LogoutServlet")
 public class LogoutServlet extends HttpServlet {
 

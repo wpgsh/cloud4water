@@ -22,7 +22,6 @@ import java.io.IOException;
  * Access token servlet.
  * Created by Administrator on 2016/7/14.
  */
-@Component(service = HttpServlet.class, property = {"httpContext.id=authn"})
 @WebServlet(urlPatterns = "/access_token", name = "AccessTokenServlet")
 public class AccessTokenServlet extends HttpServlet {
 

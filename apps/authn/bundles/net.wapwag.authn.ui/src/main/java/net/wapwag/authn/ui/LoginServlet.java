@@ -29,7 +29,6 @@ import com.google.gson.Gson;
  * Other SCR annotations can be used to configure injection
  * 
  */
-@Component(service = HttpServlet.class, property = { "httpContext.id=authn" })
 @WebServlet(urlPatterns = "/login", name = "LoginServlet")
 public class LoginServlet extends HttpServlet {
 
@@ -41,14 +40,20 @@ public class LoginServlet extends HttpServlet {
 		String userName = req.getParameter("userName");
 		String passwd = req.getParameter("passWord");
 		String checkCode = req.getParameter("checkCode");
-		
 		PrintWriter out = resp.getWriter();
 		CheckResultInfo info = new CheckResultInfo();
 		HttpSession session = req.getSession();
+		String redirectUri = (String)session.getAttribute("redirect_uri");
 		if (checkCode(session, checkCode)) {
 			if (checkUser(userName, passwd)) {
 				session.setAttribute("userName", userName);
-				info.setErrorCode("0");
+				if (StringUtil.isEmp(redirectUri)) {
+					info.setErrorCode("0");
+				}else {
+					info.setErrorCode("000000");
+					info.setErrorMsg(redirectUri);
+				}
+
 			}else {
 				info.setErrorCode("1");
 			}
@@ -79,7 +84,8 @@ public class LoginServlet extends HttpServlet {
 		String returnJson = HttpUtil.httpSendGET(QUERY_USER_URL + userName);
 		Gson gson = new Gson();
 		UserInfo info = gson.fromJson(returnJson, UserInfo.class);
-		if (null != info && passwd.equals(info.getPasswordHash())) {
+		System.out.println(info.toString());
+		if (null != info && passwd.equals(info.getPassword_hash())) {
 			return true;
 		}
 

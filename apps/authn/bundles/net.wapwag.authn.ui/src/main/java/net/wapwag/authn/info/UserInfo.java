@@ -20,7 +20,7 @@ public class UserInfo {
     private String username;
 
     @XmlElement(name = "password_hash")
-    private String passwordHash;
+    private String password_hash;
 
     @XmlElement(name = "password_salt")
     private String passwordSalt;
@@ -82,14 +82,6 @@ public class UserInfo {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getPasswordHash() {
-        return passwordHash;
-    }
-
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
     }
 
     public String getPasswordSalt() {
@@ -194,7 +186,7 @@ public class UserInfo {
                 "id=" + id +
                 ", enabled=" + enabled +
                 ", username='" + username + '\'' +
-                ", passwordHash='" + passwordHash + '\'' +
+                ", password_hash='" + password_hash + '\'' +
                 ", passwordSalt='" + passwordSalt + '\'' +
                 ", homepage='" + homepage + '\'' +
                 ", name='" + name + '\'' +
@@ -216,6 +208,14 @@ public class UserInfo {
 
 	public void setErrorMessage(String errorMessage) {
 		this.errorMessage = errorMessage;
+	}
+
+	public String getPassword_hash() {
+		return password_hash;
+	}
+
+	public void setPassword_hash(String password_hash) {
+		this.password_hash = password_hash;
 	}
 
 }

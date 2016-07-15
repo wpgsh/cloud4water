@@ -3,7 +3,6 @@
 if(null != session && null != session.getAttribute("userName") && !"".equals(session.getAttribute("userName"))) {
   %>  
 <script>  
-  alert(123);  
 </script>  
 <%  
 }else
