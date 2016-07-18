@@ -20,8 +20,7 @@ import org.slf4j.LoggerFactory;
 @Component
 public class UserDaoImpl implements UserDao {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(UserDaoImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(UserDaoImpl.class);
 
 	@Reference(target = "(osgi.name=user)")
 	private TxAwareEntityManager entityManager;
@@ -54,15 +53,9 @@ public class UserDaoImpl implements UserDao {
 	}
 
 	@Override
-	public AccessToken lookupAccessToken(final String handle)
-			throws UserDaoException {
+	public AccessToken lookupAccessToken(final String handle) throws UserDaoException {
 		try {
-			return entityManager.txExpr(new EmFunction<AccessToken>() {
-				@Override
-				public AccessToken apply(EntityManager em) {
-					return em.find(AccessToken.class, handle);
-				}
-			});
+			return entityManager.txExpr(em -> em.find(AccessToken.class, handle));
 		} catch (Exception e) {
 			throw new UserDaoException("Cannot get access token", e);
 		}
@@ -71,49 +64,34 @@ public class UserDaoImpl implements UserDao {
     @Override
     public RegisteredClient getClientByRedirectURI(final String redirectURI) throws UserDaoException {
         try {
-            return entityManager.txExpr(new EmFunction<RegisteredClient>() {
-                @Override
-                public RegisteredClient apply(EntityManager em) {
-                    return em.createQuery("select r from RegisteredClient r where r.redirectURI = :redirectURI",
-                            RegisteredClient.class)
-                            .setParameter("redirectURI", redirectURI)
-                            .getSingleResult();
-                }
-            });
+            return entityManager.txExpr(em ->
+                em.createQuery("select r from RegisteredClient r where r.redirectURI = :redirectURI",
+                        RegisteredClient.class).setParameter("redirectURI", redirectURI)
+                        .getSingleResult()
+            );
         } catch (Exception e) {
             throw new UserDaoException("Cannot get client by redirect_uri", e);
         }
     }
 
     @Override
-	public RegisteredClient getClientByClientId(final long clientId)
-			throws UserDaoException {
+	public RegisteredClient getClientByClientId(final long clientId) throws UserDaoException {
 		try {
-			return entityManager.txExpr(new EmFunction<RegisteredClient>() {
-				@Override
-				public RegisteredClient apply(EntityManager em) {
-					return em.createQuery("select r from RegisteredClient r where r.id = :clientId",
-                            RegisteredClient.class)
-							.setParameter("clientId", clientId)
-							.getSingleResult();
-				}
-			});
+			return entityManager.txExpr(em ->
+                em.createQuery("select r from RegisteredClient r where r.id = :clientId",
+                    RegisteredClient.class)
+                    .setParameter("clientId", clientId)
+                    .getSingleResult()
+            );
 		} catch (Exception e) {
 			throw new UserDaoException("Cannot add access token", e);
 		}
 	}
 
 	@Override
-	public long saveAccessToken(final AccessToken accessToken)
-			throws UserDaoException {
+	public long saveAccessToken(final AccessToken accessToken) throws UserDaoException {
 		try {
-			return entityManager.txExpr(new EmFunction<Long>() {
-				@Override
-				public Long apply(EntityManager em) {
-					em.merge(accessToken);
-					return 1L;
-				}
-			});
+			return entityManager.txExpr(em -> em.merge(accessToken) != null ? 1L : 0L);
 		} catch (Exception e) {
 			throw new UserDaoException("Cannot add access token", e);
 		}
@@ -122,17 +100,13 @@ public class UserDaoImpl implements UserDao {
     @Override
     public AccessToken getAccessToken(final AccessToken accessToken) throws UserDaoException {
         try {
-            return entityManager.txExpr(new EmFunction<AccessToken>() {
-                @Override
-                public AccessToken apply(EntityManager em) {
-                    return em.createQuery(
-                            "select at from AccessToken at where at.user.id = :userId and at.registeredClient.id = :clientId",
-                            AccessToken.class)
-                            .setParameter("userId", accessToken.getUser().getId())
-                            .setParameter("clientId", accessToken.getRegisteredClient().getId())
-                            .getSingleResult();
-                }
-            });
+            return entityManager.txExpr(em -> em.createQuery(
+                "select at from AccessToken at where at.user.id = :userId and at.registeredClient.id = :clientId",
+                    AccessToken.class)
+                    .setParameter("userId", accessToken.getUser().getId())
+                    .setParameter("clientId", accessToken.getRegisteredClient().getId())
+                    .getSingleResult()
+            );
         } catch (Exception e) {
             return null;
 //            throw new UserDaoException("cannot find access token", e);
