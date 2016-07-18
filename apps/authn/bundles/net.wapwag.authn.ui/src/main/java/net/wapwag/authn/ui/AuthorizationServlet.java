@@ -1,12 +1,9 @@
 package net.wapwag.authn.ui;
 
-import net.wapwag.authn.AuthenticationService;
 import net.wapwag.authn.AuthenticationServiceException;
 import net.wapwag.authn.dao.model.RegisteredClient;
 import net.wapwag.authn.exception.ResourceNotFoundException;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.ServiceReference;
+import net.wapwag.authn.util.OSGIUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,48 +15,33 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.util.function.Consumer;
 
 /**
+ * /authorize?
+ * response_type=code&
+ * redirect_uri=https://swms.cloud4water.com/auth/github/return&scope=user:email&state=wpg/watersupply&client_id=30958fa5da6191a4828b
+ * /authorize?
+ * client_id=client1&
+ * redirect_uri=http://www.baidu.com&scope=1&scope=2&scope=3
+ * http://localhost:8181/authn/authorize?client_id=client1&redirect_uri=http://www.baidu.com&scope=1&scope=2&scope=3
  * Authorization servlet.
  */
 @WebServlet(urlPatterns = "/authorize", name = "AuthorizationServlet")
 public class AuthorizationServlet extends HttpServlet {
-
     private static final Logger logger = LoggerFactory.getLogger(AuthorizationServlet.class);
 
     /**
      * The path for /authorize.
      */
-    private static final String AUTHORIZE_PATH = "/authn/login?client_id=%s&return_to=%s&redirect_uri=%s&scope=%s";
+    private static final String AUTHORIZE_PATH = "/authn/login?client_id=%s&return_to=%s?redirect_uri=%s&client_id=%s&scope=%s";
     
-    private void useAuthenticationService(Consumer<AuthenticationService> fn) throws ServletException {
-    	BundleContext ctx = FrameworkUtil.getBundle(AuthorizationServlet.class).getBundleContext();
-    	ServiceReference<AuthenticationService> reference = ctx.getServiceReference(AuthenticationService.class);
-    	AuthenticationService authenticationService = ctx.getService(reference);
-    	
-    	if (authenticationService == null) {
-    		throw new ServletException("AuthenticationService reference not bound");
-    	} else {
-    		try {
-    			fn.accept(authenticationService);
-    		} catch (Throwable e) {
-    			throw new ServletException("Error processing request", e);
-    		}
-    		finally {
-    			ctx.ungetService(reference);    			
-    		}
-    	}
-    }
-          
 	@Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        useAuthenticationService(authnService -> {
+        OSGIUtil.useAuthenticationService(authnService  -> {
         	RegisteredClient client = null;
             String code = null;
+            String clientId = request.getParameter("client_id");
             String redirectURI = request.getParameter("redirect_uri");
-            
-			logger.info("AuthenticationService ------->" + authnService);
 	        try {
 	            //check client valid
 	            client = authnService.getClient(redirectURI);
@@ -75,14 +57,12 @@ public class AuthorizationServlet extends HttpServlet {
 	        //check authenticated session exist
 	        HttpSession session = request.getSession();
 	        boolean authenticated = Boolean.valueOf(session.getAttribute("authenticated") + "");
-	        logger.info("--------> AuthorizationServlet" + authenticated);
 	        if (authenticated) {
 	            long userId = Long.valueOf(session.getAttribute("userId") + "");
-	            long clientId = client.getId();
-	
+
 	            try {
 	                //Get authorization code.
-	                code = authnService.getAuthorizationCode(userId, clientId, redirectURI, null);
+	                code = authnService.getAuthorizationCode(userId, client.getId(), redirectURI, null);
 	            } catch (AuthenticationServiceException e) {
 	                e.printStackTrace();
 	                logger.error("can not get authorization code : " + e);
@@ -98,14 +78,15 @@ public class AuthorizationServlet extends HttpServlet {
 	            }
 	        } else {
 	            String scope = request.getParameter("scope");
-	            redirectURI = String.format(AUTHORIZE_PATH, client.getClientId(),
-	                    "/authn/authorize", client.getRedirectURI(), scope);
+	            redirectURI = String.format(AUTHORIZE_PATH, clientId,
+	                    "/authn/authorize", redirectURI, clientId, scope);
 	            try {
 					response.sendRedirect(redirectURI);
 				} catch (IOException e) {
 					throw new UncheckedIOException(e);
 				}
 	        }	
-		});
+		}, AuthorizationServlet.class);
     }
+
 }
