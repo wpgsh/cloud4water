@@ -29,29 +29,28 @@ import com.google.gson.Gson;
  */
 @WebServlet(urlPatterns = "/login", name = "ThirdLoginServlet")
 public class ThirdLoginServlet extends HttpServlet {
-
-	private static final String CHECK_URL = "http://localhost:8181/services/oauth/authorize?client_id=";
-	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		String clientId = req.getParameter("client_id");
 		String redirectUri = req.getParameter("redirect_uri");
-		if (StringUtil.isEmp(clientId) || StringUtil.isEmp(redirectUri) || !checkClientId(clientId, redirectUri)) {
-			req.getRequestDispatcher("error.jsp").forward(req, resp);
+		HttpSession session = req.getSession();
+		String userName = (String)session.getAttribute("userName");
+		
+		/**
+		if (!StringUtil.isEmp(userName) && clientId.equals(session.getAttribute("client_id"))
+				&& redirectUri.equals((String)session.getAttribute("redirect_uri"))) {
+			
+			resp.sendRedirect(redirectUri);
 		}else {
-			HttpSession session = req.getSession();
-			String userName = (String)session.getAttribute("userName");
-			if (!StringUtil.isEmp(userName) && clientId.equals(session.getAttribute("client_id"))
-					&& redirectUri.equals((String)session.getAttribute("redirect_uri"))) {
-				
-				resp.sendRedirect(redirectUri);
-			}else {
-				session.setAttribute("client_id", clientId);
-				session.setAttribute("redirect_uri", redirectUri);
-				req.getRequestDispatcher("login.jsp").forward(req, resp);
-			}
+			session.setAttribute("client_id", clientId);
+			session.setAttribute("redirect_uri", redirectUri);
+			req.getRequestDispatcher("login.jsp").forward(req, resp);
 		}
+		**/
+		session.setAttribute("client_id", clientId);
+		session.setAttribute("redirect_uri", redirectUri);
+		req.getRequestDispatcher("login.jsp").forward(req, resp);
 	}
 
 	@Override
@@ -59,19 +58,4 @@ public class ThirdLoginServlet extends HttpServlet {
 			throws ServletException, IOException {
 		doGet(req, resp);
 	}
-	
-	private boolean checkClientId(String clientId,String redirectUri)
-	{
-		String returnJson = HttpUtil.httpSendGET(CHECK_URL + clientId +"&redirect_uri="+redirectUri);
-		
-		if (!StringUtil.isEmp(returnJson) && -1 != returnJson.indexOf("authorizationCode")) {
-			return true;
-		}
-		return true;
-	}
-	
-	public static void main(String[] args) {
-		System.out.println("gong".indexOf("a"));
-	}
-
 }

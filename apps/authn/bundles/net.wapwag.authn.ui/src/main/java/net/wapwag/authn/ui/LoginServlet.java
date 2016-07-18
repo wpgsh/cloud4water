@@ -60,6 +60,8 @@ public class LoginServlet extends HttpServlet {
 				if (checkCode(session, checkCode)) {
 					if (checkUser(user, passwd)) {
 						session.setAttribute("userName", userName);
+						session.setAttribute("authenticated", true);
+						session.setAttribute("userId", user.getId());
 						if (StringUtil.isEmp(redirectUri)) {
 							info.setErrorCode("0");
 						} else {

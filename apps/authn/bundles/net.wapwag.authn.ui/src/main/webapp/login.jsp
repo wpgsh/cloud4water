@@ -66,16 +66,15 @@ jQuery(document).ready(function() {
 				}
 				if("0" == errorCode){
 					save();
-					window.location="index.jsp";  
-				}
-				if("000000" == errorCode){
-					save();
-					if(!isEmp(windowUrl) && windowUrl.indexOf("client_id") > 0 && windowUrl.indexOf("redirect_uri") > 0 ){
-						window.location=data.errorMsg;
+					if(!isEmp(windowUrl) && windowUrl.indexOf("client_id") > 0 
+							&& windowUrl.indexOf("redirect_uri") > 0 
+							&& windowUrl.indexOf("return_to") > 0){
+						var returnUrl = windowUrl.split("return_to=");
+						returnUrl = returnUrl[1];
+						window.location=returnUrl;
 					}else{
 						window.location="index.jsp";
-					}
-					 
+					}  
 				}
 			},
 			error:function(data)
