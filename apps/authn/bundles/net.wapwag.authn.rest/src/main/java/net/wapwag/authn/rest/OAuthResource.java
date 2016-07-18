@@ -17,6 +17,7 @@ import javax.ws.rs.core.*;
  * Authentification resource.
  * Created by Lee on 2016/7/5.
  */
+@Deprecated
 @Component(service = OAuthResource.class)
 @Path("/oauth")
 public class OAuthResource {
@@ -69,7 +70,7 @@ public class OAuthResource {
         String accessToken = authnService.getAccessToken(
                 1L, client.getId(), accessTokenRequest.getClientSecret(),
                 accessTokenRequest.getAuthorizationCode(), accessTokenRequest.getRedirectURI());
-        return new AccessTokenResponse(accessToken, null);
+        return new AccessTokenResponse("Jersey支持中文", null);
     }
 
 }
