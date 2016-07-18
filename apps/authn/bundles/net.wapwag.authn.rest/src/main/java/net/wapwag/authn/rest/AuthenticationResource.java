@@ -167,6 +167,117 @@ public class AuthenticationResource {
         }
 
     }
+    
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Authorization @AnyAuthenticatedUser
+    public UserMsgResponse createNewAvatar(@BeanParam UserRequest userRequest) throws Exception {
+        try {
+            //Get the userRequest and convert it to User so the service layer could operate it.
+            User user = new User();
+            user.setId(userRequest.getId());
+            user.setUsername(userRequest.getUsername());
+            user.setPasswordHash(userRequest.getPasswordHash());
+            user.setPasswordSalt(userRequest.getPasswordSalt());
+            user.setEnabled(userRequest.getEnabled());
+            user.setAvartarId(userRequest.getAvartarId());
+            user.setAvatar(userRequest.getAvatar());
+            user.setEmail(userRequest.getEmail());
+            user.setEnabled(userRequest.getEnabled());
+            user.setHomepage(userRequest.getHomepage());
+            user.setName(userRequest.getName());
+            user.setPhone1(userRequest.getPhone1());
+            user.setPhone2(userRequest.getPhone2());
+            user.setEmail(userRequest.getEmail());
+
+            int result = authnService.saveUser(user);
+            
+            String msg = (result == 1 ? "add success" : "add fail");
+            return new UserMsgResponse(msg);
+        } catch (Exception e) {
+            throw new ResourceNotFoundException("Can not add user: " + userRequest.toString());
+        }
+
+    }
+    
+    @GET
+	@Path("/{userId}")
+	@Produces(MediaType.APPLICATION_JSON)	
+	public UserResponse getUserAvatar(@PathParam("userId") long uid) throws Exception {
+		User user = authnService.getUser(uid);
+		if (user == null) {
+			throw new ResourceNotFoundException("User not found: "+uid);
+		}
+		UserResponse userResponse = new UserResponse();
+        //Get the user from service and convert it to UserResponse so the browser could read the json response.
+        userResponse.setId(user.getId());
+        userResponse.setId(user.getId());
+        userResponse.setUsername(user.getUsername());
+        userResponse.setPasswordHash(user.getPasswordHash());
+        userResponse.setPasswordSalt(user.getPasswordSalt());
+        userResponse.setEnabled(user.getEnabled());
+        userResponse.setAvartarId(user.getAvartarId());
+        userResponse.setAvatar(user.getAvatar());
+        userResponse.setEmail(user.getEmail());
+        userResponse.setEnabled(user.getEnabled());
+        userResponse.setHomepage(user.getHomepage());
+        userResponse.setName(user.getName());
+        userResponse.setPhone1(user.getPhone1());
+        userResponse.setPhone2(user.getPhone2());
+        userResponse.setEmail(user.getEmail());
+
+        return userResponse;
+	}
+    
+    @PUT
+    @Path("/{userId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Authorization @AnyAuthenticatedUser
+    public UserMsgResponse updateUserAvatar(@BeanParam UserRequest userRequest,@PathParam("userId") long uid) throws Exception {
+        try {
+            //Get the userRequest and convert it to User so the service layer could operate it.
+            User user = new User();
+            user.setId(userRequest.getId());
+            user.setUsername(userRequest.getUsername());
+            user.setPasswordHash(userRequest.getPasswordHash());
+            user.setPasswordSalt(userRequest.getPasswordSalt());
+            user.setEnabled(userRequest.getEnabled());
+            user.setAvartarId(userRequest.getAvartarId());
+            user.setAvatar(userRequest.getAvatar());
+            user.setEmail(userRequest.getEmail());
+            user.setEnabled(userRequest.getEnabled());
+            user.setHomepage(userRequest.getHomepage());
+            user.setName(userRequest.getName());
+            user.setPhone1(userRequest.getPhone1());
+            user.setPhone2(userRequest.getPhone2());
+            user.setEmail(userRequest.getEmail());
+
+            int result = authnService.saveUser(user);
+            String msg = (result == 1 ? "update success" : "update fail");
+            return new UserMsgResponse(msg);
+
+        } catch (Exception e) {
+            throw new ResourceNotFoundException("Can not add user: " + userRequest.toString());
+        }
+
+    }
+    
+    
+    @DELETE
+    @Path("/{userId}/image")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Authorization @AnyAuthenticatedUser
+    public UserMsgResponse removeUserAvatar(@PathParam("userId") long uid) throws Exception {
+        try {
+            //Get the userRequest and convert it to User so the service layer could operate it.
+        	int result = authnService.removeUser(uid);
+        	String msg = (result == 1 ? "remove success" : "remove fail");
+            return new UserMsgResponse(msg);
+        } catch (Exception e) {
+            throw new ResourceNotFoundException("Can not remove user " );
+        }
+
+    }
   
     
     
