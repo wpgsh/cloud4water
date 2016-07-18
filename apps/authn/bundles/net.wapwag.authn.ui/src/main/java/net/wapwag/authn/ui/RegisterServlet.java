@@ -2,8 +2,6 @@ package net.wapwag.authn.ui;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.function.Consumer;
 
 import javax.servlet.ServletException;
@@ -11,13 +9,11 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import net.wapwag.authn.AuthenticationService;
 import net.wapwag.authn.AuthenticationServiceException;
 import net.wapwag.authn.dao.model.User;
-import net.wapwag.authn.info.CheckResultInfo;
-import net.wapwag.authn.util.StringUtil;
+import net.wapwag.authn.info.ResultInfo;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -50,11 +46,17 @@ public class RegisterServlet extends HttpServlet {
 		useAuthenticationService(authnService -> {
 			try {
 				String userName = req.getParameter("userName");
-				String passwd = req.getParameter("passWord");
+				String passwd = req.getParameter("password_hash");
 				String email = req.getParameter("email");
 				String phone1 = req.getParameter("phone1");
-
-				User user = authnService.getUserByName(userName);
+				ResultInfo info = new ResultInfo();
+				User user = new User();
+				user.setUsername(userName);
+				System.out.println(passwd);
+				user.setPasswordHash(passwd);
+				user.setEmail(email);
+				user.setPhone1(phone1);
+				user = authnService.saveUser(user);
 
 				Gson gson = new Gson();
 				PrintWriter out = null;
@@ -64,7 +66,8 @@ public class RegisterServlet extends HttpServlet {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				out.println(gson.toJson(null));
+				info.setErrorCode("0");
+				out.println(gson.toJson(info));
 				out.close();
 			} catch (AuthenticationServiceException e) {
 				e.printStackTrace();

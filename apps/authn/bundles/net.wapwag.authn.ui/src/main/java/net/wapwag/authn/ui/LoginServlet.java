@@ -2,8 +2,6 @@ package net.wapwag.authn.ui;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.function.Consumer;
 
 import javax.servlet.ServletException;
@@ -16,7 +14,7 @@ import javax.servlet.http.HttpSession;
 import net.wapwag.authn.AuthenticationService;
 import net.wapwag.authn.AuthenticationServiceException;
 import net.wapwag.authn.dao.model.User;
-import net.wapwag.authn.info.CheckResultInfo;
+import net.wapwag.authn.info.ResultInfo;
 import net.wapwag.authn.util.StringUtil;
 
 import org.osgi.framework.BundleContext;
@@ -52,7 +50,7 @@ public class LoginServlet extends HttpServlet {
 				String userName = req.getParameter("userName");
 				String passwd = req.getParameter("passWord");
 				String checkCode = req.getParameter("checkCode");
-				CheckResultInfo info = new CheckResultInfo();
+				ResultInfo info = new ResultInfo();
 				HttpSession session = req.getSession();
 				String redirectUri = (String) session
 						.getAttribute("redirect_uri");
@@ -109,6 +107,12 @@ public class LoginServlet extends HttpServlet {
 	private boolean checkUser(User user, String passwd) {
 
 		System.out.println(passwd);
+		if (null == user) {
+			System.out.println("user is null" );
+		}else {
+			System.out.println(user.getPasswordHash());
+			System.out.println(user.getUsername());
+		}
 		if (null != user && null != user.getPasswordHash() && passwd.equals(StringUtil.strMd5(user.getPasswordHash()))) {
 			return true;
 		}

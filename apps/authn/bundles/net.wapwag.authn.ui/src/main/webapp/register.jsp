@@ -26,12 +26,6 @@
   <script src="scripts/jQuery.md5.js"></script>
   <script> 
 jQuery(document).ready(function() {
-	var isEncoded = initCookie();
-	
-	$('input[name="passWord"]').bind('input propertychange', function() {
-		isEncoded = true;
-		
-	});
 	
 	$("#submit").click(function() {
 		
@@ -41,20 +35,10 @@ jQuery(document).ready(function() {
 			success:function(data){
 				var errorCode = data.errorCode;
 				if("1" == errorCode){
-					showError();
+					
 				}
 				if("0" == errorCode){
-					save();
-					window.location="index.jsp";  
-				}
-				if("000000" == errorCode){
-					save();
-					if(!isEmp(windowUrl) && windowUrl.indexOf("client_id") > 0 && windowUrl.indexOf("redirect_uri") > 0 ){
-						window.location=data.errorMsg;
-					}else{
-						window.location="index.jsp";
-					}
-					 
+					
 				}
 			},
 			error:function(data)

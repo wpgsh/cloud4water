@@ -1,6 +1,6 @@
 package net.wapwag.authn.info;
 
-public class CheckResultInfo {
+public class ResultInfo {
 
 	private String errorCode;
 	private String errorMsg;
