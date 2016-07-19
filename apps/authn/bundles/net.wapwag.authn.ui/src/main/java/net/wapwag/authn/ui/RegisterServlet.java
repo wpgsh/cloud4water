@@ -3,6 +3,7 @@ package net.wapwag.authn.ui;
 import java.io.IOException;
 import java.util.function.Consumer;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -31,7 +32,7 @@ import org.slf4j.LoggerFactory;
 public class RegisterServlet extends HttpServlet {
 	/** LOG */
 	private static final Logger logger = LoggerFactory
-			.getLogger(AuthorizationServlet.class);
+			.getLogger(RegisterServlet.class);
 
 	/*@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -45,8 +46,11 @@ public class RegisterServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		logger.info(req + "");
-		req.getRequestDispatcher("../services/user").forward(req, resp);
+		logger.info("req="+req);
+		ServletContext ctx = req.getServletContext();
+		ServletContext target = ctx.getContext("/services/user");
+		logger.info("target="+target);
+		target.getRequestDispatcher("/services/user").forward(req, resp);
 	}
 	/*@Override
 	protected void doPut(HttpServletRequest req, HttpServletResponse resp)
