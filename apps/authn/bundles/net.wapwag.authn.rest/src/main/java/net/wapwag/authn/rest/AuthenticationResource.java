@@ -168,6 +168,7 @@ public class AuthenticationResource {
 
     }
     
+    @Path("/{userId}/image")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Authorization @AnyAuthenticatedUser
