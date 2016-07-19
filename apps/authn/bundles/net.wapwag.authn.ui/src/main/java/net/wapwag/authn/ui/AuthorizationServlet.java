@@ -2,6 +2,7 @@ package net.wapwag.authn.ui;
 
 import net.wapwag.authn.AuthenticationServiceException;
 import net.wapwag.authn.dao.model.RegisteredClient;
+import net.wapwag.authn.exception.InvalidRequestException;
 import net.wapwag.authn.exception.ResourceNotFoundException;
 import net.wapwag.authn.util.OSGIUtil;
 import org.slf4j.Logger;
@@ -46,8 +47,7 @@ public class AuthorizationServlet extends HttpServlet {
 	            //check client valid
 	            client = authnService.getClient(redirectURI);
 	        } catch (AuthenticationServiceException e) {
-	            e.printStackTrace();
-	            logger.error("can not get client : " + e);
+                throw new InvalidRequestException("Can't get client.", e);
 	        }
 	
 	        if (client == null) {
@@ -64,8 +64,7 @@ public class AuthorizationServlet extends HttpServlet {
 	                //Get authorization code.
 	                code = authnService.getAuthorizationCode(userId, client.getId(), redirectURI, null);
 	            } catch (AuthenticationServiceException e) {
-	                e.printStackTrace();
-	                logger.error("can not get authorization code : " + e);
+                    throw new InvalidRequestException("Can't get authorization code.", e);
 	            }
 	
 	            if (code != null) {

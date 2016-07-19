@@ -1,7 +1,6 @@
 package net.wapwag.authn.ui;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.function.Consumer;
 
 import javax.servlet.ServletException;
@@ -11,17 +10,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.wapwag.authn.AuthenticationService;
-import net.wapwag.authn.AuthenticationServiceException;
-import net.wapwag.authn.dao.model.User;
-import net.wapwag.authn.info.ResultInfo;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.gson.Gson;
 
 /*
  * Definition of a servlet. Use the following annotations so that
@@ -42,6 +36,7 @@ public class RegisterServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+
 		req.getRequestDispatcher("rest/user/{userId}/public").forward(req, resp);
 	}
 
