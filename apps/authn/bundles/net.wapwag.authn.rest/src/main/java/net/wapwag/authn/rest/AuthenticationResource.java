@@ -15,6 +15,8 @@ import net.wapwag.authn.Ids;
 import net.wapwag.authn.dao.model.User;
 import net.wapwag.authn.model.UserProfile;
 import net.wapwag.authn.rest.authz.AnyAuthenticatedUser;
+import net.wapwag.authn.rest.dto.ImageRequest;
+import net.wapwag.authn.rest.dto.ImageResponse;
 import net.wapwag.authn.rest.dto.UserMsgResponse;
 import net.wapwag.authn.rest.dto.UserRequest;
 import net.wapwag.authn.rest.dto.UserResponse;
@@ -168,35 +170,23 @@ public class AuthenticationResource {
 
     }
     
-    @Path("/{userId}/image")
+   /* @Path("/{userId}/image")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Authorization @AnyAuthenticatedUser
-    public UserMsgResponse createNewAvatar(@BeanParam UserRequest userRequest) throws Exception {
+    public UserMsgResponse createNewAvatar(@BeanParam ImageRequest imageRequest) throws Exception {
         try {
             //Get the userRequest and convert it to User so the service layer could operate it.
             User user = new User();
-            user.setId(userRequest.getId());
-            user.setUsername(userRequest.getUsername());
-            user.setPasswordHash(userRequest.getPasswordHash());
-            user.setPasswordSalt(userRequest.getPasswordSalt());
-            user.setEnabled(userRequest.getEnabled());
-            user.setAvartarId(userRequest.getAvartarId());
-            user.setAvatar(userRequest.getAvatar());
-            user.setEmail(userRequest.getEmail());
-            user.setEnabled(userRequest.getEnabled());
-            user.setHomepage(userRequest.getHomepage());
-            user.setName(userRequest.getName());
-            user.setPhone1(userRequest.getPhone1());
-            user.setPhone2(userRequest.getPhone2());
-            user.setEmail(userRequest.getEmail());
+            user.setId(imageRequest.getId());
+            user.set(imageRequest.getImage());
 
             int result = authnService.saveUser(user);
             
             String msg = (result == 1 ? "add success" : "add fail");
             return new UserMsgResponse(msg);
         } catch (Exception e) {
-            throw new ResourceNotFoundException("Can not add user: " + userRequest.toString());
+            throw new ResourceNotFoundException("Can not add user: " + imageRequest.toString());
         }
 
     }
@@ -209,9 +199,9 @@ public class AuthenticationResource {
 		if (user == null) {
 			throw new ResourceNotFoundException("User not found: "+uid);
 		}
+		ImageResponse imageResponse = new ImageResponse();
 		UserResponse userResponse = new UserResponse();
         //Get the user from service and convert it to UserResponse so the browser could read the json response.
-        userResponse.setId(user.getId());
         userResponse.setId(user.getId());
         userResponse.setUsername(user.getUsername());
         userResponse.setPasswordHash(user.getPasswordHash());
@@ -234,31 +224,19 @@ public class AuthenticationResource {
     @Path("/{userId}/image")
     @Produces(MediaType.APPLICATION_JSON)
     @Authorization @AnyAuthenticatedUser
-    public UserMsgResponse updateUserAvatar(@BeanParam UserRequest userRequest,@PathParam("userId") long uid) throws Exception {
+    public UserMsgResponse updateUserAvatar(@BeanParam ImageRequest imageRequest,@PathParam("userId") long uid) throws Exception {
         try {
             //Get the userRequest and convert it to User so the service layer could operate it.
             User user = new User();
-            user.setId(userRequest.getId());
-            user.setUsername(userRequest.getUsername());
-            user.setPasswordHash(userRequest.getPasswordHash());
-            user.setPasswordSalt(userRequest.getPasswordSalt());
-            user.setEnabled(userRequest.getEnabled());
-            user.setAvartarId(userRequest.getAvartarId());
-            user.setAvatar(userRequest.getAvatar());
-            user.setEmail(userRequest.getEmail());
-            user.setEnabled(userRequest.getEnabled());
-            user.setHomepage(userRequest.getHomepage());
-            user.setName(userRequest.getName());
-            user.setPhone1(userRequest.getPhone1());
-            user.setPhone2(userRequest.getPhone2());
-            user.setEmail(userRequest.getEmail());
+            user.setId(imageRequest.getId());
+            user.setUsername(imageRequest.getImage());
 
             int result = authnService.saveUser(user);
             String msg = (result == 1 ? "update success" : "update fail");
             return new UserMsgResponse(msg);
 
         } catch (Exception e) {
-            throw new ResourceNotFoundException("Can not add user: " + userRequest.toString());
+            throw new ResourceNotFoundException("Can not add user: " + imageRequest.toString());
         }
 
     }
@@ -278,16 +256,8 @@ public class AuthenticationResource {
             throw new ResourceNotFoundException("Can not remove user " );
         }
 
-    }
+    }*/
   
-    
-    
-    
-    
-    
-    
-    
-    
     @GET
 	@Path("/getUserByName/{userName}")
 	@Produces(MediaType.APPLICATION_JSON)	

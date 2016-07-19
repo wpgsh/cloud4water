@@ -33,20 +33,35 @@ public class RegisterServlet extends HttpServlet {
 	private static final Logger logger = LoggerFactory
 			.getLogger(AuthorizationServlet.class);
 
-	@Override
+	/*@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
-		req.getRequestDispatcher("rest/user/{userId}/public").forward(req, resp);
-	}
+		//req.getRequestDispatcher("rest/user/{userId}/public").forward(req, resp);
+		req.getRequestDispatcher("rest/user/{userId}").forward(req, resp);
+		//req.getRequestDispatcher("rest/user/{userId}/image").forward(req, resp);
+	}*/
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		doGet(req, resp);
+		logger.info(req + "");
+		req.getRequestDispatcher("../services/user").forward(req, resp);
 	}
+	/*@Override
+	protected void doPut(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		req.getRequestDispatcher("rest/user/{userId}").forward(req, resp);
+	}
+	@Override
+	protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		req.getRequestDispatcher("rest/user/{userId}").forward(req, resp);
+	}*/
+	
+	
 
-	private void useAuthenticationService(Consumer<AuthenticationService> fn)
+/*	private void useAuthenticationService(Consumer<AuthenticationService> fn)
 			throws ServletException {
 		BundleContext ctx = FrameworkUtil.getBundle(AuthorizationServlet.class)
 				.getBundleContext();
@@ -66,5 +81,5 @@ public class RegisterServlet extends HttpServlet {
 				ctx.ungetService(reference);
 			}
 		}
-	}
+	}*/
 }
