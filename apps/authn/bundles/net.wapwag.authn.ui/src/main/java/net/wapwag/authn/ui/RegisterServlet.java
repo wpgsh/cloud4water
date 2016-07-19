@@ -42,37 +42,7 @@ public class RegisterServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-
-		useAuthenticationService(authnService -> {
-			try {
-				String userName = req.getParameter("userName");
-				String passwd = req.getParameter("password_hash");
-				String email = req.getParameter("email");
-				String phone1 = req.getParameter("phone1");
-				ResultInfo info = new ResultInfo();
-				User user = new User();
-				user.setUsername(userName);
-				System.out.println(passwd);
-				user.setPasswordHash(passwd);
-				user.setEmail(email);
-				user.setPhone1(phone1);
-				user = authnService.saveUser(user);
-
-				Gson gson = new Gson();
-				PrintWriter out = null;
-				try {
-					out = resp.getWriter();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				info.setErrorCode("0");
-				out.println(gson.toJson(info));
-				out.close();
-			} catch (AuthenticationServiceException e) {
-				e.printStackTrace();
-			}
-		});
+		req.getRequestDispatcher("rest/user/{userId}/public").forward(req, resp);
 	}
 
 	@Override

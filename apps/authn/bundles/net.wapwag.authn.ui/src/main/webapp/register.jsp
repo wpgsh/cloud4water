@@ -56,7 +56,7 @@ jQuery(document).ready(function() {
       <form class="form-signin" id="form" action="/authn/register" method="post">
         <h2 class="form-signin-heading">Please sign up</h2>
         <label for="inputName" class="sr-only">username</label>
-        <input type="text" name="userName" id="inputName" class="form-control" placeholder="username" required autofocus>
+        <input type="text" name="username" id="inputName" class="form-control" placeholder="username" required autofocus>
         <label for="inputEmail" class="sr-only">email</label>
         <input type="email" name="email" id="inputEmail" class="form-control" placeholder="email" required>
         <label for="inputPhone" class="sr-only">phone</label>

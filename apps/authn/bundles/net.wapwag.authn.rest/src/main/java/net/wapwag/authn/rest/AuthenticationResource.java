@@ -201,7 +201,7 @@ public class AuthenticationResource {
     }
     
     @GET
-	@Path("/{userId}")
+	@Path("/{userId}/image")
 	@Produces(MediaType.APPLICATION_JSON)	
 	public UserResponse getUserAvatar(@PathParam("userId") long uid) throws Exception {
 		User user = authnService.getUser(uid);
@@ -230,7 +230,7 @@ public class AuthenticationResource {
 	}
     
     @PUT
-    @Path("/{userId}")
+    @Path("/{userId}/image")
     @Produces(MediaType.APPLICATION_JSON)
     @Authorization @AnyAuthenticatedUser
     public UserMsgResponse updateUserAvatar(@BeanParam UserRequest userRequest,@PathParam("userId") long uid) throws Exception {
