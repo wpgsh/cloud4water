@@ -27,7 +27,7 @@ public class UsersTokenHandler implements TokenHandler {
 					new Ids.UserId(accessToken.userId).toString(),
 					accessToken.expiration,
 					accessToken.clientId,
-					accessToken.handle, null);
+					accessToken.handle);
 		} else {
             return null;
 		}
