@@ -10,13 +10,16 @@ import net.wapwag.authn.dao.model.User;
 import net.wapwag.authn.model.AccessToken;
 import net.wapwag.authn.model.UserProfile;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.oltu.oauth2.as.issuer.MD5Generator;
+import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;
+import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
+import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Set;
-import java.util.UUID;
 
 @Component
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -78,12 +81,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 accessToken = userDao.getAccessToken(accessToken);
 
                 if (accessToken.getExpiration() <= 0) {
-                    throw new AuthenticationServiceException("Can't get access token with expired authorize code.");
+                    throw new UserDaoException("Can't get access token with expired authorize code.");
                 }
 
                 //valid authorization code.
                 if (StringUtils.isNotBlank(code) && code.equals(accessToken.getAuthrizationCode())) {
-                    accessToken.setExpiration(0);
+                    accessToken.setExpiration(0L);
                     userDao.saveAccessToken(accessToken);
                     return accessToken.getHandle();
                 }
@@ -107,26 +110,35 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 accessToken.setUser(userDao.getUser(userId));
                 accessToken.setRegisteredClient(registeredClient);
 
+				OAuthIssuer oAuthIssuer = new OAuthIssuerImpl(new MD5Generator());
+                String code = oAuthIssuer.authorizationCode();
+
                 //find accessToken by clientId and userId
                 if (userDao.getAccessToken(accessToken) != null) {
                     accessToken = userDao.getAccessToken(accessToken);
                     //generate authorization code
-                    accessToken.setAuthrizationCode(UUID.randomUUID().toString().replaceAll("-", ""));
+                    accessToken.setAuthrizationCode(code);
                     accessToken.setExpiration(9223372036854775807L);
                 } else {
-                    accessToken.setHandle(UUID.randomUUID().toString().replaceAll("-", ""));
-                    accessToken.setAuthrizationCode(UUID.randomUUID().toString().replaceAll("-", ""));
+                    accessToken.setHandle(oAuthIssuer.accessToken());
+                    accessToken.setAuthrizationCode(code);
                     accessToken.setExpiration(9223372036854775807L);
                 }
                 //update authorization code
                 result = userDao.saveAccessToken(accessToken);
             }
 
-            return accessToken.getAuthrizationCode();
+            if (result > 0) {
+                return accessToken.getAuthrizationCode();
+            } else {
+                throw new UserDaoException("Can't save authorization code");
+            }
         } catch (UserDaoException e) {
             throw new AuthenticationServiceException("Cannot get register client", e);
+        } catch (OAuthSystemException e) {
+            throw new AuthenticationServiceException("Cannot get authorization code", e);
         }
-	}
+    }
 
 	/**
 	 * Check the client is a valid wpg client.

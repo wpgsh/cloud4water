@@ -68,6 +68,7 @@
     <apache.httpclient.version>4.5.2</apache.httpclient.version>
     <apache.httpclient.3x.version>3.1.0</apache.httpclient.3x.version>
     <apache.httpcore.version>4.4.4</apache.httpcore.version>
+    <apache.oltu>1.0.2</apache.oltu>
     <tw.build.ext></tw.build.ext>
   </properties>
 
@@ -170,7 +171,11 @@
         <artifactId>jaxrs-utils</artifactId>
         <version>${appframework.version}</version>
       </dependency>
-
+      <dependency>
+        <groupId>org.apache.oltu.oauth2</groupId>
+        <artifactId>org.apache.oltu.oauth2.authzserver</artifactId>
+        <version>${apache.oltu}</version>
+      </dependency>
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>

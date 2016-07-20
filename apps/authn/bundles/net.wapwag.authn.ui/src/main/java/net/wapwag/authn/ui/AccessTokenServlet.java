@@ -2,9 +2,13 @@ package net.wapwag.authn.ui;
 
 import net.wapwag.authn.AuthenticationServiceException;
 import net.wapwag.authn.dao.model.RegisteredClient;
-import net.wapwag.authn.exception.InvalidRequestException;
-import net.wapwag.authn.exception.ResourceNotFoundException;
 import net.wapwag.authn.util.OSGIUtil;
+import org.apache.oltu.oauth2.as.request.OAuthTokenRequest;
+import org.apache.oltu.oauth2.as.response.OAuthASResponse;
+import org.apache.oltu.oauth2.common.error.OAuthError;
+import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
+import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
+import org.apache.oltu.oauth2.common.message.OAuthResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.io.UncheckedIOException;
+import java.util.Set;
 
 /**
  * http://localhost:8181/authn/access_token?code=925fac4f958a4085b3b61988a72606b3
@@ -33,45 +37,84 @@ public class AccessTokenServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         OSGIUtil.useAuthenticationService(authnService -> {
             RegisteredClient client = null;
-            String accessToken = null;
-            String code = request.getParameter("code");
-            String clientId = request.getParameter("client_id");
-            String clientSecret = request.getParameter("client_secret");
-            String redirectURI = request.getParameter("redirect_uri");
-            try {
-                //check client valid
-                client = authnService.getClient(redirectURI);
-            } catch (AuthenticationServiceException e) {
-                throw new InvalidRequestException("Can't get client.", e);
-            }
-
-            if (client == null) {
-                throw new ResourceNotFoundException("client not found : " + redirectURI);
-            }
+            OAuthResponse oAuthResponse = null;
 
             HttpSession session = request.getSession();
-            session.setAttribute("authenticated", true);
-            session.setAttribute("userId", 1L);
             boolean authenticated = Boolean.valueOf(session.getAttribute("authenticated") + "");
-            long userId = Long.valueOf(session.getAttribute("userId") + "");
+            try {
+                OAuthTokenRequest oAuthTokenRequest = new OAuthTokenRequest(request);
 
-            if (authenticated) {
-                try {
-                    accessToken = authnService.getAccessToken(userId, client.getId(), clientSecret, code, redirectURI);
-                } catch (AuthenticationServiceException e) {
-                    throw new InvalidRequestException("Can't get access token.", e);
+                String code = oAuthTokenRequest.getCode();
+                String clientSecret = oAuthTokenRequest.getClientSecret();
+                String redirectURI = oAuthTokenRequest.getRedirectURI();
+                Set<String> scopes = oAuthTokenRequest.getScopes();
+
+                if (!authenticated) {
+//                    long userId = Long.valueOf(session.getAttribute("userId") + "");
+                    long userId = 1L;
+
+                    //check client valid
+                    client = authnService.getClient(redirectURI);
+
+                    String accessToken = authnService.getAccessToken(userId, client.getId(), clientSecret, code, redirectURI);
+
+                    oAuthResponse = OAuthASResponse
+                            .tokenResponse(HttpServletResponse.SC_OK)
+                            .setAccessToken(accessToken)
+                            .setExpiresIn("3600")
+                            .buildJSONMessage();
+                    response.setStatus(oAuthResponse.getResponseStatus());
+                    response.getWriter().write(oAuthResponse.getBody());
+                } else {
+                    oAuthResponse = OAuthASResponse
+                            .errorResponse(HttpServletResponse.SC_UNAUTHORIZED)
+                            .setError(OAuthError.TokenResponse.INVALID_GRANT)
+                            .setErrorDescription("User does't login")
+                            .buildJSONMessage();
+                    response.setStatus(oAuthResponse.getResponseStatus());
+                    response.getWriter().write(oAuthResponse.getBody());
                 }
+            } catch (OAuthSystemException e) {
                 try {
-                    response.getWriter().write("{access_token:" + accessToken + "}");
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
+                    oAuthResponse = OAuthASResponse
+                            .errorResponse(HttpServletResponse.SC_BAD_REQUEST)
+                            .setError(OAuthError.TokenResponse.INVALID_CLIENT)
+                            .setErrorDescription("Error client identifier")
+                            .buildJSONMessage();
+                    response.setStatus(oAuthResponse.getResponseStatus());
+                    response.getWriter().write(oAuthResponse.getBody());
+                } catch (Exception e11) {
+
                 }
-            } else {
+            } catch (AuthenticationServiceException e) {
                 try {
-                    response.sendRedirect("/login.jsp");
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
+                    oAuthResponse = OAuthASResponse
+                            .errorResponse(HttpServletResponse.SC_BAD_REQUEST)
+                            .setError(OAuthError.ResourceResponse.EXPIRED_TOKEN)
+                            .setErrorDescription("The authorization code has expired")
+                            .buildJSONMessage();
+                    response.setStatus(oAuthResponse.getResponseStatus());
+                    response.getWriter().write(oAuthResponse.getBody());
+                } catch (Exception e11) {
+
                 }
+            } catch (OAuthProblemException e) {
+                try {
+                    oAuthResponse = OAuthASResponse
+                            .errorResponse(HttpServletResponse.SC_BAD_REQUEST)
+                            .error(e)
+                            .buildJSONMessage();
+                } catch (OAuthSystemException e1) {
+                    e1.printStackTrace();
+                }
+                response.setStatus(oAuthResponse.getResponseStatus());
+                try {
+                    response.getWriter().write(oAuthResponse.getBody());
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }, AccessTokenServlet.class);
     }
