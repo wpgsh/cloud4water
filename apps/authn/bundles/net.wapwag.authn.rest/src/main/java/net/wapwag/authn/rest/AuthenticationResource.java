@@ -22,6 +22,7 @@ import net.wapwag.authn.rest.dto.UserRequest;
 import net.wapwag.authn.rest.dto.UserResponse;
 import net.wapwag.authn.rest.oauth2.UsersTokenHandler;
 
+import org.apache.commons.lang3.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -40,7 +41,7 @@ public class AuthenticationResource {
 	@Path("/{userId}/public")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Authorization @AnyAuthenticatedUser 	
-	public GetPublicUserProfileResponse getPublicUserProfile(@PathParam("uid") String uid) throws Exception {
+	public GetPublicUserProfileResponse getPublicUserProfile(@PathParam("userId") String uid) throws Exception {
 		Ids.UserId _uid;
 		try {
 			_uid = Ids.UserId.fromString(uid);
@@ -81,16 +82,34 @@ public class AuthenticationResource {
             user.setPhone1(userRequest.getPhone1());
             user.setPhone2(userRequest.getPhone2());
             user.setEmail(userRequest.getEmail());
-
-            int result = authnService.saveUser(user);
+            if(StringUtils.isNotBlank(user.getPasswordHash()) &&
+            		user.getPasswordHash().equals(user.getPasswordSalt())&&
+            		user.getPasswordHash().length()== user.getPasswordSalt().length() ){
+            	user.setPasswordSalt(null); 
+            	int result = authnService.saveUser(user);
+            	 String msg = (result == 1 ? "add success" : "add fail");
+                 return new UserMsgResponse(msg);
+            }else{
+                return new UserMsgResponse("two inputting password is not the same,fail");
+            }
             
-            String msg = (result == 1 ? "add success" : "add fail");
-            return new UserMsgResponse(msg);
         } catch (Exception e) {
             throw new ResourceNotFoundException("Can not add user: " + userRequest.toString());
         }
 
     }
+    public static void main(String[] args) {
+    	if(StringUtils.isNotBlank("123   ") && "123 ".equals("123 ")){
+    		System.out.print("sucess");
+       }
+    	else{
+
+        	System.out.print("fail");
+    		
+    	}
+    	
+		
+	}
     
     @GET
 	@Path("/{userId}")

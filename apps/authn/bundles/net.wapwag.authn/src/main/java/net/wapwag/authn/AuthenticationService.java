@@ -55,7 +55,7 @@ public interface AuthenticationService {
 	User getUser(long uid) throws AuthenticationServiceException;
 
 	int saveUser(User user) throws AuthenticationServiceException;
-
+	
 	int removeUser(long uid) throws AuthenticationServiceException;
 
 	User getUserAvatar(long uid) throws AuthenticationServiceException;
