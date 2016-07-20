@@ -1,0 +1,46 @@
+/*
+	style.css for settings pages
+ */
+ @charset 'utf-8';
+/* Personal profile active */
+.choose {
+	background-color: #f5f5f5;
+}
+/* input control-label*/
+.control-label {
+	color: #888;
+    font-weight: 600;
+    padding-top: 0px;
+}
+/* upload picture */
+.uploadImg {
+	width: 100px;
+	height: 100px;
+	border: 1px solid #ccc;
+	border-radius: 2px;
+}
+.upload-input {
+	position: absolute;
+    top: 0;
+    left: 0;
+    width: 142px;
+    height: 34px;
+    padding: 0;
+    margin-left: 20px;
+    cursor: pointer;
+    opacity: 0.0001;
+}
+.upload-label {
+	background-color: #f5f5f5;
+}
+
+/* public style */
+.margin-bottom {
+	margin-bottom: 5px;
+}
+.max-width {
+	max-width: 970px;
+}
+.font-color {
+	color: #777;
+}

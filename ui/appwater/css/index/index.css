@@ -1,0 +1,33 @@
+/*
+	index styles
+ */
+@charset 'utf-8';
+.control-label {
+	color: #888;
+	font-weight: 400px;
+}
+.uploadImg {
+	width: 200px;
+	height: 200px;
+	cursor: pointer;
+}
+.list-group-item .glyphicon-remove {
+	margin-top: 4px;
+	color: #a94442;
+	margin-right: 3px;
+}
+.list-group-item .glyphicon-ok {
+	margin-top: 4px;
+	color: #3c763d;
+	margin-right: 3px;
+}
+/* public style */
+.font-color {
+	color: #666;
+}
+.margin-top {
+	margin-top: 20px;
+}
+.max-width {
+	max-width: 970px;
+}
