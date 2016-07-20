@@ -86,9 +86,6 @@ a:hover {
     float: right;
     margin-right: 5px;
 }
-
-
-
 /* 
  *linkpwd html/resetpwd html
  *--------------------------------------------------
@@ -100,3 +97,38 @@ a:hover {
     color: #666;
     font-size: 12px;
  }
+ /* public style */
+ .errMesage {
+    /*display: none;*/
+    position: relative;
+    width: 100%;
+    padding: 12px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fcdede;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+ }
+ .errMesage span {
+    color: #911;
+    margin-left: 0px;
+    word-wrap: break-word;
+}
+ .errMesage label {
+    position: absolute;
+    padding: 5px;
+    font-size: 20px;
+    font-weight: normal;
+    top: 1px;
+    right: 10px;
+    color: #cb7979;
+    cursor: pointer;
+}
+.errMesage label:hover {
+    color: #911;
+}
+
