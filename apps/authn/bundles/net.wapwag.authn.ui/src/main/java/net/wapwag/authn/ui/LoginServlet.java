@@ -2,6 +2,7 @@ package net.wapwag.authn.ui;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 import java.util.function.Consumer;
 
 import javax.servlet.ServletException;
@@ -62,6 +63,7 @@ public class LoginServlet extends HttpServlet {
 						session.setAttribute("userName", userName);
 						session.setAttribute("authenticated", true);
 						session.setAttribute("userId", user.getId());
+						session.setAttribute("loginTime", getNowTime());
 						if (StringUtil.isEmp(redirectUri)) {
 							info.setErrorCode("0");
 						} else {
@@ -141,5 +143,10 @@ public class LoginServlet extends HttpServlet {
 				ctx.ungetService(reference);
 			}
 		}
+	}
+	
+	private long getNowTime(){
+		Date date = new Date();
+		return date.getTime();
 	}
 }

@@ -29,7 +29,8 @@ public class LogoutServlet extends HttpServlet {
 		HttpSession session = req.getSession();
 		session.setAttribute("authenticated", "");
 		session.setAttribute("userId", "");
-		session = null;
+		session.setAttribute("loginTime", "");
+		session.setAttribute("userName", "");
 		req.getRequestDispatcher("login.jsp").forward(req, resp);
 	}
 	
