@@ -201,4 +201,41 @@ public class UserDaoImpl implements UserDao {
             throw new UserDaoException("Cannot find user by username", e);
         }
 	}
+    
+    @Override
+	public User getUserByEmail(final String email) throws UserDaoException {
+		try {
+            return entityManager.txExpr(new EmFunction<User>() {
+                @Override
+                public User apply(EntityManager em) {
+                	String queryUser = "select * from users where email ='"+email+"' ";
+                	Query query = em.createNativeQuery(queryUser,User.class);
+                	List<User> result = query.getResultList();
+                	if (result.size() >= 1) {
+                		return result.get(0);
+					}
+                	return null;
+                }
+            });
+        } catch (Exception e) {
+            throw new UserDaoException("Cannot find user by username", e);
+        }
+	}
+
+	@Override
+	public User updateUserPwd(final User user) throws UserDaoException {
+		try {
+			final long uid = user.getId();
+			return entityManager.txExpr(new EmFunction<User>() {
+				@Override
+				public User apply(EntityManager em) {
+					User user =  em.find(User.class, uid);
+					user.setPasswordHash(user.getPasswordHash());
+					return user;
+				}
+			});
+		} catch (Exception e) {
+			throw new UserDaoException("Cannot get user entity", e);
+		}
+	}
 }

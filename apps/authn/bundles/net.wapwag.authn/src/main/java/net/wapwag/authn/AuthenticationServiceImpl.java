@@ -240,4 +240,27 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
         return user;
     }
+    
+    @Override  
+	public User getUserByEmail(String email)
+			throws AuthenticationServiceException {
+		User user;
+		try {
+			user = userDao.getUserByEmail(email);
+        } catch (UserDaoException e) {
+            throw new AuthenticationServiceException("cannot add user");
+        }
+        return user;
+    }
+    @Override  
+	public User updateUserPwd(User user)
+			throws AuthenticationServiceException {
+		try {
+			user = userDao.updateUserPwd(user);
+        } catch (UserDaoException e) {
+            throw new AuthenticationServiceException("cannot add user");
+        }
+        return user;
+    }
+
 }

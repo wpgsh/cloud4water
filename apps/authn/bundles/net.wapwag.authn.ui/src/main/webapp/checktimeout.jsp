@@ -1,6 +1,9 @@
 <html>
+<%@page import="net.wapwag.authn.util.AsyncLoginUtil"%>
 <%  
-if(null != session && null != session.getAttribute("userName") && !"".equals(session.getAttribute("userName"))) {
+if(null != session && null != session.getAttribute("userName") 
+&& !"".equals(session.getAttribute("userName")) &&
+AsyncLoginUtil.checkSession(session)) {
   %>  
 <script>  
 </script>  

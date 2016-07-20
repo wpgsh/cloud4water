@@ -2,8 +2,9 @@ package net.wapwag.authn.ui;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Date;
 import java.util.function.Consumer;
+
+
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,17 +13,25 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+
+
 import net.wapwag.authn.AuthenticationService;
 import net.wapwag.authn.AuthenticationServiceException;
 import net.wapwag.authn.dao.model.User;
 import net.wapwag.authn.info.ResultInfo;
+import net.wapwag.authn.util.AsyncLoginUtil;
+import net.wapwag.authn.util.SendEmailUtil;
+import net.wapwag.authn.util.SequenceKey;
 import net.wapwag.authn.util.StringUtil;
+
+
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.osgi.service.component.annotations.Component;
+
+
 
 import com.google.gson.Gson;
 
@@ -36,46 +45,29 @@ import com.google.gson.Gson;
  * Other SCR annotations can be used to configure injection
  * 
  */
-@WebServlet(urlPatterns = "/loginServlet", name = "LoginServlet")
-public class LoginServlet extends HttpServlet {
-	/** LOG */
-	private static final Logger logger = LoggerFactory
-			.getLogger(AuthorizationServlet.class);
+@WebServlet(urlPatterns="/password_reset", name="ForgetPassWDServlet")
+public class ForgetPassWDServlet extends HttpServlet {
 
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		String email = req.getParameter("email");
+		if (StringUtil.isEmp(email)) {
+			req.getRequestDispatcher("forgetpassword.jsp").forward(req, resp);
+			return;
+		}
+		System.out.println("send");
 		useAuthenticationService(authnService -> {
 			try {
-				String userName = req.getParameter("userName");
-				String passwd = req.getParameter("passWord");
-				String checkCode = req.getParameter("checkCode");
 				ResultInfo info = new ResultInfo();
-				HttpSession session = req.getSession();
-				String redirectUri = (String) session
-						.getAttribute("redirect_uri");
+				info.setErrorCode("1");
+				User user = authnService.getUserByEmail(email);
 
-				User user = authnService.getUserByName(userName);
-
-				if (checkCode(session, checkCode)) {
-					if (checkUser(user, passwd)) {
-						session.setAttribute("userName", userName);
-						session.setAttribute("authenticated", true);
-						session.setAttribute("userId", user.getId());
-						session.setAttribute("loginTime", getNowTime());
-						if (StringUtil.isEmp(redirectUri)) {
-							info.setErrorCode("0");
-						} else {
-							info.setErrorCode("000000");
-							info.setErrorMsg(redirectUri);
-						}
-
-					} else {
-						info.setErrorCode("1");
+				if (null != user && StringUtil.isEmp(user.getId() + "")) {
+					String resetKey = SequenceKey.createResetKey(user.getId() + "");
+					if (SendEmailUtil.sendEmail(resetKey, user.getEmail())) {
+						SequenceKey.addResetKey(resetKey);
+						info.setErrorCode("0");
 					}
-				} else {
-					info.setErrorCode("2");
 				}
 				Gson gson = new Gson();
 				PrintWriter out = null;
@@ -91,38 +83,13 @@ public class LoginServlet extends HttpServlet {
 				e.printStackTrace();
 			}
 		});
+		
 	}
-
+	
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		doGet(req, resp);
 	}
-
-	private boolean checkCode(HttpSession session, String checkCode) {
-		String randomStr = (String) session.getAttribute("randomStr");
-		if (StringUtil.isEmp(checkCode) || StringUtil.isEmp(randomStr)
-				|| !randomStr.equals(checkCode)) {
-			return true;
-		}
-		return true;
-	}
-
-	private boolean checkUser(User user, String passwd) {
-
-		System.out.println(passwd);
-		if (null == user) {
-			System.out.println("user is null" );
-		}else {
-			System.out.println(user.getPasswordHash());
-			System.out.println(user.getUsername());
-		}
-		if (null != user && null != user.getPasswordHash() && passwd.equals(StringUtil.strMd5(user.getPasswordHash()))) {
-			return true;
-		}
-		return false;
-	}
-
 	private void useAuthenticationService(Consumer<AuthenticationService> fn)
 			throws ServletException {
 		BundleContext ctx = FrameworkUtil.getBundle(AuthorizationServlet.class)
@@ -143,10 +110,5 @@ public class LoginServlet extends HttpServlet {
 				ctx.ungetService(reference);
 			}
 		}
-	}
-	
-	private long getNowTime(){
-		Date date = new Date();
-		return date.getTime();
 	}
 }
