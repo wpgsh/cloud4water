@@ -29,5 +29,9 @@ public interface UserDao {
 	AccessToken lookupAccessToken(String handle) throws UserDaoException;
 	
 	User getUserByName(String userName)throws UserDaoException;
+	
+	User getUserByEmail(String email)throws UserDaoException;
+	
+	User updateUserPwd(User user)throws UserDaoException;
 
 }

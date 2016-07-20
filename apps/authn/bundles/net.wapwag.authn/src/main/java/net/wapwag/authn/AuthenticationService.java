@@ -65,5 +65,9 @@ public interface AuthenticationService {
 	int removeUserAvatar(long uid) throws AuthenticationServiceException;
 
     User getUserByName(String userName) throws AuthenticationServiceException;
+    
+    User getUserByEmail(String email) throws AuthenticationServiceException;
+    
+    User updateUserPwd(User user) throws AuthenticationServiceException;
 
 }
