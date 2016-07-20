@@ -87,7 +87,17 @@ public class AccessTokenServlet extends HttpServlet {
 
                 }
             } catch (AuthenticationServiceException e) {
-                e.printStackTrace();
+                try {
+                    oAuthResponse = OAuthASResponse
+                            .errorResponse(HttpServletResponse.SC_BAD_REQUEST)
+                            .setError(OAuthError.ResourceResponse.EXPIRED_TOKEN)
+                            .setErrorDescription("The authorization code has expired")
+                            .buildJSONMessage();
+                    response.setStatus(oAuthResponse.getResponseStatus());
+                    response.getWriter().write(oAuthResponse.getBody());
+                } catch (Exception e11) {
+
+                }
             } catch (OAuthProblemException e) {
                 try {
                     oAuthResponse = OAuthASResponse
@@ -95,16 +105,7 @@ public class AccessTokenServlet extends HttpServlet {
                             .error(e)
                             .buildJSONMessage();
                 } catch (OAuthSystemException e1) {
-                    try {
-                        oAuthResponse = OAuthASResponse
-                                .errorResponse(HttpServletResponse.SC_BAD_REQUEST)
-                                .error(e)
-                                .buildJSONMessage();
-                        response.setStatus(oAuthResponse.getResponseStatus());
-                        response.getWriter().write(oAuthResponse.getBody());
-                    } catch (Exception e11) {
-
-                    }
+                    e1.printStackTrace();
                 }
                 response.setStatus(oAuthResponse.getResponseStatus());
                 try {

@@ -81,7 +81,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 accessToken = userDao.getAccessToken(accessToken);
 
                 if (accessToken.getExpiration() <= 0) {
-                    throw new AuthenticationServiceException("Can't get access token with expired authorize code.");
+                    throw new UserDaoException("Can't get access token with expired authorize code.");
                 }
 
                 //valid authorization code.
