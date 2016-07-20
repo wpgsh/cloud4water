@@ -30,7 +30,11 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-    </dependency>    
+    </dependency>
+    <dependency>
+      <groupId>org.apache.oltu.oauth2</groupId>
+      <artifactId>org.apache.oltu.oauth2.authzserver</artifactId>
+    </dependency>
   </dependencies>
 
   <build>

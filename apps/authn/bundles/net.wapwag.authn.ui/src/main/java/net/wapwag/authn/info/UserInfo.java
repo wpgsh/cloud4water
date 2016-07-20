@@ -1,64 +1,45 @@
 package net.wapwag.authn.info;
 
-import javax.xml.bind.annotation.XmlElement;
-
 /**
- * 用户信息
+ * 鐢ㄦ埛淇℃伅
  * 
  * @author gongll
  *
  */
 public class UserInfo {
 
-	@XmlElement(name = "id")
 	private long id;
 
-    @XmlElement(name = "enabled")
     private String enabled;
 
-    @XmlElement(name = "username")
     private String username;
 
-    @XmlElement(name = "password_hash")
-    private String password_hash;
+    private String passwordHash;
 
-    @XmlElement(name = "password_salt")
     private String passwordSalt;
 
-    @XmlElement(name = "homepage")
     private String homepage;
 
-    @XmlElement(name = "name")
     private String name;
 
-    @XmlElement(name = "title")
     private String title;
 
-    @XmlElement(name = "avatar")
     private String avatar;
 
-    @XmlElement(name = "avatar_id")
     private long avartarId;
 
-    @XmlElement(name = "phone1")
     private String phone1;
 
-    @XmlElement(name = "phone2")
     private String phone2;
 
-    @XmlElement(name = "email")
     private String email;
 
-    @XmlElement(name = "email_verified")
     private String emailVerified;
 
-    @XmlElement(name = "email_verification_token")
     private String emailVerifiedToken;
 
-    @XmlElement(name = "email_verification_expiration")
     private String emailVerifiedExpiration;
 
-    @XmlElement(name = "errorMessage")
     private String errorMessage;
     public long getId() {
         return id;
@@ -186,7 +167,7 @@ public class UserInfo {
                 "id=" + id +
                 ", enabled=" + enabled +
                 ", username='" + username + '\'' +
-                ", password_hash='" + password_hash + '\'' +
+                ", passwordHash='" + passwordHash + '\'' +
                 ", passwordSalt='" + passwordSalt + '\'' +
                 ", homepage='" + homepage + '\'' +
                 ", name='" + name + '\'' +
@@ -210,12 +191,12 @@ public class UserInfo {
 		this.errorMessage = errorMessage;
 	}
 
-	public String getPassword_hash() {
-		return password_hash;
+	public String getPasswordHash() {
+		return passwordHash;
 	}
 
-	public void setPassword_hash(String password_hash) {
-		this.password_hash = password_hash;
+	public void setPasswordHash(String passwordHash) {
+		this.passwordHash = passwordHash;
 	}
 
 }

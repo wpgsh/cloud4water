@@ -1,57 +1,40 @@
 package net.wapwag.authn.rest.dto;
 
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class UserResponse {
 
-	@XmlElement(name = "id")
 	private long id;
 
-    @XmlElement(name = "enabled")
     private String enabled;
 
-    @XmlElement(name = "username")
     private String username;
 
-    @XmlElement(name = "password_hash")
     private String passwordHash;
 
-    @XmlElement(name = "password_salt")
     private String passwordSalt;
 
-    @XmlElement(name = "homepage")
     private String homepage;
 
-    @XmlElement(name = "name")
     private String name;
 
-    @XmlElement(name = "title")
     private String title;
 
-    @XmlElement(name = "avatar")
     private String avatar;
 
-    @XmlElement(name = "avatar_id")
     private long avartarId;
 
-    @XmlElement(name = "phone1")
     private String phone1;
 
-    @XmlElement(name = "phone2")
     private String phone2;
 
-    @XmlElement(name = "email")
     private String email;
 
-    @XmlElement(name = "email_verified")
     private String emailVerified;
 
-    @XmlElement(name = "email_verification_token")
     private String emailVerifiedToken;
 
-    @XmlElement(name = "email_verification_expiration")
     private String emailVerifiedExpiration;
 
     public long getId() {
