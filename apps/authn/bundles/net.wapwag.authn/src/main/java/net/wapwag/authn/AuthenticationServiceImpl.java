@@ -49,9 +49,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	public AccessToken lookupToken(String handle) throws AuthenticationServiceException {
 		net.wapwag.authn.dao.model.AccessToken accessToken;
 		try {
-            logger.info(handle);
 			accessToken = userDao.lookupAccessToken(handle);
-            logger.info(accessToken.toString());
 		} catch (UserDaoException e) {
 			throw new AuthenticationServiceException("Cannot get access token", e);
 		}
@@ -86,7 +84,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
                 //valid authorization code.
                 if (StringUtils.isNotBlank(code) && code.equals(accessToken.getAuthrizationCode())) {
-                    accessToken.setExpiration(0L);
+                    accessToken.setAuthrizationCode("");
                     userDao.saveAccessToken(accessToken);
                     return accessToken.getHandle();
                 }
@@ -168,7 +166,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		}
 
 		if (user != null) {
-			return new User();
+			return user;
 		} else {
 			return null;
 		}

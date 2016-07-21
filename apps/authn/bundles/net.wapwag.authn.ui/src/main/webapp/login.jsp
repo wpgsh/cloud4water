@@ -67,7 +67,7 @@ jQuery(document).ready(function() {
 				if("1" == errorCode){
 					showError();
 				}
-				if("0" == errorCode){
+				if("0" == errorCode || "000000" == errorCode){
 					save();
 					if(!isEmp(windowUrl) && windowUrl.indexOf("client_id") > 0 
 							&& windowUrl.indexOf("redirect_uri") > 0 

@@ -1,9 +1,13 @@
 package net.wapwag.authn.ui;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Date;
-import java.util.function.Consumer;
+import com.google.gson.Gson;
+import net.wapwag.authn.AuthenticationServiceException;
+import net.wapwag.authn.dao.model.User;
+import net.wapwag.authn.info.ResultInfo;
+import net.wapwag.authn.util.OSGIUtil;
+import net.wapwag.authn.util.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,20 +15,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import net.wapwag.authn.AuthenticationService;
-import net.wapwag.authn.AuthenticationServiceException;
-import net.wapwag.authn.dao.model.User;
-import net.wapwag.authn.info.ResultInfo;
-import net.wapwag.authn.util.StringUtil;
-
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.ServiceReference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.gson.Gson;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Date;
 
 /*
  * Definition of a servlet. Use the following annotations so that
@@ -46,7 +39,7 @@ public class LoginServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
-		useAuthenticationService(authnService -> {
+		OSGIUtil.useAuthenticationService(authnService -> {
 			try {
 				String userName = req.getParameter("userName");
 				String passwd = req.getParameter("passWord");
@@ -90,7 +83,7 @@ public class LoginServlet extends HttpServlet {
 			} catch (AuthenticationServiceException e) {
 				e.printStackTrace();
 			}
-		});
+		}, LoginServlet.class);
 	}
 
 	@Override
@@ -123,28 +116,6 @@ public class LoginServlet extends HttpServlet {
 		return false;
 	}
 
-	private void useAuthenticationService(Consumer<AuthenticationService> fn)
-			throws ServletException {
-		BundleContext ctx = FrameworkUtil.getBundle(AuthorizationServlet.class)
-				.getBundleContext();
-		ServiceReference<AuthenticationService> reference = ctx
-				.getServiceReference(AuthenticationService.class);
-		AuthenticationService authenticationService = ctx.getService(reference);
-
-		if (authenticationService == null) {
-			throw new ServletException(
-					"AuthenticationService reference not bound");
-		} else {
-			try {
-				fn.accept(authenticationService);
-			} catch (Throwable e) {
-				throw new ServletException("Error processing request", e);
-			} finally {
-				ctx.ungetService(reference);
-			}
-		}
-	}
-	
 	private long getNowTime(){
 		Date date = new Date();
 		return date.getTime();

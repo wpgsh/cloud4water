@@ -54,6 +54,7 @@ public class AuthorizationServlet extends HttpServlet {
 
                 OAuthAuthzRequest oauthRequest = new OAuthAuthzRequest(request);
 
+                String scope = request.getParameter("scope");
                 String code = null;
                 String type = oauthRequest.getResponseType();
                 String clientId = oauthRequest.getClientId();
@@ -78,7 +79,7 @@ public class AuthorizationServlet extends HttpServlet {
 
                 } else {
                     redirectURI = String.format(AUTHORIZE_PATH, clientId, "/authn/authorize",
-                            type, redirectURI, clientId, scopes.toString());
+                            type, redirectURI, clientId, scope);
                     response.sendRedirect(redirectURI);
                 }
             } catch (OAuthProblemException e) {

@@ -17,7 +17,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Set;
 
@@ -39,8 +38,6 @@ public class AccessTokenServlet extends HttpServlet {
             RegisteredClient client = null;
             OAuthResponse oAuthResponse = null;
 
-            HttpSession session = request.getSession();
-            boolean authenticated = Boolean.valueOf(session.getAttribute("authenticated") + "");
             try {
                 OAuthTokenRequest oAuthTokenRequest = new OAuthTokenRequest(request);
 
@@ -49,31 +46,18 @@ public class AccessTokenServlet extends HttpServlet {
                 String redirectURI = oAuthTokenRequest.getRedirectURI();
                 Set<String> scopes = oAuthTokenRequest.getScopes();
 
-                if (!authenticated) {
-//                    long userId = Long.valueOf(session.getAttribute("userId") + "");
-                    long userId = 1L;
+                //check client valid
+                client = authnService.getClient(redirectURI);
 
-                    //check client valid
-                    client = authnService.getClient(redirectURI);
+                String accessToken = authnService.getAccessToken(1L, client.getId(), clientSecret, code, redirectURI);
 
-                    String accessToken = authnService.getAccessToken(userId, client.getId(), clientSecret, code, redirectURI);
-
-                    oAuthResponse = OAuthASResponse
-                            .tokenResponse(HttpServletResponse.SC_OK)
-                            .setAccessToken(accessToken)
-                            .setExpiresIn("3600")
-                            .buildJSONMessage();
-                    response.setStatus(oAuthResponse.getResponseStatus());
-                    response.getWriter().write(oAuthResponse.getBody());
-                } else {
-                    oAuthResponse = OAuthASResponse
-                            .errorResponse(HttpServletResponse.SC_UNAUTHORIZED)
-                            .setError(OAuthError.TokenResponse.INVALID_GRANT)
-                            .setErrorDescription("User does't login")
-                            .buildJSONMessage();
-                    response.setStatus(oAuthResponse.getResponseStatus());
-                    response.getWriter().write(oAuthResponse.getBody());
-                }
+                oAuthResponse = OAuthASResponse
+                        .tokenResponse(HttpServletResponse.SC_OK)
+                        .setAccessToken(accessToken)
+                        .setExpiresIn("3600")
+                        .buildJSONMessage();
+                response.setStatus(oAuthResponse.getResponseStatus());
+                response.getWriter().write(oAuthResponse.getBody());
             } catch (OAuthSystemException e) {
                 try {
                     oAuthResponse = OAuthASResponse

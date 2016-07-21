@@ -13,10 +13,10 @@ public class UserRequest {
     @FormParam("username")
     private String username;
 
-    @FormParam("password_hash")
+    @FormParam("passwordHash")
     private String passwordHash;
 
-    @FormParam("password_salt")
+    @FormParam("passwordSalt")
     private String passwordSalt;
 
     @FormParam("homepage")
