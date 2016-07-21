@@ -72,7 +72,8 @@ public class H2TxAwareEntityManager implements TxAwareEntityManager {
             "merge into registered_clients(id, client_id, client_secret, redirect_uri) values(1, 'client1', 'dfdjfjkdkj23klaa1', 'http://www.baidu.com')",
             "merge into registered_clients(id, client_id, client_secret, redirect_uri) values(2, 'client2', 'dfdjfjkdkj23klaa2', 'http://www.baidu.com2')",
             "merge into registered_clients(id, client_id, client_secret, redirect_uri) values(3, 'client3', 'dfdjfjkdkj23klaa3', 'http://www.baidu.com3')",
-            "merge into registered_clients(id, client_id, client_secret, redirect_uri) values(4, 'client4', 'dfdjfjkdkj23klaa4', 'http://www.baidu.com4')"
+            "merge into registered_clients(id, client_id, client_secret, redirect_uri) values(4, 'client4', 'dfdjfjkdkj23klaa4', 'http://www.baidu.com4')",
+            "merge into registered_clients(id, client_id, client_secret, redirect_uri) values(5, 'wpgclient', 'dfdjfjkdkj23klaa1', 'http://localhost:8181/authn/wpg')"
         );
 
 	@Reference(target="(osgi.unit.name=user-jpa)")

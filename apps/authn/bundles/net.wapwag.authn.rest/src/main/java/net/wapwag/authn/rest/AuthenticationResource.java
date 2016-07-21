@@ -1,33 +1,22 @@
 package net.wapwag.authn.rest;
 
-import javax.ws.rs.BeanParam;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
+import com.thingswise.appframework.jaxrs.utils.Authorization;
+import com.thingswise.appframework.jaxrs.utils.OAuth2;
 import net.wapwag.authn.AuthenticationService;
 import net.wapwag.authn.Ids;
 import net.wapwag.authn.dao.model.User;
 import net.wapwag.authn.model.UserProfile;
 import net.wapwag.authn.rest.authz.AnyAuthenticatedUser;
-import net.wapwag.authn.rest.dto.ImageRequest;
-import net.wapwag.authn.rest.dto.ImageResponse;
 import net.wapwag.authn.rest.dto.UserMsgResponse;
 import net.wapwag.authn.rest.dto.UserRequest;
 import net.wapwag.authn.rest.dto.UserResponse;
 import net.wapwag.authn.rest.oauth2.UsersTokenHandler;
-
 import org.apache.commons.lang3.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.thingswise.appframework.jaxrs.utils.Authorization;
-import com.thingswise.appframework.jaxrs.utils.OAuth2;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 @Component(service=AuthenticationResource.class)
 @Path("/user")
@@ -68,7 +57,7 @@ public class AuthenticationResource {
         try {
             //Get the userRequest and convert it to User so the service layer could operate it.
             User user = new User();
-            user.setId(userRequest.getId());
+            user.setId(100L);
             user.setUsername(userRequest.getUsername());
             user.setPasswordHash(userRequest.getPasswordHash());
             user.setPasswordSalt(userRequest.getPasswordSalt());
