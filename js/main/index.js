@@ -3,6 +3,7 @@
  *console.info($.fn.jquery);// jquery 版本
  *-------------------------------------------
  *checkLoginUser()  判断用户名和密码是否正确
+ *showError() 在页面上生成显示错误信息的元素框
  */
 (function($){
 	
@@ -91,9 +92,12 @@
 		/*---------------------------------------------------------------*/
 		/* 消息提示模板 */
 		var showError = function(obj, msg){
-			var model = "<div class='errMesage'><span>"+msg+"</span><label>x</label></div>";
-			obj.after(model);
-
+			// 防止用户反复点击按钮而重复生成错误提示框
+			if($(".errMesage").length == 0){
+				var model = "<div class='errMesage'><span>"+msg+"</span><label>x</label></div>";
+				obj.after(model);
+			}
+			
 			// 取消提示
 			$(".errMesage label").on("click", function(){
 				$(".errMesage").fadeOut(200, function(){
