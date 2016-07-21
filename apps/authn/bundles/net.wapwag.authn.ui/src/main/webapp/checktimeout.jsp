@@ -12,7 +12,7 @@ AsyncLoginUtil.checkSession(session)) {
 {
 %>
 <script>  
-  window.location="login.jsp";  
+  window.location="/authn/login.jsp";  
 </script>
 <%
 }
