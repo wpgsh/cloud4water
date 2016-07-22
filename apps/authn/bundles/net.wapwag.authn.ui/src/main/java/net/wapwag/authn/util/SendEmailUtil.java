@@ -26,13 +26,13 @@ public class SendEmailUtil {
 	private static final String subject = "[WPG] Please reset your password";
 	public static void main(String[] args) throws Exception {
 
-		sendEmail("213654", to);
+		sendEmail("213654", to,"http://localhost:8181/authn/");
 	}
 
-	public static boolean sendEmail(String resetKey,String sendEmail) {
+	public static boolean sendEmail(String resetKey,String sendEmail,String hostUrl) {
 		try {
 			Session session = createSession();
-			MimeMessage message = createMessage(session,resetKey,sendEmail);
+			MimeMessage message = createMessage(session,resetKey,sendEmail,hostUrl);
 
 			System.out.println("正在发送邮件...");
 
@@ -61,7 +61,7 @@ public class SendEmailUtil {
 
 	}
 
-	private static MimeMessage createMessage(Session session , String resetKey,String sendEmail) throws Exception {
+	private static MimeMessage createMessage(Session session , String resetKey,String sendEmail,String hostUrl) throws Exception {
 		MimeMessage message = new MimeMessage(session);
 		message.setFrom(new InternetAddress(from));
 		message.setRecipients(Message.RecipientType.TO,
@@ -70,7 +70,7 @@ public class SendEmailUtil {
 
 		MimeMultipart multipart = new MimeMultipart("related");
 		MimeBodyPart bodyPart = new MimeBodyPart();
-		bodyPart.setContent(createEmailBody(resetKey), "text/html;charset=gb2312");
+		bodyPart.setContent(createEmailBody(resetKey,hostUrl), "text/html;charset=gb2312");
 		multipart.addBodyPart(bodyPart);
 
 		message.setContent(multipart);
@@ -78,8 +78,14 @@ public class SendEmailUtil {
 		return message;
 	}
 
-	private static String createEmailBody(String resetKey) {
+	private static String createEmailBody(String resetKey,String hostUrl) {
 		try {
+			
+			File file = new File("aa.html");
+			if (!file.exists()) {
+				file.createNewFile();
+				System.out.println(file.getAbsolutePath());
+			}
 			StringBuffer sb = new StringBuffer("");
 			FileReader reader = new FileReader("conf"+File.separator+"email.html");
 			BufferedReader br = new BufferedReader(reader);
@@ -90,6 +96,8 @@ public class SendEmailUtil {
 			br.close();
 			reader.close();
 			String sendMsg = sb.toString().replace("RESET_PASSWD_URL", resetKey);
+			sendMsg = sendMsg.replace("HOST_URL", hostUrl);
+			System.out.println(sendMsg);
 			return sendMsg;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

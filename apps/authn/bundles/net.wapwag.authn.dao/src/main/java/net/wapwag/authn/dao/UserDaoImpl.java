@@ -229,9 +229,9 @@ public class UserDaoImpl implements UserDao {
 			return entityManager.txExpr(new EmFunction<User>() {
 				@Override
 				public User apply(EntityManager em) {
-					User user =  em.find(User.class, uid);
-					user.setPasswordHash(user.getPasswordHash());
-					return user;
+					User newUser =  em.find(User.class, uid);
+					newUser.setPasswordHash(user.getPasswordHash());
+					return newUser;
 				}
 			});
 		} catch (Exception e) {
