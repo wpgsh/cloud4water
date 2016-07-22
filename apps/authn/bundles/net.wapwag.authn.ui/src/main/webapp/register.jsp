@@ -41,19 +41,19 @@
 			form1.phone1.focus();
 			return false;
 		}
-		if (form1.password_hash.value == "") {
+		if (form1.passwordHash.value == "") {
 			alert("用户密码不能为空，请输入密码！");
-			form1.password_hash.focus();
+			form1.passwordHash.focus();
 			return false;
 		}
-		if (form1.password_salt.value == "") {
+		if (form1.passwordSalt.value == "") {
 			alert("用户确认密码不能为空，请输入密码！");
-			form1.password_salt.focus();
+			form1.passwordSalt.focus();
 			return false;
 		}
-		if (form1.password_hash.value != form1.password_salt.value) {
+		if (form1.passwordHash.value != form1.passwordSalt.value) {
 			alert("密码与确认密码不同");
-			form1.password_hash.focus();
+			form1.passwordHash.focus();
 			return false;
 		}
 		return true;
@@ -101,9 +101,9 @@
 			<label for="inputPhone" class="sr-only">phone</label>
 				<input type="text" name="phone1" id="inputPhone" class="form-control" placeholder="phone" required>
 			<label for="inputPassword" class="sr-only">password</label>
-				<input type="password" name="password_hash" id="inputPassword" class="form-control" placeholder="password" required>
+				<input type="password" name="passwordHash" id="inputPassword" class="form-control" placeholder="password" required>
 			<label for="confirmPassword" class="sr-only">password</label>
-				<input type="password" name="password_salt" id="confirmPassword" class="form-control" placeholder="confirm password" required>
+				<input type="password" name="passwordSalt" id="confirmPassword" class="form-control" placeholder="confirm password" required>
 			<button class="btn btn-lg btn-primary btn-block" name="Submit" id="submit" type="button">Sign up</button>
 			<div class="checkbox">
           <label>
