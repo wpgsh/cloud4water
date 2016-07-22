@@ -2,9 +2,12 @@ package net.wapwag.authn.util;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -15,29 +18,38 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+/**
+ * 发送邮件工具类
+ * @author gongll
+ *
+ */
 public class SendEmailUtil {
 
-	private static final String protocol = "smtp"; 
-	private static final String from = "gongll_wpg@sina.com";
-	private static final String pass = "wpg123@";
-	private static final String server = "smtp.sina.com";
-	private static final String to = "1422655443@qq.com";
-
-	private static final String subject = "[WPG] Please reset your password";
-	public static void main(String[] args) throws Exception {
-
-		sendEmail("213654", to,"http://localhost:8181/authn/");
-	}
-
-	public static boolean sendEmail(String resetKey,String sendEmail,String hostUrl) {
+	private static EmailConfInfo confInfo;
+	
+	/**
+	 * 发送重置密码短信
+	 * @param resetKey
+	 * @param sendEmail
+	 * @param hostUrl
+	 * @return
+	 */
+	public static boolean sendEmail(String resetKey, String sendEmail,
+			String hostUrl) {
+		
+		if (null != confInfo || initConfig()) {
+			
+		}else {
+			return false;
+		}
+		
 		try {
 			Session session = createSession();
-			MimeMessage message = createMessage(session,resetKey,sendEmail,hostUrl);
-
-			System.out.println("正在发送邮件...");
+			MimeMessage message = createMessage(session, resetKey, sendEmail,
+					hostUrl);
 
 			Transport transport = session.getTransport();
-			transport.connect(server, from, pass);
+			transport.connect(confInfo.server, confInfo.from, confInfo.pass);
 
 			transport.sendMessage(message,
 					message.getRecipients(Message.RecipientType.TO));
@@ -53,7 +65,7 @@ public class SendEmailUtil {
 
 	private static Session createSession() {
 		Properties props = new Properties();
-		props.setProperty("mail.transport.protocol", protocol);
+		props.setProperty("mail.transport.protocol", confInfo.protocol);
 		props.setProperty("mail.smtp.auth", "true");
 
 		Session session = Session.getInstance(props);
@@ -61,50 +73,74 @@ public class SendEmailUtil {
 
 	}
 
-	private static MimeMessage createMessage(Session session , String resetKey,String sendEmail,String hostUrl) throws Exception {
+	private static MimeMessage createMessage(Session session, String resetKey,
+			String sendEmail, String hostUrl) throws Exception {
 		MimeMessage message = new MimeMessage(session);
-		message.setFrom(new InternetAddress(from));
+		message.setFrom(new InternetAddress(confInfo.from));
 		message.setRecipients(Message.RecipientType.TO,
 				InternetAddress.parse(sendEmail));
-		message.setSubject(subject);
+		message.setSubject(confInfo.head);
 
 		MimeMultipart multipart = new MimeMultipart("related");
 		MimeBodyPart bodyPart = new MimeBodyPart();
-		bodyPart.setContent(createEmailBody(resetKey,hostUrl), "text/html;charset=gb2312");
+		String sendMsg = confInfo.body;
+		sendMsg = sendMsg.replace("RESET_PASSWD_URL", resetKey);
+		sendMsg = sendMsg.replace("HOST_URL", hostUrl);
+		System.out.println(sendMsg);
+		bodyPart.setContent(sendMsg,"text/html;charset=gb2312");
 		multipart.addBodyPart(bodyPart);
 
 		message.setContent(multipart);
 		message.saveChanges();
 		return message;
 	}
-
-	private static String createEmailBody(String resetKey,String hostUrl) {
+	
+	private static boolean initConfig(){
+		confInfo = new EmailConfInfo(); 
 		try {
-			
-			File file = new File("aa.html");
-			if (!file.exists()) {
-				file.createNewFile();
-				System.out.println(file.getAbsolutePath());
-			}
-			StringBuffer sb = new StringBuffer("");
-			FileReader reader = new FileReader("conf"+File.separator+"email.html");
-			BufferedReader br = new BufferedReader(reader);
+			System.out.println(SendEmailUtil.class.getClass().getResource("/").getPath());
+			StringBuffer emailMsg = new StringBuffer("");
+			BufferedReader br = 
+					new BufferedReader(new InputStreamReader(new FileInputStream("conf"+File.separator+"email.txt"),"UTF-8"));  
 			String str = null;
 			while ((str = br.readLine()) != null) {
-				sb.append(str);
+				if (str.indexOf("title") < 0) {
+					emailMsg.append(str);
+				}
+				else {
+					confInfo.head = str.substring(7,str.length()-8);
+				}
 			}
 			br.close();
-			reader.close();
-			String sendMsg = sb.toString().replace("RESET_PASSWD_URL", resetKey);
-			sendMsg = sendMsg.replace("HOST_URL", hostUrl);
-			System.out.println(sendMsg);
-			return sendMsg;
+			confInfo.body = emailMsg.toString();
+			
+			br = new BufferedReader(new InputStreamReader(new FileInputStream("conf"+File.separator+"email.properties"),"UTF-8"));  
+			Map<String,String> confMap = new HashMap<String,String>();
+			while ((str = br.readLine()) != null) {
+				confMap.put(str.split("=")[0], str.split("=")[1]);
+			}
+			br.close();
+			
+			confInfo.from = confMap.get("email_user");
+			confInfo.protocol = confMap.get("email_protocol");
+			confInfo.server = confMap.get("email_server");
+			confInfo.pass = confMap.get("email_password");
+			return true;
+			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return "";
+		return true;
 	}
-
+	
+	private static class EmailConfInfo{
+		String protocol;
+		String from;
+		String pass;
+		String server;
+		String head;
+		String body;
+	}
 }
