@@ -1,18 +1,19 @@
 package net.wapwag.authn.h2.hibernate;
 
-import com.google.common.collect.ImmutableList;
-import net.wapwag.authn.dao.TxAwareEntityManager;
 import org.apache.aries.jpa.template.EmConsumer;
 import org.apache.aries.jpa.template.EmFunction;
 import org.apache.aries.jpa.template.JpaTemplate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ServiceScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.EntityManager;
+import com.google.common.collect.ImmutableList;
 
-@Component(property="osgi.name=user")
+import net.wapwag.authn.dao.TxAwareEntityManager;
+
+@Component(property="osgi.name=user", scope=ServiceScope.SINGLETON)
 public class H2TxAwareEntityManager implements TxAwareEntityManager {
 	
 	private static Logger logger = LoggerFactory.getLogger(H2TxAwareEntityManager.class);
@@ -81,19 +82,14 @@ public class H2TxAwareEntityManager implements TxAwareEntityManager {
 	
 	@Override
 	public void init() throws Exception {
-		for (String _sql : ddl) {
-			logger.info("H2 DB Initialization: {}", _sql);
-			try {			
-				final String sql = _sql;
-				tx(new EmConsumer() {
-					@Override
-					public void accept(EntityManager em) {
-						em.createNativeQuery(sql).executeUpdate();
-					}					
-				});				
-			} catch (Exception e) {
-				throw new Exception("Error executing DDL query: "+_sql, e);
-			}
+		try {			
+			tx(em -> { 
+				for (String _sql : ddl) {
+					logger.info("H2 DB Initialization: {}", _sql);
+					em.createNativeQuery(_sql).executeUpdate();
+				}});
+		} catch (Exception e) {
+			throw new Exception("Error executing DDL update", e);
 		}
 	}
 	
