@@ -1,21 +1,24 @@
 package net.wapwag.authn.dao;
 
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
 import net.wapwag.authn.dao.model.AccessToken;
 import net.wapwag.authn.dao.model.RegisteredClient;
 import net.wapwag.authn.dao.model.User;
+
 import org.apache.aries.jpa.template.EmFunction;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ServiceScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import java.util.List;
-
-@Component
+@Component(scope=ServiceScope.SINGLETON)
 public class UserDaoImpl implements UserDao {
 
 	private static final Logger logger = LoggerFactory.getLogger(UserDaoImpl.class);
@@ -255,9 +258,9 @@ public class UserDaoImpl implements UserDao {
 			return entityManager.txExpr(new EmFunction<User>() {
 				@Override
 				public User apply(EntityManager em) {
-					User user =  em.find(User.class, uid);
-					user.setPasswordHash(user.getPasswordHash());
-					return user;
+					User newUser =  em.find(User.class, uid);
+					newUser.setPasswordHash(user.getPasswordHash());
+					return newUser;
 				}
 			});
 		} catch (Exception e) {

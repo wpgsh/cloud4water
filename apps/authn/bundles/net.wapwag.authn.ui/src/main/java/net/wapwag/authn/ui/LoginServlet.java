@@ -1,13 +1,8 @@
 package net.wapwag.authn.ui;
 
-import com.google.gson.Gson;
-import net.wapwag.authn.AuthenticationServiceException;
-import net.wapwag.authn.dao.model.User;
-import net.wapwag.authn.info.ResultInfo;
-import net.wapwag.authn.util.OSGIUtil;
-import net.wapwag.authn.util.StringUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,9 +10,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Date;
+
+import net.wapwag.authn.AuthenticationServiceException;
+import net.wapwag.authn.dao.model.User;
+import net.wapwag.authn.info.ResultInfo;
+import net.wapwag.authn.util.OSGIUtil;
+import net.wapwag.authn.util.StringUtil;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.gson.Gson;
 
 /*
  * Definition of a servlet. Use the following annotations so that
@@ -57,13 +60,7 @@ public class LoginServlet extends HttpServlet {
 						session.setAttribute("authenticated", true);
 						session.setAttribute("userId", user.getId());
 						session.setAttribute("loginTime", getNowTime());
-						if (StringUtil.isEmp(redirectUri)) {
-							info.setErrorCode("0");
-						} else {
-							info.setErrorCode("000000");
-							info.setErrorMsg(redirectUri);
-						}
-
+						info.setErrorCode("0");
 					} else {
 						info.setErrorCode("1");
 					}

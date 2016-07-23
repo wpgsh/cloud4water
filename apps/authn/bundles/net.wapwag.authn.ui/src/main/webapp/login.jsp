@@ -27,110 +27,7 @@
   <script src="scripts/jquery-form.js"></script>
   <script src="scripts/jquery.cookie.js"></script>
   <script src="scripts/jQuery.md5.js"></script>
-<script> 
-jQuery(document).ready(function() {
-	var isEncoded = initCookie();
-	
-	$('input[name="passWord"]').bind('input propertychange', function() {
-		isEncoded = true;
-		
-	});
-	
-	$("#submit").click(function() {
-		$("#userNameMsg").html("");
-		var windowUrl = window.location.search;
-		var userName = $('input[name="userName"]').val();
-		var passWord = $('input[name="passWord"]').val();
-		var i = 0;
-		if(isEmp(userName))
-		{
-			showError();
-			i++;
-		}
-		if(isEmp(passWord))
-		{
-			showError();
-			i++;
-		}
-		if(0 < i){
-			return;
-		}
-		if(isEncoded){
-			var newPassWord = $.md5(passWord);
-			$('input[name="passWord"]').val(newPassWord);
-		}
-		$("#form").ajaxSubmit({
-			type:'post',
-			dataType : 'json',  
-			success:function(data){
-				var errorCode = data.errorCode;
-				if("1" == errorCode){
-					showError();
-				}
-				if("0" == errorCode || "000000" == errorCode){
-					save();
-					if(!isEmp(windowUrl) && windowUrl.indexOf("client_id") > 0 
-							&& windowUrl.indexOf("redirect_uri") > 0 
-							&& windowUrl.indexOf("return_to") > 0){
-						var returnUrl = windowUrl.split("return_to=");
-						returnUrl = returnUrl[1];
-						window.location=returnUrl;
-					}else{
-						window.location="index.jsp";
-					}  
-				}
-			},
-			error:function(data)
-			{
-				alert("error");
-			}
-		});
-	});
-});
-
-function showError(){
-	$('input[name="passWord"]').val("");
-	$("#userNameMsg").html("Incorrect username or password.");
-}
-function isEmp(str){
-	if(undefined == str || null == str || "" == str){
-		return true;
-	}
-	str = str.trim();
-	if(undefined == str || null == str || "" == str){
-		return true;
-	}
-	return false;
-}
-function refulsCodeImg(){
-	$("#codeImg").attr("src","/authn/checkCode?" + Math.random());
-}
-//记住用户名密码 
-function save() { 
-	if ($("#ck_rmbUser").prop("checked")) { 
-		var username = $('input[name="userName"]').val(); 
-		var password = $('input[name="passWord"]').val(); 
-		$.cookie("rmbUser", "true", { expires: 7 }); //存储一个带7天期限的cookie 
-		$.cookie("username", username, { expires: 7 }); 
-		$.cookie("password", password, { expires: 7 }); 
-	}else{ 
-		$.cookie("rmbUser", "false", { expire: -1 }); 
-		$.cookie("username", "", { expires: -1 }); 
-		$.cookie("password", "", { expires: -1 }); 
-	} 
-}; 
-
-function initCookie(){
-	if ($.cookie("rmbUser") == "true") { 
-		$("#ck_rmbUser").prop("checked", true); 
-		$('input[name="userName"]').val($.cookie("username")); 
-		$('input[name="passWord"]').val($.cookie("password"));
-		return false;
-	} 
-	return true;
-}
- 
-</script>  
+  <script src="js/login.js"></script> 
   <body>
 
     <div class="container">
@@ -148,7 +45,7 @@ function initCookie(){
           <label>
             <input type="checkbox" id="ck_rmbUser" value="remember-me"> Remember me
           </label>
-          <a href="resetpassword/linkpwd.html" class="getpassword">Forgot password?</a>
+          <a href="/authn/resetpassword/linkpwd.jsp" class="getpassword">Forgot password?</a>
         </div>
         <button id="submit" class="btn btn-lg btn-success btn-block" type="button">Sign in</button>
         <div class="checkbox">
