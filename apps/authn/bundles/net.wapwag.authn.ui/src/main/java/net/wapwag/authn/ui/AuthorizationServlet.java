@@ -68,7 +68,7 @@ public class AuthorizationServlet extends HttpServlet {
                     client = authnService.getClient(redirectURI);
 
                     //Get authorization code.
-                    code = authnService.getAuthorizationCode(userId, client.getId(), redirectURI, null);
+                    code = authnService.getAuthorizationCode(userId, client.getId(), redirectURI, scopes);
 
                     oAuthResponse = OAuthASResponse
                             .authorizationResponse(request, HttpServletResponse.SC_FOUND)

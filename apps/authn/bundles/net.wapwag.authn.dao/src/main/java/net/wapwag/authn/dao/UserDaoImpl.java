@@ -1,14 +1,8 @@
 package net.wapwag.authn.dao;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-
 import net.wapwag.authn.dao.model.AccessToken;
 import net.wapwag.authn.dao.model.RegisteredClient;
 import net.wapwag.authn.dao.model.User;
-
 import org.apache.aries.jpa.template.EmFunction;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -16,6 +10,10 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import java.util.List;
 
 @Component
 public class UserDaoImpl implements UserDao {
@@ -114,6 +112,34 @@ public class UserDaoImpl implements UserDao {
     }
 
 	@Override
+	public AccessToken getAccessTokenByCode(String code) throws UserDaoException {
+        try {
+            return entityManager.txExpr(em -> em.createQuery(
+                    "select token from AccessToken token where token.authrizationCode = :code", AccessToken.class)
+                    .setParameter("code", code)
+                    .getSingleResult()
+            );
+        } catch (Exception e) {
+            return null;
+        }
+	}
+
+    @Override
+    public AccessToken getAccessTokenByUserIdAndClientId(long userId, long clientId) throws UserDaoException {
+        try {
+            return entityManager.txExpr(em -> em.createQuery(
+                    "select at from AccessToken at where at.user.id = :userId and at.registeredClient.id = :clientId",
+                    AccessToken.class)
+                    .setParameter("userId", userId)
+                    .setParameter("clientId", clientId)
+                    .getSingleResult()
+            );
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
 	public int saveUser(final User user) throws UserDaoException {
 		try {
 			return entityManager.txExpr(em -> {

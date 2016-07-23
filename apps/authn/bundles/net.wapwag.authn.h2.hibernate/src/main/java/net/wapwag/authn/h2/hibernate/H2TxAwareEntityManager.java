@@ -25,55 +25,55 @@ public class H2TxAwareEntityManager implements TxAwareEntityManager {
             "drop table if exists registered_clients",
 			// 0
 			"create table if not exists users("
-            + "  enabled varchar(1),"
-            + "  username varchar(20),"
-            + "  password_hash varchar(32),"
-            + "  password_salt varchar(32),"
-            + "  homepage varchar(50),"
-            + "  name varchar(50),"
-            + "  title varchar(50),"
-            + "  avatar varchar(50),"
-            + "  avatar_id bigint,"
-            + "  phone1 varchar(50),"
-            + "  phone2 varchar(50),"
-            + "  email varchar(50),"
-            + "  email_verified varchar(1),"
-            + "  email_verification_token varchar(32),"
-            + "  email_verification_expiration varchar(1),"
-			+ "  id bigint primary key"
+				+ "  id bigint primary key AUTO_INCREMENT,"
+				+ "  enabled varchar(1),"
+				+ "  username varchar(20),"
+				+ "  password_hash varchar(32),"
+				+ "  password_salt varchar(32),"
+				+ "  homepage varchar(50),"
+				+ "  name varchar(50),"
+				+ "  title varchar(50),"
+				+ "  avatar varchar(50),"
+				+ "  avatar_id bigint,"
+				+ "  phone1 varchar(50),"
+				+ "  phone2 varchar(50),"
+				+ "  email varchar(50),"
+				+ "  email_verified varchar(1),"
+				+ "  email_verification_token varchar(32),"
+				+ "  email_verification_expiration varchar(1)"
 			+ ")",
 			// 1
-            "merge into users(id, enabled, username, password_hash, password_salt, homepage, name, title, avatar, avatar_id, phone1, phone2, email, email_verified, email_verification_token, email_verification_expiration) values("
-            + "1, '1', 'test1', 'dfdf', 'dfdfd', 'http://www.baidu.com', 'test', 'title', 'sds', 1, '121212', '121212', '1163525902@qq.com', '1', 'dfdf', '1')",
-			"merge into users(id, enabled, username, password_hash, password_salt, homepage, name, title, avatar, avatar_id, phone1, phone2, email, email_verified, email_verification_token, email_verification_expiration) values("
-            + "2, '1', 'test2', 'dfdf', 'dfdfd', 'http://www.baidu.com', 'test', 'title', 'sds', 1, '121212', '121212', '1163525902@qq.com', '1', 'dfdf', '1')",
+            "insert into users(enabled, username, password_hash, password_salt, homepage, name, title, avatar, avatar_id, phone1, phone2, email, email_verified, email_verification_token, email_verification_expiration) values("
+            + "'1', 'test1', 'dfdf', 'dfdfd', 'http://www.baidu.com', 'test', 'title', 'sds', 1, '121212', '121212', '1163525902@qq.com', '1', 'dfdf', '1')",
+			"insert into users(enabled, username, password_hash, password_salt, homepage, name, title, avatar, avatar_id, phone1, phone2, email, email_verified, email_verification_token, email_verification_expiration) values("
+            + "'1', 'test2', 'dfdf', 'dfdfd', 'http://www.baidu.com', 'test', 'title', 'sds', 1, '121212', '121212', '1163525902@qq.com', '1', 'dfdf', '1')",
 			// 2
             "create table if not exists access_tokens("
-            + "  client_id bigint,"
-            + "  user_id bigint,"
-            + "  handle varchar(32) primary key,"
-            + "  scope varchar(100),"
-            + "  authorization_code varchar(32),"
-            + "  ac_expiration bigint,"
+				+ "  handle varchar(32) primary key,"
+				+ "  user_id bigint,"
+				+ "  client_id bigint,"
+				+ "  scope varchar(100),"
+				+ "  authorization_code varchar(32) unique,"
+				+ "  ac_expiration bigint"
             + ")",
 		    // 3
-//		    "merge into access_tokens(user_id, client_id, authorization_code, handle, ac_expiration, scope) values(1, 1, 'dsfjdjfk23skjdsds1','token1', 9223372036854775807, '1,2,3,4')",
-		    "merge into access_tokens(user_id, client_id, authorization_code, handle, ac_expiration, scope) values(2, 1, 'dsfjdjfk23skjdsds2','token2', 9223372036854775807, '1,2,3,4')",
-		    "merge into access_tokens(user_id, client_id, authorization_code, handle, ac_expiration, scope) values(1, 3, 'dsfjdjfk23skjdsds3','token3', 9223372036854775807, '1,2,3,4')",
-		    "merge into access_tokens(user_id, client_id, authorization_code, handle, ac_expiration, scope) values(1, 4, 'dsfjdjfk23skjdsds4','token4', 9223372036854775807, '1,2,3,4')",
+//		    "insert into access_tokens(user_id, client_id, authorization_code, handle, ac_expiration, scope) values(1, 1, 'dsfjdjfk23skjdsds1','token1', 9223372036854775807, '1,2,3,4')",
+		    "insert into access_tokens(user_id, client_id, authorization_code, handle, ac_expiration, scope) values(2, 1, 'dsfjdjfk23skjdsds2','token2', 9223372036854775807, '1,2,3,4')",
+		    "insert into access_tokens(user_id, client_id, authorization_code, handle, ac_expiration, scope) values(1, 3, 'dsfjdjfk23skjdsds3','token3', 9223372036854775807, '1,2,3,4')",
+		    "insert into access_tokens(user_id, client_id, authorization_code, handle, ac_expiration, scope) values(1, 4, 'dsfjdjfk23skjdsds4','token4', 9223372036854775807, '1,2,3,4')",
             //4
             "create table if not exists registered_clients("
-            + "  id bigint primary key,"
+            + "  id bigint primary key AUTO_INCREMENT,"
             + "  client_id varchar(32),"
             + "  client_secret varchar(32),"
-            + "  redirect_uri varchar(100)"
+            + "  redirect_uri varchar(100) unique"
             + ")",
             //5
-            "merge into registered_clients(id, client_id, client_secret, redirect_uri) values(1, 'client1', 'dfdjfjkdkj23klaa1', 'http://www.baidu.com')",
-            "merge into registered_clients(id, client_id, client_secret, redirect_uri) values(2, 'client2', 'dfdjfjkdkj23klaa2', 'http://www.baidu.com2')",
-            "merge into registered_clients(id, client_id, client_secret, redirect_uri) values(3, 'client3', 'dfdjfjkdkj23klaa3', 'http://www.baidu.com3')",
-            "merge into registered_clients(id, client_id, client_secret, redirect_uri) values(4, 'client4', 'dfdjfjkdkj23klaa4', 'http://www.baidu.com4')",
-            "merge into registered_clients(id, client_id, client_secret, redirect_uri) values(5, 'wpgclient', 'dfdjfjkdkj23klaa1', 'http://localhost:8181/authn/wpg')"
+            "insert into registered_clients(client_id, client_secret, redirect_uri) values('client1', 'dfdjfjkdkj23klaa1', 'http://www.baidu.com')",
+            "insert into registered_clients(client_id, client_secret, redirect_uri) values('client2', 'dfdjfjkdkj23klaa2', 'http://www.baidu.com2')",
+            "insert into registered_clients(client_id, client_secret, redirect_uri) values('client3', 'dfdjfjkdkj23klaa3', 'http://www.baidu.com3')",
+            "insert into registered_clients(client_id, client_secret, redirect_uri) values('client4', 'dfdjfjkdkj23klaa4', 'http://www.baidu.com4')",
+            "insert into registered_clients(client_id, client_secret, redirect_uri) values('wpgclient', 'dfdjfjkdkj23klaa1', 'http://localhost:8181/authn/wpg')"
         );
 
 	@Reference(target="(osgi.unit.name=user-jpa)")

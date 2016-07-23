@@ -24,6 +24,10 @@ public interface UserDao {
 
 	AccessToken getAccessToken(AccessToken accessToken) throws UserDaoException;
 
+	AccessToken getAccessTokenByCode(String code) throws UserDaoException;
+
+    AccessToken getAccessTokenByUserIdAndClientId(long userId, long clientId) throws UserDaoException;
+
 	long saveAccessToken(AccessToken accessToken) throws UserDaoException;
 
 	AccessToken lookupAccessToken(String handle) throws UserDaoException;

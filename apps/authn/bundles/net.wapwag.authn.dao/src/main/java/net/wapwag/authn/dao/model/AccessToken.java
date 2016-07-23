@@ -30,7 +30,7 @@ public class AccessToken {
     @Column(name = "scope")
     private String scope;
 
-    @Column(name = "authorization_code")
+    @Column(name = "authorization_code", unique = true)
     private String authrizationCode;
 
     @Column(name="ac_expiration")

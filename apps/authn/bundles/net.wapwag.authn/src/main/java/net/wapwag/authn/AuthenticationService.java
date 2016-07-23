@@ -26,7 +26,6 @@ public interface AuthenticationService {
 	/**
 	 * Get access token if the user has been authorization
 	 *
-     * @param userId      The user ID who has logined
 	 * @param clientId     The client ID you registered in the authorize system.
 	 * @param clientSecret The client secret you received from authorization system.
 	 * @param code         The code you received from authorize response.
@@ -35,7 +34,7 @@ public interface AuthenticationService {
 	 * @return Return accessToken.
 	 * @throws AuthenticationServiceException
 	 */
-	String getAccessToken(long userId, long clientId, String clientSecret, String code, String redirectURI)
+	String getAccessToken(long clientId, String clientSecret, String code, String redirectURI)
             throws AuthenticationServiceException;
 
 	/**
