@@ -211,7 +211,7 @@ public class UserDaoImpl implements UserDao {
             return entityManager.txExpr(new EmFunction<User>() {
                 @Override
                 public User apply(EntityManager em) {
-                	String queryUser = "select * from users where username ='"+userName+"' ";
+                	String queryUser = "select * from users where username ='"+userName+"' or email ='" + userName +"' ";
                 	Query query = em.createNativeQuery(queryUser,User.class);
                 	List<User> result = query.getResultList();
                 	if (result.size() >= 1) {

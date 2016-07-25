@@ -4,22 +4,27 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.function.Consumer;
 
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+
 import net.wapwag.authn.AuthenticationService;
 import net.wapwag.authn.AuthenticationServiceException;
 import net.wapwag.authn.dao.model.User;
 import net.wapwag.authn.info.ResultInfo;
+import net.wapwag.authn.util.AsyncLoginUtil;
 import net.wapwag.authn.util.SequenceKey;
 import net.wapwag.authn.util.StringUtil;
+
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
+
 
 import com.google.gson.Gson;
 
@@ -54,6 +59,7 @@ public class ResetPassWDServlet extends HttpServlet {
 						user = authnService.updateUserPwd(user);
 						if (null != user) {
 							SequenceKey.cleanKey(key);
+							AsyncLoginUtil.addModeTime(user.getUsername());
 							info.setErrorCode("0");
 						}
 						Gson gson = new Gson();

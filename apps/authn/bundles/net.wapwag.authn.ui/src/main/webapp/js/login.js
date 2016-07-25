@@ -96,26 +96,28 @@ jQuery(document).ready(function() {
 	function refulsCodeImg(){
 		$("#codeImg").attr("src","/authn/checkCode?" + Math.random());
 	}
-	//记住用户名密码 
+	//记住用户信息
 	function save() { 
 		if ($("#ck_rmbUser").prop("checked")) { 
 			var username = $('input[name="userName"]').val(); 
 			var password = $('input[name="passWord"]').val(); 
+			var user_cookie = username + "|" + password;
+			user_cookie = jQuery.base64.encode(user_cookie);
 			$.cookie("rmbUser", "true", { expires: 7 }); //存储一个带7天期限的cookie 
-			$.cookie("username", username, { expires: 7 }); 
-			$.cookie("password", password, { expires: 7 }); 
+			$.cookie("user_cookie", user_cookie, { expires: 7 });  
 		}else{ 
 			$.cookie("rmbUser", "false", { expire: -1 }); 
-			$.cookie("username", "", { expires: -1 }); 
-			$.cookie("password", "", { expires: -1 }); 
+			$.cookie("user_cookie", "", { expires: -1 }); 
 		} 
 	}; 
 
 	function initCookie(){
 		if ($.cookie("rmbUser") == "true") { 
 			$("#ck_rmbUser").prop("checked", true); 
-			$('input[name="userName"]').val($.cookie("username")); 
-			$('input[name="passWord"]').val($.cookie("password"));
+			var user_cookie = $.cookie("user_cookie");
+			user_cookie = jQuery.base64.decode(user_cookie);
+			$('input[name="userName"]').val(user_cookie.split("|")[0]); 
+			$('input[name="passWord"]').val(user_cookie.split("|")[1]);
 			return false;
 		} 
 		return true;

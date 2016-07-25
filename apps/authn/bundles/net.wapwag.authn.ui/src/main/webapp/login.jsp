@@ -27,7 +27,8 @@
   <script src="scripts/jquery-form.js"></script>
   <script src="scripts/jquery.cookie.js"></script>
   <script src="scripts/jQuery.md5.js"></script>
-  <script src="js/login.js"></script> 
+  <script src="js/login.js"></script>
+  <script src="scripts/jQuery.base64.js"></script>  
   <body>
 
     <div class="container">

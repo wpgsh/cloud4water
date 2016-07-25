@@ -56,7 +56,7 @@ public class LoginServlet extends HttpServlet {
 
 				if (checkCode(session, checkCode)) {
 					if (checkUser(user, passwd)) {
-						session.setAttribute("userName", userName);
+						session.setAttribute("userName", user.getUsername());
 						session.setAttribute("authenticated", true);
 						session.setAttribute("userId", user.getId());
 						session.setAttribute("loginTime", getNowTime());

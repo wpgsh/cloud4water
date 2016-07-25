@@ -9,14 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import net.wapwag.authn.info.UserInfo;
-import net.wapwag.authn.util.HttpUtil;
-import net.wapwag.authn.util.StringUtil;
-
-import org.osgi.service.component.annotations.Component;
-
-import com.google.gson.Gson;
-
 /*
  * Definition of a servlet. Use the following annotations so that
  * OPS4J PAX Web Whiteboard Extended can hook it up into the Jetty server:
