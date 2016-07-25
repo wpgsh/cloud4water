@@ -66,8 +66,4 @@ public class SequenceKey {
 	private static String getCreateTime(String key){
 		return key.substring(0,13);
 	}
-	
-	public static void main(String[] args) {
-		System.out.println("14689856664761012773166017".substring(0,13));
-	}
 }

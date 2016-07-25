@@ -100,13 +100,6 @@ public class LoginServlet extends HttpServlet {
 
 	private boolean checkUser(User user, String passwd) {
 
-		System.out.println(passwd);
-		if (null == user) {
-			System.out.println("user is null" );
-		}else {
-			System.out.println(user.getPasswordHash());
-			System.out.println(user.getUsername());
-		}
 		if (null != user && null != user.getPasswordHash() && passwd.equals(StringUtil.strMd5(user.getPasswordHash()))) {
 			return true;
 		}

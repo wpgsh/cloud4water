@@ -134,7 +134,6 @@ public class RandomImageGenerator {
 			IOException {
 		// 获取随机字符串
 		String randomStr = random(5);
-		System.out.println(randomStr);
 		// 生成图片
 		render(randomStr, new FileOutputStream("D:\\test.jpg"), 130, 40);
 	}

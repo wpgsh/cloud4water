@@ -39,7 +39,6 @@ public class ForgetPassWDServlet extends HttpServlet {
 			try {
 				String url = req.getRequestURL().toString();
 				url = url.split("/password_reset")[0];
-				System.out.println(url);
 				ResultInfo info = new ResultInfo();
 				info.setErrorCode("1");
 				User user = authnService.getUserByEmail(email);

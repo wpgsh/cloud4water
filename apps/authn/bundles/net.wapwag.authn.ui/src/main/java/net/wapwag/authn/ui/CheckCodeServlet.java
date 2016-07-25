@@ -25,11 +25,8 @@ import org.osgi.service.component.annotations.Component;
  */
 @WebServlet(urlPatterns = "/checkCode", name = "CheckCodeServlet")
 public class CheckCodeServlet extends HttpServlet {
-	// ͼƬ���
 	int width = 140;
-	// ͼƬ�߶�
 	int height = 44;
-	// ͼƬ������ַ�����
 	int randomStrNum = 4;
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -41,30 +38,16 @@ public class CheckCodeServlet extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
-		// ��ȡHttpSession����
 		HttpSession session = request.getSession();
-		// ��ȡ����ַ���
 		String randomStr = RandomImageGenerator.random(randomStrNum);
 		if (null != session) {
-			// ���ò���
 			session.setAttribute("randomStr", randomStr);
-			// ������Ӧ����,���ͼƬ�ͻ��˲�����
 			response.setDateHeader("Expires", 1L);
 			response.setHeader("Cache-Control", "no-cache, no-store, max-age=0");
 			response.addHeader("Pragma", "no-cache");
 			response.setContentType("image/jpeg");
-			// �����ҳ��
 			RandomImageGenerator.render(randomStr, response.getOutputStream(),
 					width, height);
 		}
-	}
-
-	public void init() throws ServletException {
-		// ��ȡ���
-		//width = Integer.parseInt(this.getInitParameter("width"));
-		// ��ȡ�߶�
-		//height = Integer.parseInt(this.getInitParameter("height"));
-		// ��ȡ����
-		//randomStrNum = Integer.parseInt(this.getInitParameter("num"));
 	}
 }

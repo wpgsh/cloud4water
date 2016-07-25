@@ -50,7 +50,6 @@ public class SendEmailUtil {
 				return false;
 			}
 		}
-		System.out.println(confInfo.body);
 		try {
 			Session session = createSession();
 			MimeMessage message = createMessage(session, resetKey, sendEmail,
@@ -93,7 +92,6 @@ public class SendEmailUtil {
 		String sendMsg = confInfo.body;
 		sendMsg = sendMsg.replace("RESET_PASSWD_URL", resetKey);
 		sendMsg = sendMsg.replace("HOST_URL", hostUrl);
-		System.out.println(sendMsg);
 		bodyPart.setContent(sendMsg,"text/html;charset=gb2312");
 		multipart.addBodyPart(bodyPart);
 
