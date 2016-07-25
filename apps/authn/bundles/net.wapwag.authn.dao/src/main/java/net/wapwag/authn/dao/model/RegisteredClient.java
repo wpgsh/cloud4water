@@ -12,7 +12,7 @@ import java.util.Set;
 public class RegisteredClient {
 
     @Id
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(name = "client_id")
