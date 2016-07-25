@@ -57,6 +57,15 @@ jQuery(document).ready(function() {
 				}
 			});
 		});
+		
+		// 回车键事件 
+		// 绑定键盘按下事件  
+	    $(document).keypress(function(e) {  
+	    // 回车键事件  
+	    	if(e.which == 13) {  
+	    	   $("#submit").click();  
+	       }  
+	    }); 
 	});
 
 	function showError(msg){

@@ -52,9 +52,7 @@ public class ResetPassWDServlet extends HttpServlet {
 						user.setId(Long.parseLong(SequenceKey.getUserId(key)));
 						user.setPasswordHash(passWord);
 						user = authnService.updateUserPwd(user);
-						System.out.println("NOW");
 						if (null != user) {
-							System.out.println("OK");
 							SequenceKey.cleanKey(key);
 							info.setErrorCode("0");
 						}

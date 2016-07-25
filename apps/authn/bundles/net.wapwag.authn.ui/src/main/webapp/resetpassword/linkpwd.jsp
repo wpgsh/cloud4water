@@ -62,6 +62,11 @@
     	    			showError($(".logo-title"), message);
     	    			return;
     				}
+    				if("2" == errorCode){
+    					var message = "系统繁忙，发送邮件失败，请稍候再试";
+    	    			showError($(".logo-title"), message);
+    	    			return;
+    				}
     				if("0" == errorCode){
     					window.location="/authn/resetpassword/sendsuccess.jsp";
     				}
@@ -72,6 +77,15 @@
     			}
     		});
     	});
+    	
+    	// 回车键事件 
+		// 绑定键盘按下事件  
+	    $(document).keypress(function(e) {  
+	    // 回车键事件  
+	    	if(e.which == 13) {  
+	    	   $("#submit").click();  
+	       }  
+	    }); 
     });
     
     function CheckMail(mail){

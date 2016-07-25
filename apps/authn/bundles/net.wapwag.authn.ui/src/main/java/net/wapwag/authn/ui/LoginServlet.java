@@ -36,7 +36,7 @@ import com.google.gson.Gson;
 public class LoginServlet extends HttpServlet {
 	/** LOG */
 	private static final Logger logger = LoggerFactory
-			.getLogger(AuthorizationServlet.class);
+			.getLogger(LoginServlet.class);
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)

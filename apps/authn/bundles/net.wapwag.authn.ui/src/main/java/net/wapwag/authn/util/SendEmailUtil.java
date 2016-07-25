@@ -18,6 +18,11 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import net.wapwag.authn.ui.AuthorizationServlet;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * 发送邮件工具类
  * @author gongll
@@ -26,6 +31,7 @@ import javax.mail.internet.MimeMultipart;
 public class SendEmailUtil {
 
 	private static EmailConfInfo confInfo;
+	private static final Logger logger = LoggerFactory.getLogger(SendEmailUtil.class);
 	
 	/**
 	 * 发送重置密码短信
@@ -36,13 +42,15 @@ public class SendEmailUtil {
 	 */
 	public static boolean sendEmail(String resetKey, String sendEmail,
 			String hostUrl) {
-		
-		if (null != confInfo || initConfig()) {
-			
-		}else {
-			return false;
+		logger.debug("Enter SendEmailUtil sendEmail()");
+		if (null == confInfo || StringUtil.isEmp(confInfo.body)) {
+			if (!initConfig()) {
+				logger.error("SendEmailUtil Init email config errer");
+				confInfo = null;
+				return false;
+			}
 		}
-		
+		System.out.println(confInfo.body);
 		try {
 			Session session = createSession();
 			MimeMessage message = createMessage(session, resetKey, sendEmail,
@@ -54,12 +62,11 @@ public class SendEmailUtil {
 			transport.sendMessage(message,
 					message.getRecipients(Message.RecipientType.TO));
 			transport.close();
-
-			System.out.println("发送成功!!!");
 		} catch (Exception e) {
+			logger.error(e.toString());
 			return false;
 		}
-
+		logger.debug("Exit SendEmailUtil sendEmail()");
 		return true;
 	}
 
@@ -98,7 +105,6 @@ public class SendEmailUtil {
 	private static boolean initConfig(){
 		confInfo = new EmailConfInfo(); 
 		try {
-			System.out.println(SendEmailUtil.class.getClass().getResource("/").getPath());
 			StringBuffer emailMsg = new StringBuffer("");
 			BufferedReader br = 
 					new BufferedReader(new InputStreamReader(new FileInputStream("conf"+File.separator+"email.txt"),"UTF-8"));  
