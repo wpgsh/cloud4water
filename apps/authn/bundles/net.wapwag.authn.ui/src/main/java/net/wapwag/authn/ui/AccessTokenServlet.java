@@ -49,7 +49,7 @@ public class AccessTokenServlet extends HttpServlet {
                 //check client valid
                 client = authnService.getClient(redirectURI);
 
-                String accessToken = authnService.getAccessToken(1L, client.getId(), clientSecret, code, redirectURI);
+                String accessToken = authnService.getAccessToken(client.getId(), clientSecret, code, redirectURI);
 
                 oAuthResponse = OAuthASResponse
                         .tokenResponse(HttpServletResponse.SC_OK)

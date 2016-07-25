@@ -10,21 +10,20 @@ import net.wapwag.authn.dao.model.User;
 import net.wapwag.authn.model.AccessToken;
 import net.wapwag.authn.model.UserProfile;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.oltu.oauth2.as.issuer.MD5Generator;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
+import org.apache.oltu.oauth2.as.issuer.UUIDValueGenerator;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.osgi.service.component.annotations.ServiceScope;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
-@Component
+@Component(scope=ServiceScope.SINGLETON)
 public class AuthenticationServiceImpl implements AuthenticationService {
-
-    private static final Logger logger = LoggerFactory.getLogger(AuthenticationServiceImpl.class);
 
 	@Reference
 	private UserDao userDao;
@@ -61,30 +60,34 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 ImmutableSet.copyOf(
                 		Optional.fromNullable(accessToken.getScope()).
                 		transform(String::trim).
-                		transform(s -> s.split(" ")).
+                		transform(s -> {
+                            assert s != null;
+                            return s.split(" ");
+                        }).
                 		or(new String[0])));
 	}
 
 	@Override
-	public String getAccessToken(long userId, long clientId, String clientSecret, String code, String redirectURI)
+	public String getAccessToken(long clientId, String clientSecret, String code, String redirectURI)
 			throws AuthenticationServiceException {
         try {
             RegisteredClient registeredClient = userDao.getClientByClientId(clientId);
 
             //valid clientSecret.
             if (StringUtils.isNotBlank(clientSecret) && clientSecret.equals(registeredClient.getClientSecret())) {
-                net.wapwag.authn.dao.model.AccessToken accessToken = new net.wapwag.authn.dao.model.AccessToken();
-                accessToken.setUser(userDao.getUser(userId));
-                accessToken.setRegisteredClient(registeredClient);
-                accessToken = userDao.getAccessToken(accessToken);
+                net.wapwag.authn.dao.model.AccessToken accessToken;
+                accessToken = userDao.getAccessTokenByCode(code);
 
+                if (accessToken == null) {
+                    throw new UserDaoException("Authorization code does't match");
+                }
                 if (accessToken.getExpiration() <= 0) {
                     throw new UserDaoException("Can't get access token with expired authorize code.");
                 }
 
-                //valid authorization code.
+                //validate authorization code and if match then invidate it.
                 if (StringUtils.isNotBlank(code) && code.equals(accessToken.getAuthrizationCode())) {
-                    accessToken.setAuthrizationCode("");
+                	accessToken.setExpiration(0L);
                     userDao.saveAccessToken(accessToken);
                     return accessToken.getHandle();
                 }
@@ -99,31 +102,55 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	@Override
 	public String getAuthorizationCode(long userId, long clientId, String redirectURI, Set<String> scope)
             throws AuthenticationServiceException {
-        net.wapwag.authn.dao.model.AccessToken accessToken = null;
-        long result = 0;
+        long result;
+        boolean valid = false;
+        net.wapwag.authn.dao.model.AccessToken accessToken;
+
         try {
             RegisteredClient registeredClient = userDao.getClientByClientId(clientId);
+
+            //validate client.
             if (registeredClient != null) {
-                accessToken = new net.wapwag.authn.dao.model.AccessToken();
-                accessToken.setUser(userDao.getUser(userId));
-                accessToken.setRegisteredClient(registeredClient);
 
-				OAuthIssuer oAuthIssuer = new OAuthIssuerImpl(new MD5Generator());
-                String code = oAuthIssuer.authorizationCode();
+				OAuthIssuer oAuthIssuer = new OAuthIssuerImpl(new UUIDValueGenerator());
+                String code = StringUtils.replace(oAuthIssuer.authorizationCode(), "-", "");
 
-                //find accessToken by clientId and userId
-                if (userDao.getAccessToken(accessToken) != null) {
-                    accessToken = userDao.getAccessToken(accessToken);
-                    //generate authorization code
-                    accessToken.setAuthrizationCode(code);
-                    accessToken.setExpiration(9223372036854775807L);
-                } else {
-                    accessToken.setHandle(oAuthIssuer.accessToken());
-                    accessToken.setAuthrizationCode(code);
-                    accessToken.setExpiration(9223372036854775807L);
+                //find accessToken by clientId and userId.
+                accessToken = userDao.getAccessTokenByUserIdAndClientId(userId, clientId);
+
+                //if no scope specified then set the defualt scope.
+                if (scope == null || scope.size() == 0) {
+                    scope = new HashSet<>();
+                    scope.add("user:email");
                 }
+
+                if (accessToken != null) {
+                    Set<String> originalScope = new HashSet<>(Arrays.asList(accessToken.getScope().split(" ")));
+                    //if no new scope need
+                    if (originalScope.containsAll(scope)) {
+                        scope = originalScope;
+                        valid = true;
+                    }
+                }
+
+                //if accessToken isn't exist or exist but  need new scope,refresh accessToken
+                if (!valid) {
+                    accessToken = new net.wapwag.authn.dao.model.AccessToken();
+                    accessToken.setHandle(StringUtils.replace(oAuthIssuer.accessToken(), "-", ""));
+                }
+
+                accessToken.setScope(StringUtils.join(scope, " "));
+                accessToken.setUser(userDao.getUser(userId));
+                accessToken.setRegisteredClient(userDao.getClientByClientId(clientId));
+
+                //generate authorization code
+                accessToken.setAuthrizationCode(code);
+                accessToken.setExpiration(Long.MAX_VALUE);
+
                 //update authorization code
                 result = userDao.saveAccessToken(accessToken);
+            } else {
+                throw new UserDaoException("Cannot get register client");
             }
 
             if (result > 0) {
@@ -145,7 +172,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	 *
 	 * @param redirectURI client identifier.
 	 * @return return the registered client model.
-	 * @throws AuthenticationServiceException
 	 */
 	@Override
 	public RegisteredClient getClient(String redirectURI) throws AuthenticationServiceException {

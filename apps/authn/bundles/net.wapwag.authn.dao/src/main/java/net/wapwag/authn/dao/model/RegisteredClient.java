@@ -12,7 +12,7 @@ import java.util.Set;
 public class RegisteredClient {
 
     @Id
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(name = "client_id")
@@ -21,7 +21,7 @@ public class RegisteredClient {
     @Column(name = "client_secret")
     private String clientSecret;
 
-    @Column(name = "redirect_uri")
+    @Column(name = "redirect_uri", unique = true)
     private String redirectURI;
 
     @OneToMany(mappedBy = "registeredClient", fetch = FetchType.EAGER)

@@ -98,8 +98,8 @@ public class WPGServlet extends HttpServlet {
                     .bodyForm(pair1, pair2, pair3, pair4, pair5)
                     .execute().returnContent().asString();
             Gson gson = new Gson();
-            Map<String, String> response = gson.fromJson(result, Map.class);
-            String accessToken = response.get("access_token");
+            Map response = gson.fromJson(result, Map.class);
+            String accessToken = (String) response.get("access_token");
             result = Request.Get("http://192.168.10.192:8181/services/user/1")
                     .addHeader("authorization", "Bearer " + accessToken)
                     .version(HttpVersion.HTTP_1_1)

@@ -9,9 +9,9 @@
     <meta name="author" content="">
     <title>Reset password</title>
     <!-- Bootstrap core CSS -->
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="/authn/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom styles for this template -->
-    <link href="../css/sign/sign.css" rel="stylesheet">
+    <link href="/authn/css/sign/sign.css" rel="stylesheet">
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -23,15 +23,13 @@
   <body>
 
     <div class="container">
-      <form class="form-signin" action="resetpwd.html">
+      <form class="form-signin" action="/authn/login.jsp">
         <div class="logo-div">
-            <img src="../images/wpg.png">
+            <img src="/authn/images/wpg.png">
         </div>
         <h2 class="form-signin-heading logo-title">Reset your password</h2>
-        <span class="link-span">Enter your email address and we will send you a link to reset your password.</span>
-        <label for="inputEmail" class="sr-only">Email address</label>
-        <input type="email" id="inputEmail" class="form-control" placeholder="email address" required autofocus>
-        <button class="btn btn-lg btn-success btn-block link-btn" type="submit" id="sendLink">Send password reset email</button>
+        <span class="link-span">Links have been successfully sent to your mailbox, please view and modify your password in a timely manner.</span>
+        <button class="btn btn-lg btn-default btn-block link-btn" type="submit">Return to sign in</button>
       </form>
       <div class="bottom-content">
         Copyright © 2016.Wei Pai Ge All rights reserved
@@ -40,7 +38,7 @@
 
 
     <!-- Javascript for login -->
-    <script src="../js/jquery-1.11.1.min.js"></script>
-    <script src="../js/main/index.js"></script>
+    <script src="/authn/js/jquery-1.11.1.min.js"></script>
+    <script src="/authn/js/main/index.js"></script>
   </body>
 </html>

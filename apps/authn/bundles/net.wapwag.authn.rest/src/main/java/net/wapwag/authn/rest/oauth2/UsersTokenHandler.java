@@ -25,7 +25,7 @@ public class UsersTokenHandler implements TokenHandler {
 		if (accessToken != null) {
 			return new AccessToken(
 					new Ids.UserId(accessToken.userId).toString(),
-					accessToken.expiration,
+					Long.MAX_VALUE, //access_token will never expire.
 					accessToken.clientId,
 					accessToken.handle,
 					accessToken.scope);
