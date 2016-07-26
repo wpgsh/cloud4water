@@ -68,10 +68,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	}
 
 	@Override
-	public String getAccessToken(long clientId, String clientSecret, String code, String redirectURI)
+	public String getAccessToken(String clientSecret, String code, String redirectURI)
 			throws AuthenticationServiceException {
         try {
-            RegisteredClient registeredClient = userDao.getClientByClientId(clientId);
+            RegisteredClient registeredClient = userDao.getClientByRedirectURI(redirectURI);
 
             //valid clientSecret.
             if (StringUtils.isNotBlank(clientSecret) && clientSecret.equals(registeredClient.getClientSecret())) {
@@ -79,10 +79,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 accessToken = userDao.getAccessTokenByCode(code);
 
                 if (accessToken == null) {
-                    throw new UserDaoException("Authorization code does't match");
+                    throw new AuthenticationServiceException("Invalid authorization code");
                 }
                 if (accessToken.getExpiration() <= 0) {
-                    throw new UserDaoException("Can't get access token with expired authorize code.");
+                    throw new AuthenticationServiceException("Can't get access token with expired authorize code.");
                 }
 
                 //validate authorization code and if match then invidate it.
@@ -90,24 +90,27 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 	accessToken.setExpiration(0L);
                     userDao.saveAccessToken(accessToken);
                     return accessToken.getHandle();
+                } else {
+                    throw new AuthenticationServiceException("Invalid authorization code");
                 }
+            } else {
+                throw new AuthenticationServiceException("Invalid client secret");
             }
-
-            return null;
         } catch (UserDaoException e) {
             throw new AuthenticationServiceException("Cannot get access token", e);
         }
 	}
 
 	@Override
-	public String getAuthorizationCode(long userId, long clientId, String redirectURI, Set<String> scope)
+	public String getAuthorizationCode(long userId, String redirectURI, Set<String> scope)
             throws AuthenticationServiceException {
         long result;
         boolean valid = false;
         net.wapwag.authn.dao.model.AccessToken accessToken;
 
         try {
-            RegisteredClient registeredClient = userDao.getClientByClientId(clientId);
+
+            RegisteredClient registeredClient = userDao.getClientByRedirectURI(redirectURI);
 
             //validate client.
             if (registeredClient != null) {
@@ -116,7 +119,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 String code = StringUtils.replace(oAuthIssuer.authorizationCode(), "-", "");
 
                 //find accessToken by clientId and userId.
-                accessToken = userDao.getAccessTokenByUserIdAndClientId(userId, clientId);
+                accessToken = userDao.getAccessTokenByUserIdAndClientId(userId, registeredClient.getId());
 
                 //if no scope specified then set the defualt scope.
                 if (scope == null || scope.size() == 0) {
@@ -141,7 +144,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
                 accessToken.setScope(StringUtils.join(scope, " "));
                 accessToken.setUser(userDao.getUser(userId));
-                accessToken.setRegisteredClient(userDao.getClientByClientId(clientId));
+                accessToken.setRegisteredClient(registeredClient);
 
                 //generate authorization code
                 accessToken.setAuthrizationCode(code);

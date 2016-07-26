@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.util.List;
 
@@ -103,8 +104,11 @@ public class UserDaoImpl implements UserDao {
                     .getSingleResult()
             );
         } catch (Exception e) {
-            return null;
-//            throw new UserDaoException("cannot find access token", e);
+            if (e.getCause() instanceof NoResultException) {
+                //if no result found,return null.
+                return null;
+            }
+            throw new UserDaoException("cannot find access token", e);
         }
     }
 
@@ -117,7 +121,11 @@ public class UserDaoImpl implements UserDao {
                     .getSingleResult()
             );
         } catch (Exception e) {
-            return null;
+            if (e.getCause() instanceof NoResultException) {
+                //if no result found,return null.
+                return null;
+            }
+            throw new UserDaoException("cannot find access token", e);
         }
 	}
 
@@ -132,7 +140,11 @@ public class UserDaoImpl implements UserDao {
                     .getSingleResult()
             );
         } catch (Exception e) {
-            return null;
+            if (e.getCause() instanceof NoResultException) {
+                //if no result found,return null.
+                return null;
+            }
+            throw new UserDaoException("cannot find access token", e);
         }
     }
 
