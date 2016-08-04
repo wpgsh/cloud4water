@@ -1,0 +1,72 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>net.wapwag.authn.mysql.hibernate</artifactId>
+  <packaging>bundle</packaging>
+
+  <parent>
+    <groupId>net.wapwag.authn</groupId>
+    <artifactId>root</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+
+  <dependencies>
+    <!-- Explicitly pull in MySQL DataSource -->
+    <dependency>
+      <groupId>net.wapwag.authn</groupId>
+      <artifactId>net.wapwag.authn.mysql</artifactId>
+      <version>${project.version}</version>
+      <type>bundle</type>
+    </dependency>
+    <!-- DAO model and interfaces to implement -->
+    <dependency>
+      <groupId>net.wapwag.authn</groupId>
+      <artifactId>net.wapwag.authn.dao</artifactId>
+      <version>${project.version}</version>
+      <type>bundle</type>
+    </dependency>
+    <!-- ODGi Declarative services - annotations -->
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>osgi.cmpn</artifactId>
+    </dependency>    
+    <!--  JPA API -->
+    <dependency>
+      <groupId>org.hibernate.javax.persistence</groupId>
+      <artifactId>hibernate-jpa-2.1-api</artifactId>
+    </dependency> 
+    <!-- Aries annotations to support JPA injection -->   
+    <dependency>
+      <groupId>org.apache.aries.jpa</groupId>
+      <artifactId>org.apache.aries.jpa.api</artifactId>
+    </dependency>
+    <!-- Logging framework -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Meta-Persistence>META-INF/persistence.xml</Meta-Persistence>
+            <!-- (1) poor man's way to ensure Hibernate internal classes
+                     availability 
+                 (2) explicit dependency on Hibernate model classes (see 
+                     persistence.xml) -->
+            <Import-Package>org.hibernate.jpa,net.wapwag.authn.dao.model,*</Import-Package>
+          </instructions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

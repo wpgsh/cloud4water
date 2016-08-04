@@ -16,11 +16,14 @@
   <modules>
     <module>bundles/net.wapwag.authn.h2</module>
     <module>bundles/net.wapwag.authn.h2.hibernate</module>
+    <module>bundles/net.wapwag.authn.mysql</module>
+    <module>bundles/net.wapwag.authn.mysql.hibernate</module>
     <module>bundles/net.wapwag.authn.dao</module>
     <module>bundles/net.wapwag.authn</module>
     <module>bundles/net.wapwag.authn.rest</module>
     <module>bundles/net.wapwag.authn.ui</module>
     <module>features/net.wapwag.authn-app.dev</module>
+    <module>features/net.wapwag.authn-app.pro</module>
   </modules>
 
 </project>
