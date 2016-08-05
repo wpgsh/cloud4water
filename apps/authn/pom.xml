@@ -23,7 +23,7 @@
     <module>bundles/net.wapwag.authn.rest</module>
     <module>bundles/net.wapwag.authn.ui</module>
     <module>features/net.wapwag.authn-app.dev</module>
-    <module>features/net.wapwag.authn-app.pro</module>
+    <module>features/net.wapwag.authn-app.prod</module>
   </modules>
 
 </project>

@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>net.wapwag.authn</groupId>
-  <artifactId>net.wapwag.authn-app.pro</artifactId>
+  <artifactId>net.wapwag.authn-app.prod</artifactId>
   <version>0.1.0-SNAPSHOT</version>
   <packaging>kar</packaging>
 
