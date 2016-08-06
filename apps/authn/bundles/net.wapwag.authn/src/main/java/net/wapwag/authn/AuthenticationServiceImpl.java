@@ -26,7 +26,7 @@ import java.util.Set;
 public class AuthenticationServiceImpl implements AuthenticationService {
 
 	@Reference
-	private UserDao userDao;
+	UserDao userDao;
 
 	@Override
 	public UserProfile getUserProfile(UserId uid) throws AuthenticationServiceException {
@@ -54,7 +54,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		}
         return new AccessToken(
                 accessToken.getUser().getId(),
-                accessToken.getExpiration(),
+                Long.MAX_VALUE,
                 accessToken.getRegisteredClient().getClientId(),
                 accessToken.getHandle(),
                 ImmutableSet.copyOf(

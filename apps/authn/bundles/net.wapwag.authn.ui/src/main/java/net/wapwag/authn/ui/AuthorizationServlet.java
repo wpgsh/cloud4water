@@ -44,7 +44,7 @@ public class AuthorizationServlet extends HttpServlet {
                         .errorResponse(HttpServletResponse.SC_BAD_REQUEST)
                         .error((OAuthProblemException) e)
                         .buildJSONMessage();
-            } else if (e instanceof OAuthSystemException | e instanceof AuthenticationServiceException) {
+            } else if (e instanceof OAuthSystemException || e instanceof AuthenticationServiceException) {
                 oAuthResponse = OAuthASResponse
                         .errorResponse(HttpServletResponse.SC_BAD_REQUEST)
                         .setError(OAuthError.TokenResponse.INVALID_CLIENT)
