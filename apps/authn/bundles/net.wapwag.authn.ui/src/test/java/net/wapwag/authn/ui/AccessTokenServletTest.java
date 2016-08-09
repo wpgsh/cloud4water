@@ -205,6 +205,16 @@ public class AccessTokenServletTest {
 				// TODO Auto-generated method stub
 				return null;
 			}
+
+			@Override
+			public <E extends Exception> void tx(ComplexAction<E> action, Class<E> exClass) throws E {
+				action.apply();
+			}
+
+			@Override
+			public <T, E extends Exception> T txExpr(ComplexActionWithResult<T, E> action, Class<E> exClass) throws E {
+				return action.apply();
+			}
 			
 		};
 	}	

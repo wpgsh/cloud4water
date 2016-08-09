@@ -77,35 +77,37 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	@Override
 	public String getAccessToken(String clientSecret, String code, String redirectURI)
 			throws AuthenticationServiceException {
-        try {
-            RegisteredClient registeredClient = userDao.getClientByRedirectURI(redirectURI);
-
-            //valid clientSecret.
-            if (StringUtils.isNotBlank(clientSecret) && clientSecret.equals(registeredClient.getClientSecret())) {
-                net.wapwag.authn.dao.model.AccessToken accessToken;
-                accessToken = userDao.getAccessTokenByCode(code);
-
-                if (accessToken == null) {
-                    throw new AuthenticationServiceException("Invalid authorization code");
-                }
-                if (accessToken.getExpiration() <= 0) {
-                    throw new AuthenticationServiceException("Can't get access token with expired authorize code.");
-                }
-
-                //validate authorization code and if match then invalidate it.
-                if (StringUtils.isNotBlank(code) && code.equals(accessToken.getAuthrizationCode())) {
-                	accessToken.setExpiration(0L);
-                    userDao.saveAccessToken(accessToken);
-                    return accessToken.getHandle();
-                } else {
-                    throw new AuthenticationServiceException("Invalid authorization code");
-                }
-            } else {
-                throw new AuthenticationServiceException("Invalid client secret");
-            }
-        } catch (UserDaoException e) {
-            throw new AuthenticationServiceException("Cannot get access token", e);
-        }
+		return userDao.txExpr(() -> {
+	        try {
+	            RegisteredClient registeredClient = userDao.getClientByRedirectURI(redirectURI);
+	
+	            //valid clientSecret.
+	            if (StringUtils.isNotBlank(clientSecret) && clientSecret.equals(registeredClient.getClientSecret())) {
+	                net.wapwag.authn.dao.model.AccessToken accessToken;
+	                accessToken = userDao.getAccessTokenByCode(code);
+	
+	                if (accessToken == null) {
+	                    throw new AuthenticationServiceException("Invalid authorization code");
+	                }
+	                if (accessToken.getExpiration() <= 0) {
+	                    throw new AuthenticationServiceException("Can't get access token with expired authorize code.");
+	                }
+	
+	                //validate authorization code and if match then invalidate it.
+	                if (StringUtils.isNotBlank(code) && code.equals(accessToken.getAuthrizationCode())) {
+	                	accessToken.setExpiration(0L);
+	                    userDao.saveAccessToken(accessToken);
+	                    return accessToken.getHandle();
+	                } else {
+	                    throw new AuthenticationServiceException("Invalid authorization code");
+	                }
+	            } else {
+	                throw new AuthenticationServiceException("Invalid client secret");
+	            }
+	        } catch (UserDaoException e) {
+	            throw new AuthenticationServiceException("Cannot get access token", e);
+	        }
+		}, AuthenticationServiceException.class);
 	}
 
 	@Override
