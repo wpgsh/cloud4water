@@ -69,6 +69,7 @@
     <apache.httpclient.3x.version>3.1.0</apache.httpclient.3x.version>
     <apache.httpcore.version>4.4.4</apache.httpcore.version>
     <apache.oltu>1.0.2</apache.oltu>
+    <jetty.version>9.2.13.v20150730</jetty.version>
     <tw.build.ext></tw.build.ext>
   </properties>
 
@@ -175,6 +176,16 @@
         <groupId>org.apache.oltu.oauth2</groupId>
         <artifactId>org.apache.oltu.oauth2.authzserver</artifactId>
         <version>${apache.oltu}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-server</artifactId>
+        <version>${jetty.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-servlet</artifactId>
+        <version>${jetty.version}</version>
       </dependency>
       <dependency>
         <groupId>junit</groupId>

@@ -27,6 +27,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 	@Reference
 	UserDao userDao;
+	
+	/**
+	 * FOR TEST PURPOSES ONLY: override OSGi dependency injection
+	 */
+	public void setUserDao(UserDao userDao) {
+		this.userDao = userDao;
+	}
 
 	@Override
 	public UserProfile getUserProfile(UserId uid) throws AuthenticationServiceException {
@@ -85,7 +92,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     throw new AuthenticationServiceException("Can't get access token with expired authorize code.");
                 }
 
-                //validate authorization code and if match then invidate it.
+                //validate authorization code and if match then invalidate it.
                 if (StringUtils.isNotBlank(code) && code.equals(accessToken.getAuthrizationCode())) {
                 	accessToken.setExpiration(0L);
                     userDao.saveAccessToken(accessToken);
