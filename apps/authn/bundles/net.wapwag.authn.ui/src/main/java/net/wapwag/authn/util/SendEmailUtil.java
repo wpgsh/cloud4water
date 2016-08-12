@@ -1,14 +1,7 @@
 package net.wapwag.authn.util;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.mail.Message;
 import javax.mail.Session;
@@ -17,14 +10,13 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-
-import net.wapwag.authn.ui.AuthorizationServlet;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 /**
- * ·¢ËÍÓÊ¼ş¹¤¾ßÀà
+ * å‘é€é‚®ä»¶å·¥å…·ç±»
  * @author gongll
  *
  */
@@ -34,7 +26,7 @@ public class SendEmailUtil {
 	private static final Logger logger = LoggerFactory.getLogger(SendEmailUtil.class);
 	
 	/**
-	 * ·¢ËÍÖØÖÃÃÜÂë¶ÌĞÅ
+	 * å‘é€é‡ç½®å¯†ç çŸ­ä¿¡
 	 * @param resetKey
 	 * @param sendEmail
 	 * @param hostUrl

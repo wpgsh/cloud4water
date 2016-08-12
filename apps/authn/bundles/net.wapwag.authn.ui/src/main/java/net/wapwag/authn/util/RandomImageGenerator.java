@@ -1,36 +1,34 @@
 package net.wapwag.authn.util;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Random;
-import javax.imageio.ImageIO;
 
 /**
- * ÑéÖ¤ÂëÉú³ÉÀà
+ * éªŒè¯ç ç”Ÿæˆç±»
  * 
  * @author xiaohu
  *
  */
 public class RandomImageGenerator {
-	// ´´½¨Random¶ÔÏó
+	// åˆ›å»ºRandomå¯¹è±¡
 	static Random random = new Random();
 
-	// Ëæ»úÉú³É°üº¬ÑéÖ¤Âë×Ö·û´®
+	// éšæœºç”ŸæˆåŒ…å«éªŒè¯ç å­—ç¬¦ä¸²
 	public static String random(int num) {
-		// ³õÊ¼»¯ÖÖ×Ó
+		// åˆå§‹åŒ–ç§å­
 		String[] str = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a",
 				"b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
 				"n", "p", "q", "r", "s", "t" };
 		int number = str.length;
-		// ½ÓÊÕËæ»ú×Ö·û
+		// æ¥æ”¶éšæœºå­—ç¬¦
 		String text = "";
-		// Ëæ»ú²úÉú4¸ö×Ö·ûµÄ×Ö·û´®
+		// éšæœºäº§ç”Ÿ4ä¸ªå­—ç¬¦çš„å­—ç¬¦ä¸²
 		for (int i = 0; i < num; i++) {
 			text += str[random.nextInt(number)];
 		}
@@ -38,7 +36,7 @@ public class RandomImageGenerator {
 	}
 
 	/**
-	 * Ëæ»ú²úÉú¶¨ÒåµÄÑÕÉ«
+	 * éšæœºäº§ç”Ÿå®šä¹‰çš„é¢œè‰²
 	 * 
 	 * @return
 	 */
@@ -54,7 +52,7 @@ public class RandomImageGenerator {
 	}
 
 	/**
-	 * ²úÉúËæ»ú×ÖÌå
+	 * äº§ç”Ÿéšæœºå­—ä½“
 	 * 
 	 * @return
 	 */
@@ -70,49 +68,49 @@ public class RandomImageGenerator {
 	}
 
 	/**
-	 * Éú³ÉÍ¼Æ¬
+	 * ç”Ÿæˆå›¾ç‰‡
 	 * 
 	 * @throws IOException
 	 */
 	public static void render(String randomStr, OutputStream out, int width,
 			int height) throws IOException {
-		// ÔÚÄÚ´æÖĞ´´½¨Í¼Ïñ
+		// åœ¨å†…å­˜ä¸­åˆ›å»ºå›¾åƒ
 		BufferedImage bi = new BufferedImage(width, height,
 				BufferedImage.TYPE_BYTE_INDEXED);
-		// »ñÈ¡Í¼ĞÎÉÏÏÂÎÄ
+		// è·å–å›¾å½¢ä¸Šä¸‹æ–‡
 		Graphics2D g = (Graphics2D) bi.getGraphics();
-		// »°±ß¿ò
+		// è¯è¾¹æ¡†
 		g.setColor(Color.white);
 		g.fillRect(0, 0, width, height);
 		g.setFont(getFont());
 		g.setColor(Color.BLACK);
-		// »­ÈÏÖ¤Âë£¬Ã¿¸öÈÏÖ¤ÂëÔÚ²»Í¬µÄË®Æ½Î»ÖÃ
+		// ç”»è®¤è¯ç ï¼Œæ¯ä¸ªè®¤è¯ç åœ¨ä¸åŒçš„æ°´å¹³ä½ç½®
 		String str1[] = new String[randomStr.length()];
 		for (int i = 0; i < str1.length; i++) {
 			str1[i] = randomStr.substring(i, i + 1);
 			int w = 0;
 			int x = (i + 1) % 3;
-			// Ëæ»úÉú³ÉÑéÖ¤Âë×Ö·ûË®Æ½Æ«ÒÆÁ¿
+			// éšæœºç”ŸæˆéªŒè¯ç å­—ç¬¦æ°´å¹³åç§»é‡
 			if (x == random.nextInt(7)) {
 				w = 30 - random.nextInt(7);
 			} else {
 				w = 30 + random.nextInt(7);
 			}
-			// Ëæ»úÉú³ÉÑÕÉ«
+			// éšæœºç”Ÿæˆé¢œè‰²
 			g.setColor(getRandColor());
 			g.drawString(str1[i], 20 * i + 10, w);
 		}
-		// Ëæ»ú²úÉú¸ÉÈÅµã£¬²¢ÓÃ²»Í¬µÄÑÕÉ«±íÊ¾£¬ÊÂÍ¼ÏñµÄÈÏÖ¤Âë²»Ò×±»ÆäËû³ÌĞòÌ½²âµ½
+		// éšæœºäº§ç”Ÿå¹²æ‰°ç‚¹ï¼Œå¹¶ç”¨ä¸åŒçš„é¢œè‰²è¡¨ç¤ºï¼Œäº‹å›¾åƒçš„è®¤è¯ç ä¸æ˜“è¢«å…¶ä»–ç¨‹åºæ¢æµ‹åˆ°
 		for (int i = 0; i < 100; i++) {
 			int x = random.nextInt(width);
 			int y = random.nextInt(height);
 			Color color = new Color(random.nextInt(255), random.nextInt(255),
 					random.nextInt(255));
-			// Ëæ»ú»­¸÷ÖÖÑÕÉ«µÄÏß
+			// éšæœºç”»å„ç§é¢œè‰²çš„çº¿
 			g.setColor(color);
 			g.drawOval(x, y, 0, 0);
 		}
-		// »­¸ÉÈÅÏß
+		// ç”»å¹²æ‰°çº¿
 		for (int i = 0; i < 15; i++) {
 			int x = random.nextInt(width);
 			int y = random.nextInt(height);
@@ -120,21 +118,21 @@ public class RandomImageGenerator {
 			int y1 = random.nextInt(height);
 			Color color = new Color(random.nextInt(255), random.nextInt(255),
 					random.nextInt(255));
-			// Ëæ»ú»­¸÷ÖÖÑÕÉ«Ïß
+			// éšæœºç”»å„ç§é¢œè‰²çº¿
 			g.setColor(color);
 			g.drawLine(x, y, x1, y1);
 		}
-		// Í¼ÏñÉúĞ§
+		// å›¾åƒç”Ÿæ•ˆ
 		g.dispose();
-		// Êä³öÒ³Ãæ
+		// è¾“å‡ºé¡µé¢
 		ImageIO.write(bi, "jpg", out);
 	}
 
 	public static void main(String[] args) throws FileNotFoundException,
 			IOException {
-		// »ñÈ¡Ëæ»ú×Ö·û´®
+		// è·å–éšæœºå­—ç¬¦ä¸²
 		String randomStr = random(5);
-		// Éú³ÉÍ¼Æ¬
+		// ç”Ÿæˆå›¾ç‰‡
 		render(randomStr, new FileOutputStream("D:\\test.jpg"), 130, 40);
 	}
 }

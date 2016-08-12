@@ -3,7 +3,7 @@ package net.wapwag.authn.info;
 import javax.xml.bind.annotation.XmlElement;
 
 /**
- * 用户信息
+ * 鐢ㄦ埛淇℃伅
  * 
  * @author gongll
  *
