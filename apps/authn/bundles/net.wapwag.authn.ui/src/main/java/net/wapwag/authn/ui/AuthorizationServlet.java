@@ -36,26 +36,27 @@ public class AuthorizationServlet extends HttpServlet {
     private static final String AUTHORIZE_PATH = "/authn/login?client_id=%s" +
             "&return_to=/authn/authorize?response_type=%s&redirect_uri=%s&client_id=%s&scope=%s";
 
-    public static final void buildException(OAuthResponse oAuthResponse, Exception e, HttpServletResponse response) {
+    public static void buildException(OAuthResponse oAuthResponse, Exception e, HttpServletResponse response, String redirectURI) {
         try {
 
             if (e instanceof OAuthProblemException) {
                 oAuthResponse = OAuthASResponse
-                        .errorResponse(HttpServletResponse.SC_BAD_REQUEST)
+                        .errorResponse(HttpServletResponse.SC_FOUND)
                         .error((OAuthProblemException) e)
-                        .buildJSONMessage();
+                        .location(((OAuthProblemException) e).getRedirectUri())
+                        .buildQueryMessage();
             } else if (e instanceof OAuthSystemException || e instanceof AuthenticationServiceException) {
                 oAuthResponse = OAuthASResponse
-                        .errorResponse(HttpServletResponse.SC_BAD_REQUEST)
+                        .errorResponse(HttpServletResponse.SC_FOUND)
                         .setError(OAuthError.TokenResponse.INVALID_CLIENT)
                         .setErrorDescription(e.getMessage())
-                        .buildJSONMessage();
+                        .location(redirectURI)
+                        .buildQueryMessage();
             } else {
                 throw e;
             }
 
-            response.setStatus(oAuthResponse.getResponseStatus());
-            response.getWriter().write(oAuthResponse.getBody());
+            response.sendRedirect(oAuthResponse.getLocationUri());
         } catch (Exception ex) {
             if (logger.isErrorEnabled()) {
                 logger.error(ExceptionUtils.getStackTrace(e));
@@ -67,6 +68,7 @@ public class AuthorizationServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         OSGIUtil.useAuthenticationService(authnService  -> {
             OAuthResponse oAuthResponse = null;
+            String redirectURI = null;
 
             HttpSession session = request.getSession();
 
@@ -80,7 +82,7 @@ public class AuthorizationServlet extends HttpServlet {
                 String code = null;
                 String type = oauthRequest.getResponseType();
                 String clientId = oauthRequest.getClientId();
-                String redirectURI = oauthRequest.getRedirectURI();
+                redirectURI = oauthRequest.getRedirectURI();
                 Set<String> scopes = oauthRequest.getScopes();
 
                 if (authenticated) {
@@ -103,7 +105,7 @@ public class AuthorizationServlet extends HttpServlet {
                     response.sendRedirect(redirectURI);
                 }
             } catch (Exception e) {
-                buildException(oAuthResponse, e, response);
+                buildException(oAuthResponse, e, response, redirectURI);
             }
 
 		}, AuthorizationServlet.class);

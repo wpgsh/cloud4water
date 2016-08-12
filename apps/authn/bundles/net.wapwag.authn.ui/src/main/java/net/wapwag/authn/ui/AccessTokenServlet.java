@@ -27,7 +27,9 @@ public class AccessTokenServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         OSGIUtil.useAuthenticationService(authnService -> {
+            String redirectURI = null;
             OAuthResponse oAuthResponse = null;
+
 
             try {
 
@@ -35,7 +37,7 @@ public class AccessTokenServlet extends HttpServlet {
 
                 String code = oAuthTokenRequest.getCode();
                 String clientSecret = oAuthTokenRequest.getClientSecret();
-                String redirectURI = oAuthTokenRequest.getRedirectURI();
+                redirectURI = oAuthTokenRequest.getRedirectURI();
 
                 String accessToken = authnService.getAccessToken(clientSecret, code, redirectURI);
 
@@ -48,7 +50,7 @@ public class AccessTokenServlet extends HttpServlet {
                 response.setStatus(oAuthResponse.getResponseStatus());
                 response.getWriter().write(oAuthResponse.getBody());
             } catch (Exception e) {
-                AuthorizationServlet.buildException(oAuthResponse, e, response);
+                AuthorizationServlet.buildException(oAuthResponse, e, response, redirectURI);
             }
         }, AccessTokenServlet.class);
     }
