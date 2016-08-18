@@ -1,11 +1,9 @@
 package net.wapwag.authn.ui;
 
-import net.wapwag.authn.AuthenticationServiceException;
 import net.wapwag.authn.util.OSGIUtil;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.oltu.oauth2.as.request.OAuthAuthzRequest;
 import org.apache.oltu.oauth2.as.response.OAuthASResponse;
-import org.apache.oltu.oauth2.common.error.OAuthError;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.OAuthResponse;
@@ -22,7 +20,12 @@ import java.io.IOException;
 import java.util.Set;
 
 /**
- * http://localhost:8181/authn/authorize?response_type=code&client_id=client1&redirect_uri=http://www.baidu.com&scope=1&scope=2&scope=3
+ * http://localhost:8181/authn/authorize
+ * ?response_type=code
+ * &client_id=client1
+ * &redirect_uri=http://www.baidu.com
+ * &state=wapwag
+ * &scope=1&scope=2&scope=3
  * Authorization servlet.
  */
 @WebServlet(urlPatterns = "/authorize", name = "AuthorizationServlet")
@@ -35,34 +38,6 @@ public class AuthorizationServlet extends HttpServlet {
      */
     private static final String AUTHORIZE_PATH = "/authn/login?client_id=%s" +
             "&return_to=/authn/authorize?response_type=%s&redirect_uri=%s&client_id=%s&scope=%s";
-
-    public static void buildException(OAuthResponse oAuthResponse, Exception e, HttpServletResponse response, String redirectURI) {
-        try {
-
-            if (e instanceof OAuthProblemException) {
-                oAuthResponse = OAuthASResponse
-                        .errorResponse(HttpServletResponse.SC_FOUND)
-                        .error((OAuthProblemException) e)
-                        .location(((OAuthProblemException) e).getRedirectUri())
-                        .buildQueryMessage();
-            } else if (e instanceof OAuthSystemException || e instanceof AuthenticationServiceException) {
-                oAuthResponse = OAuthASResponse
-                        .errorResponse(HttpServletResponse.SC_FOUND)
-                        .setError(OAuthError.TokenResponse.INVALID_CLIENT)
-                        .setErrorDescription(e.getMessage())
-                        .location(redirectURI)
-                        .buildQueryMessage();
-            } else {
-                throw e;
-            }
-
-            response.sendRedirect(oAuthResponse.getLocationUri());
-        } catch (Exception ex) {
-            if (logger.isErrorEnabled()) {
-                logger.error(ExceptionUtils.getStackTrace(e));
-            }
-        }
-    }
 
 	@Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -105,12 +80,35 @@ public class AuthorizationServlet extends HttpServlet {
                     response.sendRedirect(redirectURI);
                 }
             } catch (Exception e) {
-                buildException(oAuthResponse, e, response, redirectURI);
+                if (e instanceof OAuthProblemException) {
+                    try {
+                        oAuthResponse = OAuthASResponse
+                                .errorResponse(HttpServletResponse.SC_FOUND)
+                                .error((OAuthProblemException) e)
+                                .location(((OAuthProblemException) e).getRedirectUri())
+                                .buildQueryMessage();
+                    } catch (OAuthSystemException ex) {
+                        if (logger.isErrorEnabled()) {
+                            logger.error(ExceptionUtils.getStackTrace(ex));
+                        }
+                    }
+                } else {
+                    if (logger.isErrorEnabled()) {
+                        logger.error(ExceptionUtils.getStackTrace(e));
+                    }
+                }
+            } finally {
+                if (oAuthResponse != null) {
+                    try {
+                        response.sendRedirect(oAuthResponse.getLocationUri());
+                    } catch (IOException e) {
+                        if (logger.isErrorEnabled()) {
+                            logger.error(ExceptionUtils.getStackTrace(e));
+                        }
+                    }
+                }
             }
 
 		}, AuthorizationServlet.class);
-
-
     }
-
 }

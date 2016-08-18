@@ -1,7 +1,9 @@
 package net.wapwag.authn;
 
+import com.eaio.uuid.UUID;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import net.wapwag.authn.Ids.UserId;
 import net.wapwag.authn.dao.UserDao;
 import net.wapwag.authn.dao.UserDaoException;
@@ -10,13 +12,14 @@ import net.wapwag.authn.dao.model.User;
 import net.wapwag.authn.model.AccessToken;
 import net.wapwag.authn.model.UserProfile;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;
-import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
-import org.apache.oltu.oauth2.as.issuer.UUIDValueGenerator;
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.oltu.oauth2.common.error.OAuthError;
+import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ServiceScope;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -24,6 +27,8 @@ import java.util.Set;
 
 @Component(scope=ServiceScope.SINGLETON)
 public class AuthenticationServiceImpl implements AuthenticationService {
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthenticationServiceImpl.class);
 
 	@Reference
 	UserDao userDao;
@@ -75,106 +80,126 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	}
 
 	@Override
-	public String getAccessToken(String clientSecret, String code, String redirectURI)
-			throws AuthenticationServiceException {
+	public String getAccessToken(String cliendId, String clientSecret, String code, String redirectURI)
+			throws OAuthProblemException {
 		return userDao.txExpr(() -> {
 	        try {
 	            RegisteredClient registeredClient = userDao.getClientByRedirectURI(redirectURI);
-	
-	            //valid clientSecret.
-	            if (StringUtils.isNotBlank(clientSecret) && clientSecret.equals(registeredClient.getClientSecret())) {
+
+				if (registeredClient == null) {
+				    throw OAuthProblemException.error(OAuthError.TokenResponse.INVALID_CLIENT, "unknow client");
+                }
+
+	            //valid clientSecret and clientId.
+	            if (StringUtils.isNotBlank(cliendId)
+                        && StringUtils.isNotBlank(clientSecret)
+                        && clientSecret.equals(registeredClient.getClientId())
+                        && clientSecret.equals(registeredClient.getClientSecret())) {
+
 	                net.wapwag.authn.dao.model.AccessToken accessToken;
 	                accessToken = userDao.getAccessTokenByCode(code);
-	
-	                if (accessToken == null) {
-	                    throw new AuthenticationServiceException("Invalid authorization code");
-	                }
-	                if (accessToken.getExpiration() <= 0) {
-	                    throw new AuthenticationServiceException("Can't get access token with expired authorize code.");
-	                }
-	
-	                //validate authorization code and if match then invalidate it.
-	                if (StringUtils.isNotBlank(code) && code.equals(accessToken.getAuthrizationCode())) {
-	                	accessToken.setExpiration(0L);
-	                    userDao.saveAccessToken(accessToken);
-	                    return accessToken.getHandle();
-	                } else {
-	                    throw new AuthenticationServiceException("Invalid authorization code");
-	                }
+
+                    //validate authorization code and if match then invalidate it.
+                    if (accessToken != null
+                            && StringUtils.isNotBlank(code)
+                            && StringUtils.isNotBlank(accessToken.getAuthrizationCode())
+                            && accessToken.getExpiration() > 0
+                            && code.equals(accessToken.getAuthrizationCode())) {
+
+                        accessToken.setExpiration(0L);
+                        userDao.saveAccessToken(accessToken);
+                        return accessToken.getHandle();
+                    } else {
+                        throw OAuthProblemException.error(OAuthError.TokenResponse.INVALID_GRANT,
+                                "invalid or expired authorization code");
+                    }
 	            } else {
-	                throw new AuthenticationServiceException("Invalid client secret");
+	                throw OAuthProblemException.error(OAuthError.TokenResponse.INVALID_CLIENT,
+                            "error client credential");
 	            }
 	        } catch (UserDaoException e) {
-	            throw new AuthenticationServiceException("Cannot get access token", e);
+                if (logger.isErrorEnabled()) {
+                    logger.error(ExceptionUtils.getStackTrace(e));
+                }
+	            throw OAuthProblemException.error(OAuthError.CodeResponse.SERVER_ERROR,
+                        "authorization server encountered an unexpected exception");
 	        }
-		}, AuthenticationServiceException.class);
+		}, OAuthProblemException.class);
 	}
 
 	@Override
-	public String getAuthorizationCode(long userId, String redirectURI, Set<String> scope)
-            throws AuthenticationServiceException {
-        long result;
-        boolean valid = false;
-        net.wapwag.authn.dao.model.AccessToken accessToken;
+	public String getAuthorizationCode(long userId, String redirectURI, final Set<String> scope)
+            throws OAuthProblemException {
+        return userDao.txExpr(() -> {
+            long result;
+            boolean valid = false;
+            Set<String> defaultScope = Sets.newHashSet();
+            net.wapwag.authn.dao.model.AccessToken accessToken;
 
-        try {
+            try {
 
-            RegisteredClient registeredClient = userDao.getClientByRedirectURI(redirectURI);
+                RegisteredClient registeredClient = userDao.getClientByRedirectURI(redirectURI);
 
-            //validate client.
-            if (registeredClient != null) {
+                //validate client.
+                if (registeredClient != null) {
 
-				OAuthIssuer oAuthIssuer = new OAuthIssuerImpl(new UUIDValueGenerator());
-                String code = StringUtils.replace(oAuthIssuer.authorizationCode(), "-", "");
+                    String code = StringUtils.replace(new UUID().toString(), "-", "");
 
-                //find accessToken by clientId and userId.
-                accessToken = userDao.getAccessTokenByUserIdAndClientId(userId, registeredClient.getId());
+                    //find accessToken by clientId and userId.
+                    accessToken = userDao.getAccessTokenByUserIdAndClientId(userId, registeredClient.getId());
 
-                //if no scope specified then set the defualt scope.
-                if (scope == null || scope.size() == 0) {
-                    scope = new HashSet<>();
-                    scope.add("user:email");
-                }
-
-                if (accessToken != null) {
-                    Set<String> originalScope = new HashSet<>(Arrays.asList(accessToken.getScope().split(" ")));
-                    //if no new scope need
-                    if (originalScope.containsAll(scope)) {
-                        scope = originalScope;
-                        valid = true;
+                    if ("wapwag".equals(registeredClient.getClientVendor())) {
+                        //implicit scope
+                        defaultScope.add("user:*");
+                    } else if (scope == null || scope.size() == 0) {
+                        throw OAuthProblemException.error(OAuthError.CodeResponse.INVALID_SCOPE,
+                                "requested scope is invalid");
+                    } else {
+                            defaultScope = scope;
+                        if (accessToken != null) {
+                            Set<String> originalScope = new HashSet<>(Arrays.asList(accessToken.getScope().split(" ")));
+                            //if no new scope need
+                            if (originalScope.containsAll(defaultScope)) {
+                                defaultScope = originalScope;
+                                valid = true;
+                            }
+                        }
                     }
+
+                    //if accessToken isn't exist or exist but need new scope,refresh accessToken
+                    if (!valid) {
+                        accessToken = new net.wapwag.authn.dao.model.AccessToken();
+                        accessToken.setHandle(StringUtils.replace(new UUID().toString(), "-", ""));
+                    }
+
+                    accessToken.setScope(StringUtils.join(scope, " "));
+                    accessToken.setUser(userDao.getUser(userId));
+                    accessToken.setRegisteredClient(registeredClient);
+
+                    //generate authorization code
+                    accessToken.setAuthrizationCode(code);
+                    accessToken.setExpiration(Long.MAX_VALUE);
+
+                    //update authorization code
+                    result = userDao.saveAccessToken(accessToken);
+                } else {
+                    throw OAuthProblemException.error(OAuthError.CodeResponse.UNAUTHORIZED_CLIENT,
+                            "error client credential");
                 }
 
-                //if accessToken isn't exist or exist but  need new scope,refresh accessToken
-                if (!valid) {
-                    accessToken = new net.wapwag.authn.dao.model.AccessToken();
-                    accessToken.setHandle(StringUtils.replace(oAuthIssuer.accessToken(), "-", ""));
+                if (result > 0) {
+                    return accessToken.getAuthrizationCode();
+                } else {
+                    throw new UserDaoException("Can't save authorization code");
                 }
-
-                accessToken.setScope(StringUtils.join(scope, " "));
-                accessToken.setUser(userDao.getUser(userId));
-                accessToken.setRegisteredClient(registeredClient);
-
-                //generate authorization code
-                accessToken.setAuthrizationCode(code);
-                accessToken.setExpiration(Long.MAX_VALUE);
-
-                //update authorization code
-                result = userDao.saveAccessToken(accessToken);
-            } else {
-                throw new UserDaoException("Cannot get register client");
+            } catch (UserDaoException e) {
+                if (logger.isErrorEnabled()) {
+                    logger.error(ExceptionUtils.getStackTrace(e));
+                }
+                throw OAuthProblemException.error(OAuthError.CodeResponse.SERVER_ERROR,
+                        "authorization server encountered an unexpected exception");
             }
-
-            if (result > 0) {
-                return accessToken.getAuthrizationCode();
-            } else {
-                throw new UserDaoException("Can't save authorization code");
-            }
-        } catch (UserDaoException e) {
-            throw new AuthenticationServiceException("Cannot get register client", e);
-        } catch (OAuthSystemException e) {
-            throw new AuthenticationServiceException("Cannot get authorization code", e);
-        }
+        }, OAuthProblemException.class);
     }
 
 	/**

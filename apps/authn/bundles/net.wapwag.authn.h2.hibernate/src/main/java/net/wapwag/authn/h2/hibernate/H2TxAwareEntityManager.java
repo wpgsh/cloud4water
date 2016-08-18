@@ -67,14 +67,15 @@ public class H2TxAwareEntityManager implements TxAwareEntityManager {
             + "  id bigint primary key AUTO_INCREMENT,"
             + "  client_id varchar(32),"
             + "  client_secret varchar(32),"
+            + "  client_vendor varchar(32),"
             + "  redirect_uri varchar(100) unique"
             + ")",
             //5
-            "insert into registered_clients(client_id, client_secret, redirect_uri) values('client1', 'dfdjfjkdkj23klaa1', 'http://www.baidu.com')",
-            "insert into registered_clients(client_id, client_secret, redirect_uri) values('client2', 'dfdjfjkdkj23klaa2', 'http://www.baidu.com2')",
-            "insert into registered_clients(client_id, client_secret, redirect_uri) values('client3', 'dfdjfjkdkj23klaa3', 'http://www.baidu.com3')",
-            "insert into registered_clients(client_id, client_secret, redirect_uri) values('client4', 'dfdjfjkdkj23klaa4', 'http://www.baidu.com4')",
-            "insert into registered_clients(client_id, client_secret, redirect_uri) values('wpgclient', 'dfdjfjkdkj23klaa1', 'http://localhost:8181/authn/wpg')"
+            "insert into registered_clients(client_id, client_secret, redirect_uri, client_vendor) values('client1', 'dfdjfjkdkj23klaa1', 'http://www.baidu.com', 'wapwag')",
+            "insert into registered_clients(client_id, client_secret, redirect_uri, client_vendor) values('client2', 'dfdjfjkdkj23klaa2', 'http://www.baidu.com2', 'wapwag')",
+            "insert into registered_clients(client_id, client_secret, redirect_uri, client_vendor) values('client3', 'dfdjfjkdkj23klaa3', 'http://www.baidu.com3', 'wapwag')",
+            "insert into registered_clients(client_id, client_secret, redirect_uri, client_vendor) values('client4', 'dfdjfjkdkj23klaa4', 'http://www.baidu.com4', 'wapwag')",
+            "insert into registered_clients(client_id, client_secret, redirect_uri, client_vendor) values('wpgclient', 'dfdjfjkdkj23klaa1', 'http://localhost:8181/authn/wpg', 'wapwag')"
         );
 
 	@Reference(target="(osgi.unit.name=user-jpa)")

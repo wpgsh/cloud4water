@@ -1,8 +1,12 @@
 package net.wapwag.authn.ui;
 
 import net.wapwag.authn.util.OSGIUtil;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.oltu.oauth2.as.request.OAuthTokenRequest;
 import org.apache.oltu.oauth2.as.response.OAuthASResponse;
+import org.apache.oltu.oauth2.common.OAuth;
+import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.message.OAuthResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,24 +37,59 @@ public class AccessTokenServlet extends HttpServlet {
 
             try {
 
+                String auth = request.getHeader("Authorization");
+
+                if (StringUtils.isBlank(auth)) {
+                    response.setHeader("WWW-Authenticate", "BASIC realm=\"Client Credential\"");
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                }
+
                 OAuthTokenRequest oAuthTokenRequest = new OAuthTokenRequest(request);
 
+                String clientId = oAuthTokenRequest.getClientId();
                 String code = oAuthTokenRequest.getCode();
                 String clientSecret = oAuthTokenRequest.getClientSecret();
                 redirectURI = oAuthTokenRequest.getRedirectURI();
 
-                String accessToken = authnService.getAccessToken(clientSecret, code, redirectURI);
+                String accessToken = authnService.getAccessToken(clientId, clientSecret, code, redirectURI);
 
                 oAuthResponse = OAuthASResponse
                         .tokenResponse(HttpServletResponse.SC_OK)
+                        .setTokenType(OAuth.OAUTH_HEADER_NAME)
                         .setAccessToken(accessToken)
-                        .setExpiresIn("3600")
+                        .setExpiresIn(String.valueOf(Long.MAX_VALUE))
                         .buildJSONMessage();
-
-                response.setStatus(oAuthResponse.getResponseStatus());
-                response.getWriter().write(oAuthResponse.getBody());
             } catch (Exception e) {
-                AuthorizationServlet.buildException(oAuthResponse, e, response, redirectURI);
+                if (e instanceof OAuthProblemException) {
+                    try {
+                        oAuthResponse = OAuthASResponse
+                                .errorResponse(HttpServletResponse.SC_BAD_REQUEST)
+                                .error((OAuthProblemException) e)
+                                .location(((OAuthProblemException) e).getRedirectUri())
+                                .buildJSONMessage();
+                    } catch (Exception ex) {
+                        if (logger.isErrorEnabled()) {
+                            logger.error(ExceptionUtils.getStackTrace(ex));
+                        }
+                    }
+                } else {
+                    if (logger.isErrorEnabled()) {
+                        logger.error(ExceptionUtils.getStackTrace(e));
+                    }
+                }
+            } finally {
+                if (oAuthResponse != null) {
+                    response.setHeader("Cache-Type", "no-store");
+                    response.setHeader("Pragma", "no-cache");
+                    response.setStatus(oAuthResponse.getResponseStatus());
+                    try {
+                        response.getWriter().write(oAuthResponse.getBody());
+                    } catch (IOException e) {
+                        if (logger.isErrorEnabled()) {
+                            logger.error(ExceptionUtils.getStackTrace(e));
+                        }
+                    }
+                }
             }
         }, AccessTokenServlet.class);
     }

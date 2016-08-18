@@ -24,6 +24,9 @@ public class RegisteredClient {
     @Column(name = "redirect_uri", unique = true)
     private String redirectURI;
 
+    @Column(name = "client_vendor")
+    private String clientVendor;
+
     @OneToMany(mappedBy = "registeredClient", fetch = FetchType.EAGER)
     private Set<AccessToken> accessTokenList;
 
@@ -33,6 +36,14 @@ public class RegisteredClient {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getClientVendor() {
+        return clientVendor;
+    }
+
+    public void setClientVendor(String clientVendor) {
+        this.clientVendor = clientVendor;
     }
 
     public String getClientId() {
