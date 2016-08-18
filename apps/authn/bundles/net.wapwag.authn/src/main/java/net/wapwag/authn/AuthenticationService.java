@@ -15,12 +15,13 @@ public interface AuthenticationService {
 	 * Get authorization code if the user has not been authorization
 	 *
 	 * @param userId      The user ID who has logined
+	 * @param cliendId The client id registered in the resource server
 	 * @param redirectURI The URL in your application where users will be sent after authorization.
 	 * @param scope       For users who have authorized scopes for the application.
 	 * @return Return authorization code.
 	 * @throws OAuthProblemException
 	 */
-	String getAuthorizationCode(long userId, String redirectURI, Set<String> scope)
+	String getAuthorizationCode(long userId, String cliendId, String redirectURI, Set<String> scope)
             throws OAuthProblemException;
 
 	/**

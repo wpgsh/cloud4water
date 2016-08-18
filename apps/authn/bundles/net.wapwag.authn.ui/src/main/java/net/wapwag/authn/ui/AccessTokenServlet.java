@@ -79,6 +79,7 @@ public class AccessTokenServlet extends HttpServlet {
                 }
             } finally {
                 if (oAuthResponse != null) {
+                    response.setContentType("application/json;charset=UTF-8");
                     response.setHeader("Cache-Type", "no-store");
                     response.setHeader("Pragma", "no-cache");
                     response.setStatus(oAuthResponse.getResponseStatus());

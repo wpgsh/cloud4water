@@ -37,7 +37,7 @@ public class AuthorizationServlet extends HttpServlet {
      * The path for /authorize.
      */
     private static final String AUTHORIZE_PATH = "/authn/login?client_id=%s" +
-            "&return_to=/authn/authorize?response_type=%s&redirect_uri=%s&client_id=%s&scope=%s";
+            "&return_to=/authn/authorize?response_type=%s&redirect_uri=%s&client_id=%s";
 
 	@Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -65,7 +65,7 @@ public class AuthorizationServlet extends HttpServlet {
                     long userId = Long.valueOf(String.valueOf(session.getAttribute("userId")));
 
                     //Get authorization code.
-                    code = authnService.getAuthorizationCode(userId, redirectURI, scopes);
+                    code = authnService.getAuthorizationCode(userId, clientId, redirectURI, scopes);
 
                     oAuthResponse = OAuthASResponse
                             .authorizationResponse(request, HttpServletResponse.SC_FOUND)
@@ -76,16 +76,17 @@ public class AuthorizationServlet extends HttpServlet {
 
                 } else {
                     //build return_to uri if not login.
-                    redirectURI = String.format(AUTHORIZE_PATH, clientId, type, redirectURI, clientId, scope);
+                    redirectURI = String.format(AUTHORIZE_PATH, clientId, type, redirectURI, clientId);
                     response.sendRedirect(redirectURI);
                 }
             } catch (Exception e) {
                 if (e instanceof OAuthProblemException) {
                     try {
+                        redirectURI = ((OAuthProblemException) e).getRedirectUri();
                         oAuthResponse = OAuthASResponse
                                 .errorResponse(HttpServletResponse.SC_FOUND)
                                 .error((OAuthProblemException) e)
-                                .location(((OAuthProblemException) e).getRedirectUri())
+                                .location(redirectURI == null ? "http://www.baidu.com" : redirectURI)
                                 .buildQueryMessage();
                     } catch (OAuthSystemException ex) {
                         if (logger.isErrorEnabled()) {

@@ -225,7 +225,7 @@ public class AuthenticationServiceImplTest {
 
 	@Test
 	public void testGetAuthorizationCode() throws Exception {
-		String authorizationCode = authnService.getAuthorizationCode(USER_ID, REDIRECT_URI, null);
+		String authorizationCode = authnService.getAuthorizationCode(USER_ID, CLIENT_ID, REDIRECT_URI, null);
         TestCase.assertEquals(StringUtils.isNotBlank(authorizationCode), true);
         TestCase.assertEquals(authorizationCode.length(), 32);
 	}

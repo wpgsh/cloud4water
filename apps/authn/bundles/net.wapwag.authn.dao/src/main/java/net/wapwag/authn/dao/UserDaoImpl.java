@@ -308,13 +308,13 @@ public class UserDaoImpl implements UserDao {
 	
 	@Override
 	public <T, E extends Exception> T txExpr(ComplexActionWithResult<T, E> action, Class<E> exClass) throws E {		
-		final List<T> result = new ArrayList<T>(1);
+		final List<T> result = new ArrayList<T>();
 		
 		Exception ex;
 		try {
 			ex = entityManager.txExpr(em -> {
 					try {
-						result.set(0, action.apply());
+						result.add(action.apply());
 						return null;
 					} catch (Exception e) {
 						return e;

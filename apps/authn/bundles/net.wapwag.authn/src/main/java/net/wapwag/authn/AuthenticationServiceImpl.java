@@ -128,7 +128,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	}
 
 	@Override
-	public String getAuthorizationCode(long userId, String redirectURI, final Set<String> scope)
+	public String getAuthorizationCode(long userId, String cliendId, String redirectURI, final Set<String> scope)
             throws OAuthProblemException {
         return userDao.txExpr(() -> {
             long result;
@@ -141,7 +141,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 RegisteredClient registeredClient = userDao.getClientByRedirectURI(redirectURI);
 
                 //validate client.
-                if (registeredClient != null) {
+                if (registeredClient != null
+                        && StringUtils.isNotBlank(cliendId)
+                        && cliendId.equals(registeredClient.getClientId())) {
 
                     String code = StringUtils.replace(new UUID().toString(), "-", "");
 
@@ -196,8 +198,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 if (logger.isErrorEnabled()) {
                     logger.error(ExceptionUtils.getStackTrace(e));
                 }
-                throw OAuthProblemException.error(OAuthError.CodeResponse.SERVER_ERROR,
-                        "authorization server encountered an unexpected exception");
+                throw OAuthProblemException.error(OAuthError.CodeResponse.UNAUTHORIZED_CLIENT,
+                        "error client credential");
             }
         }, OAuthProblemException.class);
     }

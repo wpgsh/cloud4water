@@ -1,27 +1,9 @@
 package net.wapwag.authn.ui;
 
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Map;
-
-import javax.servlet.Servlet;
-
-import org.apache.commons.codec.binary.Base64;
-import org.eclipse.jetty.server.NetworkTrafficServerConnector;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.ServletHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.util.thread.QueuedThreadPool;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import junit.framework.TestCase;
 import net.wapwag.authn.AuthenticationServiceImpl;
 import net.wapwag.authn.dao.UserDao;
@@ -30,6 +12,21 @@ import net.wapwag.authn.dao.model.AccessToken;
 import net.wapwag.authn.dao.model.RegisteredClient;
 import net.wapwag.authn.dao.model.User;
 import net.wapwag.authn.util.OSGIUtil;
+import org.apache.commons.codec.binary.Base64;
+import org.eclipse.jetty.server.NetworkTrafficServerConnector;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.ServletHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.junit.Test;
+
+import javax.servlet.Servlet;
+import javax.servlet.http.HttpServletResponse;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Map;
 
 public class AccessTokenServletTest {
 	
@@ -219,7 +216,7 @@ public class AccessTokenServletTest {
 		};
 	}	
 	
-	@Before
+//	@Before
 	public void setup() throws Exception {
 		
 		AuthenticationServiceImpl authnService = new AuthenticationServiceImpl();
@@ -236,8 +233,8 @@ public class AccessTokenServletTest {
 				
 	}
 	
-	@Test
-	public void testError_InvalidClient() throws Exception {
+//	@Test
+	public void testError_InvalidClient1() throws Exception {
 		URL url = new URL(String.format("http://localhost:%d", port));
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setDoOutput(true);
@@ -262,12 +259,163 @@ public class AccessTokenServletTest {
 		conn.disconnect();
 	}
 	
-	@After
+//	@After
 	public void complete() throws Exception {
 		if (server != null) {
 			server.stop();
 			server.join();
 		}
+	}
+
+    private static final String ACCESSTOKEN_CONTEXT_PATH = "http://localhost:8181/authn/access_token";
+
+    private static Map<String, Object> getRequest(boolean auth, String basicAuth, String queryString) throws Exception {
+        URL url = new URL(ACCESSTOKEN_CONTEXT_PATH);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setDoOutput(true);
+        conn.addRequestProperty("content-type", "application/x-www-form-urlencoded");
+        if (auth) {
+            conn.addRequestProperty("Authorization",
+                    "Basic "+
+                            Base64.encodeBase64String(basicAuth.getBytes()));
+        }
+        conn.connect();
+        OutputStream out = conn.getOutputStream();
+        out.write(queryString.getBytes());
+        out.flush();
+        int respCode = conn.getResponseCode();
+        Map<String, Object> result = null;
+        if (respCode == HttpServletResponse.SC_UNAUTHORIZED) {
+            result = Maps.newHashMap();
+        } else if (respCode == HttpServletResponse.SC_BAD_REQUEST) {
+            result = new Gson().fromJson(
+                    new InputStreamReader(conn.getErrorStream()),
+                    new TypeToken<Map<String, Object>>(){}.getType());
+        } else {
+            result = new Gson().fromJson(
+                    new InputStreamReader(conn.getInputStream()),
+                    new TypeToken<Map<String, Object>>(){}.getType());
+        }
+
+        result.put("statusCode", respCode);
+        conn.disconnect();
+
+        return result;
+    }
+
+    //====================== invalid_request ========================
+    @Test
+    public void testError_BasicAuthFailed() throws Exception {
+        noBasicHttpAuth();
+    }
+
+    private void noBasicHttpAuth() throws Exception {
+        Map<String, Object> resultMap = getRequest(false, null, "");
+        TestCase.assertEquals(HttpServletResponse.SC_UNAUTHORIZED, resultMap.get("statusCode"));
+    }
+
+    //====================== invalid_request ========================
+    @Test
+	public void testError_InvalidRequest() throws Exception {
+        emptyRequest();
+        missingGrantType();
+        invalidGrantType();
+        missingCode();
+        missingRedirectURI();
+	}
+
+	private void emptyRequest() throws Exception {
+        Map<String, Object> resultMap = getRequest(true, "invalidClientId:invalidSecret", "");
+        TestCase.assertEquals(HttpServletResponse.SC_BAD_REQUEST, resultMap.get("statusCode"));
+        TestCase.assertEquals("invalid_request", resultMap.get("error"));
+    }
+
+    private void missingGrantType() throws Exception {
+        Map<String, Object> resultMap = getRequest(true,
+                "invalidClientId:invalidSecret",
+                        "&code=2b69443d5aebfe6c34a3e90a71e34169" +
+                        "&redirect_uri=http://www.baidu.com");
+        TestCase.assertEquals(HttpServletResponse.SC_BAD_REQUEST, resultMap.get("statusCode"));
+        TestCase.assertEquals("invalid_request", resultMap.get("error"));
+    }
+
+    private void invalidGrantType() throws Exception {
+        Map<String, Object> resultMap = getRequest(true,
+                "invalidClientId:invalidSecret",
+                "grant_type=invalid_grant_type" +
+                "&code=2b69443d5aebfe6c34a3e90a71e34169" +
+                        "&redirect_uri=http://www.baidu.com");
+        TestCase.assertEquals(HttpServletResponse.SC_BAD_REQUEST, resultMap.get("statusCode"));
+        TestCase.assertEquals("invalid_request", resultMap.get("error"));
+    }
+
+    private void missingCode() throws Exception {
+        Map<String, Object> resultMap = getRequest(true,
+                "invalidClientId:invalidSecret",
+                "grant_type=authorization_code" +
+                        "&redirect_uri=http://www.baidu.com");
+        TestCase.assertEquals(HttpServletResponse.SC_BAD_REQUEST, resultMap.get("statusCode"));
+        TestCase.assertEquals("invalid_request", resultMap.get("error"));
+    }
+
+    private void missingRedirectURI() throws Exception {
+        Map<String, Object> resultMap = getRequest(true,
+                "invalidClientId:invalidSecret",
+                "grant_type=authorization_code" +
+                        "&code=2b69443d5aebfe6c34a3e90a71e34169");
+        TestCase.assertEquals(HttpServletResponse.SC_BAD_REQUEST, resultMap.get("statusCode"));
+        TestCase.assertEquals("invalid_request", resultMap.get("error"));
+    }
+
+    //====================== invalid_client ========================
+    @Test
+	public void testError_InvalidClient() throws Exception {
+        invalidCredential();
+	}
+
+    private void invalidCredential() throws Exception {
+        Map<String, Object> resultMap = getRequest(true,
+                "invalidClientId:invalidSecret",
+                "grant_type=authorization_code" +
+                        "&code=2b69443d5aebfe6c34a3e90a71e34169" +
+                        "&redirect_uri=http://www.baidu.com");
+        TestCase.assertEquals(HttpServletResponse.SC_BAD_REQUEST, resultMap.get("statusCode"));
+        TestCase.assertEquals("invalid_client", resultMap.get("error"));
+    }
+
+    //====================== invalid_grant ========================
+    @Test
+	public void testError_InvalidGrant() throws Exception {
+        invalidAuthorizationCode();
+	}
+
+	private void invalidAuthorizationCode() throws Exception {
+        Map<String, Object> resultMap = getRequest(true,
+                "client1:dfdjfjkdkj23klaa1",
+                "grant_type=authorization_code" +
+                        "&code=2b69443d5aebfe6c34a3e90a71e34169" +
+                        "&redirect_uri=http://www.baidu.com");
+        TestCase.assertEquals(HttpServletResponse.SC_BAD_REQUEST, resultMap.get("statusCode"));
+        TestCase.assertEquals("invalid_grant", resultMap.get("error"));
+    }
+
+    //====================== unauthorized_client ========================
+
+	public void testError_UnauthorizedClient() {
+        //There is no scenario at this time
+	}
+
+    //====================== unsupported_grant_type ========================
+
+	public void testError_UnsupportedGrantType() {
+        //There is no scenario at this time
+	}
+
+    //====================== invalid_scope ========================
+
+	public void testError_InvalidScope() {
+        //There is no scenario at this time
+        //All client now registered is wpg client and has a implicit scope for themself
 	}
 
 }
