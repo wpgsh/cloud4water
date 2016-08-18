@@ -1,22 +1,22 @@
 package net.wapwag.authn;
 
-import java.util.Map;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-
 import junit.framework.TestCase;
 import net.wapwag.authn.dao.UserDao;
 import net.wapwag.authn.dao.UserDaoException;
 import net.wapwag.authn.dao.model.AccessToken;
 import net.wapwag.authn.dao.model.RegisteredClient;
 import net.wapwag.authn.dao.model.User;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class AuthenticationServiceImplTest {
-	
+
 	private AuthenticationServiceImpl authnService;
 	
 	@Before
@@ -29,10 +29,11 @@ public class AuthenticationServiceImplTest {
 	protected final long INTERNAL_CLIENT_ID = 2;
 	protected final String CLIENT_ID = "a";
 	protected final String CLIENT_SECRET = "b";
+    protected final String CLIENT_VENDOR = "wapwag";
 	protected final String REDIRECT_URI = "http://localhost";
 	protected final String ACCESS_TOKEN = "c";
 	protected final String AUTHORIZATION_CODE = "d";
-	protected final long EXPIRATION = 0;
+	protected final long EXPIRATION = Long.MAX_VALUE;
 	protected final String SCOPE = "scope";
 	
 	
@@ -46,20 +47,37 @@ public class AuthenticationServiceImplTest {
 		RegisteredClient client = new RegisteredClient();
 		client.setClientId(CLIENT_ID);
 		client.setClientSecret(CLIENT_SECRET);
+		client.setClientVendor(CLIENT_VENDOR);
 		client.setId(INTERNAL_CLIENT_ID);
 		client.setRedirectURI(REDIRECT_URI);
 		return client;
 	}
-	
+
+	protected AccessToken createAccessToken1() {
+        AccessToken accessToken = new AccessToken();
+        accessToken.setAuthrizationCode(AUTHORIZATION_CODE);
+        accessToken.setExpiration(EXPIRATION);
+        accessToken.setHandle(ACCESS_TOKEN);
+        accessToken.setRegisteredClient(createClient1());
+        accessToken.setScope(SCOPE);
+        accessToken.setUser(createUser1());
+        return accessToken;
+    }
+
 	protected UserDao createUserDao() {
 		return new UserDao() {
-			
+
 			private Map<Long, User> users = 
 				ImmutableMap.of(USER_ID, createUser1());
 			
 			private Map<Long, RegisteredClient> clients = 
 				ImmutableMap.of(INTERNAL_CLIENT_ID, createClient1());
-			
+
+            private Map<String, AccessToken> initToken =
+                    ImmutableMap.of(AUTHORIZATION_CODE, createAccessToken1());
+
+            private Map<String, AccessToken> tokens = new HashMap<>(initToken);
+
 			@Override
 			public User getUser(long uid) throws UserDaoException {
 				return users.get(uid);
@@ -97,13 +115,14 @@ public class AuthenticationServiceImplTest {
 
 			@Override
 			public RegisteredClient getClientByClientId(long clientId) throws UserDaoException {
-				// TODO Auto-generated method stub
-				return null;
+				return clients.get(clientId);
 			}
 
 			@Override
 			public RegisteredClient getClientByRedirectURI(String redirectURI) throws UserDaoException {
-				// TODO Auto-generated method stub
+			    if (REDIRECT_URI.equals(redirectURI)) {
+			        return clients.get(INTERNAL_CLIENT_ID);
+                }
 				return null;
 			}
 
@@ -115,20 +134,29 @@ public class AuthenticationServiceImplTest {
 
 			@Override
 			public AccessToken getAccessTokenByCode(String code) throws UserDaoException {
-				// TODO Auto-generated method stub
-				return null;
+				return tokens.get(code);
 			}
 
 			@Override
 			public AccessToken getAccessTokenByUserIdAndClientId(long userId, long clientId) throws UserDaoException {
-				// TODO Auto-generated method stub
+			    for (String key : tokens.keySet()) {
+			        AccessToken accessToken = tokens.get(key);
+                    if (userId == accessToken.getUser().getId()
+                            && clientId == accessToken.getRegisteredClient().getId()) {
+                        return accessToken;
+                    }
+                }
 				return null;
 			}
 
 			@Override
 			public long saveAccessToken(AccessToken accessToken) throws UserDaoException {
-				// TODO Auto-generated method stub
-				return 0;
+			    if (tokens.containsKey(accessToken.getAuthrizationCode())) {
+			        return 0;
+                } else {
+                    tokens.put(accessToken.getAuthrizationCode(), accessToken);
+                    return 1;
+                }
 			}
 
 			@Override
@@ -186,6 +214,20 @@ public class AuthenticationServiceImplTest {
 		TestCase.assertEquals(ImmutableSet.of(SCOPE), accessToken.scope);
 		TestCase.assertEquals(CLIENT_ID, accessToken.clientId);
 		TestCase.assertEquals(USER_ID, accessToken.userId);
+	}
+
+	@Test
+	public void testGetAccessToken() throws Exception {
+
+		String token = authnService.getAccessToken(CLIENT_ID, CLIENT_SECRET, AUTHORIZATION_CODE, REDIRECT_URI);
+		TestCase.assertEquals(ACCESS_TOKEN, token);
+	}
+
+	@Test
+	public void testGetAuthorizationCode() throws Exception {
+		String authorizationCode = authnService.getAuthorizationCode(USER_ID, REDIRECT_URI, null);
+        TestCase.assertEquals(StringUtils.isNotBlank(authorizationCode), true);
+        TestCase.assertEquals(authorizationCode.length(), 32);
 	}
 	
 }

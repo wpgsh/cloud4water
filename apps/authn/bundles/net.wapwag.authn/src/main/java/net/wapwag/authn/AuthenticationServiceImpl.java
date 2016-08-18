@@ -93,7 +93,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	            //valid clientSecret and clientId.
 	            if (StringUtils.isNotBlank(cliendId)
                         && StringUtils.isNotBlank(clientSecret)
-                        && clientSecret.equals(registeredClient.getClientId())
+                        && cliendId.equals(registeredClient.getClientId())
                         && clientSecret.equals(registeredClient.getClientSecret())) {
 
 	                net.wapwag.authn.dao.model.AccessToken accessToken;
