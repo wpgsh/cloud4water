@@ -42,6 +42,7 @@ public class AccessTokenServlet extends HttpServlet {
                 if (StringUtils.isBlank(auth)) {
                     response.setHeader("WWW-Authenticate", "BASIC realm=\"Client Credential\"");
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                    return;
                 }
 
                 OAuthTokenRequest oAuthTokenRequest = new OAuthTokenRequest(request);
