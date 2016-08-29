@@ -34,7 +34,6 @@ public class AccessTokenServlet extends HttpServlet {
             String redirectURI = null;
             OAuthResponse oAuthResponse = null;
 
-
             try {
 
                 String auth = request.getHeader("Authorization");

@@ -1,62 +1,69 @@
 package net.wapwag.authn.ui;
 
-import com.google.common.collect.Maps;
 import junit.framework.TestCase;
+import net.wapwag.authn.dao.UserDao;
 import org.junit.Test;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Map;
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
 
 /**
  * Test for AuhtorizationServlet class
  * Created by Administrator on 2016/8/11.
  */
-public class AuthorizationServletTest {
+public class AuthorizationServletTest extends BaseServletTest {
 
-    private static final String AUTHORIZE_CONTEXT_PATH = "http://localhost:8181/authn/authorize";
+    private static final int port = 9100;
 
-    private static Map<String, Object> getRequest(boolean login, String path) throws Exception {
-        URL url = new URL(path);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.addRequestProperty("content-type", "application/x-www-form-urlencoded");
-        if (login) {
-            conn.setRequestProperty("Cookie", login());
-        }
-        conn.setInstanceFollowRedirects(false);
-        conn.connect();
-        int respCode = conn.getResponseCode();
+    private static final int maxServerThreads = 10;
 
-        Map<String, Object> result = Maps.newHashMap();
-        if (respCode == HttpServletResponse.SC_FOUND) {
-            result.put("redirectURI", conn.getHeaderField("Location"));
-        }
+    private static final int acceptQueueSize = 1;
 
-        result.put("statusCode", respCode);
+    private static final String AUTHORIZE_CONTEXT_PATH = "http://localhost:" + port + "/authn/authorize";
 
+    @Override
+    protected Filter createFilter() throws Exception {
+        return new Filter() {
+            @Override
+            public void init(FilterConfig filterConfig) throws ServletException {
 
-        conn.disconnect();
+            }
 
-        return result;
+            @Override
+            public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+                throws IOException, ServletException {
+                if (request instanceof HttpServletRequest) {
+                    HttpServletRequest httpRequest = (HttpServletRequest) request;
+                    HttpSession session = httpRequest.getSession();
+                    if (session != null && session.getAttribute("Authenticated") == null) {
+                        session.setAttribute("userId", 1L);
+                        session.setAttribute("authenticated", true);
+                    }
+                }
+                request.setCharacterEncoding("UTF-8");
+                response.setCharacterEncoding("UTF-8");
+                chain.doFilter(request, response);
+            }
+
+            @Override
+            public void destroy() {
+
+            }
+        };
     }
 
-    private static String login() throws Exception {
-        URL url = new URL("http://localhost:8181/authn/loginServlet");
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setDoOutput(true);
-        conn.connect();
-        OutputStream out = conn.getOutputStream();
-        out.write("userName=test1&passWord=b52c96bea30646abf8170f333bbd42b9".getBytes());
-        out.flush();
-        conn.disconnect();
-        int respCode = conn.getResponseCode();
-        if (HttpServletResponse.SC_OK == respCode) {
-            return conn.getHeaderField("Set-Cookie");
-        } else {
-            return null;
-        }
+    protected Servlet createServlet() {
+        return new AuthorizationServlet();
+    }
+
+    protected UserDao createUserDao() throws Exception {
+        return UserDaoMock.getUserDao();
+    }
+
+    public AuthorizationServletTest() {
+        super(port, maxServerThreads, acceptQueueSize);
     }
 
     //====================== invalid_request ========================
@@ -69,31 +76,30 @@ public class AuthorizationServletTest {
     }
 
     private void emptyRequest() throws Exception {
-        Map<String, Object> resultMap = getRequest(false, AUTHORIZE_CONTEXT_PATH);
-        TestCase.assertEquals(HttpServletResponse.SC_FOUND, resultMap.get("statusCode"));
+        QueryComponentResponse response = getAcceptQueryComponent(AUTHORIZE_CONTEXT_PATH,
+                APPLICATION_X_WWW_FORM_URLENCODED);
+        TestCase.assertEquals(SC_FOUND, response.responseCode);
         TestCase.assertEquals(
                 "http://www.baidu.com?error_description=Missing+response_type+parameter+value&error=invalid_request",
-                resultMap.get("redirectURI"));
+                response.body.get("redirectURI"));
     }
 
     private void missingResponseType() throws Exception {
-        String path = AUTHORIZE_CONTEXT_PATH +
-                "?client_id=client1&redirect_uri=http://www.baidu.com";
-        Map<String, Object> resultMap = getRequest(false, path);
-        TestCase.assertEquals(HttpServletResponse.SC_FOUND, resultMap.get("statusCode"));
+        String path = AUTHORIZE_CONTEXT_PATH + "?client_id=client1&redirect_uri=http://www.baidu.com";
+        QueryComponentResponse response = getAcceptQueryComponent(path, APPLICATION_X_WWW_FORM_URLENCODED);
+        TestCase.assertEquals(SC_FOUND, response.responseCode);
         TestCase.assertEquals(
                 "http://www.baidu.com?error_description=Missing+response_type+parameter+value&error=invalid_request",
-                resultMap.get("redirectURI"));
+                response.body.get("redirectURI"));
     }
 
     private void missingClientId() throws Exception {
-        String path = AUTHORIZE_CONTEXT_PATH +
-                "?response_type=code&redirect_uri=http://www.baidu.com";
-        Map<String, Object> resultMap = getRequest(false, path);
-        TestCase.assertEquals(HttpServletResponse.SC_FOUND, resultMap.get("statusCode"));
+        String path = AUTHORIZE_CONTEXT_PATH + "?response_type=code&redirect_uri=http://www.baidu.com";
+        QueryComponentResponse response = getAcceptQueryComponent(path, APPLICATION_X_WWW_FORM_URLENCODED);
+        TestCase.assertEquals(SC_FOUND, response.responseCode);
         TestCase.assertEquals(
                 "http://www.baidu.com?error_description=Missing+parameters%3A+client_id&error=invalid_request",
-                resultMap.get("redirectURI"));
+                response.body.get("redirectURI"));
     }
 
     //====================== unauthorized_client ========================
@@ -107,21 +113,21 @@ public class AuthorizationServletTest {
     private void invalidClient() throws Exception {
         String path = AUTHORIZE_CONTEXT_PATH +
                 "?response_type=code&client_id=invalidClient&redirect_uri=http://www.baidu.com";
-        Map<String, Object> resultMap = getRequest(true, path);
-        TestCase.assertEquals(HttpServletResponse.SC_FOUND, resultMap.get("statusCode"));
+        QueryComponentResponse response = getAcceptQueryComponent(path, APPLICATION_X_WWW_FORM_URLENCODED);
+        TestCase.assertEquals(SC_FOUND, response.responseCode);
         TestCase.assertEquals(
                 "http://www.baidu.com?error_description=error+client+credential&error=unauthorized_client",
-                resultMap.get("redirectURI"));
+                response.body.get("redirectURI"));
     }
 
     private void invalidRedirectURI() throws Exception {
         String path = AUTHORIZE_CONTEXT_PATH +
                 "?response_type=code&client_id=invalidClient&redirect_uri=invalidRequestURI";
-        Map<String, Object> resultMap = getRequest(true, path);
-        TestCase.assertEquals(HttpServletResponse.SC_FOUND, resultMap.get("statusCode"));
+        QueryComponentResponse response = getAcceptQueryComponent(path, APPLICATION_X_WWW_FORM_URLENCODED);
+        TestCase.assertEquals(SC_FOUND, response.responseCode);
         TestCase.assertEquals(
                 "http://www.baidu.com?error_description=error+client+credential&error=unauthorized_client",
-                resultMap.get("redirectURI"));
+                response.body.get("redirectURI"));
     }
 
     //====================== access_denied ========================

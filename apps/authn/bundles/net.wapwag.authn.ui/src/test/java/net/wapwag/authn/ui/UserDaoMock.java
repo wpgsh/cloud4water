@@ -11,9 +11,9 @@ public class UserDaoMock {
 	
 	static final long USER_ID = 1;
 	static final long INTERNAL_CLIENT_ID = 2;
-	static final String CLIENT_ID = "a";
-	static final String CLIENT_SECRET = "b";
-	static final String REDIRECT_URI = "http://localhost";
+	static final String CLIENT_ID = "client1";
+	static final String CLIENT_SECRET = "dfdjfjkdkj23klaa1";
+	static final String REDIRECT_URI = "http://www.baidu.com";
 	static final String ACCESS_TOKEN = "c";
 	static final String AUTHORIZATION_CODE = "d";
 	static final long EXPIRATION = 0;
@@ -74,6 +74,9 @@ public class UserDaoMock {
 		
 		when(dao.getUser(USER_ID)).thenReturn(user1);
 		when(dao.lookupAccessToken(ACCESS_TOKEN)).thenReturn(accessToken1);
+		when(dao.getClientByRedirectURI(REDIRECT_URI)).thenReturn(client1);
+        when(dao.saveAccessToken(accessToken1)).thenReturn(1L);
+        when(dao.getAccessTokenByCode(AUTHORIZATION_CODE)).thenReturn(accessToken1);
 		
 		mockTx(dao);
 		

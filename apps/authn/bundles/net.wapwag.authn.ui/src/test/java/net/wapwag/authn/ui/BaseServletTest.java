@@ -1,29 +1,32 @@
 package net.wapwag.authn.ui;
 
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Map;
-
-import javax.servlet.Servlet;
-
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import net.wapwag.authn.AuthenticationServiceImpl;
+import net.wapwag.authn.dao.UserDao;
+import net.wapwag.authn.util.OSGIUtil;
 import org.apache.commons.codec.binary.Base64;
 import org.eclipse.jetty.server.NetworkTrafficServerConnector;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.ServletHandler;
+import org.eclipse.jetty.servlet.FilterHolder;
+import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.junit.After;
 import org.junit.Before;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import net.wapwag.authn.AuthenticationServiceImpl;
-import net.wapwag.authn.dao.UserDao;
-import net.wapwag.authn.util.OSGIUtil;
+import javax.servlet.DispatcherType;
+import javax.servlet.Filter;
+import javax.servlet.Servlet;
+import javax.servlet.http.HttpServletResponse;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.EnumSet;
+import java.util.Map;
 
 public abstract class BaseServletTest {
 	
@@ -38,7 +41,7 @@ public abstract class BaseServletTest {
 		this.acceptQueueSize = acceptQueueSize;
 	}
 
-	static Server createServer(int port, int maxServerThreads, int acceptQueueSize, Servlet servlet) {
+	static Server createServer(int port, int maxServerThreads, int acceptQueueSize, Filter filter, Servlet servlet) {
 		QueuedThreadPool threadPool = new QueuedThreadPool();
 		threadPool.setMaxThreads(maxServerThreads);
 		threadPool.setName("JettyServer");
@@ -54,15 +57,22 @@ public abstract class BaseServletTest {
 		connector.setStopTimeout(10000);
 		connector.setAcceptQueueSize(acceptQueueSize);
 		server.addConnector(connector);
-		
-		ServletHandler handler = new ServletHandler();
+
+        ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.SESSIONS);
 		ServletHolder servletHolder = new ServletHolder(servlet);
-		handler.addServletWithMapping(servletHolder, "/*");
-		server.setHandler(handler);
-		
+        handler.addServlet(servletHolder, "/*");
+        if (filter != null) {
+            handler.addFilter(new FilterHolder(filter), "/*", EnumSet.of(DispatcherType.REQUEST,
+                    DispatcherType.FORWARD, DispatcherType.ERROR, DispatcherType.INCLUDE));
+        }
+
+        server.setHandler(handler);
+
 		return server;
 	}
-	
+
+	protected abstract Filter createFilter() throws Exception;
+
 	protected abstract Servlet createServlet() throws Exception;
 	
 	protected abstract UserDao createUserDao() throws Exception;
@@ -70,7 +80,7 @@ public abstract class BaseServletTest {
 	@Before
 	public void setupServer() throws Exception {
 		if (port >= 0) {		
-			server = createServer(port, maxServerThreads, acceptQueueSize, createServlet());
+			server = createServer(port, maxServerThreads, acceptQueueSize, createFilter(), createServlet());
 			server.start();
 		}
 	}
@@ -98,7 +108,20 @@ public abstract class BaseServletTest {
 	
 	public static final int SC_BAD_REQUEST = 400;
 	public static final int SC_UNAUTHORIZED = 401;
-	
+    public static final int SC_FOUND = 302;
+
+	public static class QueryComponentResponse {
+
+		public final int responseCode;
+
+		public final Map<String, Object> body;
+
+		public QueryComponentResponse(int responseCode, Map<String, Object> body) {
+			this.responseCode = responseCode;
+			this.body = body;
+		}
+	}
+
 	public static class JsonResponse {
 		
 		public final int responseCode;
@@ -112,7 +135,28 @@ public abstract class BaseServletTest {
 		}
 		
 	}
-	
+
+	public static QueryComponentResponse getAcceptQueryComponent(String _url,String contentType) throws Exception {
+        URL url = new URL(_url);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.addRequestProperty("content-type", contentType);
+        conn.setInstanceFollowRedirects(false);
+        conn.connect();
+        int respCode = conn.getResponseCode();
+        Map<String, Object> result = Maps.newHashMap();
+        result.put("redirectURI", conn.getHeaderField("Location"));
+        System.out.println(conn.getHeaderFields());
+        if (respCode == HttpServletResponse.SC_FOUND) {
+            result.put("redirectURI", conn.getHeaderField("Location"));
+        }
+
+        result.put("statusCode", respCode);
+
+        conn.disconnect();
+
+        return new QueryComponentResponse(respCode, result);
+    }
+
     public static JsonResponse postAcceptJson(
     		String _url,
     		boolean auth, String basicAuth, 
@@ -132,15 +176,18 @@ public abstract class BaseServletTest {
         out.flush();
         
         int respCode = conn.getResponseCode();
-        String respContentType = conn.getContentType();
         Map<String, Object> result;
-        if (APPLICATION_JSON.equals(respContentType)) {
-        	result = ImmutableMap.of();
-        } else {
-        	result = new Gson().fromJson(
+        if (respCode == SC_UNAUTHORIZED) {
+            result = ImmutableMap.of();
+        } else if (respCode == SC_BAD_REQUEST) {
+            result = new Gson().fromJson(
                     new InputStreamReader(conn.getErrorStream()),
                     new TypeToken<Map<String, Object>>(){}.getType());
-        }        
+        } else {
+            result = new Gson().fromJson(
+                    new InputStreamReader(conn.getInputStream()),
+                    new TypeToken<Map<String, Object>>(){}.getType());
+        }
         conn.disconnect();
 
         return new JsonResponse(respCode, result);

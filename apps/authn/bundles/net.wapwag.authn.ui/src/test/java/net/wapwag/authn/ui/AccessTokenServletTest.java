@@ -1,25 +1,30 @@
 package net.wapwag.authn.ui;
 
-import javax.servlet.Servlet;
-
-import org.junit.Test;
-
 import junit.framework.TestCase;
 import net.wapwag.authn.dao.UserDao;
+import org.junit.Test;
+
+import javax.servlet.Filter;
+import javax.servlet.Servlet;
 
 public class AccessTokenServletTest extends BaseServletTest {
 	
 	private static final int port = 9100;
 	
-	private static final int maxServerThreads = 4;
+	private static final int maxServerThreads = 10;
 	
 	private static final int acceptQueueSize = 1;
 
 	public AccessTokenServletTest() {
 		super(port, maxServerThreads, acceptQueueSize);
 	}
-	
-	protected Servlet createServlet() {
+
+    @Override
+    protected Filter createFilter() throws Exception {
+        return null;
+    }
+
+    protected Servlet createServlet() {
 		return new AccessTokenServlet();		
 	}
 	
