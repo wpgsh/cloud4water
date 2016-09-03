@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <features>
-  <feature name="net.wapwag.authn" install="auto">
+  <feature name="net.wapwag.authn-app.dev" install="auto">
     <feature prerequisite="true">net.wapwag.base</feature>
   </feature>
 </features>
