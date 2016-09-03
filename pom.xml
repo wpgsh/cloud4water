@@ -9,6 +9,7 @@
   <modules>
     <module>apps/base</module>
     <module>apps/authn</module>
+    <module>apps/wemp</module>
   </modules>
 
   <repositories>
@@ -70,6 +71,9 @@
     <apache.httpcore.version>4.4.4</apache.httpcore.version>
     <apache.oltu>1.0.2</apache.oltu>
     <jetty.version>9.2.13.v20150730</jetty.version>
+    <commons.email>1.1</commons.email>
+    <javax.mail>1.4</javax.mail>
+    <javax.activation>1.1.1</javax.activation>
     <tw.build.ext></tw.build.ext>
   </properties>
 
@@ -166,6 +170,21 @@
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
         <version>${apache.common}</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-email</groupId>
+        <artifactId>commons-email</artifactId>
+        <version>${commons.email}</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.mail</groupId>
+        <artifactId>mail</artifactId>
+        <version>${javax.mail}</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.activation</groupId>
+        <artifactId>activation</artifactId>
+        <version>${javax.activation}</version>
       </dependency>
       <dependency>
         <groupId>com.thingswise.appframework</groupId>
