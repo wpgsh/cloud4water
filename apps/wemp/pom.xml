@@ -1,0 +1,29 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>net.wapwag.wemp</groupId>
+  <artifactId>root</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <parent>
+    <groupId>net.wapwag</groupId>
+    <artifactId>root</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+
+  <modules>
+    <module>bundles/net.wapwag.wemp.h2</module>
+    <module>bundles/net.wapwag.wemp.h2.hibernate</module>
+    <module>bundles/net.wapwag.wemp.mysql</module>
+    <module>bundles/net.wapwag.wemp.mysql.hibernate</module>
+    <module>bundles/net.wapwag.wemp.dao</module>
+    <module>bundles/net.wapwag.wemp</module>
+    <module>bundles/net.wapwag.wemp.rest</module>
+    <module>bundles/net.wapwag.wemp.ui</module>
+    <module>features/net.wapwag.wemp-app.dev</module>
+    <module>features/net.wapwag.wemp-app.prod</module>
+  </modules>
+
+</project>
