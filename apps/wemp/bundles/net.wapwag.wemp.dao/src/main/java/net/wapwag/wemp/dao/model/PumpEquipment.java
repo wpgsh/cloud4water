@@ -6,12 +6,12 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * User model
- * Created by Administrator on 2016/9/28 0028.
+ * Pump equipment entity
+ * Created by Administrator on 2016/10/19 0019.
  */
 @Entity
-@Table(name = "user_data")
-public class User {
+@Table(name = "pump_equipment_data")
+public class PumpEquipment {
 
     @Id
     @Column

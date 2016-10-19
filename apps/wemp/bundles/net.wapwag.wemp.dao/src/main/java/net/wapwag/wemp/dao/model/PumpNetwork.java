@@ -1,17 +1,15 @@
 package net.wapwag.wemp.dao.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 
 /**
- * User model
- * Created by Administrator on 2016/9/28 0028.
+ * Pump network entity
+ * Created by Administrator on 2016/10/19 0019.
  */
 @Entity
-@Table(name = "user_data")
-public class User {
+@Table(name = "pump_network_data")
+public class PumpNetwork {
 
     @Id
     @Column

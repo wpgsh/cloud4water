@@ -87,6 +87,12 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
 	public Area getArea(Area area) throws WaterEquipmentDaoException {
 		try {
 			return entityManager.txExpr(em -> {
+                Town town = em.find(Town.class, "110101001adsa");
+                County county = em.find(County.class, "11010asas1");
+                City city = em.find(City.class, "110100asas");
+                Province province = em.find(Province.class, "110000asa");
+                Area area1 = em.find(Area.class, "100000asa");
+                Country country = em.find(Country.class, "1asa");
 				return em.find(Area.class, area.getId());
 			});
 		} catch (Exception e) {

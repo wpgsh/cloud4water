@@ -8,8 +8,8 @@ import java.util.List;
  * Created by Administrator on 2016/10/18 0018.
  */
 @Entity
-@Table(name = "city_data")
-public class City {
+@Table(name = "pump_room_data")
+public class PumpRoom {
 
     @Id
     @Column
@@ -19,12 +19,8 @@ public class City {
     private String name;
 
     @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "city_id")
-    private List<County> countyList;
-
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "city_id")
-    private List<PumpNetwork> pumpNetworkList;
+    @JoinColumn(name = "pump_room_id")
+    private List<PumpEquipment> pumpEquipmentList;
 
     public String getId() {
         return id;
@@ -42,11 +38,11 @@ public class City {
         this.name = name;
     }
 
-    public List<County> getCountyList() {
-        return countyList;
+    public List<PumpEquipment> getPumpEquipmentList() {
+        return pumpEquipmentList;
     }
 
-    public void setCountyList(List<County> countyList) {
-        this.countyList = countyList;
+    public void setPumpEquipmentList(List<PumpEquipment> pumpEquipmentList) {
+        this.pumpEquipmentList = pumpEquipmentList;
     }
 }
