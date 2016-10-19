@@ -7,12 +7,14 @@
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <jta-data-source>osgi:service/javax.sql.DataSource/(osgi.jndi.service.name=jdbc/WaterEquipment)</jta-data-source>
         <non-jta-data-source>osgi:service/javax.sql.DataSource/(osgi.jndi.service.name=jdbc/WaterEquipment)</non-jta-data-source>
-        <!-- Add JPA model classes here:
-        
-        <class>...fully-qualified class #1 name...</class> 
-        <class>...fully-qualified class #2 name...</class>
-        
-        -->        
+        <class>net.wapwag.wemp.dao.model.ObjectData</class>
+        <class>net.wapwag.wemp.dao.model.ObjectDict</class>
+        <class>net.wapwag.wemp.dao.model.Country</class>
+        <class>net.wapwag.wemp.dao.model.Area</class>
+        <class>net.wapwag.wemp.dao.model.Province</class>
+        <class>net.wapwag.wemp.dao.model.City</class>
+        <class>net.wapwag.wemp.dao.model.County</class>
+        <class>net.wapwag.wemp.dao.model.Town</class>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
         </properties>

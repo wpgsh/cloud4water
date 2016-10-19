@@ -74,7 +74,6 @@
     <commons.email>1.1</commons.email>
     <javax.mail>1.4</javax.mail>
     <javax.activation>1.1.1</javax.activation>
-    <tw.build.ext></tw.build.ext>
   </properties>
 
   <profiles>

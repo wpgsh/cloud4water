@@ -1,5 +1,7 @@
 package net.wapwag.wemp.dao;
 
+import net.wapwag.wemp.dao.model.*;
+
 /**
  * Water Equipment DAO methods
  * 
@@ -7,8 +9,30 @@ package net.wapwag.wemp.dao;
  */
 public interface WaterEquipmentDao {
 
-	// TODO add relevant methods
-	
+	int saveObjectData(ObjectData ObjectData) throws WaterEquipmentDaoException;
+
+	int removeObjectData(String objectId) throws WaterEquipmentDaoException;
+
+    ObjectData getObjectData(ObjectData ObjectData) throws WaterEquipmentDaoException;
+
+	int saveObjectDict(ObjectDict objectDict) throws WaterEquipmentDaoException;
+
+	int removeObjectDict(int objectDictId) throws WaterEquipmentDaoException;
+
+    ObjectData getObjectDict(ObjectDict objectDict) throws WaterEquipmentDaoException;
+
+	Country getCountry(Country country) throws WaterEquipmentDaoException;
+
+	Area getArea(Area area) throws WaterEquipmentDaoException;
+
+	Province getProvince(Province province) throws WaterEquipmentDaoException;
+
+	City getCity(City city) throws WaterEquipmentDaoException;
+
+	County getCounty(County county) throws WaterEquipmentDaoException;
+
+	Town getTown(Town town) throws WaterEquipmentDaoException;
+
 	/**
 	 * An action that consists of several steps to be performed
 	 * within a single transaction

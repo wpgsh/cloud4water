@@ -21,15 +21,21 @@ public class MysqlTxAwareEntityManager implements TxAwareEntityManager {
 	}
 
 	@Override
-	public void tx(EmConsumer emSupplier) throws Exception {
-		// TODO implement tx sequence
-		throw new RuntimeException("TODO - Not implemented");
+	public void tx(EmConsumer emConsumer) throws Exception {
+		try {
+			jpa.tx(emConsumer);
+		} catch (Throwable e) {
+			throw new Exception("Error executing query (tx)", e);
+		}
 	}
 
 	@Override
 	public <T> T txExpr(EmFunction<T> emFunction) throws Exception {
-		// TODO implement tx sequence with result
-		throw new RuntimeException("TODO - Not implemented");
+		try {
+			return jpa.txExpr(emFunction);
+		} catch (Throwable e) {
+			throw new Exception("Error executing query (txExpr)", e);
+		}
 	}
 
 }

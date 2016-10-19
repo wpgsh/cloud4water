@@ -3,9 +3,9 @@
 
   <bean id="dataSource" class="com.mysql.jdbc.jdbc2.optional.MysqlDataSource">
     <!-- TODO make H2 URL configurable via JVM system properties -->
-    <property name="URL" value="jdbc:mysql://localhost:3306/wpg_wemp"/>
-    <property name="user" value="wpg"/>
-    <property name="password" value="wpg"/>
+    <property name="URL" value="jdbc:mysql://139.196.254.159:3306/wemp"/>
+    <property name="user" value="root"/>
+    <property name="password" value=""/>
   </bean>
 
   <service interface="javax.sql.DataSource" ref="dataSource">

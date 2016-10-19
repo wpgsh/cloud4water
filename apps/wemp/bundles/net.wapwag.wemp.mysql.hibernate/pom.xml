@@ -63,7 +63,7 @@
                      availability 
                  (2) explicit dependency on Hibernate model classes (see 
                      persistence.xml) -->
-            <Import-Package>org.hibernate.jpa,net.wapwag.authn.dao.model,*</Import-Package>
+            <Import-Package>org.hibernate.jpa,net.wapwag.wemp.dao.model,*</Import-Package>
           </instructions>
         </configuration>
       </plugin>
