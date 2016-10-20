@@ -18,6 +18,7 @@ public class Project {
     @Column
     private String name;
 
+    @JsonIgnore
     @ManyToOne
     private County county;
 

@@ -18,6 +18,7 @@ public class PumpRoom {
     @Column
     private String name;
 
+    @JsonIgnore
     @ManyToOne
     private Project project;
 

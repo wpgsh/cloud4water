@@ -1,10 +1,15 @@
 package net.wapwag.wemp.rest;
 
 import com.google.common.collect.Maps;
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import net.wapwag.wemp.dao.model.JsonIgnore;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.lang.reflect.Modifier;
 import java.util.Map;
 
 /**
@@ -14,11 +19,31 @@ import java.util.Map;
 @XmlRootElement
 public class ResponseMapper {
 
-    private static final Gson serlizer = new Gson();
+    private static final Gson serlizer = new GsonBuilder()
+            .setExclusionStrategies(new ExclusionStrategy() {
+
+                /**
+                 * @param f the field object that is under test
+                 * @return true if the field should be ignored; otherwise false
+                 */
+                @Override
+                public boolean shouldSkipField(FieldAttributes f) {
+                    return f.getAnnotation(JsonIgnore.class) != null;
+                }
+
+                /**
+                 * @param clazz the class object that is under test
+                 * @return true if the class should be ignored; otherwise false
+                 */
+                @Override
+                public boolean shouldSkipClass(Class<?> clazz) {
+                    return false;
+                }
+            }).create();
 
     private static final ResponseMapper responseMapper = new ResponseMapper();
 
-    private Map<String, Object> resultMap = Maps.newHashMap();
+    private static Map<String, Object> resultMap = Maps.newHashMap();
 
     private String result;
 
@@ -38,6 +63,7 @@ public class ResponseMapper {
     }
 
     public static ResponseMapper serialize() {
+        resultMap.clear();
         return responseMapper;
     }
 
