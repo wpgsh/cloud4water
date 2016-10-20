@@ -1,7 +1,7 @@
 package net.wapwag.wemp.dao.model;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 /**
  * Country
@@ -18,9 +18,12 @@ public class PumpRoom {
     @Column
     private String name;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @ManyToOne
+    private Project project;
+
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "pump_room_id")
-    private List<PumpEquipment> pumpEquipmentList;
+    private Set<PumpEquipment> pumpEquipmentSet;
 
     public String getId() {
         return id;
@@ -38,11 +41,19 @@ public class PumpRoom {
         this.name = name;
     }
 
-    public List<PumpEquipment> getPumpEquipmentList() {
-        return pumpEquipmentList;
+    public Project getProject() {
+        return project;
     }
 
-    public void setPumpEquipmentList(List<PumpEquipment> pumpEquipmentList) {
-        this.pumpEquipmentList = pumpEquipmentList;
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
+    public Set<PumpEquipment> getPumpEquipmentSet() {
+        return pumpEquipmentSet;
+    }
+
+    public void setPumpEquipmentSet(Set<PumpEquipment> pumpEquipmentSet) {
+        this.pumpEquipmentSet = pumpEquipmentSet;
     }
 }

@@ -1,9 +1,6 @@
 package net.wapwag.wemp.dao.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * Pump equipment entity
@@ -20,6 +17,10 @@ public class PumpEquipment {
     @Column
     private String name;
 
+    @ManyToOne
+    @JoinColumn(name = "pump_room_id")
+    private PumpRoom pumpRoom;
+
     public String getId() {
         return id;
     }
@@ -34,5 +35,13 @@ public class PumpEquipment {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public PumpRoom getPumpRoom() {
+        return pumpRoom;
+    }
+
+    public void setPumpRoom(PumpRoom pumpRoom) {
+        this.pumpRoom = pumpRoom;
     }
 }

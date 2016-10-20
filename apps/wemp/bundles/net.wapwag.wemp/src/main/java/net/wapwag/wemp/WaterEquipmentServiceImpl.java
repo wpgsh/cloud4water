@@ -1,16 +1,12 @@
 package net.wapwag.wemp;
 
-import com.google.gson.Gson;
+import net.wapwag.wemp.dao.WaterEquipmentDao;
 import net.wapwag.wemp.dao.WaterEquipmentDaoException;
-import net.wapwag.wemp.dao.model.Area;
-import net.wapwag.wemp.dao.model.ObjectData;
-import net.wapwag.wemp.dao.model.ObjectDict;
+import net.wapwag.wemp.dao.model.*;
+import net.wapwag.wemp.model.AccessToken;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ServiceScope;
-
-import net.wapwag.wemp.dao.WaterEquipmentDao;
-import net.wapwag.wemp.model.AccessToken;
 
 @Component(scope=ServiceScope.SINGLETON)
 public class WaterEquipmentServiceImpl implements WaterEquipmentService {
@@ -76,14 +72,153 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
 	public Area getArea(Area area) throws WaterEquipmentServiceException {
         return waterEquipmentDao.txExpr(() -> {
             try {
-                Area result = waterEquipmentDao.getArea(area);
-//                result.setName(new Gson().toJson(result));
-                return result;
+				return waterEquipmentDao.getArea(area);
             } catch (WaterEquipmentDaoException e) {
                 return null;
             }
         }, WaterEquipmentServiceException.class);
 	}
 
+    @Override
+    public Country getCountry(Country country) throws WaterEquipmentServiceException {
+        return waterEquipmentDao.txExpr(() -> {
+            try {
+                return waterEquipmentDao.getCountry(country);
+            } catch (WaterEquipmentDaoException e) {
+                return null;
+            }
+        }, WaterEquipmentServiceException.class);
+    }
 
+    @Override
+    public int saveProject(Project project) throws WaterEquipmentServiceException {
+        return waterEquipmentDao.txExpr(() -> {
+            try {
+                return waterEquipmentDao.saveProject(project);
+            } catch (WaterEquipmentDaoException e) {
+                return 0;
+            }
+        }, WaterEquipmentServiceException.class);
+    }
+
+    @Override
+    public int removeProject(Project project) throws WaterEquipmentServiceException {
+        return waterEquipmentDao.txExpr(() -> {
+            try {
+                return waterEquipmentDao.removeProject(project.getId());
+            } catch (WaterEquipmentDaoException e) {
+                return 0;
+            }
+        }, WaterEquipmentServiceException.class);
+    }
+
+    @Override
+    public int updateProject(Project project) throws WaterEquipmentServiceException {
+        return waterEquipmentDao.txExpr(() -> {
+            try {
+                return waterEquipmentDao.saveProject(project);
+            } catch (WaterEquipmentDaoException e) {
+                return 0;
+            }
+        }, WaterEquipmentServiceException.class);
+    }
+
+    @Override
+    public Project getProject(Project project) throws WaterEquipmentServiceException {
+        return waterEquipmentDao.txExpr(() -> {
+            try {
+                return waterEquipmentDao.getProject(project);
+            } catch (WaterEquipmentDaoException e) {
+                return null;
+            }
+        }, WaterEquipmentServiceException.class);
+    }
+
+    @Override
+    public int savePumpRoom(PumpRoom pumpRoom) throws WaterEquipmentServiceException {
+        return waterEquipmentDao.txExpr(() -> {
+            try {
+                return waterEquipmentDao.savePumpRoom(pumpRoom);
+            } catch (WaterEquipmentDaoException e) {
+                return 0;
+            }
+        }, WaterEquipmentServiceException.class);
+    }
+
+    @Override
+    public int removePumpRoom(PumpRoom pumpRoom) throws WaterEquipmentServiceException {
+        return waterEquipmentDao.txExpr(() -> {
+            try {
+                return waterEquipmentDao.removePumpRoom(pumpRoom.getId());
+            } catch (WaterEquipmentDaoException e) {
+                return 0;
+            }
+        }, WaterEquipmentServiceException.class);
+    }
+
+    @Override
+    public int updatePumpRoom(PumpRoom pumpRoom) throws WaterEquipmentServiceException {
+        return waterEquipmentDao.txExpr(() -> {
+            try {
+                return waterEquipmentDao.savePumpRoom(pumpRoom);
+            } catch (WaterEquipmentDaoException e) {
+                return 0;
+            }
+        }, WaterEquipmentServiceException.class);
+    }
+
+    @Override
+    public PumpRoom getPumpRoom(PumpRoom pumpRoom) throws WaterEquipmentServiceException {
+        return waterEquipmentDao.txExpr(() -> {
+            try {
+                return waterEquipmentDao.getPumpRoom(pumpRoom);
+            } catch (WaterEquipmentDaoException e) {
+                return null;
+            }
+        }, WaterEquipmentServiceException.class);
+    }
+
+    @Override
+    public int savePumpEquipment(PumpEquipment pumpEquipment) throws WaterEquipmentServiceException {
+        return waterEquipmentDao.txExpr(() -> {
+            try {
+                return waterEquipmentDao.savePumpEquipment(pumpEquipment);
+            } catch (WaterEquipmentDaoException e) {
+                return 0;
+            }
+        }, WaterEquipmentServiceException.class);
+    }
+
+    @Override
+    public int removePumpEquipment(PumpEquipment pumpEquipment) throws WaterEquipmentServiceException {
+        return waterEquipmentDao.txExpr(() -> {
+            try {
+                return waterEquipmentDao.removePumpEquipment(pumpEquipment.getId());
+            } catch (WaterEquipmentDaoException e) {
+                return 0;
+            }
+        }, WaterEquipmentServiceException.class);
+    }
+
+    @Override
+    public int updatePumpEquipment(PumpEquipment pumpEquipment) throws WaterEquipmentServiceException {
+        return waterEquipmentDao.txExpr(() -> {
+            try {
+                return waterEquipmentDao.savePumpEquipment(pumpEquipment);
+            } catch (WaterEquipmentDaoException e) {
+                return 0;
+            }
+        }, WaterEquipmentServiceException.class);
+    }
+
+    @Override
+    public PumpEquipment getPumpEquipment(PumpEquipment pumpEquipment) throws WaterEquipmentServiceException {
+        return waterEquipmentDao.txExpr(() -> {
+            try {
+                return waterEquipmentDao.getPumpEquipment(pumpEquipment);
+            } catch (WaterEquipmentDaoException e) {
+                return null;
+            }
+        }, WaterEquipmentServiceException.class);
+    }
 }

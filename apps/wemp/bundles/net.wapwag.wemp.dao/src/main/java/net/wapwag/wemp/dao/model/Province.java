@@ -1,7 +1,7 @@
 package net.wapwag.wemp.dao.model;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 /**
  * Country
@@ -18,9 +18,9 @@ public class Province {
     @Column
     private String name;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany
     @JoinColumn(name = "province_id")
-    private List<City> cityList;
+    private Set<City> citySet;
 
     public String getId() {
         return id;
@@ -38,11 +38,11 @@ public class Province {
         this.name = name;
     }
 
-    public List<City> getCityList() {
-        return cityList;
+    public Set<City> getCitySet() {
+        return citySet;
     }
 
-    public void setCityList(List<City> cityList) {
-        this.cityList = cityList;
+    public void setCitySet(Set<City> citySet) {
+        this.citySet = citySet;
     }
 }

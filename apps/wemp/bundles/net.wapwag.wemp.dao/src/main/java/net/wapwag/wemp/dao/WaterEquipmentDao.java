@@ -29,9 +29,32 @@ public interface WaterEquipmentDao {
 
 	City getCity(City city) throws WaterEquipmentDaoException;
 
-	County getCounty(County county) throws WaterEquipmentDaoException;
+	County getCounty(String countyId) throws WaterEquipmentDaoException;
 
-	Town getTown(Town town) throws WaterEquipmentDaoException;
+	int saveProject(Project project) throws WaterEquipmentDaoException;
+
+	int removeProject(String projectId) throws WaterEquipmentDaoException;
+
+    int updateProject(Project project) throws WaterEquipmentDaoException;
+
+    Project getProject(Project project) throws WaterEquipmentDaoException;
+
+    int savePumpRoom(PumpRoom pumpRoom) throws WaterEquipmentDaoException;
+
+	int removePumpRoom(String pumpRoomId) throws WaterEquipmentDaoException;
+
+    int updatePumpRoom(PumpRoom pumpRoom) throws WaterEquipmentDaoException;
+
+    PumpRoom getPumpRoom(PumpRoom pumpRoom) throws WaterEquipmentDaoException;
+
+    int savePumpEquipment(PumpEquipment pumpEquipment) throws WaterEquipmentDaoException;
+
+	int removePumpEquipment(String pumpEquipmentId) throws WaterEquipmentDaoException;
+
+    int updatePumpEquipment(PumpEquipment pumpEquipment) throws WaterEquipmentDaoException;
+
+    PumpEquipment getPumpEquipment(PumpEquipment pumpEquipment) throws WaterEquipmentDaoException;
+
 
 	/**
 	 * An action that consists of several steps to be performed
