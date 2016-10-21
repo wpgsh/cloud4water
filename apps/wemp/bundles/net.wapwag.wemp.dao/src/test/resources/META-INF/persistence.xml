@@ -3,10 +3,8 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     version="2.0">
     <!--  RESOURCE_LOCAL -->
-    <persistence-unit name="waterequipment-jpa" transaction-type="JTA">
+    <persistence-unit name="sample.jpa">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <jta-data-source>osgi:service/javax.sql.DataSource/(osgi.jndi.service.name=jdbc/WaterEquipment)</jta-data-source>
-        <non-jta-data-source>osgi:service/javax.sql.DataSource/(osgi.jndi.service.name=jdbc/WaterEquipment)</non-jta-data-source>
         <!-- Add JPA model classes here:
         
         <class>...fully-qualified class #1 name...</class> 
@@ -24,6 +22,11 @@
         <class>net.wapwag.wemp.dao.model.ObjectOrganizationScope</class>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+			<property name="hibernate.connection.driver_class" value="org.h2.Driver"/>
+			<property name="hibernate.connection.url" value="jdbc:h2:mem"/>
+			<property name="hibernate.hbm2ddl.auto" value="create"/>
+			<property name="hibernate.show_sql" value="true"/>
         </properties>
     </persistence-unit>
 </persistence>
