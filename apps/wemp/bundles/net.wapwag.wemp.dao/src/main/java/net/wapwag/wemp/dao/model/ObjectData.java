@@ -1,6 +1,7 @@
 package net.wapwag.wemp.dao.model;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -9,51 +10,29 @@ import java.util.List;
  */
 @Entity
 @Table(name = "object_data")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class ObjectData {
 
     @Id
-    @Column(name = "object_id")
-    private String objectId;
+    @Column(name = "id")
+    private String id;
 
-    @Column(name = "object_type")
-    private String objectType;
+    @Column(name = "name")
+    private String name;
 
-    @Column(name = "object_name")
-    private String objectName;
-
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "object_parent_id")
-    private List<ObjectData> childList;
-
-    public String getObjectId() {
-        return objectId;
+    public String getId() {
+        return id;
     }
 
-    public void setObjectId(String objectId) {
-        this.objectId = objectId;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public String getObjectType() {
-        return objectType;
+    public String getName() {
+        return name;
     }
 
-    public void setObjectType(String objectType) {
-        this.objectType = objectType;
-    }
-
-    public String getObjectName() {
-        return objectName;
-    }
-
-    public void setObjectName(String objectName) {
-        this.objectName = objectName;
-    }
-
-    public List<ObjectData> getChildList() {
-        return childList;
-    }
-
-    public void setChildList(List<ObjectData> childList) {
-        this.childList = childList;
+    public void setName(String name) {
+        this.name = name;
     }
 }

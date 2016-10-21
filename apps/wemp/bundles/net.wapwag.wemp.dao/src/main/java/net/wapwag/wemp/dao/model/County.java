@@ -9,40 +9,28 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "county_data")
-public class County {
+public class County extends ObjectData {
 
-    @Id
-    @Column
-    private String id;
-
-    @Column
-    private String name;
+    @ManyToOne
+    private City city;
 
     @OneToMany
     @JoinColumn(name = "county_id")
     private Set<Project> projectSet;
 
-    public String getId() {
-        return id;
+    public City getCity() {
+        return city;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setCity(City city) {
+        this.city = city;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Set<Project> getTownSet() {
+    public Set<Project> getProjectSet() {
         return projectSet;
     }
 
-    public void setTownSet(Set<Project> projectSet) {
+    public void setProjectSet(Set<Project> projectSet) {
         this.projectSet = projectSet;
     }
 }

@@ -8,34 +8,11 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "pump_equipment_data")
-public class PumpEquipment {
-
-    @Id
-    @Column
-    private String id;
-
-    @Column
-    private String name;
+public class PumpEquipment extends ObjectData {
 
     @ManyToOne
     @JoinColumn(name = "pump_room_id")
     private PumpRoom pumpRoom;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public PumpRoom getPumpRoom() {
         return pumpRoom;

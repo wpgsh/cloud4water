@@ -4,6 +4,7 @@ import net.wapwag.wemp.dao.WaterEquipmentDao;
 import net.wapwag.wemp.dao.WaterEquipmentDaoException;
 import net.wapwag.wemp.dao.model.*;
 import net.wapwag.wemp.model.AccessToken;
+import net.wapwag.wemp.model.CountryView;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ServiceScope;
@@ -26,7 +27,16 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
 		throw new RuntimeException("TODO - not implemented");
 	}
 
-	@Override
+    @Override
+    public int saveCountry(Country country) throws WaterEquipmentServiceException {
+        try {
+            return waterEquipmentDao.saveCountry(country);
+        } catch (WaterEquipmentDaoException e) {
+            throw new WaterEquipmentServiceException("can't add country");
+        }
+    }
+
+    @Override
 	public int saveObject(ObjectData ObjectData) throws WaterEquipmentServiceException {
 		try {
 			return waterEquipmentDao.saveObjectData(ObjectData);
@@ -80,10 +90,14 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
 	}
 
     @Override
-    public Country getCountry(Country country) throws WaterEquipmentServiceException {
+    public CountryView getCountry(Country country) throws WaterEquipmentServiceException {
         return waterEquipmentDao.txExpr(() -> {
             try {
-                return waterEquipmentDao.getCountry(country);
+                Country result = waterEquipmentDao.getCountry(country);
+                CountryView countryView = new CountryView();
+                countryView.setId(result.getId());
+                countryView.setName(result.getName());
+                return countryView;
             } catch (WaterEquipmentDaoException e) {
                 return null;
             }

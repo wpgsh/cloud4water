@@ -1,7 +1,9 @@
 package net.wapwag.wemp;
 
+import net.wapwag.wemp.dao.WaterEquipmentDaoException;
 import net.wapwag.wemp.dao.model.*;
 import net.wapwag.wemp.model.AccessToken;
+import net.wapwag.wemp.model.CountryView;
 
 /**
  * Water Equipment Service methods
@@ -28,7 +30,9 @@ public interface WaterEquipmentService {
 	 * @return
 	 */
 	AccessToken lookupToken(String handle) throws WaterEquipmentServiceException;
-	
+
+    int saveCountry(Country country) throws WaterEquipmentServiceException;
+
 	int saveObject(ObjectData ObjectData) throws WaterEquipmentServiceException;
 
 	int removeObject(ObjectData ObjectData) throws WaterEquipmentServiceException;
@@ -41,7 +45,7 @@ public interface WaterEquipmentService {
 
 	ObjectDict getObjectDict(ObjectDict objectDict) throws WaterEquipmentServiceException;
 
-	Country getCountry(Country country) throws WaterEquipmentServiceException;
+    CountryView getCountry(Country country) throws WaterEquipmentServiceException;
 
 	Area getArea(Area area) throws WaterEquipmentServiceException;
 

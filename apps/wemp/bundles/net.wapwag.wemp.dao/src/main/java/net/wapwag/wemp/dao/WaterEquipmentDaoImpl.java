@@ -22,7 +22,19 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
 
 	}
 
-	@Override
+    @Override
+    public int saveCountry(Country country) throws WaterEquipmentDaoException {
+        try {
+            return entityManager.txExpr(em -> {
+                em.merge(country);
+                return 1;
+            });
+        } catch (Exception e) {
+            throw new WaterEquipmentDaoException("can't save country", e);
+        }
+    }
+
+    @Override
 	public int saveObjectData(final ObjectData ObjectData) throws WaterEquipmentDaoException {
 		try {
 			return entityManager.txExpr(em -> {
@@ -77,16 +89,7 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
 	@Override
 	public Country getCountry(Country country) throws WaterEquipmentDaoException {
         try {
-            return entityManager.txExpr(em -> em.createQuery("select country from Country country " +
-                        "left join fetch country.areaSet area " +
-                        "left join fetch area.provinceSet province " +
-                        "left join fetch province.citySet city " +
-                        "left join fetch city.countySet county " +
-                        "left join fetch county.projectSet project " +
-                        "left join fetch project.pumpRoomSet pumpRoom " +
-                        "left join fetch pumpRoom.pumpEquipmentSet pumpEquipment " +
-                        "where country.id = :id", Country.class)
-                        .setParameter("id", country.getId()).getSingleResult());
+            return entityManager.txExpr(em -> em.find(Country.class, country.getId()));
         } catch (Exception e) {
             throw new WaterEquipmentDaoException("can't save object dict", e);
         }

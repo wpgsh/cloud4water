@@ -9,6 +9,8 @@ import net.wapwag.wemp.dao.model.*;
  */
 public interface WaterEquipmentDao {
 
+	int saveCountry(Country country) throws WaterEquipmentDaoException;
+
 	int saveObjectData(ObjectData ObjectData) throws WaterEquipmentDaoException;
 
 	int removeObjectData(String objectId) throws WaterEquipmentDaoException;

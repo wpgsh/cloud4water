@@ -9,34 +9,11 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "country_data")
-public class Country {
-
-    @Id
-    @Column
-    private String id;
-
-    @Column
-    private String name;
+public class Country extends ObjectData {
 
     @OneToMany
     @JoinColumn(name = "country_id")
     private Set<Area> areaSet;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public Set<Area> getAreaSet() {
         return areaSet;

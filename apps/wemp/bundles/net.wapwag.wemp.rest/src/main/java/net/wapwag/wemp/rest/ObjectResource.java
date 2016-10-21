@@ -36,31 +36,14 @@ public class ObjectResource {
 		throw new RuntimeException("TODO - not implemented");
 	}
 
-	@POST
+	@Path("/country")
+    @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-	public ResponseMapper saveUser(String json) throws Exception {
-        ObjectData ObjectData = new Gson().fromJson(json, ObjectData.class);
-        return ResponseMapper.serialize().add("count", waterEquipmentService.saveObject(ObjectData));
+    public ResponseMapper saveCountry(String json) throws Exception {
+        Country country = new Gson().fromJson(json, Country.class);
+        return ResponseMapper.serialize().add("count", waterEquipmentService.saveCountry(country));
     }
-
-	@POST
-    @Path("/dict")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseMapper saveObjectDict(String json) throws Exception {
-        ObjectDict objectDict = new Gson().fromJson(json, ObjectDict.class);
-		return ResponseMapper.serialize().add("count", waterEquipmentService.saveObjectDict(objectDict));
-	}
-
-	@DELETE
-    @Path("/dict")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseMapper removeObjectDict(String json) throws Exception {
-        ObjectDict objectDict = new Gson().fromJson(json, ObjectDict.class);
-		return ResponseMapper.serialize().add("count", waterEquipmentService.removeObjectDict(objectDict));
-	}
 
 	@GET
     @Path("/country")

@@ -9,28 +9,16 @@ import java.util.List;
  */
 @Entity
 @Table(name = "pump_network_data")
-public class PumpNetwork {
+public class PumpNetwork extends ObjectData {
 
-    @Id
-    @Column
-    private String id;
+    @ManyToOne
+    private City city;
 
-    @Column
-    private String name;
-
-    public String getId() {
-        return id;
+    public City getCity() {
+        return city;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setCity(City city) {
+        this.city = city;
     }
 }

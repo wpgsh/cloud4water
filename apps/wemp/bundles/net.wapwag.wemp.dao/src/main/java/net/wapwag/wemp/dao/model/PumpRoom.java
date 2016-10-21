@@ -9,14 +9,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "pump_room_data")
-public class PumpRoom {
-
-    @Id
-    @Column
-    private String id;
-
-    @Column
-    private String name;
+public class PumpRoom extends ObjectData {
 
     @JsonIgnore
     @ManyToOne
@@ -25,22 +18,6 @@ public class PumpRoom {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "pump_room_id")
     private Set<PumpEquipment> pumpEquipmentSet;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public Project getProject() {
         return project;

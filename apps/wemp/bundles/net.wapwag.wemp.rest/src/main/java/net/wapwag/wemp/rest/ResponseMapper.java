@@ -19,7 +19,7 @@ import java.util.Map;
 @XmlRootElement
 public class ResponseMapper {
 
-    private static final Gson serlizer = new GsonBuilder()
+    private static final Gson serializer = new GsonBuilder()
             .setExclusionStrategies(new ExclusionStrategy() {
 
                 /**
@@ -41,9 +41,7 @@ public class ResponseMapper {
                 }
             }).create();
 
-    private static final ResponseMapper responseMapper = new ResponseMapper();
-
-    private static Map<String, Object> resultMap = Maps.newHashMap();
+    private Map<String, Object> resultMap = Maps.newHashMap();
 
     private String result;
 
@@ -54,7 +52,7 @@ public class ResponseMapper {
      */
     @XmlElement
     public String getResult() {
-        return serlizer.toJson(resultMap);
+        return serializer.toJson(resultMap);
     }
 
     public ResponseMapper add(String key, Object value) {
@@ -63,8 +61,7 @@ public class ResponseMapper {
     }
 
     public static ResponseMapper serialize() {
-        resultMap.clear();
-        return responseMapper;
+        return new ResponseMapper();
     }
 
 }
