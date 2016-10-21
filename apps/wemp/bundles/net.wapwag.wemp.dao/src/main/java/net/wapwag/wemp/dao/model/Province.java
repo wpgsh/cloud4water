@@ -11,7 +11,7 @@ import javax.persistence.Table;
 @PrimaryKeyJoinColumn(name = "id")
 public class Province extends ObjectEntity {
 
-	@ManyToOne(cascade=CascadeType.ALL)
+	@ManyToOne
 	private Area area;
 	
 	public Province() {
