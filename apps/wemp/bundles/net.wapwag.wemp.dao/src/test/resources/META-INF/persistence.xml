@@ -3,14 +3,20 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              version="2.0">
     <!--  RESOURCE_LOCAL -->
-    <persistence-unit name="sample.jpa">
+    <persistence-unit name="test-wemp">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <!-- Add JPA model classes here:
+        <class>net.wapwag.wemp.dao.model.ObjectData</class>
+        <class>net.wapwag.wemp.dao.model.Country</class>
+        <class>net.wapwag.wemp.dao.model.Area</class>
+        <class>net.wapwag.wemp.dao.model.Province</class>
+        <class>net.wapwag.wemp.dao.model.City</class>
+        <class>net.wapwag.wemp.dao.model.County</class>
+        <class>net.wapwag.wemp.dao.model.Project</class>
+        <class>net.wapwag.wemp.dao.model.PumpRoom</class>
+        <class>net.wapwag.wemp.dao.model.PumpEquipment</class>
+        <class>net.wapwag.wemp.dao.model.PumpNetwork</class>
 
-        <class>...fully-qualified class #1 name...</class>
-        <class>...fully-qualified class #2 name...</class>
-
-        -->
+        <class>net.wapwag.wemp.dao.model.User</class>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
             <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>

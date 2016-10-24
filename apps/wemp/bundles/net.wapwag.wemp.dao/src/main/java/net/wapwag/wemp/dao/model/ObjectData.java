@@ -1,8 +1,10 @@
 package net.wapwag.wemp.dao.model;
 
+import javax.annotation.Generated;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Object data model
@@ -14,17 +16,18 @@ import java.util.List;
 public class ObjectData {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private String id;
+    private long id;
 
     @Column(name = "name")
     private String name;
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -35,4 +38,5 @@ public class ObjectData {
     public void setName(String name) {
         this.name = name;
     }
+
 }

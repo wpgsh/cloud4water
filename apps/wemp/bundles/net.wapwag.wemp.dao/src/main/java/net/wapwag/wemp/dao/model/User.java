@@ -1,9 +1,7 @@
 package net.wapwag.wemp.dao.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.Set;
 
 /**
  * User model
@@ -14,17 +12,28 @@ import javax.persistence.Table;
 public class User {
 
     @Id
-    @Column
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
     @Column
     private String name;
 
-    public String getId() {
+    @ManyToMany
+    @JoinTable(name = "user_object",
+        joinColumns = {
+                @JoinColumn(name = "user_id")
+        },
+        inverseJoinColumns = {
+                @JoinColumn(name = "object_id")
+        }
+    )
+    private Set<ObjectData> objectDataSet;
+
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -34,5 +43,13 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Set<ObjectData> getObjectDataSet() {
+        return objectDataSet;
+    }
+
+    public void setObjectDataSet(Set<ObjectData> objectDataSet) {
+        this.objectDataSet = objectDataSet;
     }
 }
