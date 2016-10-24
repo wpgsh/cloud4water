@@ -11,7 +11,6 @@ import java.util.Set;
 @Table(name = "project_data")
 public class Project extends ObjectData {
 
-    @JsonIgnore
     @ManyToOne
     private County county;
 

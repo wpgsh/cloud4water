@@ -11,7 +11,6 @@ import java.util.Set;
 @Table(name = "pump_room_data")
 public class PumpRoom extends ObjectData {
 
-    @JsonIgnore
     @ManyToOne
     private Project project;
 
