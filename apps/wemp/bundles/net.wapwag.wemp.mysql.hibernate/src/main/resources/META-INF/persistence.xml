@@ -8,14 +8,14 @@
         <jta-data-source>osgi:service/javax.sql.DataSource/(osgi.jndi.service.name=jdbc/WaterEquipment)</jta-data-source>
         <non-jta-data-source>osgi:service/javax.sql.DataSource/(osgi.jndi.service.name=jdbc/WaterEquipment)</non-jta-data-source>
         <class>net.wapwag.wemp.dao.model.ObjectData</class>
-        <class>net.wapwag.wemp.dao.model.Country</class>
-        <class>net.wapwag.wemp.dao.model.Area</class>
-        <class>net.wapwag.wemp.dao.model.Province</class>
-        <class>net.wapwag.wemp.dao.model.City</class>
-        <class>net.wapwag.wemp.dao.model.County</class>
-        <class>net.wapwag.wemp.dao.model.Project</class>
-        <class>net.wapwag.wemp.dao.model.PumpRoom</class>
-        <class>net.wapwag.wemp.dao.model.PumpEquipment</class>
+        <class>net.wapwag.wemp.dao.model.geo.Country</class>
+        <class>net.wapwag.wemp.dao.model.geo.Area</class>
+        <class>net.wapwag.wemp.dao.model.geo.Province</class>
+        <class>net.wapwag.wemp.dao.model.geo.City</class>
+        <class>net.wapwag.wemp.dao.model.geo.County</class>
+        <class>net.wapwag.wemp.dao.model.project.Project</class>
+        <class>net.wapwag.wemp.dao.model.project.PumpRoom</class>
+        <class>net.wapwag.wemp.dao.model.project.PumpEquipment</class>
         <class>net.wapwag.wemp.dao.model.PumpNetwork</class>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>

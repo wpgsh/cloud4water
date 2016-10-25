@@ -3,6 +3,11 @@ package net.wapwag.wemp;
 import net.wapwag.wemp.dao.WaterEquipmentDao;
 import net.wapwag.wemp.dao.WaterEquipmentDaoException;
 import net.wapwag.wemp.dao.model.*;
+import net.wapwag.wemp.dao.model.geo.Area;
+import net.wapwag.wemp.dao.model.geo.Country;
+import net.wapwag.wemp.dao.model.project.Project;
+import net.wapwag.wemp.dao.model.project.PumpEquipment;
+import net.wapwag.wemp.dao.model.project.PumpRoom;
 import net.wapwag.wemp.model.AccessToken;
 import net.wapwag.wemp.model.CountryView;
 import org.osgi.service.component.annotations.Component;
@@ -56,29 +61,6 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
 	}
 
 	@Override
-	public int saveObjectDict(ObjectDict objectDict) throws WaterEquipmentServiceException {
-		try {
-			return waterEquipmentDao.saveObjectDict(objectDict);
-		} catch (WaterEquipmentDaoException e) {
-			throw new WaterEquipmentServiceException("can't add object dict");
-		}
-	}
-
-	@Override
-	public int removeObjectDict(ObjectDict objectDict) throws WaterEquipmentServiceException {
-		try {
-			return waterEquipmentDao.removeObjectDict(objectDict.getDictId());
-		} catch (WaterEquipmentDaoException e) {
-			throw new WaterEquipmentServiceException("can't remove object dict");
-		}
-	}
-
-	@Override
-	public ObjectDict getObjectDict(ObjectDict objectDict) throws WaterEquipmentServiceException {
-		return null;
-	}
-
-	@Override
 	public Area getArea(Area area) throws WaterEquipmentServiceException {
         return waterEquipmentDao.txExpr(() -> {
             try {
@@ -95,7 +77,7 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
             try {
                 Country result = waterEquipmentDao.getCountry(country);
                 CountryView countryView = new CountryView();
-                countryView.setId(result.getId());
+                countryView.setId(result.getId() + "");
                 countryView.setName(result.getName());
                 return countryView;
             } catch (WaterEquipmentDaoException e) {

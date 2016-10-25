@@ -1,4 +1,7 @@
-package net.wapwag.wemp.dao.model;
+package net.wapwag.wemp.dao.model.project;
+
+import net.wapwag.wemp.dao.model.ObjectData;
+import net.wapwag.wemp.dao.model.ObjectType;
 
 import javax.persistence.*;
 
@@ -13,6 +16,10 @@ public class PumpEquipment extends ObjectData {
     @ManyToOne
     @JoinColumn(name = "pump_room_id")
     private PumpRoom pumpRoom;
+
+    public PumpEquipment() {
+        super(ObjectType.PUMPEQUIPMENT);
+    }
 
     public PumpRoom getPumpRoom() {
         return pumpRoom;

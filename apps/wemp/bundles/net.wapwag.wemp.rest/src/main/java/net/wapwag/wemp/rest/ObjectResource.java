@@ -1,25 +1,22 @@
 package net.wapwag.wemp.rest;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import com.google.gson.Gson;
 import net.wapwag.wemp.WaterEquipmentServiceException;
-import net.wapwag.wemp.dao.model.*;
+import net.wapwag.wemp.dao.model.geo.Area;
+import net.wapwag.wemp.dao.model.geo.Country;
+import net.wapwag.wemp.dao.model.project.Project;
+import net.wapwag.wemp.dao.model.project.PumpEquipment;
+import net.wapwag.wemp.dao.model.project.PumpRoom;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-
-import com.thingswise.appframework.jaxrs.utils.OAuth2;
 
 import net.wapwag.wemp.WaterEquipmentService;
 import net.wapwag.wemp.rest.authz.FineGrainedAuthorization;
 import net.wapwag.wemp.rest.authz.Permission;
 import net.wapwag.wemp.rest.bindings.GetObjectPropertiesResponse;
-import net.wapwag.wemp.rest.oauth2.WempTokenHandler;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Component(service=ObjectResource.class)
 @Path("/object")

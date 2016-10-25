@@ -1,4 +1,7 @@
-package net.wapwag.wemp.dao.model;
+package net.wapwag.wemp.dao.model.geo;
+
+import net.wapwag.wemp.dao.model.ObjectData;
+import net.wapwag.wemp.dao.model.ObjectType;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -17,6 +20,10 @@ public class Province extends ObjectData {
     @OneToMany
     @JoinColumn(name = "province_id")
     private Set<City> citySet;
+
+    public Province() {
+        super(ObjectType.PROVINCE);
+    }
 
     public Area getArea() {
         return area;

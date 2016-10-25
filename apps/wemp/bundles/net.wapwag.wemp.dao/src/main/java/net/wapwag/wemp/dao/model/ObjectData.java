@@ -23,6 +23,18 @@ public class ObjectData {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ObjectType type;
+
+    public ObjectData() {
+
+    }
+
+    public ObjectData(ObjectType type) {
+        this.type = type;
+    }
+
     public long getId() {
         return id;
     }
@@ -37,6 +49,18 @@ public class ObjectData {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public ObjectType getType() {
+        return type;
+    }
+
+    public void setType(ObjectType type) {
+        this.type = type;
+    }
+
+    public Class<? extends ObjectData> getObjectClass() {
+        return type.getObjectClass();
     }
 
 }

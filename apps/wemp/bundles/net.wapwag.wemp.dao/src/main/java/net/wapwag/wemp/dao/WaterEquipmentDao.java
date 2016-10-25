@@ -1,6 +1,10 @@
 package net.wapwag.wemp.dao;
 
-import net.wapwag.wemp.dao.model.*;
+import net.wapwag.wemp.dao.model.ObjectData;
+import net.wapwag.wemp.dao.model.geo.*;
+import net.wapwag.wemp.dao.model.project.Project;
+import net.wapwag.wemp.dao.model.project.PumpEquipment;
+import net.wapwag.wemp.dao.model.project.PumpRoom;
 
 /**
  * Water Equipment DAO methods
@@ -13,15 +17,9 @@ public interface WaterEquipmentDao {
 
 	int saveObjectData(ObjectData ObjectData) throws WaterEquipmentDaoException;
 
-	int removeObjectData(String objectId) throws WaterEquipmentDaoException;
+	int removeObjectData(long objectId) throws WaterEquipmentDaoException;
 
     ObjectData getObjectData(ObjectData ObjectData) throws WaterEquipmentDaoException;
-
-	int saveObjectDict(ObjectDict objectDict) throws WaterEquipmentDaoException;
-
-	int removeObjectDict(int objectDictId) throws WaterEquipmentDaoException;
-
-    ObjectData getObjectDict(ObjectDict objectDict) throws WaterEquipmentDaoException;
 
 	Country getCountry(Country country) throws WaterEquipmentDaoException;
 
@@ -31,11 +29,11 @@ public interface WaterEquipmentDao {
 
 	City getCity(City city) throws WaterEquipmentDaoException;
 
-	County getCounty(String countyId) throws WaterEquipmentDaoException;
+	County getCounty(long countyId) throws WaterEquipmentDaoException;
 
 	int saveProject(Project project) throws WaterEquipmentDaoException;
 
-	int removeProject(String projectId) throws WaterEquipmentDaoException;
+	int removeProject(long projectId) throws WaterEquipmentDaoException;
 
     int updateProject(Project project) throws WaterEquipmentDaoException;
 
@@ -43,7 +41,7 @@ public interface WaterEquipmentDao {
 
     int savePumpRoom(PumpRoom pumpRoom) throws WaterEquipmentDaoException;
 
-	int removePumpRoom(String pumpRoomId) throws WaterEquipmentDaoException;
+	int removePumpRoom(long pumpRoomId) throws WaterEquipmentDaoException;
 
     int updatePumpRoom(PumpRoom pumpRoom) throws WaterEquipmentDaoException;
 
@@ -51,7 +49,7 @@ public interface WaterEquipmentDao {
 
     int savePumpEquipment(PumpEquipment pumpEquipment) throws WaterEquipmentDaoException;
 
-	int removePumpEquipment(String pumpEquipmentId) throws WaterEquipmentDaoException;
+	int removePumpEquipment(long pumpEquipmentId) throws WaterEquipmentDaoException;
 
     int updatePumpEquipment(PumpEquipment pumpEquipment) throws WaterEquipmentDaoException;
 

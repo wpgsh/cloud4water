@@ -1,4 +1,8 @@
-package net.wapwag.wemp.dao.model;
+package net.wapwag.wemp.dao.model.project;
+
+import net.wapwag.wemp.dao.model.ObjectData;
+import net.wapwag.wemp.dao.model.ObjectType;
+import net.wapwag.wemp.dao.model.geo.County;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -17,6 +21,10 @@ public class Project extends ObjectData {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "project_id")
     private Set<PumpRoom> pumpRoomSet;
+
+    public Project() {
+        super(ObjectType.PROJECT);
+    }
 
     public County getCounty() {
         return county;

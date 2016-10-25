@@ -1,4 +1,7 @@
-package net.wapwag.wemp.dao.model;
+package net.wapwag.wemp.dao.model.project;
+
+import net.wapwag.wemp.dao.model.ObjectData;
+import net.wapwag.wemp.dao.model.ObjectType;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -17,6 +20,10 @@ public class PumpRoom extends ObjectData {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "pump_room_id")
     private Set<PumpEquipment> pumpEquipmentSet;
+
+    public PumpRoom() {
+        super(ObjectType.PUMPROOM);
+    }
 
     public Project getProject() {
         return project;

@@ -1,9 +1,8 @@
 package net.wapwag.wemp.dao;
 
-import net.wapwag.wemp.dao.model.Area;
-import net.wapwag.wemp.dao.model.Country;
+import net.wapwag.wemp.dao.model.geo.Country;
 import net.wapwag.wemp.dao.model.ObjectData;
-import net.wapwag.wemp.dao.model.User;
+import net.wapwag.wemp.dao.model.permission.User;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,8 +29,8 @@ public class TestObjectModel {
 		tx.begin();
         User user = new User();
         user.setName("管理员");
+		em.persist(user);
 
-        Set<ObjectData> objectDataSet = new HashSet<>();
 		ObjectData china = new Country();
         china.setName("中国");
 
@@ -47,13 +46,6 @@ public class TestObjectModel {
 
         em.persist(japan);
 
-        objectDataSet.add(china);
-        objectDataSet.add(america);
-        objectDataSet.add(japan);
-
-        user.setObjectDataSet(objectDataSet);
-
-        em.persist(user);
 		em.flush();
 		
 		tx.commit();

@@ -1,6 +1,10 @@
 package net.wapwag.wemp.dao;
 
 import net.wapwag.wemp.dao.model.*;
+import net.wapwag.wemp.dao.model.geo.*;
+import net.wapwag.wemp.dao.model.project.Project;
+import net.wapwag.wemp.dao.model.project.PumpEquipment;
+import net.wapwag.wemp.dao.model.project.PumpRoom;
 import org.osgi.service.component.annotations.*;
 
 import java.util.ArrayList;
@@ -47,43 +51,13 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
 	}
 
 	@Override
-	public int removeObjectData(String objectId) throws WaterEquipmentDaoException {
+	public int removeObjectData(long objectId) throws WaterEquipmentDaoException {
 		return 0;
 	}
 
 	@Override
 	public ObjectData getObjectData(ObjectData ObjectData) throws WaterEquipmentDaoException {
 		return new ObjectData();
-	}
-
-	@Override
-	public int saveObjectDict(ObjectDict objectDict) throws WaterEquipmentDaoException {
-		try {
-			return entityManager.txExpr(em -> {
-				em.merge(objectDict);
-				return 1;
-			});
-		} catch (Exception e) {
-			throw new WaterEquipmentDaoException("can't save object dict", e);
-		}
-	}
-
-	@Override
-	public int removeObjectDict(int objectDictId) throws WaterEquipmentDaoException {
-		try {
-			return entityManager.txExpr(em -> {
-				ObjectDict objectDict = em.find(ObjectDict.class, objectDictId);
-                em.remove(objectDict);
-				return 1;
-			});
-		} catch (Exception e) {
-			throw new WaterEquipmentDaoException("can't save object dict", e);
-		}
-	}
-
-	@Override
-	public ObjectData getObjectDict(ObjectDict objectDict) throws WaterEquipmentDaoException {
-		return null;
 	}
 
 	@Override
@@ -120,7 +94,7 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
 	}
 
 	@Override
-	public County getCounty(String countyId) throws WaterEquipmentDaoException {
+	public County getCounty(long countyId) throws WaterEquipmentDaoException {
         try {
             return entityManager.txExpr(em -> em.createQuery("select county from County county " +
                         "where county.id = :id", County.class)
@@ -143,7 +117,7 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
     }
 
     @Override
-    public int removeProject(String projectId) throws WaterEquipmentDaoException {
+    public int removeProject(long projectId) throws WaterEquipmentDaoException {
         try {
             return entityManager.txExpr(em -> {
                 Project project = em.find(Project.class, projectId);
@@ -186,7 +160,7 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
     }
 
     @Override
-    public int removePumpRoom(String pumpRoomId) throws WaterEquipmentDaoException {
+    public int removePumpRoom(long pumpRoomId) throws WaterEquipmentDaoException {
         try {
             return entityManager.txExpr(em -> {
                 PumpRoom pumpRoom = em.find(PumpRoom.class, pumpRoomId);
@@ -228,7 +202,7 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
     }
 
     @Override
-    public int removePumpEquipment(String pumpEquipmentId) throws WaterEquipmentDaoException {
+    public int removePumpEquipment(long pumpEquipmentId) throws WaterEquipmentDaoException {
         try {
             return entityManager.txExpr(em -> {
                 PumpEquipment pumpEquipment = em.find(PumpEquipment.class, pumpEquipmentId);
