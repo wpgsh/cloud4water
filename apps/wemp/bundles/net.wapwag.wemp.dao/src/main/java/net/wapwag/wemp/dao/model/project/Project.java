@@ -16,10 +16,10 @@ import java.util.Set;
 public class Project extends ObjectData {
 
     @ManyToOne
+    @JoinColumn(name = "county_id")
     private County county;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "project_id")
+    @OneToMany(mappedBy = "project")
     private Set<PumpRoom> pumpRoomSet;
 
     public Project() {

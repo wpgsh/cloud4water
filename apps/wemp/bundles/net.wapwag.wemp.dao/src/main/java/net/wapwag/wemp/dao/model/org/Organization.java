@@ -23,11 +23,11 @@ public class Organization extends ObjectData {
     private Set<Group> groupSet;
 
     @OneToMany
-    @JoinColumn(name = "org_id")
+    @JoinColumn(name = "organization_id")
     private Set<OrgObject> orgObjectSet;
 
     @OneToMany
-    @JoinColumn(name = "org_id")
+    @JoinColumn(name = "organization_id")
     private Set<UserOrg> userOrgSet;
 
     public Organization() {

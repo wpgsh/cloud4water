@@ -15,10 +15,10 @@ import java.util.Set;
 public class Province extends ObjectData {
 
     @ManyToOne
+    @JoinColumn(name = "area_id")
     private Area area;
 
-    @OneToMany
-    @JoinColumn(name = "province_id")
+    @OneToMany(mappedBy = "province")
     private Set<City> citySet;
 
     public Province() {

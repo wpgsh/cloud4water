@@ -14,8 +14,7 @@ import java.util.Set;
 @Table(name = "country_data")
 public class Country extends ObjectData {
 
-    @OneToMany
-    @JoinColumn(name = "country_id")
+    @OneToMany(mappedBy = "country")
     private Set<Area> areaSet;
 
     public Country() {

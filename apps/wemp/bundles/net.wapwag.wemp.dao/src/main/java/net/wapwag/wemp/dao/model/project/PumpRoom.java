@@ -15,10 +15,10 @@ import java.util.Set;
 public class PumpRoom extends ObjectData {
 
     @ManyToOne
+    @JoinColumn(name = "project_id")
     private Project project;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "pump_room_id")
+    @OneToMany(mappedBy = "pumpRoom")
     private Set<PumpEquipment> pumpEquipmentSet;
 
     public PumpRoom() {
