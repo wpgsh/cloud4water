@@ -30,8 +30,7 @@ public class ObjectEntity {
 	@Enumerated(EnumType.STRING)
 	private ObjectType type;
 	
-	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
-	@JoinColumn(name="object_id")
+	@OneToMany(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, mappedBy="id.object")
 	private Set<ObjectOrganizationScope> organizations;
 
 	public Class<? extends ObjectEntity> getObjectClass() {

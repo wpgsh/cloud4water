@@ -1,5 +1,6 @@
 package net.wapwag.wemp.dao.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -18,13 +19,14 @@ import javax.persistence.Table;
 @PrimaryKeyJoinColumn(name = "id")
 public class Organization extends ObjectEntity {
 
-	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
-	@JoinColumn(name="organization_id")
-	private Set<UserOrganizationRole> users;
+	@OneToMany(
+			fetch=FetchType.LAZY, 
+			cascade={CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, 
+			mappedBy="id.organization")
+	private Set<UserOrganizationRole> users = new HashSet<UserOrganizationRole>();
 	
-	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
-	@JoinColumn(name="organization_id")
-	private Set<ObjectEntity> objects;
+	@OneToMany(fetch=FetchType.LAZY, cascade={CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, mappedBy="id.organization")
+	private Set<ObjectOrganizationScope> objects;
 	
 	public Organization() {
 		

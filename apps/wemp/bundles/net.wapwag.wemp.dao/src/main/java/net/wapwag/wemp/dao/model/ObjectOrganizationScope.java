@@ -6,6 +6,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -19,9 +20,11 @@ public class ObjectOrganizationScope {
 		private static final long serialVersionUID = 1L;
 
 		@ManyToOne(fetch=FetchType.EAGER)
+		@JoinColumn(name="object_id", referencedColumnName="id")
 		protected ObjectEntity object;
 		
 		@ManyToOne(fetch=FetchType.EAGER)
+		@JoinColumn(name="organization_id", referencedColumnName="id")
 		protected Organization organization;
 
 		@Override

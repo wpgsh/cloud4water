@@ -1,5 +1,6 @@
 package net.wapwag.wemp.dao.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -27,9 +28,11 @@ public class User {
 	@Column(name="external_id")
 	private String externalId;
 	
-	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)	
-	@JoinColumn(name="user_id")
-	private Set<UserOrganizationRole> organizations;
+	@OneToMany(
+			fetch=FetchType.LAZY, 
+			cascade={CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, 
+			mappedBy="id.user")	
+	private Set<UserOrganizationRole> organizations = new HashSet<UserOrganizationRole>();
 
 	public long getId() {
 		return id;

@@ -19,10 +19,12 @@ public class UserOrganizationRole {
 				
 		private static final long serialVersionUID = 1L;
 
-		@ManyToOne(fetch=FetchType.EAGER)
+		@ManyToOne
+		@JoinColumn(name="user_id", referencedColumnName="id")
 		protected User user;
 		
-		@ManyToOne(fetch=FetchType.EAGER)
+		@ManyToOne
+		@JoinColumn(name="organization_id", referencedColumnName="id")
 		protected Organization organization;
 
 		@Override
@@ -131,6 +133,10 @@ public class UserOrganizationRole {
 
 	public void setRole(RoleType role) {
 		this.role = role;
+	}
+
+	public void setId(UserOrganizationId userOrganizationId) {
+		this.id = userOrganizationId;
 	}		
 
 }
