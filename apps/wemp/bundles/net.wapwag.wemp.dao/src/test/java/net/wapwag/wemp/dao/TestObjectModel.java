@@ -1,16 +1,12 @@
 package net.wapwag.wemp.dao;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -24,18 +20,19 @@ import net.wapwag.wemp.dao.model.WaterManagementAuthority;
 
 public class TestObjectModel {
 	
-	private EntityManager em;
+	private static EntityManagerFactory emf;
 	
 	private EntityTransaction tx;
-
-	@Before
-	public void before() {				
-		em = Persistence.createEntityManagerFactory("sample.jpa").createEntityManager();
-	}
 	
+	@BeforeClass
+	public static void initializeEntityManagerFactory() {
+		emf = Persistence.createEntityManagerFactory("sample.jpa");
+	}
+
 	@Test	
 	public void testModel() {
 		
+		EntityManager em = emf.createEntityManager();		
         tx = em.getTransaction();
         tx.begin();
 
@@ -76,13 +73,14 @@ public class TestObjectModel {
 		System.out.println("province.area="+province.getArea());
 		
 		tx.commit();
-		
+		em.close();
 	}
 	
 
     @Test
     public void testManyToMany() {
     	
+    	EntityManager em = emf.createEntityManager();
         tx = em.getTransaction();
         tx.begin();    	
 
@@ -104,25 +102,19 @@ public class TestObjectModel {
         em.persist(userOrganizationRole);
         
         tx.commit();
+        em.close();
         
+        em = emf.createEntityManager();
         tx = em.getTransaction();
         tx.begin();    	        
         
         user = em.
-        		createQuery("select u from User u left join u.organizations where u.externalId = :externalId", User.class).setParameter("externalId", "admin0").
+        		createQuery("select u from User u where u.externalId = :externalId", User.class).
+        		setParameter("externalId", "admin0").
         		getSingleResult();
         
-        // NOTE: this refresh call here is needed to update the object in the Hibernate cache.
-        // When user object was persisted, its organizations field was not initialized correctly:
-        // it was missing the reverse reference to the UOR entity. In real world the user object
-        // initialization should look like follows:
-        //   
-        //   uor.setId(new UserOrganizationRole.UserOrganizationId(user, organization)
-        //   user.getOrganizations().add(uor)
-        //   organization.getUsers().add(uor)
-        //
-        
-        em.refresh(user);
+        // NOTE: since we have a totally new EntityManager for the remainder of the testcase, the values from the DB will be
+        // refreshed
         
         System.out.println("User.externalId="+user.getExternalId());
         TestCase.assertEquals("admin0", user.getExternalId());
@@ -140,13 +132,9 @@ public class TestObjectModel {
         System.out.println("User.organizations="+user.getOrganizations());
         		
     	tx.commit();
+    	em.close();
 
     }
 
-
-	@After
-	public void after() {
-		em.close();
-	}
 
 }
