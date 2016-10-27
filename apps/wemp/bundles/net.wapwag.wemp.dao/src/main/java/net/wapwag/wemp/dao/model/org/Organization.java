@@ -18,16 +18,13 @@ import java.util.Set;
 @Table(name = "org_data")
 public class Organization extends ObjectData {
 
-    @OneToMany
-    @JoinColumn(name = "org_id")
+    @OneToMany(mappedBy = "organization")
     private Set<Group> groupSet;
 
-    @OneToMany
-    @JoinColumn(name = "organization_id")
+    @OneToMany(mappedBy = "orgObjectId.organization")
     private Set<OrgObject> orgObjectSet;
 
-    @OneToMany
-    @JoinColumn(name = "organization_id")
+    @OneToMany(mappedBy = "userOrgId.organization")
     private Set<UserOrg> userOrgSet;
 
     public Organization() {

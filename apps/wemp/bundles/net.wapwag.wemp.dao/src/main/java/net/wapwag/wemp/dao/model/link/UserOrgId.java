@@ -3,7 +3,9 @@ package net.wapwag.wemp.dao.model.link;
 import net.wapwag.wemp.dao.model.org.Organization;
 import net.wapwag.wemp.dao.model.permission.User;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.io.Serializable;
 
@@ -13,9 +15,11 @@ public class UserOrgId implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne
+    @JoinColumn(name = "org_id")
     private Organization organization;
 
     public UserOrgId() {

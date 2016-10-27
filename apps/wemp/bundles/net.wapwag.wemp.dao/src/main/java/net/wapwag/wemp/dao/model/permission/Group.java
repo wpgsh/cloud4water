@@ -21,14 +21,16 @@ public class Group {
 
     @Column
     private String name;
+    
+    @ManyToOne
+    @JoinColumn(name = "org_id")
+    private Organization organization;
 
-    @OneToMany
-    @JoinColumn(name = "group_id")
+    @OneToMany(mappedBy = "groupObjectId.group")
     private Set<GroupObject> groupObjectSet;
 
-    @OneToMany
-    @JoinColumn(name = "group_id")
-    private Set<UserGroup> userGroupsSet;
+    @OneToMany(mappedBy = "userGroupId.group")
+    private Set<UserGroup> userGroupSet;
 
     public long getId() {
         return id;
@@ -55,10 +57,10 @@ public class Group {
     }
 
     public Set<UserGroup> getUserGroupsSet() {
-        return userGroupsSet;
+        return userGroupSet;
     }
 
-    public void setUserGroupsSet(Set<UserGroup> userGroupsSet) {
-        this.userGroupsSet = userGroupsSet;
+    public void setUserGroupsSet(Set<UserGroup> userGroupSet) {
+        this.userGroupSet = userGroupSet;
     }
 }

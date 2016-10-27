@@ -1,5 +1,6 @@
 package net.wapwag.wemp.dao;
 
+import junit.framework.TestCase;
 import net.wapwag.wemp.dao.model.ObjectData;
 import net.wapwag.wemp.dao.model.geo.Country;
 import net.wapwag.wemp.dao.model.link.UserOrg;
@@ -13,6 +14,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class TestObjectModel {
@@ -37,6 +39,11 @@ public class TestObjectModel {
         tx.begin();
     }
 
+    @After
+    public void afterMethod() {
+        tx.commit();
+    }
+
     @Test
     public void testManyToManyInsert() {
 
@@ -53,7 +60,7 @@ public class TestObjectModel {
         Set<Organization> orgSet = new HashSet<>();
         for (i = 0; i < 10; i++) {
             organization = new WaterManageAuth();
-            organization.setName("研发部");
+            organization.setName("研发部" + i);
             orgSet.add(organization);
             em.persist(organization);
         }
@@ -66,9 +73,17 @@ public class TestObjectModel {
             em.persist(userOrg);
         }
 
-        tx.commit();
     }
 
+    @Test
+    public void testManyToManySelect() {
+        User user = em.find(User.class, 10L);
+        List<Organization> orgList = em.createQuery(
+                "select userOrg.userOrgId.organization from UserOrg userOrg where userOrg.userOrgId.user = :user", Organization.class)
+                .setParameter("user", user).getResultList();
+
+        TestCase.assertTrue(orgList != null && orgList.size() > 0);
+    }
 
     @Test
 	public void testModel() {
@@ -93,8 +108,6 @@ public class TestObjectModel {
         em.persist(japan);
 
 		em.flush();
-		
-		tx.commit();
 		
 	}
 	

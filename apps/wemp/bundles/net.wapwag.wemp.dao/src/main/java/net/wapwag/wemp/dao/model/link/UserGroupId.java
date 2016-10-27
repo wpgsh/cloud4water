@@ -4,6 +4,7 @@ import net.wapwag.wemp.dao.model.permission.Group;
 import net.wapwag.wemp.dao.model.permission.User;
 
 import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.io.Serializable;
 
@@ -13,9 +14,11 @@ public class UserGroupId implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne
+    @JoinColumn(name = "group_id")
     private Group group;
 
     public UserGroupId() {

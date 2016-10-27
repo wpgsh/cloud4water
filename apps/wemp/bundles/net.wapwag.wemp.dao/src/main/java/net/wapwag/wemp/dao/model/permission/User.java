@@ -1,6 +1,5 @@
 package net.wapwag.wemp.dao.model.permission;
 
-import net.wapwag.wemp.dao.model.ObjectData;
 import net.wapwag.wemp.dao.model.link.UserGroup;
 import net.wapwag.wemp.dao.model.link.UserObject;
 import net.wapwag.wemp.dao.model.link.UserOrg;
@@ -23,16 +22,13 @@ public class User {
     @Column
     private String name;
 
-    @OneToMany
-    @JoinColumn(name = "user_id")
+    @OneToMany(mappedBy = "userObjectId.user")
     private Set<UserObject> userObjectSet;
 
-    @OneToMany
-    @JoinColumn(name = "user_id")
+    @OneToMany(mappedBy = "userGroupId.user")
     private Set<UserGroup> userGroupsSet;
 
-    @OneToMany
-    @JoinColumn(name = "user_id")
+    @OneToMany(mappedBy = "userOrgId.user")
     private Set<UserOrg> userOrgSet;
 
     public long getId() {

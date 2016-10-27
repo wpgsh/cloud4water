@@ -13,18 +13,18 @@ import javax.persistence.*;
 public class UserOrg {
 
     @EmbeddedId
-    private UserOrgId UserOrgId;
+    private UserOrgId userOrgId;
 
     @ManyToOne
     @JoinColumn(name = "job_id")
     private JobTitle jobTitle;
 
     public UserOrgId getUserOrgId() {
-        return UserOrgId;
+        return userOrgId;
     }
 
     public void setUserOrgId(UserOrgId userOrgId) {
-        UserOrgId = userOrgId;
+        this.userOrgId = userOrgId;
     }
 
     public JobTitle getJobTitle() {
