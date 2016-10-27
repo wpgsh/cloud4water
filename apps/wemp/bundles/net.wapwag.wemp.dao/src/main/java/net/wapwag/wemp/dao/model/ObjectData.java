@@ -2,6 +2,7 @@ package net.wapwag.wemp.dao.model;
 
 import net.wapwag.wemp.dao.model.link.GroupObject;
 import net.wapwag.wemp.dao.model.link.OrgObject;
+import net.wapwag.wemp.dao.model.link.UserObject;
 
 import javax.annotation.Generated;
 import javax.persistence.*;
@@ -30,9 +31,15 @@ public class ObjectData {
     @Enumerated(EnumType.STRING)
     private ObjectType type;
 
+    @Transient
+    @OneToMany(mappedBy = "userObjectId.objectData")
+    private Set<UserObject> userObjectSet;
+
+    @Transient
     @OneToMany(mappedBy = "groupObjectId.objectData")
     private Set<GroupObject> groupObjectSet;
 
+    @Transient
     @OneToMany(mappedBy = "orgObjectId.objectData")
     private Set<OrgObject> orgObjectSet;
 
@@ -66,6 +73,14 @@ public class ObjectData {
 
     public void setType(ObjectType type) {
         this.type = type;
+    }
+
+    public Set<UserObject> getUserObjectSet() {
+        return userObjectSet;
+    }
+
+    public void setUserObjectSet(Set<UserObject> userObjectSet) {
+        this.userObjectSet = userObjectSet;
     }
 
     public Class<? extends ObjectData> getObjectClass() {

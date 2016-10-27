@@ -1,6 +1,6 @@
 package net.wapwag.wemp;
 
-import net.wapwag.wemp.dao.model.*;
+import net.wapwag.wemp.dao.model.ObjectData;
 import net.wapwag.wemp.dao.model.geo.Area;
 import net.wapwag.wemp.dao.model.geo.Country;
 import net.wapwag.wemp.dao.model.project.Project;
@@ -8,6 +8,9 @@ import net.wapwag.wemp.dao.model.project.PumpEquipment;
 import net.wapwag.wemp.dao.model.project.PumpRoom;
 import net.wapwag.wemp.model.AccessToken;
 import net.wapwag.wemp.model.CountryView;
+import net.wapwag.wemp.model.UserView;
+
+import java.util.List;
 
 /**
  * Water Equipment Service methods
@@ -35,13 +38,15 @@ public interface WaterEquipmentService {
 	 */
 	AccessToken lookupToken(String handle) throws WaterEquipmentServiceException;
 
+	ObjectData getObject(long objId) throws WaterEquipmentServiceException;
+
+    List<UserView> getUsersByObject(long objId, String actionId) throws WaterEquipmentServiceException;
+
     int saveCountry(Country country) throws WaterEquipmentServiceException;
 
 	int saveObject(ObjectData ObjectData) throws WaterEquipmentServiceException;
 
 	int removeObject(ObjectData ObjectData) throws WaterEquipmentServiceException;
-
-	ObjectData getObject(ObjectData ObjectData) throws WaterEquipmentServiceException;
 
     CountryView getCountry(Country country) throws WaterEquipmentServiceException;
 

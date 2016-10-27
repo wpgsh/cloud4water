@@ -2,9 +2,13 @@ package net.wapwag.wemp.dao;
 
 import net.wapwag.wemp.dao.model.ObjectData;
 import net.wapwag.wemp.dao.model.geo.*;
+import net.wapwag.wemp.dao.model.permission.User;
 import net.wapwag.wemp.dao.model.project.Project;
 import net.wapwag.wemp.dao.model.project.PumpEquipment;
 import net.wapwag.wemp.dao.model.project.PumpRoom;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * Water Equipment DAO methods
@@ -13,13 +17,15 @@ import net.wapwag.wemp.dao.model.project.PumpRoom;
  */
 public interface WaterEquipmentDao {
 
+	ObjectData getObjectData(long objId) throws WaterEquipmentDaoException;
+
+    List<User> getUsersByObject(long objId, String actionId) throws WaterEquipmentDaoException;
+
 	int saveCountry(Country country) throws WaterEquipmentDaoException;
 
 	int saveObjectData(ObjectData ObjectData) throws WaterEquipmentDaoException;
 
 	int removeObjectData(long objectId) throws WaterEquipmentDaoException;
-
-    ObjectData getObjectData(ObjectData ObjectData) throws WaterEquipmentDaoException;
 
 	Country getCountry(Country country) throws WaterEquipmentDaoException;
 

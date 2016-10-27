@@ -2,7 +2,11 @@ package net.wapwag.wemp.rest;
 
 import com.thingswise.appframework.jaxrs.utils.OAuth2;
 import net.wapwag.wemp.WaterEquipmentService;
+import net.wapwag.wemp.WaterEquipmentServiceException;
 import net.wapwag.wemp.dao.model.ObjectData;
+import net.wapwag.wemp.dao.model.permission.User;
+import net.wapwag.wemp.model.ObjectView;
+import net.wapwag.wemp.model.UserView;
 import net.wapwag.wemp.rest.authz.FineGrainedAuthorization;
 import net.wapwag.wemp.rest.authz.Permission;
 import net.wapwag.wemp.rest.bindings.GetObjectPropertiesResponse;
@@ -11,6 +15,8 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import javax.ws.rs.*;
+import java.util.List;
+import java.util.Set;
 
 @Component(service = ObjectResource.class)
 @Path("/object/{oid}")
@@ -22,15 +28,15 @@ public class ObjectResource {
 
     @GET
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
-    public ObjectData getObject(@PathParam("oid") long objId) {
-        throw new RuntimeException("TODO - not implemented");
+    public ObjectView getObject(@PathParam("oid") long objId) throws Exception {
+        return new ObjectView(waterEquipmentService.getObject(objId));
     }
 
     @Path("/users")
     @GET
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
-    public ObjectData getUsersByObject() {
-        throw new RuntimeException("TODO - not implemented");
+    public List<UserView> getUsersByObject(@PathParam("oid") long objId, @QueryParam("actionId") String actionId) throws Exception {
+        return waterEquipmentService.getUsersByObject(objId, actionId);
     }
 
     @Path("/user/{uid}")

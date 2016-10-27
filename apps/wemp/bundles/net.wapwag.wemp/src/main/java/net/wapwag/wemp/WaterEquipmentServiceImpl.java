@@ -2,17 +2,22 @@ package net.wapwag.wemp;
 
 import net.wapwag.wemp.dao.WaterEquipmentDao;
 import net.wapwag.wemp.dao.WaterEquipmentDaoException;
-import net.wapwag.wemp.dao.model.*;
+import net.wapwag.wemp.dao.model.ObjectData;
 import net.wapwag.wemp.dao.model.geo.Area;
 import net.wapwag.wemp.dao.model.geo.Country;
+import net.wapwag.wemp.dao.model.permission.User;
 import net.wapwag.wemp.dao.model.project.Project;
 import net.wapwag.wemp.dao.model.project.PumpEquipment;
 import net.wapwag.wemp.dao.model.project.PumpRoom;
 import net.wapwag.wemp.model.AccessToken;
 import net.wapwag.wemp.model.CountryView;
+import net.wapwag.wemp.model.UserView;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ServiceScope;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component(scope=ServiceScope.SINGLETON)
 public class WaterEquipmentServiceImpl implements WaterEquipmentService {
@@ -31,6 +36,29 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
 		// TODO implement...
 		throw new RuntimeException("TODO - not implemented");
 	}
+
+    @Override
+    public ObjectData getObject(long objId) throws WaterEquipmentServiceException {
+        return waterEquipmentDao.txExpr(() -> {
+            try {
+                return waterEquipmentDao.getObjectData(objId);
+            } catch (WaterEquipmentDaoException e) {
+                return null;
+            }
+        }, WaterEquipmentServiceException.class);
+    }
+
+    @Override
+    public List<UserView> getUsersByObject(long objId, String actionId) throws WaterEquipmentServiceException {
+        return waterEquipmentDao.txExpr(() -> {
+            try {
+                List<User> userList = waterEquipmentDao.getUsersByObject(objId, actionId);
+                return userList.stream().map(UserView::new).collect(Collectors.toList());
+            } catch (WaterEquipmentDaoException e) {
+                return null;
+            }
+        }, WaterEquipmentServiceException.class);
+    }
 
     @Override
     public int saveCountry(Country country) throws WaterEquipmentServiceException {
@@ -53,11 +81,6 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
 	@Override
 	public int removeObject(ObjectData ObjectData) throws WaterEquipmentServiceException {
 		return 0;
-	}
-
-	@Override
-	public ObjectData getObject(ObjectData ObjectData) throws WaterEquipmentServiceException {
-		return null;
 	}
 
 	@Override

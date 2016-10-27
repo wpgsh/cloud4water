@@ -1,7 +1,8 @@
 package net.wapwag.wemp.dao;
 
-import net.wapwag.wemp.dao.model.*;
+import net.wapwag.wemp.dao.model.ObjectData;
 import net.wapwag.wemp.dao.model.geo.*;
+import net.wapwag.wemp.dao.model.permission.User;
 import net.wapwag.wemp.dao.model.project.Project;
 import net.wapwag.wemp.dao.model.project.PumpEquipment;
 import net.wapwag.wemp.dao.model.project.PumpRoom;
@@ -56,11 +57,33 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
 	}
 
 	@Override
-	public ObjectData getObjectData(ObjectData ObjectData) throws WaterEquipmentDaoException {
-		return new ObjectData();
+	public ObjectData getObjectData(long objId) throws WaterEquipmentDaoException {
+        try {
+            return entityManager.txExpr(em -> em.find(ObjectData.class, objId));
+        } catch (Exception e) {
+            throw new WaterEquipmentDaoException("can't get object", e);
+        }
 	}
 
-	@Override
+    @Override
+    public List<User> getUsersByObject(long objId, String actionId) throws WaterEquipmentDaoException {
+        try {
+            return entityManager.txExpr(em -> {
+
+                ObjectData objectData = em.find(ObjectData.class, objId);
+                String sql = "select uo.userObjectId.user from UserObjectR uo " +
+                        "where uo.userObjectId.objectData = :obj and uo.actionId = :actionId";
+                return em.createQuery(sql, User.class)
+                        .setParameter("obj", objectData)
+                        .setParameter("actionId", actionId).getResultList();
+
+            });
+        } catch (Exception e) {
+            throw new WaterEquipmentDaoException("can't get object", e);
+        }
+    }
+
+    @Override
 	public Country getCountry(Country country) throws WaterEquipmentDaoException {
         try {
             return entityManager.txExpr(em -> em.find(Country.class, country.getId()));
