@@ -1,10 +1,9 @@
 package net.wapwag.wemp.dao.model.link;
 
-import net.wapwag.wemp.dao.model.ObjectData;
-import net.wapwag.wemp.dao.model.permission.Group;
-
-import javax.persistence.*;
-import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * User group many to many linked entity
@@ -46,4 +45,5 @@ public class GroupObject {
     public void setTransitive(String transitive) {
         this.transitive = transitive;
     }
+
 }

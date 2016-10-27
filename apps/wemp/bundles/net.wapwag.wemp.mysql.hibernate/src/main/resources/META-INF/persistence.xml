@@ -8,15 +8,35 @@
         <jta-data-source>osgi:service/javax.sql.DataSource/(osgi.jndi.service.name=jdbc/WaterEquipment)</jta-data-source>
         <non-jta-data-source>osgi:service/javax.sql.DataSource/(osgi.jndi.service.name=jdbc/WaterEquipment)</non-jta-data-source>
         <class>net.wapwag.wemp.dao.model.ObjectData</class>
+
         <class>net.wapwag.wemp.dao.model.geo.Country</class>
         <class>net.wapwag.wemp.dao.model.geo.Area</class>
         <class>net.wapwag.wemp.dao.model.geo.Province</class>
         <class>net.wapwag.wemp.dao.model.geo.City</class>
         <class>net.wapwag.wemp.dao.model.geo.County</class>
+
         <class>net.wapwag.wemp.dao.model.project.Project</class>
         <class>net.wapwag.wemp.dao.model.project.PumpRoom</class>
         <class>net.wapwag.wemp.dao.model.project.PumpEquipment</class>
-        <class>net.wapwag.wemp.dao.model.PumpNetwork</class>
+
+        <class>net.wapwag.wemp.dao.model.org.Organization</class>
+        <class>net.wapwag.wemp.dao.model.org.JobTitle</class>
+        <class>net.wapwag.wemp.dao.model.org.PropertyManageCompany</class>
+        <class>net.wapwag.wemp.dao.model.org.WaterManageAuth</class>
+        <class>net.wapwag.wemp.dao.model.org.WaterManageCompany</class>
+        <class>net.wapwag.wemp.dao.model.org.WPGBranch</class>
+        <class>net.wapwag.wemp.dao.model.org.WPGCompany</class>
+        <class>net.wapwag.wemp.dao.model.org.WPGDepartment</class>
+
+        <class>net.wapwag.wemp.dao.model.permission.User</class>
+        <class>net.wapwag.wemp.dao.model.permission.Group</class>
+
+        <class>net.wapwag.wemp.dao.model.link.GroupObject</class>
+        <class>net.wapwag.wemp.dao.model.link.OrgObject</class>
+        <class>net.wapwag.wemp.dao.model.link.UserObject</class>
+        <class>net.wapwag.wemp.dao.model.link.UserOrg</class>
+        <class>net.wapwag.wemp.dao.model.link.UserGroup</class>
+
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
         </properties>

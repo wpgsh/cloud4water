@@ -10,14 +10,11 @@ import net.wapwag.wemp.rest.oauth2.WempTokenHandler;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import javax.ws.rs.*;
 
 @Component(service = ObjectResource.class)
 @Path("/object/{oid}")
-@OAuth2(tokenHandler = WempTokenHandler.NAME)
+//@OAuth2(tokenHandler = WempTokenHandler.NAME)
 public class ObjectResource {
 
     @Reference
@@ -25,7 +22,7 @@ public class ObjectResource {
 
     @GET
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
-    public ObjectData getObject() {
+    public ObjectData getObject(@PathParam("oid") long objId) {
         throw new RuntimeException("TODO - not implemented");
     }
 
