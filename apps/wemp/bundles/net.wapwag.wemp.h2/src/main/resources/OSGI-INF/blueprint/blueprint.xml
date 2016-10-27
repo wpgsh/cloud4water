@@ -10,7 +10,7 @@
 
   <service interface="javax.sql.DataSource" ref="dataSource">
     <service-properties>
-      <entry key="osgi.jndi.service.name" value="jdbc/WaterEquipment"/>
+      <entry key="osgi.jndi.service.name" value="jdbc/WaterEquipment_H2"/>
     </service-properties>
   </service>
 

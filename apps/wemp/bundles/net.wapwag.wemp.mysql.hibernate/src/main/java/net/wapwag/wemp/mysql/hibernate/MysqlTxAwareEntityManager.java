@@ -12,7 +12,7 @@ import net.wapwag.wemp.dao.TxAwareEntityManager;
 @Component(property="osgi.name=waterequipment", scope=ServiceScope.SINGLETON)
 public class MysqlTxAwareEntityManager implements TxAwareEntityManager {
 
-	@Reference(target="(osgi.unit.name=waterequipment-jpa)")
+	@Reference(target="(osgi.unit.name=waterequipment-jpa-mysql)")
 	protected JpaTemplate jpa;
 	
 	@Override

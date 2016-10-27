@@ -1,5 +1,10 @@
 package net.wapwag.wemp.h2.hibernate;
 
+import java.util.Map;
+
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+
 import org.apache.aries.jpa.template.EmConsumer;
 import org.apache.aries.jpa.template.EmFunction;
 import org.apache.aries.jpa.template.JpaTemplate;
@@ -12,7 +17,7 @@ import net.wapwag.wemp.dao.TxAwareEntityManager;
 @Component(property="osgi.name=waterequipment", scope=ServiceScope.SINGLETON)
 public class H2TxAwareEntityManager implements TxAwareEntityManager {
 
-	@Reference(target="(osgi.unit.name=waterequipment-jpa)")
+	@Reference(target="(osgi.unit.name=waterequipment-jpa-h2)")
 	protected JpaTemplate jpa;
 	
 	@Override
@@ -31,5 +36,5 @@ public class H2TxAwareEntityManager implements TxAwareEntityManager {
 		// TODO implement tx sequence with result
 		throw new RuntimeException("TODO - Not implemented");
 	}
-
+	
 }
