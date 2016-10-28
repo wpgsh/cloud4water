@@ -71,7 +71,7 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
             return entityManager.txExpr(em -> {
 
                 ObjectData objectData = em.find(ObjectData.class, objId);
-                String sql = "select uo.userObjectId.user from UserObjectR uo " +
+                String sql = "select uo.userObjectId.user from UserObject uo " +
                         "where uo.userObjectId.objectData = :obj and uo.actionId = :actionId";
                 return em.createQuery(sql, User.class)
                         .setParameter("obj", objectData)

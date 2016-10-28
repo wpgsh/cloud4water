@@ -98,7 +98,17 @@
                      availability 
                  (2) explicit dependency on Hibernate model classes (see 
                      persistence.xml) -->
-            <Import-Package>org.hibernate.jpa,net.wapwag.wemp.dao.model,org.h2.jdbcx,*</Import-Package>
+            <Import-Package>              
+              org.hibernate.jpa,
+              net.wapwag.wemp.dao.model,
+              net.wapwag.wemp.dao.model.geo,
+              net.wapwag.wemp.dao.model.link,
+              net.wapwag.wemp.dao.model.org,
+              net.wapwag.wemp.dao.model.permission,
+              net.wapwag.wemp.dao.model.project,
+			  org.h2.jdbcx,
+			  *
+			</Import-Package>
           </instructions>
         </configuration>
       </plugin>
