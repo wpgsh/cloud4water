@@ -47,16 +47,17 @@ public class ObjectTest extends BaseTestConfig {
 
     @Test
     public void testGetObjectByUser() {
-        long objectId = 12L;
+        long objectId = 1L;
         long userId = 1L;
-        String actionId = "read";
-        String hql = "";
 
-        ObjectData objectData = em.find(ObjectData.class, objectId);
-        User user = em.find(User.class, userId);
-        UserObject userObject = em.find(UserObject.class, new UserObjectId(user, objectData));
+        String hql = "select uo.userObjectId.objectData from UserObject uo " +
+                "where uo.userObjectId.objectData.id = :objId and uo.userObjectId.user.id = :userId";
 
-        TestCase.assertTrue(userObject != null && actionId.equals(userObject.getActionId()));
+        ObjectData objectData = em.createQuery(hql, ObjectData.class)
+                .setParameter("objId", objectId)
+                .setParameter("userId", userId).getSingleResult();
+
+        TestCase.assertTrue(objectData != null);
     }
 
     @Test
@@ -65,8 +66,11 @@ public class ObjectTest extends BaseTestConfig {
         long userId = 2L;
         String actionId = "write";
         int transitive = 0;
-        ObjectData objectData = em.find(ObjectData.class, objectId);
-        User user = em.find(User.class, userId);
+        User user = new User();
+        user.setId(userId);
+
+        ObjectData objectData = new ObjectData();
+        objectData.setId(objectId);
 
         UserObject userObject = new UserObject();
         userObject.setUserObjectId(new UserObjectId(user, objectData));
@@ -85,24 +89,23 @@ public class ObjectTest extends BaseTestConfig {
     public void testRemoveObjectByUser() {
         long objectId = 12L;
         long userId = 2L;
-        String actionId = "write";
+        String action = "write";
 
-        ObjectData objectData = new ObjectData();
-        objectData.setId(objectId);
-        User user = new User();
-        user.setId(userId);
+        String hql = "delete from UserObject userObject where " +
+                "userObject.userObjectId.user.id = :userId " +
+                "and userObject.userObjectId.objectData.id = :objId";
+        if (!action.isEmpty()) {
+            hql  += " and userObject.actionId = :action";
+        }
 
-        UserObject userObject = new UserObject();
-        userObject.setUserObjectId(new UserObjectId(user, objectData));
-        userObject.setActionId(actionId);
+        Query query = em.createQuery(hql).setParameter("objId", objectId)
+                .setParameter("userId", userId);
 
-        userObject = em.find(UserObject.class, new UserObjectId(user, objectData));
+        if (!action.isEmpty()) {
+            query.setParameter("action", action);
+        }
 
-        em.remove(userObject);
-
-        userObject = em.find(UserObject.class, new UserObjectId(user, objectData));
-
-        TestCase.assertTrue(userObject == null);
+        TestCase.assertTrue(query.executeUpdate() > 0);
     }
 
     @Test
@@ -117,17 +120,17 @@ public class ObjectTest extends BaseTestConfig {
 
     @Test
     public void testGetObjectByGroup() {
-        long objId = 1L;
-        long groupId = 13L;
+        long objId = 2L;
+        long groupId = 11L;
 
-        String hql = "select groupObject from GroupObject groupObject " +
+        String hql = "select groupObject.groupObjectId.objectData from GroupObject groupObject " +
                 "where groupObject.groupObjectId.objectData.id = :objId " +
                 "AND groupObject.groupObjectId.group.id = :groupId";
-        List<GroupObject> permissionList = em.createQuery(hql, GroupObject.class)
+        ObjectData objectData = em.createQuery(hql, ObjectData.class)
                 .setParameter("objId", objId)
-                .setParameter("groupId", groupId).getResultList();
+                .setParameter("groupId", groupId).getSingleResult();
 
-        TestCase.assertTrue(permissionList.size() > 0);
+        TestCase.assertTrue(objectData != null);
     }
 
     @Test
@@ -151,10 +154,10 @@ public class ObjectTest extends BaseTestConfig {
 
     @Test
     public void testRemoveObjectByGroup() {
-        long groudId = 2L;
+        long groupId = 2L;
 
         Group group = new Group();
-        group.setId(groudId);
+        group.setId(groupId);
 
         Query query =  em.createQuery("delete from GroupObject groupObject where groupObject.groupObjectId.group = :group")
                 .setParameter("group", group);

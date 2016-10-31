@@ -1,16 +1,12 @@
 package net.wapwag.wemp;
 
 import net.wapwag.wemp.dao.model.ObjectData;
-import net.wapwag.wemp.dao.model.geo.Area;
-import net.wapwag.wemp.dao.model.geo.Country;
-import net.wapwag.wemp.dao.model.project.Project;
-import net.wapwag.wemp.dao.model.project.PumpEquipment;
-import net.wapwag.wemp.dao.model.project.PumpRoom;
-import net.wapwag.wemp.model.AccessToken;
-import net.wapwag.wemp.model.CountryView;
-import net.wapwag.wemp.model.UserView;
+import net.wapwag.wemp.dao.model.permission.Group;
+import net.wapwag.wemp.dao.model.permission.User;
+import net.wapwag.wemp.model.*;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Water Equipment Service methods
@@ -38,42 +34,57 @@ public interface WaterEquipmentService {
 	 */
 	AccessToken lookupToken(String handle) throws WaterEquipmentServiceException;
 
-	ObjectData getObject(long objId) throws WaterEquipmentServiceException;
+	ObjectView getObject(long objId) throws WaterEquipmentServiceException;
 
-    List<UserView> getUsersByObject(long objId, String actionId) throws WaterEquipmentServiceException;
+    List<UserView> getUsersByObject(long objId, String action) throws WaterEquipmentServiceException;
 
-    int saveCountry(Country country) throws WaterEquipmentServiceException;
+	ObjectView getObjectByUser(long objId, long userId);
 
-	int saveObject(ObjectData ObjectData) throws WaterEquipmentServiceException;
+	ResultView addObjectByUser(long objId, long userId);
 
-	int removeObject(ObjectData ObjectData) throws WaterEquipmentServiceException;
+	ResultView removeObjectByUser(long objId, long userId, String action);
 
-    CountryView getCountry(Country country) throws WaterEquipmentServiceException;
+	List<GroupView> getGroupsByObject(long objId, String action);
 
-	Area getArea(Area area) throws WaterEquipmentServiceException;
+	ObjectView getObjectByGroup(long objId, long groupId);
 
-    int saveProject(Project project) throws WaterEquipmentServiceException;
+	ResultView addObjectByGroup(long objId, long groupId);
 
-    int removeProject(Project project) throws WaterEquipmentServiceException;
+	ResultView removeObjectByGroup(long objId, long groupId, String action);
 
-    int updateProject(Project project) throws WaterEquipmentServiceException;
+	List<GroupView> getGroupsByOrg(long orgId);
 
-    Project getProject(Project project) throws WaterEquipmentServiceException;
+	ResultView addGroupByOrg(long orgId, Group group);
 
-    int savePumpRoom(PumpRoom pumpRoom) throws WaterEquipmentServiceException;
+	GroupView getGroupByOrg(long orgId, long groupId);
 
-    int removePumpRoom(PumpRoom pumpRoom) throws WaterEquipmentServiceException;
+	ResultView updateGroupByOrg(long orgId, long groupId, Group group);
 
-    int updatePumpRoom(PumpRoom pumpRoom) throws WaterEquipmentServiceException;
+	ResultView removeGroupByOrg(long orgId, long groupId);
 
-    PumpRoom getPumpRoom(PumpRoom pumpRoom) throws WaterEquipmentServiceException;
+	List<UserView> getUsersByGroup(long orgId, long groupId);
 
-    int savePumpEquipment(PumpEquipment pumpEquipment) throws WaterEquipmentServiceException;
+	ResultView addUserByGroup(long orgId, long groupId, long userId);
 
-    int removePumpEquipment(PumpEquipment pumpEquipment) throws WaterEquipmentServiceException;
+	ResultView removeUserByGroup(long orgId, long groupId, long userId);
 
-    int updatePumpEquipment(PumpEquipment pumpEquipment) throws WaterEquipmentServiceException;
+	List<ObjectView> getObjectsByGroup(long orgId, long groupId);
 
-    PumpEquipment getPumpEquipment(PumpEquipment pumpEquipment) throws WaterEquipmentServiceException;
+	ObjectView getObjectByGroup(long objId, long groupId, String action);
 
+    List<UserView> getUsersByOrg(long orgId);
+
+    ResultView addUserByOrg(long orgId, User user);
+
+    ObjectData removeUserByOrg(long orgId, long uid);
+
+    List<ObjectView> getObjectsByOrg(long orgId);
+
+    ResultView addObjectByOrg(long orgId, ObjectData objectData);
+
+    ResultView removeObjectByOrg(long orgId, long objId);
+
+    ResultView checkPermission(long userId, ObjectData objectData);
+
+    Set<ObjectView> getObjectsByUser(long userId, String action);
 }

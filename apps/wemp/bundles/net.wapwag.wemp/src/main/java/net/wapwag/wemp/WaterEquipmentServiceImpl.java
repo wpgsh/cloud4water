@@ -3,27 +3,22 @@ package net.wapwag.wemp;
 import net.wapwag.wemp.dao.WaterEquipmentDao;
 import net.wapwag.wemp.dao.WaterEquipmentDaoException;
 import net.wapwag.wemp.dao.model.ObjectData;
-import net.wapwag.wemp.dao.model.geo.Area;
-import net.wapwag.wemp.dao.model.geo.Country;
+import net.wapwag.wemp.dao.model.permission.Group;
 import net.wapwag.wemp.dao.model.permission.User;
-import net.wapwag.wemp.dao.model.project.Project;
-import net.wapwag.wemp.dao.model.project.PumpEquipment;
-import net.wapwag.wemp.dao.model.project.PumpRoom;
-import net.wapwag.wemp.model.AccessToken;
-import net.wapwag.wemp.model.CountryView;
-import net.wapwag.wemp.model.UserView;
+import net.wapwag.wemp.model.*;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ServiceScope;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component(scope=ServiceScope.SINGLETON)
 public class WaterEquipmentServiceImpl implements WaterEquipmentService {
 
 	@Reference
-	WaterEquipmentDao waterEquipmentDao;
+	private WaterEquipmentDao waterEquipmentDao;
 
 	@Override
 	public boolean isAuthorized(String user, String permission, String target) {
@@ -38,10 +33,10 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
 	}
 
     @Override
-    public ObjectData getObject(long objId) throws WaterEquipmentServiceException {
+    public ObjectView getObject(long objId) throws WaterEquipmentServiceException {
         return waterEquipmentDao.txExpr(() -> {
             try {
-                return waterEquipmentDao.getObjectData(objId);
+                return new ObjectView(waterEquipmentDao.getObjectData(objId));
             } catch (WaterEquipmentDaoException e) {
                 return null;
             }
@@ -49,10 +44,10 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
     }
 
     @Override
-    public List<UserView> getUsersByObject(long objId, String actionId) throws WaterEquipmentServiceException {
+    public List<UserView> getUsersByObject(long objId, String action) throws WaterEquipmentServiceException {
         return waterEquipmentDao.txExpr(() -> {
             try {
-                List<User> userList = waterEquipmentDao.getUsersByObject(objId, actionId);
+                List<User> userList = waterEquipmentDao.getUsersByObject(objId, action);
                 return userList.stream().map(UserView::new).collect(Collectors.toList());
             } catch (WaterEquipmentDaoException e) {
                 return null;
@@ -61,183 +56,127 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
     }
 
     @Override
-    public int saveCountry(Country country) throws WaterEquipmentServiceException {
-        try {
-            return waterEquipmentDao.saveCountry(country);
-        } catch (WaterEquipmentDaoException e) {
-            throw new WaterEquipmentServiceException("can't add country");
-        }
+    public ObjectView getObjectByUser(long objId, long userId) {
+        return null;
     }
 
     @Override
-	public int saveObject(ObjectData ObjectData) throws WaterEquipmentServiceException {
-		try {
-			return waterEquipmentDao.saveObjectData(ObjectData);
-		} catch (WaterEquipmentDaoException e) {
-            throw new WaterEquipmentServiceException("can't add object");
-        }
-	}
-
-	@Override
-	public int removeObject(ObjectData ObjectData) throws WaterEquipmentServiceException {
-		return 0;
-	}
-
-	@Override
-	public Area getArea(Area area) throws WaterEquipmentServiceException {
-        return waterEquipmentDao.txExpr(() -> {
-            try {
-				return waterEquipmentDao.getArea(area);
-            } catch (WaterEquipmentDaoException e) {
-                return null;
-            }
-        }, WaterEquipmentServiceException.class);
-	}
-
-    @Override
-    public CountryView getCountry(Country country) throws WaterEquipmentServiceException {
-        return waterEquipmentDao.txExpr(() -> {
-            try {
-                Country result = waterEquipmentDao.getCountry(country);
-                CountryView countryView = new CountryView();
-                countryView.setId(result.getId() + "");
-                countryView.setName(result.getName());
-                return countryView;
-            } catch (WaterEquipmentDaoException e) {
-                return null;
-            }
-        }, WaterEquipmentServiceException.class);
+    public ResultView addObjectByUser(long objId, long userId) {
+        return null;
     }
 
     @Override
-    public int saveProject(Project project) throws WaterEquipmentServiceException {
-        return waterEquipmentDao.txExpr(() -> {
-            try {
-                return waterEquipmentDao.saveProject(project);
-            } catch (WaterEquipmentDaoException e) {
-                return 0;
-            }
-        }, WaterEquipmentServiceException.class);
+    public ResultView removeObjectByUser(long objId, long userId, String action) {
+        return null;
     }
 
     @Override
-    public int removeProject(Project project) throws WaterEquipmentServiceException {
-        return waterEquipmentDao.txExpr(() -> {
-            try {
-                return waterEquipmentDao.removeProject(project.getId());
-            } catch (WaterEquipmentDaoException e) {
-                return 0;
-            }
-        }, WaterEquipmentServiceException.class);
+    public List<GroupView> getGroupsByObject(long objId, String action) {
+        return null;
     }
 
     @Override
-    public int updateProject(Project project) throws WaterEquipmentServiceException {
-        return waterEquipmentDao.txExpr(() -> {
-            try {
-                return waterEquipmentDao.saveProject(project);
-            } catch (WaterEquipmentDaoException e) {
-                return 0;
-            }
-        }, WaterEquipmentServiceException.class);
+    public ObjectView getObjectByGroup(long objId, long groupId) {
+        return null;
     }
 
     @Override
-    public Project getProject(Project project) throws WaterEquipmentServiceException {
-        return waterEquipmentDao.txExpr(() -> {
-            try {
-                return waterEquipmentDao.getProject(project);
-            } catch (WaterEquipmentDaoException e) {
-                return null;
-            }
-        }, WaterEquipmentServiceException.class);
+    public ResultView addObjectByGroup(long objId, long groupId) {
+        return null;
     }
 
     @Override
-    public int savePumpRoom(PumpRoom pumpRoom) throws WaterEquipmentServiceException {
-        return waterEquipmentDao.txExpr(() -> {
-            try {
-                return waterEquipmentDao.savePumpRoom(pumpRoom);
-            } catch (WaterEquipmentDaoException e) {
-                return 0;
-            }
-        }, WaterEquipmentServiceException.class);
+    public ResultView removeObjectByGroup(long objId, long groupId, String action) {
+        return null;
     }
 
     @Override
-    public int removePumpRoom(PumpRoom pumpRoom) throws WaterEquipmentServiceException {
-        return waterEquipmentDao.txExpr(() -> {
-            try {
-                return waterEquipmentDao.removePumpRoom(pumpRoom.getId());
-            } catch (WaterEquipmentDaoException e) {
-                return 0;
-            }
-        }, WaterEquipmentServiceException.class);
+    public List<GroupView> getGroupsByOrg(long orgId) {
+        return null;
     }
 
     @Override
-    public int updatePumpRoom(PumpRoom pumpRoom) throws WaterEquipmentServiceException {
-        return waterEquipmentDao.txExpr(() -> {
-            try {
-                return waterEquipmentDao.savePumpRoom(pumpRoom);
-            } catch (WaterEquipmentDaoException e) {
-                return 0;
-            }
-        }, WaterEquipmentServiceException.class);
+    public ResultView addGroupByOrg(long orgId, Group group) {
+        return null;
     }
 
     @Override
-    public PumpRoom getPumpRoom(PumpRoom pumpRoom) throws WaterEquipmentServiceException {
-        return waterEquipmentDao.txExpr(() -> {
-            try {
-                return waterEquipmentDao.getPumpRoom(pumpRoom);
-            } catch (WaterEquipmentDaoException e) {
-                return null;
-            }
-        }, WaterEquipmentServiceException.class);
+    public GroupView getGroupByOrg(long orgId, long groupId) {
+        return null;
     }
 
     @Override
-    public int savePumpEquipment(PumpEquipment pumpEquipment) throws WaterEquipmentServiceException {
-        return waterEquipmentDao.txExpr(() -> {
-            try {
-                return waterEquipmentDao.savePumpEquipment(pumpEquipment);
-            } catch (WaterEquipmentDaoException e) {
-                return 0;
-            }
-        }, WaterEquipmentServiceException.class);
+    public ResultView updateGroupByOrg(long orgId, long groupId, Group group) {
+        return null;
     }
 
     @Override
-    public int removePumpEquipment(PumpEquipment pumpEquipment) throws WaterEquipmentServiceException {
-        return waterEquipmentDao.txExpr(() -> {
-            try {
-                return waterEquipmentDao.removePumpEquipment(pumpEquipment.getId());
-            } catch (WaterEquipmentDaoException e) {
-                return 0;
-            }
-        }, WaterEquipmentServiceException.class);
+    public ResultView removeGroupByOrg(long orgId, long groupId) {
+        return null;
     }
 
     @Override
-    public int updatePumpEquipment(PumpEquipment pumpEquipment) throws WaterEquipmentServiceException {
-        return waterEquipmentDao.txExpr(() -> {
-            try {
-                return waterEquipmentDao.savePumpEquipment(pumpEquipment);
-            } catch (WaterEquipmentDaoException e) {
-                return 0;
-            }
-        }, WaterEquipmentServiceException.class);
+    public List<UserView> getUsersByGroup(long orgId, long groupId) {
+        return null;
     }
 
     @Override
-    public PumpEquipment getPumpEquipment(PumpEquipment pumpEquipment) throws WaterEquipmentServiceException {
-        return waterEquipmentDao.txExpr(() -> {
-            try {
-                return waterEquipmentDao.getPumpEquipment(pumpEquipment);
-            } catch (WaterEquipmentDaoException e) {
-                return null;
-            }
-        }, WaterEquipmentServiceException.class);
+    public ResultView addUserByGroup(long orgId, long groupId, long userId) {
+        return null;
+    }
+
+    @Override
+    public ResultView removeUserByGroup(long orgId, long groupId, long userId) {
+        return null;
+    }
+
+    @Override
+    public List<ObjectView> getObjectsByGroup(long orgId, long groupId) {
+        return null;
+    }
+
+    @Override
+    public ObjectView getObjectByGroup(long objId, long groupId, String action) {
+        return null;
+    }
+
+    @Override
+    public List<UserView> getUsersByOrg(long orgId) {
+        return null;
+    }
+
+    @Override
+    public ResultView addUserByOrg(long orgId, User user) {
+        return null;
+    }
+
+    @Override
+    public ObjectData removeUserByOrg(long orgId, long uid) {
+        return null;
+    }
+
+    @Override
+    public List<ObjectView> getObjectsByOrg(long orgId) {
+        return null;
+    }
+
+    @Override
+    public ResultView addObjectByOrg(long orgId, ObjectData objectData) {
+        return null;
+    }
+
+    @Override
+    public ResultView removeObjectByOrg(long orgId, long objId) {
+        return null;
+    }
+
+    @Override
+    public ResultView checkPermission(long userId, ObjectData objectData) {
+        return null;
+    }
+
+    @Override
+    public Set<ObjectView> getObjectsByUser(long userId, String action) {
+        return null;
     }
 }

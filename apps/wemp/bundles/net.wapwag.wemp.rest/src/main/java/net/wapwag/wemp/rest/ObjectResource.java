@@ -1,22 +1,18 @@
 package net.wapwag.wemp.rest;
 
-import com.thingswise.appframework.jaxrs.utils.OAuth2;
 import net.wapwag.wemp.WaterEquipmentService;
-import net.wapwag.wemp.WaterEquipmentServiceException;
 import net.wapwag.wemp.dao.model.ObjectData;
-import net.wapwag.wemp.dao.model.permission.User;
+import net.wapwag.wemp.model.GroupView;
 import net.wapwag.wemp.model.ObjectView;
+import net.wapwag.wemp.model.ResultView;
 import net.wapwag.wemp.model.UserView;
 import net.wapwag.wemp.rest.authz.FineGrainedAuthorization;
 import net.wapwag.wemp.rest.authz.Permission;
-import net.wapwag.wemp.rest.bindings.GetObjectPropertiesResponse;
-import net.wapwag.wemp.rest.oauth2.WempTokenHandler;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import javax.ws.rs.*;
 import java.util.List;
-import java.util.Set;
 
 @Component(service = ObjectResource.class)
 @Path("/object/{oid}")
@@ -24,68 +20,68 @@ import java.util.Set;
 public class ObjectResource {
 
     @Reference
-    WaterEquipmentService waterEquipmentService;
+    private WaterEquipmentService waterEquipmentService;
 
     @GET
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
     public ObjectView getObject(@PathParam("oid") long objId) throws Exception {
-        return new ObjectView(waterEquipmentService.getObject(objId));
+        return waterEquipmentService.getObject(objId);
     }
 
     @Path("/users")
     @GET
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
-    public List<UserView> getUsersByObject(@PathParam("oid") long objId, @QueryParam("actionId") String actionId) throws Exception {
-        return waterEquipmentService.getUsersByObject(objId, actionId);
+    public List<UserView> getUsersByObject(@PathParam("oid") long objId, @QueryParam("action") String action) throws Exception {
+        return waterEquipmentService.getUsersByObject(objId, action);
     }
 
     @Path("/user/{uid}")
     @GET
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
-    public ObjectData getObjectByUser() {
-        throw new RuntimeException("TODO - not implemented");
+    public ObjectView getObjectByUser(@PathParam("oid") long objId, @PathParam("uid") long userId) {
+        return waterEquipmentService.getObjectByUser(objId, userId);
     }
 
     @Path("/user/{uid}")
     @POST
-    @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
-    public ObjectData saveObjectByUser() {
-        throw new RuntimeException("TODO - not implemented");
+    @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
+    public ResultView addObjectByUser(@PathParam("oid") long objId, @PathParam("uid") long userId) {
+        return waterEquipmentService.addObjectByUser(objId, userId);
     }
 
     @Path("/user/{uid}")
     @DELETE
-    @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
-    public ObjectData removeObjectByUser() {
-        throw new RuntimeException("TODO - not implemented");
+    @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
+    public ResultView removeObjectByUser(@PathParam("oid") long objId, @PathParam("uid") long userId, @QueryParam("action") String actionId) {
+        return waterEquipmentService.removeObjectByUser(objId, userId, actionId);
     }
 
     @Path("/groups")
     @GET
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
-    public ObjectData getGroupsByObject() {
-        throw new RuntimeException("TODO - not implemented");
+    public List<GroupView> getGroupsByObject(@PathParam("oid") long objId, @QueryParam("actionId") String actionId) {
+        return waterEquipmentService.getGroupsByObject(objId, actionId);
     }
 
     @Path("/group/{gid}")
     @GET
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
-    public ObjectData getObjectByGroup() {
-        throw new RuntimeException("TODO - not implemented");
+    public ObjectView getObjectByGroup(@PathParam("oid") long objId, @PathParam("gid") long gid) {
+        return waterEquipmentService.getObjectByGroup(objId, gid);
     }
 
     @Path("/group/{gid}")
     @POST
-    @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
-    public ObjectData saveObjectByGroup() {
-        throw new RuntimeException("TODO - not implemented");
+    @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
+    public ResultView addObjectByGroup(@PathParam("oid") long objId, @PathParam("gid") long gid) {
+        return waterEquipmentService.addObjectByGroup(objId, gid);
     }
 
     @Path("/group/{gid}")
     @DELETE
-    @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
-    public ObjectData removeObjectByGroup() {
-        throw new RuntimeException("TODO - not implemented");
+    @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
+    public ResultView removeObjectByGroup(@PathParam("oid") long objId, @PathParam("gid") long gid, @QueryParam("action") String action) {
+        return waterEquipmentService.removeObjectByGroup(objId, gid, action);
     }
 
 }

@@ -1,11 +1,8 @@
 package net.wapwag.wemp.dao;
 
 import net.wapwag.wemp.dao.model.ObjectData;
-import net.wapwag.wemp.dao.model.geo.*;
+import net.wapwag.wemp.dao.model.permission.Group;
 import net.wapwag.wemp.dao.model.permission.User;
-import net.wapwag.wemp.dao.model.project.Project;
-import net.wapwag.wemp.dao.model.project.PumpEquipment;
-import net.wapwag.wemp.dao.model.project.PumpRoom;
 
 import java.util.List;
 import java.util.Set;
@@ -19,49 +16,57 @@ public interface WaterEquipmentDao {
 
 	ObjectData getObjectData(long objId) throws WaterEquipmentDaoException;
 
-    List<User> getUsersByObject(long objId, String actionId) throws WaterEquipmentDaoException;
+    List<User> getUsersByObject(long objId, String action) throws WaterEquipmentDaoException;
+	
+	ObjectData getObjectByUser(long objId, long userId) throws WaterEquipmentDaoException;
 
-	int saveCountry(Country country) throws WaterEquipmentDaoException;
+	int addObjectByUser(long objId, long userId) throws WaterEquipmentDaoException;
 
-	int saveObjectData(ObjectData ObjectData) throws WaterEquipmentDaoException;
+	int removeObjectByUser(long objId, long userId, String action) throws WaterEquipmentDaoException;
 
-	int removeObjectData(long objectId) throws WaterEquipmentDaoException;
+    List<Group> getGroupsByObject(long objId, String action) throws WaterEquipmentDaoException;
 
-	Country getCountry(Country country) throws WaterEquipmentDaoException;
+	ObjectData getObjectByGroup(long objId, long groupId) throws WaterEquipmentDaoException;
 
-	Area getArea(Area area) throws WaterEquipmentDaoException;
+	int addObjectByGroup(long objId, long groupId) throws WaterEquipmentDaoException;
 
-	Province getProvince(Province province) throws WaterEquipmentDaoException;
+	int removeObjectByGroup(long objId, long groupId, String action) throws WaterEquipmentDaoException;
 
-	City getCity(City city) throws WaterEquipmentDaoException;
+	List<Group> getGroupsByOrg(long orgId) throws WaterEquipmentDaoException;
 
-	County getCounty(long countyId) throws WaterEquipmentDaoException;
+	int addGroupByOrg(long orgId, Group group) throws WaterEquipmentDaoException;
 
-	int saveProject(Project project) throws WaterEquipmentDaoException;
+	Group getGroupByOrg(long orgId, long groupId) throws WaterEquipmentDaoException;
 
-	int removeProject(long projectId) throws WaterEquipmentDaoException;
+	int updateGroupByOrg(long orgId, long groupId, Group group) throws WaterEquipmentDaoException;
 
-    int updateProject(Project project) throws WaterEquipmentDaoException;
+	int removeGroupByOrg(long orgId, long groupId) throws WaterEquipmentDaoException;
 
-    Project getProject(Project project) throws WaterEquipmentDaoException;
+	List<User> getUsersByGroup(long orgId, long groupId) throws WaterEquipmentDaoException;
 
-    int savePumpRoom(PumpRoom pumpRoom) throws WaterEquipmentDaoException;
+	int addUserByGroup(long orgId, long groupId, long userId) throws WaterEquipmentDaoException;
 
-	int removePumpRoom(long pumpRoomId) throws WaterEquipmentDaoException;
+	int removeUserByGroup(long orgId, long groupId, long userId) throws WaterEquipmentDaoException;
 
-    int updatePumpRoom(PumpRoom pumpRoom) throws WaterEquipmentDaoException;
+	List<ObjectData> getObjectsByGroup(long orgId, long groupId) throws WaterEquipmentDaoException;
 
-    PumpRoom getPumpRoom(PumpRoom pumpRoom) throws WaterEquipmentDaoException;
+	ObjectData getObjectByGroup(long objId, long groupId, String action) throws WaterEquipmentDaoException;
 
-    int savePumpEquipment(PumpEquipment pumpEquipment) throws WaterEquipmentDaoException;
+	List<User> getUsersByOrg(long orgId) throws WaterEquipmentDaoException;
 
-	int removePumpEquipment(long pumpEquipmentId) throws WaterEquipmentDaoException;
+	int addUserByOrg(long orgId, User user) throws WaterEquipmentDaoException;
 
-    int updatePumpEquipment(PumpEquipment pumpEquipment) throws WaterEquipmentDaoException;
+	ObjectData removeUserByOrg(long orgId, long uid) throws WaterEquipmentDaoException;
 
-    PumpEquipment getPumpEquipment(PumpEquipment pumpEquipment) throws WaterEquipmentDaoException;
+	List<ObjectData> getObjectsByOrg(long orgId) throws WaterEquipmentDaoException;
 
+	int addObjectByOrg(long orgId, ObjectData objectData) throws WaterEquipmentDaoException;
 
+	int removeObjectByOrg(long orgId, long objId) throws WaterEquipmentDaoException;
+
+	int checkPermission(long userId, ObjectData objectData) throws WaterEquipmentDaoException;
+
+	Set<ObjectData> getObjectsByUser(long userId, String action) throws WaterEquipmentDaoException;
 	/**
 	 * An action that consists of several steps to be performed
 	 * within a single transaction

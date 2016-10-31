@@ -4,6 +4,11 @@ import com.thingswise.appframework.jaxrs.utils.OAuth2;
 import net.wapwag.wemp.WaterEquipmentService;
 import net.wapwag.wemp.dao.model.ObjectData;
 import net.wapwag.wemp.dao.model.permission.Group;
+import net.wapwag.wemp.dao.model.permission.User;
+import net.wapwag.wemp.model.GroupView;
+import net.wapwag.wemp.model.ObjectView;
+import net.wapwag.wemp.model.ResultView;
+import net.wapwag.wemp.model.UserView;
 import net.wapwag.wemp.rest.authz.FineGrainedAuthorization;
 import net.wapwag.wemp.rest.authz.Permission;
 import net.wapwag.wemp.rest.oauth2.WempTokenHandler;
@@ -11,105 +16,127 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import javax.ws.rs.*;
+import java.util.List;
 import java.util.Set;
 
 @Component(service = OrgGroupResource.class)
 @Path("/organization/{oid}")
-@OAuth2(tokenHandler = WempTokenHandler.NAME)
+//@OAuth2(tokenHandler = WempTokenHandler.NAME)
 public class OrgGroupResource {
 
     @Reference
-    WaterEquipmentService waterEquipmentService;
+    private WaterEquipmentService waterEquipmentService;
 
     @Path("/organizationGroups")
     @GET
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
-    public Set<Group> getGroupsByOrg() {
-        throw new RuntimeException("TODO - not implemented");
+    public List<GroupView> getGroupsByOrg(@PathParam("oid") long orgId) {
+        return waterEquipmentService.getGroupsByOrg(orgId);
     }
 
     @Path("/organizationGroups")
     @POST
     @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
-    public String addGroupByOrg(Group group) {
-        throw new RuntimeException("TODO - not implemented");
+    public ResultView addGroupByOrg(@PathParam("oid") long orgId, Group group) {
+        return waterEquipmentService.addGroupByOrg(orgId, group);
     }
 
     @Path("/organizationGroup/{gid}")
     @GET
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
-    public Group getGroupByOrg() {
-        throw new RuntimeException("TODO - not implemented");
+    public GroupView getGroupByOrg(@PathParam("oid") long orgId, @PathParam("gid") long groupId) {
+        return waterEquipmentService.getGroupByOrg(orgId, groupId);
     }
 
     @Path("/organizationGroup/{gid}")
     @PUT
     @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
-    public String updateGroupByOrg() {
-        throw new RuntimeException("TODO - not implemented");
+    public ResultView updateGroupByOrg(@PathParam("oid") long orgId, @PathParam("gid") long groupId, Group group) {
+        return waterEquipmentService.updateGroupByOrg(orgId, groupId, group);
     }
 
     @Path("/organizationGroup/{gid}")
     @DELETE
     @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
-    public String removeGroupByOrg() {
-        throw new RuntimeException("TODO - not implemented");
+    public ResultView removeGroupByOrg(@PathParam("oid") long orgId, @PathParam("gid") long groupId) {
+        return waterEquipmentService.removeGroupByOrg(orgId, groupId);
     }
 
     @Path("/organizationGroup/{gid}/users")
     @GET
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
-    public ObjectData saveObjectByUser() {
-        throw new RuntimeException("TODO - not implemented");
+    public List<UserView> getUsersByGroup(@PathParam("oid") long orgId, @PathParam("gid") long groupId) {
+        return waterEquipmentService.getUsersByGroup(orgId, groupId);
+    }
+
+    @Path("/organizationGroup/{gid}/user/{uid}")
+    @POST
+    @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
+    public ResultView addUserByGroup(@PathParam("oid") long orgId, @PathParam("gid") long groupId, @PathParam("uid") long userId) {
+        return waterEquipmentService.addUserByGroup(orgId, groupId, userId);
     }
 
     @Path("/organizationGroup/{gid}/user/{uid}")
     @DELETE
-    @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
-    public ObjectData removeObjectByUser() {
-        throw new RuntimeException("TODO - not implemented");
+    @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
+    public ResultView removeUserByGroup(@PathParam("oid") long orgId, @PathParam("gid") long groupId, @PathParam("uid") long userId) {
+        return waterEquipmentService.removeUserByGroup(orgId, groupId, userId);
     }
 
     @Path("/organizationGroup/{gid}/objects")
     @GET
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
-    public ObjectData getGroupsByObject() {
-        throw new RuntimeException("TODO - not implemented");
+    public List<ObjectView> getObjectsByGroup(@PathParam("oid") long orgId, @PathParam("gid") long groupId) {
+        return waterEquipmentService.getObjectsByGroup(orgId, groupId);
     }
 
     @Path("/organizationGroup/{gid}/checkPermissions")
     @GET
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
-    public ObjectData getObjectByGroup() {
-        throw new RuntimeException("TODO - not implemented");
+    public ObjectView getObjectByGroup(@PathParam("oid") long orgId, @PathParam("gid") long groupId, @QueryParam("action") String action) {
+        return waterEquipmentService.getObjectByGroup(orgId, groupId, action);
+    }
+
+    @Path("/organizationUsers")
+    @GET
+    @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
+    public List<UserView> getUsersByOrg(@PathParam("oid") long orgId) {
+        return waterEquipmentService.getUsersByOrg(orgId);
     }
 
     @Path("/organizationUsers")
     @POST
-    @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
-    public ObjectData saveObjectByGroup() {
-        throw new RuntimeException("TODO - not implemented");
+    @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
+    public ResultView addUserByOrg(@PathParam("oid") long orgId, User user) {
+        return waterEquipmentService.addUserByOrg(orgId, user);
     }
 
     @Path("/organizationUser/{uid}")
     @DELETE
+    @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
+    public ObjectData removeUserByOrg(@PathParam("oid") long orgId, @PathParam("uid") long uid) {
+        return waterEquipmentService.removeUserByOrg(orgId, uid);
+    }
+
+    @Path("/objects")
+    @GET
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
-    public ObjectData removeObjectByGroup() {
-        throw new RuntimeException("TODO - not implemented");
+    public List<ObjectView> getObjectsByOrg(@PathParam("oid") long orgId) {
+        return waterEquipmentService.getObjectsByOrg(orgId);
     }
 
     @Path("/objects")
     @DELETE
-    @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
-    public ObjectData removeObjectByGroup12() {
-        throw new RuntimeException("TODO - not implemented");
+    @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
+    public ResultView addObjectByOrg(@PathParam("oid") long orgId, ObjectData objectData) {
+        return waterEquipmentService.addObjectByOrg(orgId, objectData);
     }
 
-    @Path("/object/{obid}")
+    @Path("/object/{objId}")
     @DELETE
-    @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
-    public ObjectData removeObjectByGroup2() {
-        throw new RuntimeException("TODO - not implemented");
+    @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
+    public ResultView removeObjectByOrg(@PathParam("oid") long orgId, @PathParam("objId") long objId) {
+        return waterEquipmentService.removeObjectByOrg(orgId, objId);
     }
 
 }
