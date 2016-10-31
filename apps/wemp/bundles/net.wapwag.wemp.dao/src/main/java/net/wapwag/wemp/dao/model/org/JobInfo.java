@@ -6,12 +6,12 @@ import javax.persistence.*;
 import java.util.Set;
 
 /**
- * Job title such as manager,technician or secretary,etc.
+ * Job info such as manager,technician or secretary,etc.
  * Created by Administrator on 2016/10/25 0025.
  */
 @Entity
-@Table(name = "job_title")
-public class JobTitle {
+@Table(name = "job_info")
+public class JobInfo {
 
     @Id
     private long id;

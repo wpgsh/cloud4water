@@ -1,9 +1,7 @@
 package net.wapwag.wemp.mysql.hibernate;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.Hashtable;
+import com.google.common.collect.ImmutableMap;
+import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 
 import javax.naming.Context;
 import javax.naming.Name;
@@ -14,9 +12,10 @@ import javax.naming.spi.InitialContextFactoryBuilder;
 import javax.naming.spi.NamingManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import java.util.Hashtable;
 
-import com.google.common.collect.ImmutableMap;
-import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class PrepareContext {
 	
@@ -62,7 +61,7 @@ public class PrepareContext {
     	
     	return Persistence.createEntityManagerFactory("waterequipment-jpa-mysql",
     			ImmutableMap.of(
-    					"hibernate.hbm2ddl.auto", "create", 
+//    					"hibernate.hbm2ddl.auto", "create",
     					"hibernate.show_sql", "true",
     					"hibernate.transaction.jta.platform", "org.hibernate.service.jta.platform.internal.SunOneJtaPlatform"));
 	}

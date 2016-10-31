@@ -1,6 +1,6 @@
 package net.wapwag.wemp.dao.model.link;
 
-import net.wapwag.wemp.dao.model.org.JobTitle;
+import net.wapwag.wemp.dao.model.org.JobInfo;
 
 import javax.persistence.*;
 
@@ -17,7 +17,7 @@ public class UserOrg {
 
     @ManyToOne
     @JoinColumn(name = "job_id")
-    private JobTitle jobTitle;
+    private JobInfo jobInfo;
 
     public UserOrgId getUserOrgId() {
         return userOrgId;
@@ -27,11 +27,11 @@ public class UserOrg {
         this.userOrgId = userOrgId;
     }
 
-    public JobTitle getJobTitle() {
-        return jobTitle;
+    public JobInfo getJobInfo() {
+        return jobInfo;
     }
 
-    public void setJobTitle(JobTitle jobTitle) {
-        this.jobTitle = jobTitle;
+    public void setJobInfo(JobInfo jobInfo) {
+        this.jobInfo = jobInfo;
     }
 }

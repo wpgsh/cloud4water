@@ -48,6 +48,14 @@ public class Group {
         this.name = name;
     }
 
+    public Organization getOrganization() {
+        return organization;
+    }
+
+    public void setOrganization(Organization organization) {
+        this.organization = organization;
+    }
+
     public Set<GroupObject> getGroupObjectSet() {
         return groupObjectSet;
     }
@@ -61,6 +69,14 @@ public class Group {
     }
 
     public void setUserGroupsSet(Set<UserGroup> userGroupSet) {
+        this.userGroupSet = userGroupSet;
+    }
+
+    public Set<UserGroup> getUserGroupSet() {
+        return userGroupSet;
+    }
+
+    public void setUserGroupSet(Set<UserGroup> userGroupSet) {
         this.userGroupSet = userGroupSet;
     }
 }

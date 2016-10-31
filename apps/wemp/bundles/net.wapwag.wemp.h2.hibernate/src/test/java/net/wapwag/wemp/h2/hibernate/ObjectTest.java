@@ -77,7 +77,7 @@ public class ObjectTest {
 	            userObject = new UserObject();
 	            userObject.setUserObjectId(new UserObjectId(user, obj));
 	            userObject.setActionId("read");
-	            userObject.setTransitive("0");
+	            userObject.setTransitive(0);
 	            em.persist(userObject);
 	        }
 	        

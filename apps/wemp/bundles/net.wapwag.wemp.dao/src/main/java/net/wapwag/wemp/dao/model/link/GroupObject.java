@@ -19,8 +19,8 @@ public class GroupObject {
     @Column
     private String actionId;
 
-    @Column(length = 1, columnDefinition = "char(1)", nullable = false)
-    private String transitive;
+    @Column(length = 1, columnDefinition = "tinyint(1)", nullable = false)
+    private int transitive;
 
     public GroupObjectId getGroupObjectId() {
         return groupObjectId;
@@ -38,11 +38,11 @@ public class GroupObject {
         this.actionId = actionId;
     }
 
-    public String getTransitive() {
+    public int getTransitive() {
         return transitive;
     }
 
-    public void setTransitive(String transitive) {
+    public void setTransitive(int transitive) {
         this.transitive = transitive;
     }
 

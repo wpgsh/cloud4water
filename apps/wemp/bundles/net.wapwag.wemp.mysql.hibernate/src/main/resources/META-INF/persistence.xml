@@ -20,7 +20,7 @@
         <class>net.wapwag.wemp.dao.model.project.PumpEquipment</class>
 
         <class>net.wapwag.wemp.dao.model.org.Organization</class>
-        <class>net.wapwag.wemp.dao.model.org.JobTitle</class>
+        <class>net.wapwag.wemp.dao.model.org.JobInfo</class>
         <class>net.wapwag.wemp.dao.model.org.PropertyManageCompany</class>
         <class>net.wapwag.wemp.dao.model.org.WaterManageAuth</class>
         <class>net.wapwag.wemp.dao.model.org.WaterManageCompany</class>
