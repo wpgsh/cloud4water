@@ -7,7 +7,6 @@ import org.junit.BeforeClass;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 
 /**
  * Base test configuration

@@ -2,8 +2,7 @@ package net.wapwag.wemp.mysql.hibernate;
 
 import junit.framework.TestCase;
 import net.wapwag.wemp.dao.model.ObjectData;
-import net.wapwag.wemp.dao.model.link.UserGroup;
-import net.wapwag.wemp.dao.model.link.UserGroupId;
+import net.wapwag.wemp.dao.model.link.*;
 import net.wapwag.wemp.dao.model.org.Organization;
 import net.wapwag.wemp.dao.model.permission.Group;
 import net.wapwag.wemp.dao.model.permission.User;
@@ -180,27 +179,79 @@ public class OrgGroupTest extends BaseTestConfig {
 
     @Test
     public void testAddUserByOrg() {
+        User user = new User();
+        user.setId(1L);
 
+        Organization organization = new Organization();
+        organization.setId(orgId);
+
+        UserOrg userOrg = new UserOrg();
+        UserOrgId userOrgId = new UserOrgId(user, organization);
+        userOrg.setUserOrgId(userOrgId);
+
+        em.persist(userOrg);
+
+        em.flush();
+
+        UserOrg added = em.find(UserOrg.class, userOrgId);
+
+        TestCase.assertTrue(added != null);
     }
 
     @Test
     public void testRemoveUserByOrg() {
+        long userId = 1L;
+        String hql = "delete from UserOrg userOrg " +
+                "where userOrg.userOrgId.organization.id = :orgId " +
+                "and userOrg.userOrgId.user.id = :userId";
+        Query query = em.createQuery(hql)
+                .setParameter("orgId", orgId)
+                .setParameter("userId", userId);
+        long removeCount = query.executeUpdate();
 
+        TestCase.assertTrue(removeCount > 0);
     }
 
     @Test
     public void testGetObjectsByOrg() {
+        String hql = "select orgObject.orgObjectId.objectData from OrgObject orgObject " +
+                "where orgObject.orgObjectId.organization.id = :orgId";
+        List<ObjectData> objList = em.createQuery(hql, ObjectData.class)
+                .setParameter("orgId", orgId).getResultList();
 
+        TestCase.assertTrue(objList != null && objList.size() > 0);
     }
 
     @Test
     public void testAddObjectByOrg() {
+        Organization organization = new Organization();
+        organization.setId(orgId);
 
+        List<ObjectData> objList = em.createQuery("select obj from ObjectData obj", ObjectData.class)
+                .setFirstResult(0).setMaxResults(10).getResultList();
+
+        OrgObject orgObject;
+        for (ObjectData objectData : objList) {
+            orgObject = new OrgObject();
+            orgObject.setOrgObjectId(new OrgObjectId(organization, objectData));
+            em.persist(orgObject);
+        }
     }
 
     @Test
     public void testRemoveObjectByOrg() {
+        long objId = 1L;
 
+        String hql = "delete from OrgObject orgObject " +
+                "where orgObject.orgObjectId.organization.id = :orgId " +
+                "and orgObject.orgObjectId.objectData.id = :objId";
+        Query query = em.createQuery(hql)
+                .setParameter("orgId", orgId)
+                .setParameter("objId", objId);
+
+        long removeCount = query.executeUpdate();
+
+        TestCase.assertTrue(removeCount > 0);
     }
 
 }
