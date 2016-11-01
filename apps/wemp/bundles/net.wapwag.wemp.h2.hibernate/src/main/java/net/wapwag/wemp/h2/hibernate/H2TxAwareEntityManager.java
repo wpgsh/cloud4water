@@ -1,10 +1,5 @@
 package net.wapwag.wemp.h2.hibernate;
 
-import java.util.Map;
-
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-
 import org.apache.aries.jpa.template.EmConsumer;
 import org.apache.aries.jpa.template.EmFunction;
 import org.apache.aries.jpa.template.JpaTemplate;

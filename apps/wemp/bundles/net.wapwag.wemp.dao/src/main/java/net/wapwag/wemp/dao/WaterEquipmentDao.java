@@ -60,6 +60,8 @@ public interface WaterEquipmentDao {
     int updatePumpEquipment(PumpEquipment pumpEquipment) throws WaterEquipmentDaoException;
 
     PumpEquipment getPumpEquipment(PumpEquipment pumpEquipment) throws WaterEquipmentDaoException;
+    
+    boolean isAuthorized(long userId, String action, long objectId) throws WaterEquipmentDaoException;
 
 
 	/**

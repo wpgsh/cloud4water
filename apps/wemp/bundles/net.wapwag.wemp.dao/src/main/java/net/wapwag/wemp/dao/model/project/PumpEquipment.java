@@ -2,6 +2,7 @@ package net.wapwag.wemp.dao.model.project;
 
 import net.wapwag.wemp.dao.model.ObjectData;
 import net.wapwag.wemp.dao.model.ObjectType;
+import net.wapwag.wemp.dao.model.Parent;
 
 import javax.persistence.*;
 
@@ -13,6 +14,7 @@ import javax.persistence.*;
 @Table(name = "pump_equipment_data")
 public class PumpEquipment extends ObjectData {
 
+	@Parent
     @ManyToOne
     @JoinColumn(name = "pump_room_id")
     private PumpRoom pumpRoom;
