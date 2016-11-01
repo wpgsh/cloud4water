@@ -8,7 +8,15 @@ public class ResultView {
 
     private final long count;
 
-    public ResultView(long count) {
+    private ResultView(long count) {
         this.count = count;
+    }
+
+    public static ResultView newInstance(long count) {
+        return new ResultView(count);
+    }
+
+    public static ResultView newInstance(boolean flag) {
+        return new ResultView(flag ? 1 : 0);
     }
 }

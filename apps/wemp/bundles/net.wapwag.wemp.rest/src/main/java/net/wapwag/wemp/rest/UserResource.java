@@ -25,14 +25,14 @@ public class UserResource {
     @Path("/checkPermissions")
     @POST
     @FineGrainedAuthorization(permission = Permission.READ, target = "{uid}")
-    public ResultView checkPermission(@PathParam("uid") long userId, ObjectData objectData) {
+    public ResultView checkPermission(@PathParam("uid") long userId, ObjectData objectData) throws Exception {
         return waterEquipmentService.checkPermission(userId, objectData);
     }
 
     @Path("/objects")
     @GET
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
-    public Set<ObjectView> getObjectsByUser(@PathParam("uid") long userId, @QueryParam("action") String action) {
+    public Set<ObjectView> getObjectsByUser(@PathParam("uid") long userId, @QueryParam("action") String action) throws Exception {
         return waterEquipmentService.getObjectsByUser(userId, action);
     }
 

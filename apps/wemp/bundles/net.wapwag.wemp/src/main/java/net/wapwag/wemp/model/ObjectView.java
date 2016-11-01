@@ -15,9 +15,13 @@ public class ObjectView {
 
     private final ObjectType objectType;
 
-    public ObjectView(ObjectData objectData) {
+    private ObjectView(ObjectData objectData) {
         this.id = objectData.getId();
         this.name = objectData.getName();
         this.objectType = objectData.getType();
+    }
+
+    public static ObjectView newInstance(ObjectData objectData) {
+        return new ObjectView(objectData);
     }
 }

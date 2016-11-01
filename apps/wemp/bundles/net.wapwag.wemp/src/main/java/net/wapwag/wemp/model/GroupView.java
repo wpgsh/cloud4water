@@ -1,28 +1,24 @@
 package net.wapwag.wemp.model;
 
+import net.wapwag.wemp.dao.model.permission.Group;
+
 /**
- * Country view class
+ * Group view class
  * Created by Administrator on 2016/10/21 0021.
  */
 public class GroupView {
 
-    private String id;
+    private final long id;
 
-    private String name;
+    private final String name;
 
-    public String getId() {
-        return id;
+    private GroupView(Group group) {
+        this.id = group.getId();
+        this.name = group.getName();
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public static GroupView newInstance(Group group) {
+        return new GroupView(group);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }

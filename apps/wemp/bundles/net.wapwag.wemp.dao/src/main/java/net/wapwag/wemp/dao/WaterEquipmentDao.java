@@ -50,13 +50,13 @@ public interface WaterEquipmentDao {
 
 	List<ObjectData> getObjectsByGroup(long orgId, long groupId) throws WaterEquipmentDaoException;
 
-	ObjectData getObjectByGroup(long objId, long groupId, String action) throws WaterEquipmentDaoException;
+	ObjectData getObjectByGroup(long orgId, long groupId, long objId, String action) throws WaterEquipmentDaoException;
 
 	List<User> getUsersByOrg(long orgId) throws WaterEquipmentDaoException;
 
 	int addUserByOrg(long orgId, User user) throws WaterEquipmentDaoException;
 
-	ObjectData removeUserByOrg(long orgId, long uid) throws WaterEquipmentDaoException;
+	int removeUserByOrg(long orgId, long uid) throws WaterEquipmentDaoException;
 
 	List<ObjectData> getObjectsByOrg(long orgId) throws WaterEquipmentDaoException;
 
@@ -64,9 +64,10 @@ public interface WaterEquipmentDao {
 
 	int removeObjectByOrg(long orgId, long objId) throws WaterEquipmentDaoException;
 
-	int checkPermission(long userId, ObjectData objectData) throws WaterEquipmentDaoException;
+	boolean checkPermission(long userId, ObjectData objectData) throws WaterEquipmentDaoException;
 
 	Set<ObjectData> getObjectsByUser(long userId, String action) throws WaterEquipmentDaoException;
+
 	/**
 	 * An action that consists of several steps to be performed
 	 * within a single transaction

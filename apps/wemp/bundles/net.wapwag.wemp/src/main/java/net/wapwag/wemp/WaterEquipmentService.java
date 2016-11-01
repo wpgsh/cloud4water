@@ -38,53 +38,53 @@ public interface WaterEquipmentService {
 
     List<UserView> getUsersByObject(long objId, String action) throws WaterEquipmentServiceException;
 
-	ObjectView getObjectByUser(long objId, long userId);
+	ObjectView getObjectByUser(long objId, long userId) throws WaterEquipmentServiceException;
 
-	ResultView addObjectByUser(long objId, long userId);
+	ResultView addObjectByUser(long objId, long userId) throws WaterEquipmentServiceException;
 
-	ResultView removeObjectByUser(long objId, long userId, String action);
+	ResultView removeObjectByUser(long objId, long userId, String action) throws WaterEquipmentServiceException;
 
-	List<GroupView> getGroupsByObject(long objId, String action);
+	List<GroupView> getGroupsByObject(long objId, String action) throws WaterEquipmentServiceException;
 
-	ObjectView getObjectByGroup(long objId, long groupId);
+	ObjectView getObjectByGroup(long objId, long groupId) throws WaterEquipmentServiceException;
 
-	ResultView addObjectByGroup(long objId, long groupId);
+	ResultView addObjectByGroup(long objId, long groupId) throws WaterEquipmentServiceException;
 
-	ResultView removeObjectByGroup(long objId, long groupId, String action);
+	ResultView removeObjectByGroup(long objId, long groupId, String action) throws WaterEquipmentServiceException;
 
-	List<GroupView> getGroupsByOrg(long orgId);
+	List<GroupView> getGroupsByOrg(long orgId) throws WaterEquipmentServiceException;
 
-	ResultView addGroupByOrg(long orgId, Group group);
+	ResultView addGroupByOrg(long orgId, Group group) throws WaterEquipmentServiceException;
 
-	GroupView getGroupByOrg(long orgId, long groupId);
+	GroupView getGroupByOrg(long orgId, long groupId) throws WaterEquipmentServiceException;
 
-	ResultView updateGroupByOrg(long orgId, long groupId, Group group);
+	ResultView updateGroupByOrg(long orgId, long groupId, Group group) throws WaterEquipmentServiceException;
 
-	ResultView removeGroupByOrg(long orgId, long groupId);
+	ResultView removeGroupByOrg(long orgId, long groupId) throws WaterEquipmentServiceException;
 
-	List<UserView> getUsersByGroup(long orgId, long groupId);
+	List<UserView> getUsersByGroup(long orgId, long groupId) throws WaterEquipmentServiceException;
 
-	ResultView addUserByGroup(long orgId, long groupId, long userId);
+	ResultView addUserByGroup(long orgId, long groupId, long userId) throws WaterEquipmentServiceException;
 
-	ResultView removeUserByGroup(long orgId, long groupId, long userId);
+	ResultView removeUserByGroup(long orgId, long groupId, long userId) throws WaterEquipmentServiceException;
 
-	List<ObjectView> getObjectsByGroup(long orgId, long groupId);
+	List<ObjectView> getObjectsByGroup(long orgId, long groupId) throws WaterEquipmentServiceException;
 
-	ObjectView getObjectByGroup(long objId, long groupId, String action);
+	ObjectView getObjectByGroup(long orgId, long groupId, long objId, String action) throws WaterEquipmentServiceException;
 
-    List<UserView> getUsersByOrg(long orgId);
+    List<UserView> getUsersByOrg(long orgId) throws WaterEquipmentServiceException;
 
-    ResultView addUserByOrg(long orgId, User user);
+    ResultView addUserByOrg(long orgId, User user) throws WaterEquipmentServiceException;
 
-    ObjectData removeUserByOrg(long orgId, long uid);
+	ResultView removeUserByOrg(long orgId, long uid) throws WaterEquipmentServiceException;
 
-    List<ObjectView> getObjectsByOrg(long orgId);
+    List<ObjectView> getObjectsByOrg(long orgId) throws WaterEquipmentServiceException;
 
-    ResultView addObjectByOrg(long orgId, ObjectData objectData);
+    ResultView addObjectByOrg(long orgId, ObjectData objectData) throws WaterEquipmentServiceException;
 
-    ResultView removeObjectByOrg(long orgId, long objId);
+    ResultView removeObjectByOrg(long orgId, long objId) throws WaterEquipmentServiceException;
 
-    ResultView checkPermission(long userId, ObjectData objectData);
+    ResultView checkPermission(long userId, ObjectData objectData) throws WaterEquipmentServiceException;
 
-    Set<ObjectView> getObjectsByUser(long userId, String action);
+    Set<ObjectView> getObjectsByUser(long userId, String action) throws WaterEquipmentServiceException;
 }

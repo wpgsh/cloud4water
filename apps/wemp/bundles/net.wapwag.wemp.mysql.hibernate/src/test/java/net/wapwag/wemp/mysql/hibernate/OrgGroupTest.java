@@ -30,9 +30,10 @@ public class OrgGroupTest extends BaseTestConfig {
 
     @Test
     public void testAddGroupByObject() {
-        Group group = em.find(Group.class, 2L);
+        Group group = new Group();
+        group.setName("新添加组");
 
-        Organization org = new Organization();
+        Organization org = em.find(Organization.class, orgId);
         org.setId(orgId);
         group.setOrganization(org);
 
@@ -54,17 +55,16 @@ public class OrgGroupTest extends BaseTestConfig {
 
     @Test
     public void testUpdateGroupByOrg() {
-        long groupId = 2L;
+        long groupId = 1L;
 
-        String hql = "select g from Group g where g.id = :groupId and g.organization.id = :orgId";
+        Organization org = em.find(Organization.class, orgId);
 
-        Group group = em.createQuery(hql, Group.class)
-                .setParameter("groupId", groupId)
-                .setParameter("orgId", orgId).getSingleResult();
+        Group group = new Group();
+        group.setName("添加组到研发部");
+        group.setId(groupId);
+        group.setOrganization(org);
 
-        group.setName("组被修改");
-
-        em.persist(group);
+        em.merge(group);
 
         em.flush();
     }
@@ -97,6 +97,28 @@ public class OrgGroupTest extends BaseTestConfig {
 
     @Test
     public void testAddUserByGroup() {
+        long groupId = 2L;
+        long userId = 1L;
+        User user = new User();
+        user.setId(userId);
+
+        Group group = new Group();
+        group.setId(groupId);
+        Organization org = new Organization();
+        org.setId(orgId);
+        group.setOrganization(org);
+
+        UserGroup userGroup = new UserGroup();
+        userGroup.setUserGroupId(new UserGroupId(user, group));
+        em.persist(userGroup);
+
+        userGroup = em.find(UserGroup.class, userGroup.getUserGroupId());
+
+        TestCase.assertTrue(userGroup != null);
+    }
+
+    @Test
+    public void testAddUsersByGroup() {
         long groupId = 2L;
         Group group = new Group();
         group.setId(groupId);
