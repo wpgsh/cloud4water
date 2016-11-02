@@ -25,7 +25,7 @@ public class Organization extends ObjectData {
     private Set<OrgObject> orgObjectSet;
 
     @OneToMany(mappedBy = "userOrgId.organization")
-    private Set<UserOrg> userOrgSet;
+    private Set<UserOrg> orgUserSet;
 
     public Organization() {
 
@@ -51,11 +51,11 @@ public class Organization extends ObjectData {
         this.orgObjectSet = orgObjectSet;
     }
 
-    public Set<UserOrg> getUserOrgSet() {
-        return userOrgSet;
+    public Set<UserOrg> getOrgUserSet() {
+        return orgUserSet;
     }
 
-    public void setUserOrgSet(Set<UserOrg> userOrgSet) {
-        this.userOrgSet = userOrgSet;
+    public void setOrgUserSet(Set<UserOrg> orgUserSet) {
+        this.orgUserSet = orgUserSet;
     }
 }

@@ -23,7 +23,7 @@ public class User {
     private String name;
 
     @OneToMany(mappedBy = "accessTokenId.user")
-    private Set<AccessToken> accessTokenSet;
+    private Set<AccessToken> userClientSet;
 
     @OneToMany(mappedBy = "userObjectId.user")
     private Set<UserObject> userObjectSet;
@@ -50,12 +50,12 @@ public class User {
         this.name = name;
     }
 
-    public Set<AccessToken> getAccessTokenSet() {
-        return accessTokenSet;
+    public Set<AccessToken> getUserClientSet() {
+        return userClientSet;
     }
 
-    public void setAccessTokenSet(Set<AccessToken> accessTokenSet) {
-        this.accessTokenSet = accessTokenSet;
+    public void setUserClientSet(Set<AccessToken> userClientSet) {
+        this.userClientSet = userClientSet;
     }
 
     public Set<UserObject> getUserObjectSet() {

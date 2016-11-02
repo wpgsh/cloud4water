@@ -1,8 +1,7 @@
 package net.wapwag.wemp.mysql.hibernate;
 
-import junit.framework.TestCase;
 import net.wapwag.wemp.dao.model.ObjectData;
-import net.wapwag.wemp.dao.model.link.*;
+import net.wapwag.wemp.dao.model.link.UserGroup;
 import net.wapwag.wemp.dao.model.org.Organization;
 import net.wapwag.wemp.dao.model.permission.Group;
 import net.wapwag.wemp.dao.model.permission.User;
@@ -11,6 +10,7 @@ import org.junit.Test;
 import javax.persistence.Query;
 import java.util.List;
 
+import static org.junit.Assert.assertTrue;
 /**
  * Test organization and group query
  * Created by Administrator on 2016/10/27 0027.
@@ -25,7 +25,7 @@ public class OrgGroupTest extends BaseTestConfig {
         List<Group> groupList = em.createQuery(hql, Group.class)
                 .setParameter("orgId", orgId).getResultList();
 
-        TestCase.assertTrue(groupList != null);
+        assertTrue(groupList != null);
     }
 
 
@@ -39,7 +39,7 @@ public class OrgGroupTest extends BaseTestConfig {
                 .setParameter("groupId", groupId)
                 .setParameter("orgId", orgId).getSingleResult();
 
-        TestCase.assertTrue(group != null);
+        assertTrue(group != null);
     }
 
     @Test
@@ -67,7 +67,7 @@ public class OrgGroupTest extends BaseTestConfig {
         Query query = em.createQuery(hql).setParameter("groupId", groupId)
                 .setParameter("orgId", orgId);
 
-        query.executeUpdate();
+        assertTrue(query.executeUpdate() > 0);
     }
 
     @Test
@@ -81,7 +81,7 @@ public class OrgGroupTest extends BaseTestConfig {
                 .setParameter("orgId", orgId)
                 .setParameter("groupId", groupId).getResultList();
 
-        TestCase.assertTrue(userList != null && userList.size() > 0);
+        assertTrue(userList != null && userList.size() > 0);
     }
 
     @Test
@@ -116,7 +116,7 @@ public class OrgGroupTest extends BaseTestConfig {
                 .setParameter("groupId", groupId)
                 .setParameter("orgId", orgId).getResultList();
 
-        TestCase.assertTrue(objList != null && objList.size() > 0);
+        assertTrue(objList != null && objList.size() > 0);
     }
 
     @Test
@@ -137,7 +137,7 @@ public class OrgGroupTest extends BaseTestConfig {
                 .setParameter("orgId", orgId)
                 .setParameter("objId", objId).getSingleResult();
 
-        TestCase.assertTrue(objectData != null);
+        assertTrue(objectData != null);
     }
 
     @Test
@@ -146,7 +146,7 @@ public class OrgGroupTest extends BaseTestConfig {
         List<User> userList = em.createQuery(hql, User.class)
                 .setParameter("orgId", orgId).getResultList();
 
-        TestCase.assertTrue(userList != null && userList.size() > 0);
+        assertTrue(userList != null && userList.size() > 0);
     }
 
     @Test
@@ -160,7 +160,7 @@ public class OrgGroupTest extends BaseTestConfig {
                 .setParameter("userId", userId);
         long removeCount = query.executeUpdate();
 
-        TestCase.assertTrue(removeCount > 0);
+        assertTrue(removeCount > 0);
     }
 
     @Test
@@ -170,7 +170,7 @@ public class OrgGroupTest extends BaseTestConfig {
         List<ObjectData> objList = em.createQuery(hql, ObjectData.class)
                 .setParameter("orgId", orgId).getResultList();
 
-        TestCase.assertTrue(objList != null && objList.size() > 0);
+        assertTrue(objList != null && objList.size() > 0);
     }
 
     @Test
@@ -186,7 +186,7 @@ public class OrgGroupTest extends BaseTestConfig {
 
         long removeCount = query.executeUpdate();
 
-        TestCase.assertTrue(removeCount > 0);
+        assertTrue(removeCount > 0);
     }
 
 }

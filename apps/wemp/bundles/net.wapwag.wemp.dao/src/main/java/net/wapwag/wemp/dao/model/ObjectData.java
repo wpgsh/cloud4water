@@ -32,13 +32,13 @@ public class ObjectData {
     private ObjectType type;
 
     @OneToMany(mappedBy = "userObjectId.objectData")
-    private Set<UserObject> userObjectSet;
+    private Set<UserObject> objectUserSet;
 
     @OneToMany(mappedBy = "groupObjectId.objectData")
-    private Set<GroupObject> groupObjectSet;
+    private Set<GroupObject> objectGroupSet;
 
     @OneToMany(mappedBy = "orgObjectId.objectData")
-    private Set<OrgObject> orgObjectSet;
+    private Set<OrgObject> objectOrgSet;
 
     public ObjectData() {
 
@@ -72,31 +72,27 @@ public class ObjectData {
         this.type = type;
     }
 
-    public Set<UserObject> getUserObjectSet() {
-        return userObjectSet;
+    public Set<UserObject> getObjectUserSet() {
+        return objectUserSet;
     }
 
-    public void setUserObjectSet(Set<UserObject> userObjectSet) {
-        this.userObjectSet = userObjectSet;
+    public void setObjectUserSet(Set<UserObject> objectUserSet) {
+        this.objectUserSet = objectUserSet;
     }
 
-    public Class<? extends ObjectData> getObjectClass() {
-        return type.getObjectClass();
+    public Set<GroupObject> getObjectGroupSet() {
+        return objectGroupSet;
     }
 
-    public Set<GroupObject> getGroupObjectSet() {
-        return groupObjectSet;
+    public void setObjectGroupSet(Set<GroupObject> objectGroupSet) {
+        this.objectGroupSet = objectGroupSet;
     }
 
-    public void setGroupObjectSet(Set<GroupObject> groupObjectSet) {
-        this.groupObjectSet = groupObjectSet;
+    public Set<OrgObject> getObjectOrgSet() {
+        return objectOrgSet;
     }
 
-    public Set<OrgObject> getOrgObjectSet() {
-        return orgObjectSet;
-    }
-
-    public void setOrgObjectSet(Set<OrgObject> orgObjectSet) {
-        this.orgObjectSet = orgObjectSet;
+    public void setObjectOrgSet(Set<OrgObject> objectOrgSet) {
+        this.objectOrgSet = objectOrgSet;
     }
 }

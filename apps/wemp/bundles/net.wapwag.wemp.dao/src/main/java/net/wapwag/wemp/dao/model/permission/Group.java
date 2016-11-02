@@ -30,7 +30,7 @@ public class Group {
     private Set<GroupObject> groupObjectSet;
 
     @OneToMany(mappedBy = "userGroupId.group")
-    private Set<UserGroup> userGroupSet;
+    private Set<UserGroup> groupUserSet;
 
     public long getId() {
         return id;
@@ -64,19 +64,11 @@ public class Group {
         this.groupObjectSet = groupObjectSet;
     }
 
-    public Set<UserGroup> getUserGroupsSet() {
-        return userGroupSet;
+    public Set<UserGroup> getGroupUserSet() {
+        return groupUserSet;
     }
 
-    public void setUserGroupsSet(Set<UserGroup> userGroupSet) {
-        this.userGroupSet = userGroupSet;
-    }
-
-    public Set<UserGroup> getUserGroupSet() {
-        return userGroupSet;
-    }
-
-    public void setUserGroupSet(Set<UserGroup> userGroupSet) {
-        this.userGroupSet = userGroupSet;
+    public void setGroupUserSet(Set<UserGroup> groupUserSet) {
+        this.groupUserSet = groupUserSet;
     }
 }

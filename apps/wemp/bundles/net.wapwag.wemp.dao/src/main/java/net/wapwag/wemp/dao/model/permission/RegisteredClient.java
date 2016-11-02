@@ -28,7 +28,7 @@ public class RegisteredClient {
     private String clientVendor;
 
     @OneToMany(mappedBy = "accessTokenId.registeredClient")
-    private Set<AccessToken> accessTokenList;
+    private Set<AccessToken> clientUserSet;
 
     public long getId() {
         return id;
@@ -70,12 +70,11 @@ public class RegisteredClient {
         this.redirectURI = redirectURI;
     }
 
-    public Set<AccessToken> getAccessTokenList() {
-        return accessTokenList;
+    public Set<AccessToken> getClientUserSet() {
+        return clientUserSet;
     }
 
-    public void setAccessTokenList(Set<AccessToken> accessTokenList) {
-        this.accessTokenList = accessTokenList;
+    public void setClientUserSet(Set<AccessToken> clientUserSet) {
+        this.clientUserSet = clientUserSet;
     }
-
 }
