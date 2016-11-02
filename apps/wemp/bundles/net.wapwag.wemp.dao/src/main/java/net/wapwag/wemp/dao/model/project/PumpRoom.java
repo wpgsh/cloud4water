@@ -2,6 +2,7 @@ package net.wapwag.wemp.dao.model.project;
 
 import net.wapwag.wemp.dao.model.ObjectData;
 import net.wapwag.wemp.dao.model.ObjectType;
+import net.wapwag.wemp.dao.model.Parent;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -14,6 +15,7 @@ import java.util.Set;
 @Table(name = "pump_room_data")
 public class PumpRoom extends ObjectData {
 
+	@Parent
     @ManyToOne
     @JoinColumn(name = "project_id")
     private Project project;

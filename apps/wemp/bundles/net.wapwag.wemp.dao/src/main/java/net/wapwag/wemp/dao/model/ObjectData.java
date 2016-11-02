@@ -31,15 +31,12 @@ public class ObjectData {
     @Enumerated(EnumType.STRING)
     private ObjectType type;
 
-    @Transient
     @OneToMany(mappedBy = "userObjectId.objectData")
     private Set<UserObject> userObjectSet;
 
-    @Transient
     @OneToMany(mappedBy = "groupObjectId.objectData")
     private Set<GroupObject> groupObjectSet;
 
-    @Transient
     @OneToMany(mappedBy = "orgObjectId.objectData")
     private Set<OrgObject> orgObjectSet;
 

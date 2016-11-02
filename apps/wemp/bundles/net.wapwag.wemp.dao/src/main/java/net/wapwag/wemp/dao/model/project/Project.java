@@ -2,6 +2,7 @@ package net.wapwag.wemp.dao.model.project;
 
 import net.wapwag.wemp.dao.model.ObjectData;
 import net.wapwag.wemp.dao.model.ObjectType;
+import net.wapwag.wemp.dao.model.Parent;
 import net.wapwag.wemp.dao.model.geo.County;
 
 import javax.persistence.*;
@@ -15,6 +16,7 @@ import java.util.Set;
 @Table(name = "project_data")
 public class Project extends ObjectData {
 
+	@Parent
     @ManyToOne
     @JoinColumn(name = "county_id")
     private County county;
