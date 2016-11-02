@@ -7,18 +7,12 @@ import javax.persistence.*;
  * Updated by Lee on 2016/7/5.
  */
 @Entity
-@Table(name="access_tokens")
+@Table(name="access_token")
 public class AccessToken {
 
-    @ManyToOne
-    @JoinColumn(name="user_id")
-	private User user;
+    @EmbeddedId
+    private AccessTokenId accessTokenId;
 
-    @ManyToOne
-    @JoinColumn(name = "client_id")
-    private RegisteredClient registeredClient;
-
-    @Id
     @Column(name="handle")
 	private String handle;
 
@@ -31,20 +25,12 @@ public class AccessToken {
     @Column(name="ac_expiration")
 	private long expiration;
 
-    public User getUser() {
-        return user;
+    public AccessTokenId getAccessTokenId() {
+        return accessTokenId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public RegisteredClient getRegisteredClient() {
-        return registeredClient;
-    }
-
-    public void setRegisteredClient(RegisteredClient registeredClient) {
-        this.registeredClient = registeredClient;
+    public void setAccessTokenId(AccessTokenId accessTokenId) {
+        this.accessTokenId = accessTokenId;
     }
 
     public String getHandle() {

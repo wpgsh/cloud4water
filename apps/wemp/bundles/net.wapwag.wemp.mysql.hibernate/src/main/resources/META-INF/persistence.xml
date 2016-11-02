@@ -29,6 +29,8 @@
         <class>net.wapwag.wemp.dao.model.org.WPGDepartment</class>
 
         <class>net.wapwag.wemp.dao.model.permission.User</class>
+        <class>net.wapwag.wemp.dao.model.permission.AccessToken</class>
+        <class>net.wapwag.wemp.dao.model.permission.RegisteredClient</class>
         <class>net.wapwag.wemp.dao.model.permission.Group</class>
 
         <class>net.wapwag.wemp.dao.model.link.GroupObject</class>

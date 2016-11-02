@@ -22,6 +22,9 @@ public class User {
     @Column
     private String name;
 
+    @OneToMany(mappedBy = "accessTokenId.user")
+    private Set<AccessToken> accessTokenSet;
+
     @OneToMany(mappedBy = "userObjectId.user")
     private Set<UserObject> userObjectSet;
 
@@ -45,6 +48,14 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Set<AccessToken> getAccessTokenSet() {
+        return accessTokenSet;
+    }
+
+    public void setAccessTokenSet(Set<AccessToken> accessTokenSet) {
+        this.accessTokenSet = accessTokenSet;
     }
 
     public Set<UserObject> getUserObjectSet() {

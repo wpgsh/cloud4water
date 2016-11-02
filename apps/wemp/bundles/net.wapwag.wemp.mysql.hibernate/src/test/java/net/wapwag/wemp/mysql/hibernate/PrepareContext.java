@@ -17,6 +17,7 @@ import java.util.Hashtable;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@SuppressWarnings("Duplicates")
 public class PrepareContext {
 	
     private static final String JNDI_DATA_SOURCE = "osgi:service/javax.sql.DataSource/(osgi.jndi.service.name=jdbc/WaterEquipment_MySQL)";
@@ -31,7 +32,7 @@ public class PrepareContext {
 				@Override
 				public InitialContextFactory createInitialContextFactory(Hashtable<?, ?> environment) throws NamingException {				
 					when(root.getNameParser("")).thenReturn(nameParser);
-					
+
 					return new InitialContextFactory() {
 						@Override
 						public Context getInitialContext(Hashtable<?, ?> environment) throws NamingException {

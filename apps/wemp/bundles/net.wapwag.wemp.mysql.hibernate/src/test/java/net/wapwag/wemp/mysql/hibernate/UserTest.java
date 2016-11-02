@@ -13,6 +13,7 @@ import java.util.Set;
  * Test object
  * Created by Administrator on 2016/10/27 0027.
  */
+@SuppressWarnings("Duplicates")
 public class UserTest extends BaseTestConfig {
 
     private static final long userId = 1L;
@@ -89,6 +90,41 @@ public class UserTest extends BaseTestConfig {
         Set<ObjectData> result = new HashSet<>(objList);
 
         TestCase.assertTrue(result.size() > 0);
+    }
+
+    @Test
+    public void isAuthorized() throws Exception {
+
+    }
+
+    @Test
+    public void lookupAccessToken() throws Exception {
+
+    }
+
+    @Test
+    public void getClientByRedirectURI() throws Exception {
+
+    }
+
+    @Test
+    public void getAccessTokenByUserIdAndClientId() throws Exception {
+
+    }
+
+    @Test
+    public void getAccessTokenByCode() throws Exception {
+
+    }
+
+    @Test
+    public void saveAccessToken() throws Exception {
+
+    }
+
+    @Test
+    public void getUser() throws Exception {
+
     }
 
 }

@@ -4,6 +4,7 @@ import net.wapwag.wemp.dao.model.ObjectData;
 import net.wapwag.wemp.dao.model.permission.Group;
 import net.wapwag.wemp.dao.model.permission.User;
 import net.wapwag.wemp.model.*;
+import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 
 import java.util.List;
 import java.util.Set;
@@ -29,10 +30,32 @@ public interface WaterEquipmentService {
 	/**
 	 * Lookup access token by a handle
 	 * 
-	 * @param handle
-	 * @return
+	 * @param handle the access token need to be checked
+	 * @return return the token that the user has
 	 */
-	AccessToken lookupToken(String handle) throws WaterEquipmentServiceException;
+	TokenView lookupToken(String handle) throws WaterEquipmentServiceException;
+
+	/**
+	 * Get authorization code if the user has not been authorized
+	 *
+	 * @param userId      The user ID who has logined
+	 * @param cliendId The client id registered in the resource server
+	 * @param redirectURI The URL in your application where users will be sent after authorization.
+	 * @param scope       For users who have authorized scopes for the application.
+	 * @return Return authorization code.
+	 */
+	String getAuthorizationCode(long userId, String cliendId, String redirectURI, Set<String> scope) throws OAuthProblemException;
+
+	/**
+	 * Get access token if the user has been authorization
+	 *
+	 * @param clientId     The client id registered in the resource server
+	 * @param clientSecret The client secret you received from authorization system.
+	 * @param code         The code you received from authorize response.
+	 * @param redirectURI  The URL in your application where users will be sent after authorization.
+	 * @return Return accessToken.
+	 */
+	String getAccessToken(String clientId, String clientSecret, String code, String redirectURI) throws OAuthProblemException;
 
 	ObjectView getObject(long objId) throws WaterEquipmentServiceException;
 

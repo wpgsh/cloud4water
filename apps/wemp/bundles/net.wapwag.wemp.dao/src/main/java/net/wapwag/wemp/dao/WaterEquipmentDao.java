@@ -1,7 +1,9 @@
 package net.wapwag.wemp.dao;
 
 import net.wapwag.wemp.dao.model.ObjectData;
+import net.wapwag.wemp.dao.model.permission.AccessToken;
 import net.wapwag.wemp.dao.model.permission.Group;
+import net.wapwag.wemp.dao.model.permission.RegisteredClient;
 import net.wapwag.wemp.dao.model.permission.User;
 
 import java.util.List;
@@ -13,6 +15,20 @@ import java.util.Set;
  *
  */
 public interface WaterEquipmentDao {
+
+	boolean isAuthorized(long userId, String action, long objectId) throws WaterEquipmentDaoException;
+
+    AccessToken lookupAccessToken(String handle) throws WaterEquipmentDaoException;
+
+	RegisteredClient getClientByRedirectURI(String redirectURI) throws WaterEquipmentDaoException;
+
+    AccessToken getAccessTokenByUserIdAndClientId(long userId, long clientId) throws WaterEquipmentDaoException;
+
+    AccessToken getAccessTokenByCode(String code) throws WaterEquipmentDaoException;
+
+    long saveAccessToken(AccessToken accessToken) throws WaterEquipmentDaoException;
+
+    User getUser(long uid) throws WaterEquipmentDaoException;
 
 	ObjectData getObjectData(long objId) throws WaterEquipmentDaoException;
 
@@ -67,8 +83,6 @@ public interface WaterEquipmentDao {
 	boolean checkPermission(long userId, ObjectData objectData) throws WaterEquipmentDaoException;
 
 	Set<ObjectData> getObjectsByUser(long userId, String action) throws WaterEquipmentDaoException;
-
-    boolean isAuthorized(long userId, String action, long objectId) throws WaterEquipmentDaoException;
 
 	/**
 	 * An action that consists of several steps to be performed

@@ -53,7 +53,7 @@
     <google.gson.version>2.3.1</google.gson.version>
     <guava.version>16.0.1</guava.version>
     <javax.servlet.version>3.1.0</javax.servlet.version>
-    <junit.version>4.4</junit.version>
+    <junit.version>4.12</junit.version>
     <maven.assembly.plugin.version>2.6</maven.assembly.plugin.version>
     <maven.compiler.plugin.version>3.5.1</maven.compiler.plugin.version>
     <maven.resources.plugin.version>2.6</maven.resources.plugin.version>
@@ -74,6 +74,7 @@
     <commons.email>1.1</commons.email>
     <javax.mail>1.4</javax.mail>
     <javax.activation>1.1.1</javax.activation>
+    <mockito.version>2.2.9</mockito.version>
   </properties>
 
   <profiles>
@@ -214,6 +215,12 @@
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>${mockito.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>

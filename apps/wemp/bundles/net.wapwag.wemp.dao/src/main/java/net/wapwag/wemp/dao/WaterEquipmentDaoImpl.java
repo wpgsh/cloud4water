@@ -1,23 +1,22 @@
 package net.wapwag.wemp.dao;
 
 import net.wapwag.wemp.dao.model.ObjectData;
+import net.wapwag.wemp.dao.model.Parent;
 import net.wapwag.wemp.dao.model.link.*;
 import net.wapwag.wemp.dao.model.org.Organization;
+import net.wapwag.wemp.dao.model.permission.AccessToken;
 import net.wapwag.wemp.dao.model.permission.Group;
-import net.wapwag.wemp.dao.model.Parent;
-import net.wapwag.wemp.dao.model.geo.*;
+import net.wapwag.wemp.dao.model.permission.RegisteredClient;
 import net.wapwag.wemp.dao.model.permission.User;
 import org.osgi.service.component.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.Query;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import javax.persistence.Entity;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import java.lang.reflect.Field;
+import java.util.*;
 
 @Component(scope=ServiceScope.SINGLETON)
 public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
@@ -25,7 +24,7 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
 	private static Logger logger = LoggerFactory.getLogger(WaterEquipmentDaoImpl.class);
 
 	@Reference(target = "(osgi.name=waterequipment)")
-	private TxAwareEntityManager entityManager;
+	protected TxAwareEntityManager entityManager;
 
 	@Activate
 	protected void init() throws Exception {
@@ -36,6 +35,198 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
 	protected void destroy() {
 
 	}
+
+    @Override
+    public boolean isAuthorized(long userId, String action, long objectId) throws WaterEquipmentDaoException {
+        try {
+            return entityManager.txExpr(em -> {
+                ObjectData object = em.find(ObjectData.class, objectId);
+
+                StringBuilder select0 = new StringBuilder();
+                StringBuilder select1 = new StringBuilder();
+
+                select0.append("select o0.id,uo0.userObjectId.user.id");
+                select1.append("select o0.id,go0.groupObjectId.group.id");
+
+                Class<?> clazz = object.getType().getObjectClass();
+
+                StringBuilder from0 = new StringBuilder();
+                StringBuilder from1 = new StringBuilder();
+
+                from0.append("from ").append(clazz.getSimpleName()).append(" o0 left join o0.userObjectSet uo0");
+                from1.append("from ").append(clazz.getSimpleName()).append(" o0 left join o0.groupObjectSet go0 left join go0.groupObjectId.group.userGroupSet ug0");
+
+                StringBuilder where0 = new StringBuilder();
+                StringBuilder where1 = new StringBuilder();
+
+                where0.append("where o0.id = :objectId and ((uo0 is null or (uo0.userObjectId.user.id = :userId and uo0.actionId = :action))");
+                where1.append("where o0.id = :objectId and ((go0 is null or (ug0.userGroupId.user.id = :userId and go0.actionId = :action))");
+
+                String objId = "o0";
+                int idx = 1;
+
+                while (true) {
+                    Field[] declaredFields = clazz.getDeclaredFields();
+                    if (declaredFields != null) {
+                        for (Field f : declaredFields) {
+                            if (f.isAnnotationPresent(Parent.class)) {
+                                clazz = f.getType();
+                                objId = objId + "." + f.getName();
+                                if (clazz.isAnnotationPresent(Entity.class)) {
+                                    select0.append(",uo").append(idx).append(".userObjectId.user.id");
+                                    from0.append(" left join ").append(objId).append(".userObjectSet uo").append(idx);
+                                    where0.append(" or (uo").append(idx).append(" is null or (uo").append(idx).append(".userObjectId.user.id = :userId and uo").append(idx).append(".actionId = :action and uo").append(idx).append(".transitive = 1))");
+
+                                    select1.append(",go").append(idx).append(".groupObjectId.group.id");
+                                    from1.append(" left join ").append(objId).append(".groupObjectSet go").append(idx).append(" left join go").append(idx).append(".groupObjectId.group.userGroupSet ug").append(idx);
+                                    where1.append(" or (go").append(idx).append(" is null or (ug").append(idx).append(".userGroupId.user.id = :userId and go").append(idx).append(".actionId = :action and go").append(idx).append(".transitive = 1))");
+
+                                    idx++;
+                                    continue;
+                                } else {
+                                    throw new RuntimeException("Invalid parent class. A JPA Entity expected: " + clazz.getName());
+                                }
+                            }
+                        }
+                    }
+                    break;
+                }
+
+                where0.append(")");
+                where1.append(")");
+
+                String query0 = select0 + " " + from0 + " " + where0;
+                logger.debug("isAuthorized: query0: {}. objectId={}, userId={}, action={}", query0, objectId, userId, action);
+
+                List result0 = em.createQuery(query0).
+                        setParameter("objectId", objectId).
+                        setParameter("userId", userId).
+                        setParameter("action", action).
+                        getResultList();
+
+                if (result0.size() > 0) {
+                    for (Object[] row : (List<Object[]>) result0) {
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("isAuthorized: result0=" + Arrays.asList(row));
+                        }
+                        if (row[0] != null) {
+                            for (int i = 0; i < idx; i++) {
+                                if (row[i + 1] != null) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                String query1 = select1 + " " + from1 + " " + where1;
+                logger.debug("isAuthorized: query1: {}. objectId={}, userId={}, action={}", query1, objectId, userId, action);
+
+                List result1 = em.createQuery(query1).
+                        setParameter("objectId", objectId).
+                        setParameter("userId", userId).
+                        setParameter("action", action).
+                        getResultList();
+
+                if (result1.size() > 0) {
+                    for (Object[] row : (List<Object[]>) result1) {
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("isAuthorized: result1=" + Arrays.asList(row));
+                        }
+                        if (row[0] != null) {
+                            for (int i = 0; i < idx; i++) {
+                                if (row[i + 1] != null) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return false;
+            });
+        } catch (Exception e) {
+            throw new WaterEquipmentDaoException("Cannot check authorization", e);
+        }
+    }
+
+    @Override
+    public AccessToken lookupAccessToken(final String handle) throws WaterEquipmentDaoException {
+        try {
+            return entityManager.txExpr(em -> em.find(AccessToken.class, handle));
+        } catch (Exception e) {
+            throw new WaterEquipmentDaoException("can't get access token", e);
+        }
+    }
+
+    @Override
+    public RegisteredClient getClientByRedirectURI(String redirectURI) throws WaterEquipmentDaoException {
+        final String hql = "select r from RegisteredClient r where r.redirectURI = :redirectURI";
+        try {
+            return entityManager.txExpr(em ->
+                    em.createQuery(hql, RegisteredClient.class)
+                            .setParameter("redirectURI", redirectURI)
+                            .getSingleResult()
+            );
+        } catch (Exception e) {
+            throw new WaterEquipmentDaoException("Cannot get client by redirect_uri", e);
+        }
+    }
+
+    @Override
+    public AccessToken getAccessTokenByUserIdAndClientId(long userId, long clientId) throws WaterEquipmentDaoException {
+        final String hql = "select at from AccessToken at " +
+                "where at.accessTokenId.user.id = :userId " +
+                "and at.accessTokenId.registeredClient.id = :clientId";
+        try {
+            return entityManager.txExpr(em -> em.createQuery(hql, AccessToken.class)
+                    .setParameter("userId", userId)
+                    .setParameter("clientId", clientId)
+                    .getSingleResult()
+            );
+        } catch (Exception e) {
+            if (e.getCause() instanceof NoResultException) {
+                //if no result found,return null.
+                return null;
+            }
+            throw new WaterEquipmentDaoException("can't find access token", e);
+        }
+    }
+
+    @Override
+    public AccessToken getAccessTokenByCode(String code) throws WaterEquipmentDaoException {
+        final String hql = "select token from AccessToken token where token.authrizationCode = :code";
+
+        try {
+            return entityManager.txExpr(em -> em.createQuery(hql, AccessToken.class)
+                    .setParameter("code", code)
+                    .getSingleResult()
+            );
+        } catch (Exception e) {
+            if (e.getCause() instanceof NoResultException) {
+                return null;
+            }
+            throw new WaterEquipmentDaoException("can't find access token", e);
+        }
+    }
+
+    @Override
+    public long saveAccessToken(AccessToken accessToken) throws WaterEquipmentDaoException {
+        try {
+            return entityManager.txExpr(em -> em.merge(accessToken) != null ? 1L : 0L);
+        } catch (Exception e) {
+            throw new WaterEquipmentDaoException("Cannot add access token", e);
+        }
+    }
+
+    @Override
+    public User getUser(long uid) throws WaterEquipmentDaoException {
+        try {
+            return entityManager.txExpr((em) -> em.find(User.class, uid));
+        } catch (Exception e) {
+            throw new WaterEquipmentDaoException("Cannot get user by id", e);
+        }
+    }
 
 	@Override
 	public ObjectData getObjectData(long objId) throws WaterEquipmentDaoException {
@@ -573,21 +764,21 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
 		} catch (Exception e) {
 			throw new RuntimeException("Unexpected exception", e);
 		}
-		
+
 		if (ex != null) {
 			if (exClass.isAssignableFrom(ex.getClass())) {
 				throw exClass.cast(ex);
 			} else {
 				throw new RuntimeException("Unexpected exception", ex);
 			}
-		} 
+		}
 	}
-	
+
 	@SuppressWarnings("Duplicates")
     @Override
-	public <T, E extends Exception> T txExpr(ComplexActionWithResult<T, E> action, Class<E> exClass) throws E {		
+	public <T, E extends Exception> T txExpr(ComplexActionWithResult<T, E> action, Class<E> exClass) throws E {
 		final List<T> result = new ArrayList<>();
-		
+
 		Exception ex;
 		try {
 			ex = entityManager.txExpr(em -> {
@@ -601,130 +792,15 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
 		} catch (Exception e) {
 			throw new RuntimeException("Unexpected exception", e);
 		}
-		
+
 		if (ex != null) {
 			if (exClass.isAssignableFrom(ex.getClass())) {
 				throw exClass.cast(ex);
 			} else {
 				throw new RuntimeException("Unexpected exception", ex);
 			}
-		} 
-		
-		return result.get(0);		
-	}
-
-	@Override
-	public boolean isAuthorized(long userId, String action, long objectId) throws WaterEquipmentDaoException {
-		try {
-			return entityManager.txExpr(em -> {
-				ObjectData object = em.find(ObjectData.class, objectId);
-
-				StringBuffer select0 = new StringBuffer();
-				StringBuffer select1 = new StringBuffer();
-
-				select0.append("select o0.id,uo0.userObjectId.user.id");
-				select1.append("select o0.id,go0.groupObjectId.group.id");
-
-				Class<?> clazz = object.getType().getObjectClass();
-
-				StringBuffer from0 = new StringBuffer();
-				StringBuffer from1 = new StringBuffer();
-
-				from0.append("from "+clazz.getSimpleName()+" o0 left join o0.userObjectSet uo0");
-				from1.append("from "+clazz.getSimpleName()+" o0 left join o0.groupObjectSet go0 left join go0.groupObjectId.group.userGroupSet ug0");
-
-				StringBuffer where0 = new StringBuffer();
-				StringBuffer where1 = new StringBuffer();
-
-				where0.append("where o0.id = :objectId and ((uo0 is null or (uo0.userObjectId.user.id = :userId and uo0.actionId = :action))");
-				where1.append("where o0.id = :objectId and ((go0 is null or (ug0.userGroupId.user.id = :userId and go0.actionId = :action))");
-
-				String objId = "o0";
-				int idx = 1;
-
-				while (true) {
-					Field[] declaredFields = clazz.getDeclaredFields();
-					if (declaredFields != null) {
-						for (Field f : declaredFields) {
-							if (f.isAnnotationPresent(Parent.class)) {
-								clazz = f.getType();
-								objId = objId+"."+f.getName();
-								if (clazz.isAnnotationPresent(Entity.class)) {
-									select0.append(",uo"+idx+".userObjectId.user.id");
-									from0.append(" left join "+objId+".userObjectSet uo"+idx);
-									where0.append(" or (uo"+idx+" is null or (uo"+idx+".userObjectId.user.id = :userId and uo"+idx+".actionId = :action and uo"+idx+".transitive = 1))");
-
-									select1.append(",go"+idx+".groupObjectId.group.id");
-									from1.append(" left join "+objId+".groupObjectSet go"+idx+" left join go"+idx+".groupObjectId.group.userGroupSet ug"+idx);
-									where1.append(" or (go"+idx+" is null or (ug"+idx+".userGroupId.user.id = :userId and go"+idx+".actionId = :action and go"+idx+".transitive = 1))");
-
-									idx ++;
-									continue;
-								} else {
-									throw new RuntimeException("Invalid parent class. A JPA Entity expected: "+clazz.getName());
-								}
-							}
-						}
-					}
-					break;
-				}
-
-				where0.append(")");
-				where1.append(")");
-
-				String query0 = select0+" "+from0+" "+where0;
-				logger.debug("isAuthorized: query0: {}. objectId={}, userId={}, action={}", query0, objectId, userId, action);
-
-				List result0 = em.createQuery(query0).
-					setParameter("objectId", objectId).
-					setParameter("userId", userId).
-					setParameter("action",  action).
-					getResultList();
-
-				if (result0.size() > 0) {
-					for (Object[] row : (List<Object[]>) result0) {
-						if (logger.isDebugEnabled()) {
-							logger.debug("isAuthorized: result0="+Arrays.asList(row));
-						}
-						if (row[0] != null) {
-							for (int i=0; i<idx; i++) {
-								if (row[i+1] != null) {
-									return true;
-								}
-							}
-						}
-					}
-				}
-
-				String query1 = select1+" "+from1+" "+where1;
-				logger.debug("isAuthorized: query1: {}. objectId={}, userId={}, action={}", query1, objectId, userId, action);
-
-				List result1 = em.createQuery(query1).
-						setParameter("objectId", objectId).
-						setParameter("userId", userId).
-						setParameter("action",  action).
-						getResultList();
-
-				if (result1.size() > 0) {
-					for (Object[] row : (List<Object[]>) result1) {
-						if (logger.isDebugEnabled()) {
-							logger.debug("isAuthorized: result1="+Arrays.asList(row));
-						}
-						if (row[0] != null) {
-							for (int i=0; i<idx; i++) {
-								if (row[i+1] != null) {
-									return true;
-								}
-							}
-						}
-					}
-				}
-
-				return false;
-			});
-		} catch (Exception e) {
-			throw new WaterEquipmentDaoException("Cannot check authorization", e);
 		}
-	}
 
+		return result.get(0);
+	}
 }

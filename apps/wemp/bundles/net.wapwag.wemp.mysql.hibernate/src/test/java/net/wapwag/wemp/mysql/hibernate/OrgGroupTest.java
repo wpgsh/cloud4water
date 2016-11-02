@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class OrgGroupTest extends BaseTestConfig {
 
-    private static final long orgId = 1L;
+    private static final long orgId = 4L;
 
     @Test
     public void testGetGroupsByOrg() {
@@ -28,17 +28,6 @@ public class OrgGroupTest extends BaseTestConfig {
         TestCase.assertTrue(groupList != null);
     }
 
-    @Test
-    public void testAddGroupByObject() {
-        Group group = new Group();
-        group.setName("新添加组");
-
-        Organization org = em.find(Organization.class, orgId);
-        org.setId(orgId);
-        group.setOrganization(org);
-
-        em.persist(group);
-    }
 
     @Test
     public void testGetGroupByOrg() {
@@ -93,45 +82,6 @@ public class OrgGroupTest extends BaseTestConfig {
                 .setParameter("groupId", groupId).getResultList();
 
         TestCase.assertTrue(userList != null && userList.size() > 0);
-    }
-
-    @Test
-    public void testAddUserByGroup() {
-        long groupId = 2L;
-        long userId = 1L;
-        User user = new User();
-        user.setId(userId);
-
-        Group group = new Group();
-        group.setId(groupId);
-        Organization org = new Organization();
-        org.setId(orgId);
-        group.setOrganization(org);
-
-        UserGroup userGroup = new UserGroup();
-        userGroup.setUserGroupId(new UserGroupId(user, group));
-        em.persist(userGroup);
-
-        userGroup = em.find(UserGroup.class, userGroup.getUserGroupId());
-
-        TestCase.assertTrue(userGroup != null);
-    }
-
-    @Test
-    public void testAddUsersByGroup() {
-        long groupId = 2L;
-        Group group = new Group();
-        group.setId(groupId);
-
-        List<User> userList = em.createQuery("select user from User user", User.class).getResultList();
-
-        UserGroup userGroup;
-        for (User user : userList) {
-            userGroup = new UserGroup();
-            userGroup.setUserGroupId(new UserGroupId(user, group));
-            em.persist(userGroup);
-        }
-
     }
 
     @Test
@@ -200,27 +150,6 @@ public class OrgGroupTest extends BaseTestConfig {
     }
 
     @Test
-    public void testAddUserByOrg() {
-        User user = new User();
-        user.setId(1L);
-
-        Organization organization = new Organization();
-        organization.setId(orgId);
-
-        UserOrg userOrg = new UserOrg();
-        UserOrgId userOrgId = new UserOrgId(user, organization);
-        userOrg.setUserOrgId(userOrgId);
-
-        em.persist(userOrg);
-
-        em.flush();
-
-        UserOrg added = em.find(UserOrg.class, userOrgId);
-
-        TestCase.assertTrue(added != null);
-    }
-
-    @Test
     public void testRemoveUserByOrg() {
         long userId = 1L;
         String hql = "delete from UserOrg userOrg " +
@@ -242,22 +171,6 @@ public class OrgGroupTest extends BaseTestConfig {
                 .setParameter("orgId", orgId).getResultList();
 
         TestCase.assertTrue(objList != null && objList.size() > 0);
-    }
-
-    @Test
-    public void testAddObjectByOrg() {
-        Organization organization = new Organization();
-        organization.setId(orgId);
-
-        List<ObjectData> objList = em.createQuery("select obj from ObjectData obj", ObjectData.class)
-                .setFirstResult(0).setMaxResults(10).getResultList();
-
-        OrgObject orgObject;
-        for (ObjectData objectData : objList) {
-            orgObject = new OrgObject();
-            orgObject.setOrgObjectId(new OrgObjectId(organization, objectData));
-            em.persist(orgObject);
-        }
     }
 
     @Test

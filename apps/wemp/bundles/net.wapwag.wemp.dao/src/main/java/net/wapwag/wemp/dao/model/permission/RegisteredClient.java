@@ -8,7 +8,7 @@ import java.util.Set;
  * Created by Lee on 2016/7/5.
  */
 @Entity
-@Table(name = "registered_clients")
+@Table(name = "registered_client")
 public class RegisteredClient {
 
     @Id
@@ -27,7 +27,7 @@ public class RegisteredClient {
     @Column(name = "client_vendor")
     private String clientVendor;
 
-    @OneToMany(mappedBy = "registeredClient", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "accessTokenId.registeredClient")
     private Set<AccessToken> accessTokenList;
 
     public long getId() {
