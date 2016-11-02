@@ -452,7 +452,8 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
             return entityManager.txExpr(em -> {
                 Organization org = em.find(Organization.class, orgId);
 
-                group.setId(groupId);
+                Group groupEntity = em.find(Group.class, groupId);;
+                groupEntity.setName(group.getName());
                 group.setOrganization(org);
 
                 em.merge(group);
@@ -465,12 +466,19 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
 
 	@Override
 	public int removeGroupByOrg(long orgId, long groupId) throws WaterEquipmentDaoException {
+        final String hql = "select g from Group g where g.id = :groupId and g.organization.id = :orgId";
+
         try {
-            return entityManager.txExpr(em -> em.createQuery("delete from Group g where " +
-                    "g.id = :groupId and g.organization.id = :orgId")
-                    .setParameter("groupId", groupId)
-                    .setParameter("orgId", orgId)
-                    .executeUpdate());
+            return entityManager.txExpr(em -> {
+                Group group = em.createQuery(hql, Group.class)
+                        .setParameter("groupId", groupId)
+                        .setParameter("orgId", orgId)
+                        .getSingleResult();
+
+                em.remove(group);
+
+                return 1;
+            });
         } catch (Exception e) {
             throw new WaterEquipmentDaoException("can't remove group by org", e);
         }

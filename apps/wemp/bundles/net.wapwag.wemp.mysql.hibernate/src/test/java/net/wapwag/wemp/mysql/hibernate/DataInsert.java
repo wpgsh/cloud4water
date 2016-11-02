@@ -1,6 +1,5 @@
 package net.wapwag.wemp.mysql.hibernate;
 
-import junit.framework.TestCase;
 import net.wapwag.wemp.dao.model.ObjectData;
 import net.wapwag.wemp.dao.model.ObjectType;
 import net.wapwag.wemp.dao.model.geo.Country;
@@ -11,9 +10,7 @@ import net.wapwag.wemp.dao.model.permission.*;
 import org.junit.Test;
 
 import javax.persistence.Query;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
@@ -50,7 +47,7 @@ public class DataInsert extends BaseTestConfig {
     private void testAddUserOrg() {
 
         int i;
-        User user = null;
+        User user;
 
         for (i = 0; i < 10; i++) {
             user = new User();
@@ -59,20 +56,10 @@ public class DataInsert extends BaseTestConfig {
         }
 
         Organization organization;
-        Set<Organization> orgSet = new HashSet<>();
         for (i = 0; i < 10; i++) {
             organization = new WaterManageAuth();
             organization.setName("研发部" + i);
-            orgSet.add(organization);
             em.persist(organization);
-        }
-
-        UserOrg userOrg;
-
-        for (Organization tmp : orgSet) {
-            userOrg = new UserOrg();
-            userOrg.setUserOrgId(new UserOrgId(user, tmp));
-            em.persist(userOrg);
         }
 
     }
@@ -102,7 +89,7 @@ public class DataInsert extends BaseTestConfig {
 
     private void testAddGroup() {
         Group group;
-        int addCount = 11;
+        int addCount = 21;
 
         for (int i = 0; i < addCount; i++) {
             group = new Group();
@@ -232,10 +219,14 @@ public class DataInsert extends BaseTestConfig {
     }
 
     private static void testUpdateGroupsByOrg() {
-        Query query = em.createQuery("update Group g set g.organization.id = :orgId")
+        Query query1 = em.createQuery("update Group g set g.organization.id = :orgId where g.id > 11")
                 .setParameter("orgId", orgId);
 
-        assertTrue(query.executeUpdate() > 0);
+        Query query2 = em.createQuery("update Group g set g.organization.id = :orgId where g.id <= 11")
+                .setParameter("orgId", 5L);
+
+        query1.executeUpdate();
+        query2.executeUpdate();
     }
 
     private static void testAddUsersByGroup() {
@@ -252,31 +243,41 @@ public class DataInsert extends BaseTestConfig {
             em.persist(userGroup);
         }
 
+        group = new Group();
+        group.setId(1L);
+        for (User user : userList) {
+            userGroup = new UserGroup();
+            userGroup.setUserGroupId(new UserGroupId(user, group));
+            em.persist(userGroup);
+        }
+
+        group = new Group();
+        group.setId(12L);
+        for (User user : userList) {
+            userGroup = new UserGroup();
+            userGroup.setUserGroupId(new UserGroupId(user, group));
+            em.persist(userGroup);
+        }
+
     }
 
     private static void testAddUserByOrg() {
-        User user = new User();
-        user.setId(1L);
+        List<User> userList = em.createQuery("select user from User user", User.class).getResultList();
 
-        Organization organization = new Organization();
-        organization.setId(orgId);
+        List<Organization> orgList = em.createQuery("select org from Organization org", Organization.class).getResultList();
 
-        UserOrg userOrg = new UserOrg();
-        UserOrgId userOrgId = new UserOrgId(user, organization);
-        userOrg.setUserOrgId(userOrgId);
-
-        em.persist(userOrg);
-
-        em.flush();
-
-        UserOrg added = em.find(UserOrg.class, userOrgId);
-
-        TestCase.assertTrue(added != null);
+        UserOrg userOrg;
+        for (User user : userList) {
+            for (Organization org : orgList) {
+                userOrg = new UserOrg();
+                userOrg.setUserOrgId(new UserOrgId(user, org));
+                em.persist(userOrg);
+            }
+        }
     }
 
     private static void testAddObjectByOrg() {
-        Organization organization = new Organization();
-        organization.setId(orgId);
+        List<Organization> orgList = em.createQuery("select org from Organization org", Organization.class).getResultList();
 
         List<ObjectData> objList = em.createQuery("select obj from ObjectData obj where obj.type <> :type", ObjectData.class)
                 .setParameter("type", ObjectType.WATER_MANAGE_AUTH)
@@ -284,10 +285,11 @@ public class DataInsert extends BaseTestConfig {
 
         OrgObject orgObject;
         for (ObjectData objectData : objList) {
-            orgObject = new OrgObject();
-            orgObject.setOrgObjectId(new OrgObjectId(organization, objectData));
-            em.persist(orgObject);
+            for (Organization org : orgList) {
+                orgObject = new OrgObject();
+                orgObject.setOrgObjectId(new OrgObjectId(org, objectData));
+                em.persist(orgObject);
+            }
         }
     }
-
 }

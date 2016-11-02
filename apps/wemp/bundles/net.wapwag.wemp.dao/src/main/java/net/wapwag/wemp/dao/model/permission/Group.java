@@ -26,10 +26,10 @@ public class Group {
     @JoinColumn(name = "org_id")
     private Organization organization;
 
-    @OneToMany(mappedBy = "groupObjectId.group")
+    @OneToMany(mappedBy = "groupObjectId.group", cascade = CascadeType.ALL)
     private Set<GroupObject> groupObjectSet;
 
-    @OneToMany(mappedBy = "userGroupId.group")
+    @OneToMany(mappedBy = "userGroupId.group", cascade = CascadeType.ALL)
     private Set<UserGroup> groupUserSet;
 
     public long getId() {

@@ -19,6 +19,8 @@ public class OrgGroupTest extends BaseTestConfig {
 
     private static final long orgId = 4L;
 
+    private static final long removeOrgId = 5L;
+
     @Test
     public void testGetGroupsByOrg() {
         final String hql = "select g from Group g where g.organization.id = :orgId";
@@ -31,7 +33,7 @@ public class OrgGroupTest extends BaseTestConfig {
 
     @Test
     public void testGetGroupByOrg() {
-        long groupId = 2L;
+        long groupId = 12L;
 
         String hql = "select g from Group g where g.id = :groupId and g.organization.id = :orgId";
 
@@ -44,35 +46,36 @@ public class OrgGroupTest extends BaseTestConfig {
 
     @Test
     public void testUpdateGroupByOrg() {
-        long groupId = 1L;
+        long groupId = 12L;
 
         Organization org = em.find(Organization.class, orgId);
 
-        Group group = new Group();
+        Group group = em.find(Group.class, groupId);
         group.setName("添加组到研发部");
         group.setId(groupId);
         group.setOrganization(org);
 
         em.merge(group);
-
-        em.flush();
     }
 
     @Test
     public void testRemoveGroupByOrg() {
-        long groupId = 2L;
+        long groupId = 10L;
 
-        String hql = "delete from Group g where g.id = :groupId and g.organization.id = :orgId";
+        String hql = "select g from Group g where g.id = :groupId and g.organization.id = :orgId";
 
-        Query query = em.createQuery(hql).setParameter("groupId", groupId)
-                .setParameter("orgId", orgId);
+        Group group = em.createQuery(hql, Group.class)
+                .setParameter("groupId", groupId)
+                .setParameter("orgId", removeOrgId)
+                .getSingleResult();
 
-        assertTrue(query.executeUpdate() > 0);
+        em.remove(group);
+
     }
 
     @Test
     public void testGetUsersByGroup() {
-        long groupId = 2L;
+        long groupId = 12L;
         String hql = "select userGroup.userGroupId.user from UserGroup userGroup " +
                 "where userGroup.userGroupId.group.id = :groupId " +
                 "and userGroup.userGroupId.group.organization.id = :orgId";
@@ -95,7 +98,7 @@ public class OrgGroupTest extends BaseTestConfig {
                 "and userGroup.userGroupId.user.id = :userId";
 
         UserGroup userGroup = em.createQuery(hql, UserGroup.class)
-                .setParameter("orgId", orgId)
+                .setParameter("orgId", removeOrgId)
                 .setParameter("groupId", groupId)
                 .setParameter("userId", userId).getSingleResult();
 
@@ -104,7 +107,7 @@ public class OrgGroupTest extends BaseTestConfig {
 
     @Test
     public void testGetObjectsByGroup() {
-        long groupId = 2L;
+        long groupId = 12L;
         String hql = "select groupObject.groupObjectId.objectData from GroupObject  groupObject " +
                 "where groupObject.groupObjectId.group.id = :groupId " +
                 "and groupObject.groupObjectId.group.organization.id = :orgId";
@@ -121,7 +124,7 @@ public class OrgGroupTest extends BaseTestConfig {
 
     @Test
     public void testGetObjectByGroup() {
-        long groupId = 2L;
+        long groupId = 12L;
         long objId = 1L;
 
         String hql = "select groupObject.groupObjectId.objectData from GroupObject  groupObject " +
@@ -156,7 +159,7 @@ public class OrgGroupTest extends BaseTestConfig {
                 "where userOrg.userOrgId.organization.id = :orgId " +
                 "and userOrg.userOrgId.user.id = :userId";
         Query query = em.createQuery(hql)
-                .setParameter("orgId", orgId)
+                .setParameter("orgId", removeOrgId)
                 .setParameter("userId", userId);
         long removeCount = query.executeUpdate();
 
@@ -181,7 +184,7 @@ public class OrgGroupTest extends BaseTestConfig {
                 "where orgObject.orgObjectId.organization.id = :orgId " +
                 "and orgObject.orgObjectId.objectData.id = :objId";
         Query query = em.createQuery(hql)
-                .setParameter("orgId", orgId)
+                .setParameter("orgId", removeOrgId)
                 .setParameter("objId", objId);
 
         long removeCount = query.executeUpdate();
