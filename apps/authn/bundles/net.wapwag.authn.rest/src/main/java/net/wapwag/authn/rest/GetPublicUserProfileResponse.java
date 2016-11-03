@@ -5,10 +5,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class GetPublicUserProfileResponse {
-
-	private long id;
-
+	
 	@XmlElement(name="id")
+	private long id;
+	
 	public long getId() {
 		return id;
 	}

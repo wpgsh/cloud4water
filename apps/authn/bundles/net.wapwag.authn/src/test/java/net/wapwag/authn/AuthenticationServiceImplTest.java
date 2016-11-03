@@ -6,6 +6,7 @@ import junit.framework.TestCase;
 import net.wapwag.authn.dao.UserDao;
 import net.wapwag.authn.dao.UserDaoException;
 import net.wapwag.authn.dao.model.AccessToken;
+import net.wapwag.authn.dao.model.Image;
 import net.wapwag.authn.dao.model.RegisteredClient;
 import net.wapwag.authn.dao.model.User;
 import org.apache.commons.lang3.StringUtils;
@@ -201,6 +202,24 @@ public class AuthenticationServiceImplTest {
 			@Override
 			public <T, E extends Exception> T txExpr(ComplexActionWithResult<T, E> action, Class<E> exClass) throws E {
 				return action.apply();
+			}
+
+			@Override
+			public int saveImg(Image image) throws UserDaoException {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+
+			@Override
+			public int deleteImg(String avartarId) throws UserDaoException {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+
+			@Override
+			public Image getAvatar(String avartarId) throws UserDaoException {
+				// TODO Auto-generated method stub
+				return null;
 			}
 			
 		};

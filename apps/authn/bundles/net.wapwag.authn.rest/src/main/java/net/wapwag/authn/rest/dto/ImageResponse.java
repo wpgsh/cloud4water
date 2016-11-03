@@ -6,24 +6,24 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class ImageResponse {
 	@XmlElement(name = "id")
-	private long id;
+	private String id;
 
 	@XmlElement(name = "image")
-	private String image;
+	private byte[] image;
 
-	public long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
-	public String getImage() {
+	public byte[] getImage() {
 		return image;
 	}
 
-	public void setImage(String image) {
+	public void setImage(byte[] image) {
 		this.image = image;
 	}
 	

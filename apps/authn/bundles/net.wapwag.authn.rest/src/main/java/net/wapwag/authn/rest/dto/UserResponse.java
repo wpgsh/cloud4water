@@ -34,7 +34,7 @@ public class UserResponse {
     private String avatar;
 
     @XmlElement(name = "avatar_id")
-    private long avartarId;
+    private String avartarId;
 
     @XmlElement(name = "phone1")
     private String phone1;
@@ -126,11 +126,11 @@ public class UserResponse {
         this.avatar = avatar;
     }
 
-    public long getAvartarId() {
+    public String getAvartarId() {
         return avartarId;
     }
 
-    public void setAvartarId(long avartarId) {
+    public void setAvartarId(String avartarId) {
         this.avartarId = avartarId;
     }
 

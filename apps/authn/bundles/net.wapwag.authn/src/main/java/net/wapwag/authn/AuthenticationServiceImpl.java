@@ -1,16 +1,9 @@
 package net.wapwag.authn;
 
-import com.eaio.uuid.UUID;
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
-import net.wapwag.authn.Ids.UserId;
-import net.wapwag.authn.dao.UserDao;
-import net.wapwag.authn.dao.UserDaoException;
-import net.wapwag.authn.dao.model.RegisteredClient;
-import net.wapwag.authn.dao.model.User;
-import net.wapwag.authn.model.AccessToken;
-import net.wapwag.authn.model.UserProfile;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.oltu.oauth2.common.error.OAuthError;
@@ -21,9 +14,19 @@ import org.osgi.service.component.annotations.ServiceScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import com.eaio.uuid.UUID;
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+
+import net.wapwag.authn.Ids.UserId;
+import net.wapwag.authn.dao.UserDao;
+import net.wapwag.authn.dao.UserDaoException;
+import net.wapwag.authn.dao.model.Image;
+import net.wapwag.authn.dao.model.RegisteredClient;
+import net.wapwag.authn.dao.model.User;
+import net.wapwag.authn.model.AccessToken;
+import net.wapwag.authn.model.UserProfile;
 
 @Component(scope=ServiceScope.SINGLETON)
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -287,7 +290,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		try {
 			return userDao.removeUserAvatar(uid);
 		} catch (UserDaoException e) {
-			throw new AuthenticationServiceException("cannot remove user");
+			throw new AuthenticationServiceException("cannot remove user Avatar");
 		}
 	}
 
@@ -298,7 +301,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		try {
 			user = userDao.getUserByName(userName);
         } catch (UserDaoException e) {
-            throw new AuthenticationServiceException("cannot add user");
+            throw new AuthenticationServiceException("cannot get user By Name");
         }
         return user;
     }
@@ -310,7 +313,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		try {
 			user = userDao.getUserByEmail(email);
         } catch (UserDaoException e) {
-            throw new AuthenticationServiceException("cannot add user");
+            throw new AuthenticationServiceException("cannot get user By Email");
         }
         return user;
     }
@@ -320,9 +323,36 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		try {
 			user = userDao.updateUserPwd(user);
         } catch (UserDaoException e) {
-            throw new AuthenticationServiceException("cannot add user");
+            throw new AuthenticationServiceException("cannot update user pwd");
         }
         return user;
     }
+
+	@Override
+	public int saveImg(Image image) throws AuthenticationServiceException {
+		try {
+			return userDao.saveImg(image);
+		} catch (UserDaoException e) {
+			throw new AuthenticationServiceException("cannot save Image");
+		}
+	}
+
+	@Override
+	public int deleteImg(String avartarId) throws AuthenticationServiceException {
+		try {
+			return userDao.deleteImg(avartarId);
+		} catch (UserDaoException e) {
+			throw new AuthenticationServiceException("cannot remove user Avatar");
+		}
+	}
+
+	@Override
+	public Image getAvatar(String avartarId) throws AuthenticationServiceException {
+		try {
+			return userDao.getAvatar(avartarId);
+		} catch (UserDaoException e) {
+			throw new AuthenticationServiceException("Cannot get user", e);
+		}
+	}
 
 }

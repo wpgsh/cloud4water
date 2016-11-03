@@ -1,6 +1,7 @@
 package net.wapwag.authn.dao;
 
 import net.wapwag.authn.dao.model.AccessToken;
+import net.wapwag.authn.dao.model.Image;
 import net.wapwag.authn.dao.model.RegisteredClient;
 import net.wapwag.authn.dao.model.User;
 
@@ -9,7 +10,7 @@ public interface UserDao {
 	User getUser(long uid) throws UserDaoException;
 
 	int saveUser(User user) throws UserDaoException;
-
+	
 	int removeUser(long uid) throws UserDaoException;
 
 	User getUserAvatar(long id) throws UserDaoException;
@@ -89,5 +90,11 @@ public interface UserDao {
 	 * @throws E
 	 */
 	<T, E extends Exception> T txExpr(ComplexActionWithResult<T, E> action, Class<E> exClass) throws E;
+
+	int saveImg(Image image) throws UserDaoException;
+
+	int deleteImg(String avartarId) throws UserDaoException;
+
+	Image getAvatar(String avartarId) throws UserDaoException;
 
 }

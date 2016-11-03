@@ -1,4 +1,4 @@
-package net.wapwag.authn.h2.hibernate;
+package net.wapwag.authn.mysql.hibernate;
 
 import com.google.common.collect.ImmutableList;
 import net.wapwag.authn.dao.TxAwareEntityManager;
@@ -13,9 +13,9 @@ import org.slf4j.LoggerFactory;
 import javax.persistence.EntityManager;
 
 @Component(property="osgi.name=user")
-public class H2TxAwareEntityManager implements TxAwareEntityManager {
+public class MysqlTxAwareEntityManager implements TxAwareEntityManager {
 	
-	private static Logger logger = LoggerFactory.getLogger(H2TxAwareEntityManager.class);
+	private static Logger logger = LoggerFactory.getLogger(MysqlTxAwareEntityManager.class);
 	
 	private static final ImmutableList<String> ddl =
 		ImmutableList.of(
@@ -81,7 +81,7 @@ public class H2TxAwareEntityManager implements TxAwareEntityManager {
 	
 	@Override
 	public void init() throws Exception {
-		for (String _sql : ddl) {
+		/**for (String _sql : ddl) {
 			logger.info("H2 DB Initialization: {}", _sql);
 			try {			
 				final String sql = _sql;
@@ -94,7 +94,7 @@ public class H2TxAwareEntityManager implements TxAwareEntityManager {
 			} catch (Exception e) {
 				throw new Exception("Error executing DDL query: "+_sql, e);
 			}
-		}
+		}**/
 	}
 	
 	@Override

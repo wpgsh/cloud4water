@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.wapwag.authn.dao.model.AccessToken;
+import net.wapwag.authn.dao.model.Image;
 import net.wapwag.authn.dao.model.RegisteredClient;
 import net.wapwag.authn.dao.model.User;
 
@@ -168,7 +169,8 @@ public class UserDaoImpl implements UserDao {
 		}
 	}
 
-	@Override
+
+    @Override
 	public int removeUser(final long uid) throws UserDaoException {
 		try {
 			return entityManager.txExpr(em -> {
@@ -334,5 +336,42 @@ public class UserDaoImpl implements UserDao {
 		
 		return result.get(0);		
 	}
-	
+
+	@Override
+	public int saveImg(Image image) throws UserDaoException {
+		try {
+			return entityManager.txExpr(em -> {
+				em.merge(image);
+				return 1;
+			});
+		} catch (Exception e) {
+			throw new UserDaoException("Cannot save image", e);
+		}
+	}
+
+	@Override
+	public int deleteImg(String avartarId) throws UserDaoException {
+		try {
+			return entityManager.txExpr(em -> {
+				Image image = em.find(Image.class, avartarId);
+				em.remove(image);
+				return 1;
+			});
+		} catch (Exception e) {
+			throw new UserDaoException("Cannot add user", e);
+		}
+	}
+
+	@Override
+	public Image getAvatar(String avartarId) throws UserDaoException {
+		try {
+			return entityManager.txExpr(em -> {
+				Image image = em.find(Image.class, avartarId);
+				return image;
+			});
+		} catch (Exception e) {
+			throw new UserDaoException("Cannot add user", e);
+		}
+	}
+
 }

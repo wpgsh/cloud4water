@@ -1,10 +1,12 @@
 package net.wapwag.authn;
 
 import net.wapwag.authn.Ids.UserId;
+import net.wapwag.authn.dao.model.Image;
 import net.wapwag.authn.dao.model.RegisteredClient;
 import net.wapwag.authn.dao.model.User;
 import net.wapwag.authn.model.AccessToken;
 import net.wapwag.authn.model.UserProfile;
+
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 
 import java.util.Set;
@@ -59,6 +61,8 @@ public interface AuthenticationService {
 	int removeUser(long uid) throws AuthenticationServiceException;
 
 	User getUserAvatar(long uid) throws AuthenticationServiceException;
+	
+	
 
 	int saveUserAvatar(User user) throws AuthenticationServiceException;
 
@@ -69,5 +73,11 @@ public interface AuthenticationService {
     User getUserByEmail(String email) throws AuthenticationServiceException;
     
     User updateUserPwd(User user) throws AuthenticationServiceException;
+
+	int saveImg(Image image) throws AuthenticationServiceException;
+
+	int deleteImg(String avartarId) throws AuthenticationServiceException;
+
+	Image getAvatar(String avartarId) throws AuthenticationServiceException;
 
 }
