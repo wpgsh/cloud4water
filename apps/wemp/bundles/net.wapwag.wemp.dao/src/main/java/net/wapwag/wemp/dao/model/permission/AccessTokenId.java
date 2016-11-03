@@ -26,13 +26,13 @@ public class AccessTokenId implements Serializable {
         
     }
     
-    public User getUser() {
-        return user;
-    }
-
     public AccessTokenId(User user, RegisteredClient registeredClient) {
         this.user = user;
         this.registeredClient = registeredClient;
+    }
+
+    public User getUser() {
+        return user;
     }
 
     public void setUser(User user) {

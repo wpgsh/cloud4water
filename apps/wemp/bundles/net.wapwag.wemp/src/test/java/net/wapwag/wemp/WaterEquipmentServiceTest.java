@@ -1,30 +1,24 @@
 package net.wapwag.wemp;
 
 import net.wapwag.wemp.dao.WaterEquipmentDao;
-import net.wapwag.wemp.dao.WaterEquipmentDaoImpl;
+import net.wapwag.wemp.dao.WaterEquipmentDaoException;
 import net.wapwag.wemp.dao.model.ObjectData;
 import net.wapwag.wemp.dao.model.ObjectType;
-import net.wapwag.wemp.dao.model.permission.Group;
+import net.wapwag.wemp.dao.model.permission.AccessToken;
+import net.wapwag.wemp.dao.model.permission.AccessTokenId;
+import net.wapwag.wemp.dao.model.permission.RegisteredClient;
 import net.wapwag.wemp.dao.model.permission.User;
-import net.wapwag.wemp.model.*;
+import net.wapwag.wemp.model.AccessTokenMapper;
+import net.wapwag.wemp.model.ObjectView;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Suite;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.List;
-import java.util.Set;
-
-import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class WaterEquipmentServiceTest {
@@ -40,38 +34,112 @@ public class WaterEquipmentServiceTest {
 
     private static final long objId = 1L;
 
-    @Mock
-    private WaterEquipmentService waterEquipmentService;
+    private static WaterEquipmentServiceImpl waterEquipmentService;
 
     @Mock
 	private WaterEquipmentDao waterEquipmentDao;
 
+    @SuppressWarnings("unchecked")
     @Before
     public void before() throws Exception {
+        when(waterEquipmentDao
+                .txExpr(any(WaterEquipmentDao.ComplexActionWithResult.class), any(Class.class)))
+                .then(method -> {
+                    WaterEquipmentDao.ComplexActionWithResult a = method.getArgument(0);
+                    return a.apply();
+                });
+
+        waterEquipmentService = new WaterEquipmentServiceImpl();
+        waterEquipmentService.setWaterEquipmentDao(waterEquipmentDao);
+
+    }
+
+    @Test
+    public void testIsAuthorized() throws Exception {
+
+    }
+
+    @Test
+    public void testLookupToken() throws Exception {
+        //Use base64 encoding handle:testToken
+        String handle = "testToken";
+        String encodeHandle = "dGVzdFRva2Vu";
+
+        long userId = 1L;
+        long clientId = 1L;
+        String clientIdentity = "clientId";
+
+        User user = new User();
+        user.setId(userId);
+
+        RegisteredClient client = new RegisteredClient();
+        client.setId(clientId);
+        client.setClientId(clientIdentity);
+
+        AccessTokenId accessTokenId = new AccessTokenId(user, client);
+        AccessToken accessToken = new AccessToken();
+        accessToken.setAccessTokenId(accessTokenId);
+        accessToken.setHandle(handle);
+        accessToken.setAuthrizationCode("testCode");
+        accessToken.setExpiration(Long.MAX_VALUE);
+        accessToken.setScope("user:name user:avatar");
+
+        when(waterEquipmentDao.lookupAccessToken(handle)).thenReturn(accessToken);
+
+        AccessTokenMapper accessTokenMapper = waterEquipmentService.lookupToken(encodeHandle);
+
+        assertNotNull(accessTokenMapper);
+        assertTrue(Long.parseLong(accessTokenMapper.userId) == userId);
+        assertTrue(clientIdentity.equals(accessTokenMapper.clientId));
+        assertTrue(accessTokenMapper.scope.size() == 2);
+    }
+
+    @Test
+    public void testLookupToken_canNotFindToken() throws Exception {
+        when(waterEquipmentDao.lookupAccessToken(anyString())).thenReturn(null);
+
+        AccessTokenMapper accessTokenMapper = waterEquipmentService.lookupToken("invalid_handle");
+
+        assertNull(accessTokenMapper);
+    }
+
+    @Test(expected = WaterEquipmentServiceException.class)
+    public void testLookupToken_handle_illegalBase64Format() throws Exception {
+        AccessTokenMapper accessTokenMapper = waterEquipmentService.lookupToken("invalid_handle");
+
+        assertNull(accessTokenMapper);
+    }
+
+    @Test
+    public void testLookupToken_Exception() throws Exception {
+        when(waterEquipmentDao.lookupAccessToken(anyString())).thenThrow(WaterEquipmentDaoException.class);
+
+        AccessTokenMapper accessTokenMapper = waterEquipmentService.lookupToken("dGVzdFRva2Vu");
+
+        assertNull(accessTokenMapper);
+    }
+
+    @Test
+    public void testGetObject() throws Exception {
         ObjectData objectData = new ObjectData();
         objectData.setId(objId);
         objectData.setName("中国");
         objectData.setType(ObjectType.COUNTRY);
 
         when(waterEquipmentDao.getObjectData(objId)).thenReturn(objectData);
+
+        ObjectView objectView = waterEquipmentService.getObject(objId);
+
+        assertNotNull(objectView);
     }
 
     @Test
-    public void isAuthorized() throws Exception {
+    public void testGetObjectUnfind() throws Exception {
+        when(waterEquipmentDao.getObjectData(objId)).thenThrow(WaterEquipmentDaoException .class);
 
-    }
+        ObjectView objectView = waterEquipmentService.getObject(objId);
 
-    @Test
-    public void lookupToken() throws Exception {
-
-    }
-
-    @Test
-    public void getObject() throws Exception {
-        ObjectData objectData = waterEquipmentDao.getObjectData(objId);
-
-        verify(waterEquipmentDao, times(1)).getObjectData(objId);
-        assertNotNull(objectData);
+        assertNull(objectView);
     }
 
     @Test

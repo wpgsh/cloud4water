@@ -55,13 +55,12 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
                 String token = new String(Base64.getDecoder().decode(handle));
 
                 AccessToken accessToken = waterEquipmentDao.lookupAccessToken(token);
-
                 AccessTokenId accessTokenId = accessToken.getAccessTokenId();
 
                 if (accessTokenId != null) {
                     return new AccessTokenMapper(
                             Long.toString(accessTokenId.getUser().getId()),
-                            Long.MAX_VALUE,
+                            accessToken.getExpiration(),
                             accessTokenId.getRegisteredClient().getClientId(),
                             accessToken.getHandle(),
                             ImmutableSet.copyOf(
@@ -77,6 +76,8 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
                 }
             } catch (WaterEquipmentDaoException e) {
                 return null;
+            } catch (IllegalArgumentException e) {
+                throw new WaterEquipmentServiceException("Illegal handle character");
             }
         }, WaterEquipmentServiceException.class);
 	}
