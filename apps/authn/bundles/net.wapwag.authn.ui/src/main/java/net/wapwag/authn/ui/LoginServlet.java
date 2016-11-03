@@ -45,10 +45,11 @@ public class LoginServlet extends HttpServlet {
 		OSGIUtil.useAuthenticationService(authnService -> {
 			try {
 				String userName = req.getParameter("userName");
+				//Has been encrypted by MD5
 				String passwd = req.getParameter("passWord");
 				String checkCode = req.getParameter("checkCode");
 				ResultInfo info = new ResultInfo();
-				HttpSession session = req.getSession();
+				HttpSession session = req.getSession(false);
 				String redirectUri = (String) session
 						.getAttribute("redirect_uri");
 
@@ -59,7 +60,11 @@ public class LoginServlet extends HttpServlet {
 						session.setAttribute("userName", user.getUsername());
 						session.setAttribute("authenticated", true);
 						session.setAttribute("userId", user.getId());
+						session.setAttribute("phone", user.getPhone1());
+						session.setAttribute("email", user.getEmail());
+						session.setAttribute("homePage", user.getHomepage());
 						session.setAttribute("loginTime", getNowTime());
+						session.setMaxInactiveInterval(30 * 60);
 						info.setErrorCode("0");
 					} else {
 						info.setErrorCode("1");
@@ -100,7 +105,8 @@ public class LoginServlet extends HttpServlet {
 
 	private boolean checkUser(User user, String passwd) {
 
-		if (null != user && null != user.getPasswordHash() && passwd.equals(StringUtil.strMd5(user.getPasswordHash()))) {
+		if (null != user && null != user.getPasswordHash() && 
+				user.getPasswordHash().equals(StringUtil.strSHA1(passwd + user.getPasswordSalt()))) {
 			return true;
 		}
 		return false;

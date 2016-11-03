@@ -47,33 +47,33 @@
                 <div class="col-sm-9">
                     <form class="form-horizontal">
                       <div class="form-group">
-                        <label for="inputTitle" class="col-sm-2 control-label">Title</label>
+                        <!-- <label for="inputTitle" class="col-sm-2 control-label">Title</label>
                         <div class="col-sm-6">
-                          <input type="text" class="form-control" id="inputTitle" value="Wpg wisdom water" disabled>
-                        </div>
+                          <input type="text" class="form-control" id="inputTitle" value="<%=session.getAttribute("userName")%>" disabled>
+                        </div> -->
                       </div>
                       <div class="form-group">
                         <label for="inputName" class="col-sm-2 control-label">Name</label>
                         <div class="col-sm-6">
-                          <input type="text" class="form-control" id="inputName" value="admin" disabled>
+                          <input type="text" class="form-control" id="inputName" value="<%=session.getAttribute("userName")%>" disabled>
                         </div>
                       </div>
                       <div class="form-group">
                         <label for="inputPhone" class="col-sm-2 control-label">Phone</label>
                         <div class="col-sm-6">
-                          <input type="text" class="form-control" id="inputPhone" value="1234578910" disabled>
+                          <input type="text" class="form-control" id="inputPhone" value="<%=session.getAttribute("phone")%>" disabled>
                         </div>
                       </div>
                       <div class="form-group">
                         <label for="inputEmail" class="col-sm-2 control-label">Email</label>
                         <div class="col-sm-6">
-                          <input type="text" class="form-control" id="inputEmail" value="99999999@163.com" disabled>
+                          <input type="text" class="form-control" id="inputEmail" value="<%=session.getAttribute("email")%>" disabled>
                         </div>
                       </div>
                       <div class="form-group">
                         <label for="inputHomePage" class="col-sm-2 control-label">Homepage</label>
                         <div class="col-sm-6">
-                          <input type="text" class="form-control" id="inputHomePage" value="https://www.baidu.com/" disabled>
+                          <input type="text" class="form-control" id="inputHomePage" value="<%=session.getAttribute("homePage")%>" disabled>
                         </div>
                       </div>
                     </form><!-- form -->
@@ -82,7 +82,7 @@
                     If you want to modify your basic information, click on the button below.
                 </div>
                 <div class="col-sm-12 margin-top">
-                    <a href="settings/profile.html" type="submit" class="btn btn-success">Edit profile</a>
+                    <a href="settings/profile.jsp" type="submit" class="btn btn-success">Edit profile</a>
                 </div>
               </div>
             </div><!-- panel -->
@@ -114,5 +114,9 @@
     <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
     <script src="js/holder.min.js"></script>
     <script src="js/offcanvas.js"></script>
+    <script type="text/javascript">
+    
+    
+    </script>
   </body>
 </html>
