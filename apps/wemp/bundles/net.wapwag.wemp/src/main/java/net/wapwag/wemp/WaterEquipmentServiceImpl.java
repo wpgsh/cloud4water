@@ -19,10 +19,7 @@ import org.osgi.service.component.annotations.ServiceScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component(scope=ServiceScope.SINGLETON)
@@ -55,7 +52,9 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
 	public AccessTokenMapper lookupToken(String handle) throws WaterEquipmentServiceException {
 		return waterEquipmentDao.txExpr(() -> {
             try {
-                AccessToken accessToken = waterEquipmentDao.lookupAccessToken(handle);
+                String token = new String(Base64.getDecoder().decode(handle));
+
+                AccessToken accessToken = waterEquipmentDao.lookupAccessToken(token);
 
                 AccessTokenId accessTokenId = accessToken.getAccessTokenId();
 
