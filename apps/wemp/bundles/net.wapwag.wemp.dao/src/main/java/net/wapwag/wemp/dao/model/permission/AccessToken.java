@@ -13,7 +13,7 @@ public class AccessToken {
     @EmbeddedId
     private AccessTokenId accessTokenId;
 
-    @Column(name="handle")
+    @Column(name="handle", unique = true)
 	private String handle;
 
     @Column(name = "scope")

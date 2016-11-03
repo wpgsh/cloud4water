@@ -152,16 +152,21 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
 
     @Override
     public AccessToken lookupAccessToken(final String handle) throws WaterEquipmentDaoException {
+        final String hql = "select token from AccessToken token where token.handle = :handle";
+
         try {
-            return entityManager.txExpr(em -> em.find(AccessToken.class, handle));
+            return entityManager.txExpr(em -> em.createQuery(hql, AccessToken.class)
+                    .setParameter("handle", handle)
+                    .getSingleResult()
+            );
         } catch (Exception e) {
-            throw new WaterEquipmentDaoException("can't get access token", e);
+            throw new WaterEquipmentDaoException("can't get access token by the handle", e);
         }
     }
 
     @Override
     public RegisteredClient getClientByRedirectURI(String redirectURI) throws WaterEquipmentDaoException {
-        final String hql = "select r from RegisteredClient r where r.redirectURI = :redirectURI";
+        final String hql = "select client from RegisteredClient client where client.redirectURI = :redirectURI";
         try {
             return entityManager.txExpr(em ->
                     em.createQuery(hql, RegisteredClient.class)
@@ -175,9 +180,9 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
 
     @Override
     public AccessToken getAccessTokenByUserIdAndClientId(long userId, long clientId) throws WaterEquipmentDaoException {
-        final String hql = "select at from AccessToken at " +
-                "where at.accessTokenId.user.id = :userId " +
-                "and at.accessTokenId.registeredClient.id = :clientId";
+        final String hql = "select token from AccessToken token " +
+                "where token.accessTokenId.user.id = :userId " +
+                "and token.accessTokenId.registeredClient.id = :clientId";
         try {
             return entityManager.txExpr(em -> em.createQuery(hql, AccessToken.class)
                     .setParameter("userId", userId)
@@ -452,7 +457,7 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
             return entityManager.txExpr(em -> {
                 Organization org = em.find(Organization.class, orgId);
 
-                Group groupEntity = em.find(Group.class, groupId);;
+                Group groupEntity = em.find(Group.class, groupId);
                 groupEntity.setName(group.getName());
                 group.setOrganization(org);
 

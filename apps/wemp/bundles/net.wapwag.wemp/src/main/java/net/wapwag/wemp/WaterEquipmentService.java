@@ -33,7 +33,7 @@ public interface WaterEquipmentService {
 	 * @param handle the access token need to be checked
 	 * @return return the token that the user has
 	 */
-	TokenView lookupToken(String handle) throws WaterEquipmentServiceException;
+	AccessTokenMapper lookupToken(String handle) throws WaterEquipmentServiceException;
 
 	/**
 	 * Get authorization code if the user has not been authorized

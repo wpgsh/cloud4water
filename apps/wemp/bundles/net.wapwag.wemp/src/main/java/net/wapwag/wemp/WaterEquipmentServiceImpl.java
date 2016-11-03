@@ -1,6 +1,8 @@
 package net.wapwag.wemp;
 
 import com.eaio.uuid.UUID;
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import net.wapwag.wemp.dao.WaterEquipmentDao;
 import net.wapwag.wemp.dao.WaterEquipmentDaoException;
@@ -36,13 +38,48 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
     }
 
 	@Override
-	public boolean isAuthorized(String user, String permission, String target) {
-        throw new RuntimeException("TODO - not implemented");
+	public boolean isAuthorized(String userName, String action, String objId) throws WaterEquipmentServiceException {
+        long userId = 1L;
+        long targetId = Long.valueOf(objId);
+
+        return waterEquipmentDao.txExpr(() -> {
+            try {
+                return waterEquipmentDao.isAuthorized(userId, action, targetId);
+            } catch (WaterEquipmentDaoException e) {
+                return false;
+            }
+        }, WaterEquipmentServiceException.class);
     }
 
 	@Override
-	public TokenView lookupToken(String handle) throws WaterEquipmentServiceException {
-		throw new RuntimeException("TODO - not implemented");
+	public AccessTokenMapper lookupToken(String handle) throws WaterEquipmentServiceException {
+		return waterEquipmentDao.txExpr(() -> {
+            try {
+                AccessToken accessToken = waterEquipmentDao.lookupAccessToken(handle);
+
+                AccessTokenId accessTokenId = accessToken.getAccessTokenId();
+
+                if (accessTokenId != null) {
+                    return new AccessTokenMapper(
+                            Long.toString(accessTokenId.getUser().getId()),
+                            Long.MAX_VALUE,
+                            accessTokenId.getRegisteredClient().getClientId(),
+                            accessToken.getHandle(),
+                            ImmutableSet.copyOf(
+                                    Optional.fromNullable(accessToken.getScope()).
+                                            transform(String::trim).
+                                            transform(s -> {
+                                                assert s != null;
+                                                return s.split(" ");
+                                            }).
+                                            or(new String[0])));
+                } else {
+                    return  null;
+                }
+            } catch (WaterEquipmentDaoException e) {
+                return null;
+            }
+        }, WaterEquipmentServiceException.class);
 	}
 
     /**
@@ -98,12 +135,11 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
                     //if accessToken isn't exist or exist but need new scope,refresh accessToken
                     if (!valid) {
                         accessToken = new AccessToken();
+                        accessToken.setAccessTokenId(new AccessTokenId(waterEquipmentDao.getUser(userId), registeredClient));
                         accessToken.setHandle(StringUtils.replace(new UUID().toString(), "-", ""));
                     }
 
                     accessToken.setScope(StringUtils.join(scope, " "));
-
-                    AccessTokenId accessTokenId = new AccessTokenId(waterEquipmentDao.getUser(userId), registeredClient);
 
                     //generate authorization code
                     accessToken.setAuthrizationCode(code);
