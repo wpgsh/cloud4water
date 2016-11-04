@@ -8,9 +8,9 @@ import net.wapwag.wemp.dao.model.permission.User;
  */
 public class UserView {
 
-    private final long id;
+    public final long id;
 
-    private final String name;
+    public final String name;
 
     private UserView(User user) {
         this.id = user.getId();

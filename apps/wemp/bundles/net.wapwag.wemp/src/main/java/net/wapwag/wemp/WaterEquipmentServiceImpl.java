@@ -55,9 +55,9 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
                 String token = new String(Base64.getDecoder().decode(handle));
 
                 AccessToken accessToken = waterEquipmentDao.lookupAccessToken(token);
-                AccessTokenId accessTokenId = accessToken.getAccessTokenId();
 
-                if (accessTokenId != null) {
+                if (accessToken != null) {
+                    AccessTokenId accessTokenId = accessToken.getAccessTokenId();
                     return new AccessTokenMapper(
                             Long.toString(accessTokenId.getUser().getId()),
                             accessToken.getExpiration(),
@@ -139,7 +139,7 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
                         accessToken.setHandle(StringUtils.replace(new UUID().toString(), "-", ""));
                     }
 
-                    accessToken.setScope(StringUtils.join(scope, " "));
+                    accessToken.setScope(StringUtils.join(defaultScope, " "));
 
                     //generate authorization code
                     accessToken.setAuthrizationCode(code);
