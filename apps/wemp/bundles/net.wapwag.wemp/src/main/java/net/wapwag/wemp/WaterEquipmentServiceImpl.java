@@ -199,11 +199,7 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
 
                     //validate authorization code and if match then invalidate it.
                     if (accessToken != null
-                            && StringUtils.isNotBlank(code)
-                            && StringUtils.isNotBlank(accessToken.getAuthrizationCode())
-                            && accessToken.getExpiration() > 0
-                            && code.equals(accessToken.getAuthrizationCode())) {
-
+                            && accessToken.getExpiration() > 0) {
                         accessToken.setExpiration(0L);
                         waterEquipmentDao.saveAccessToken(accessToken);
                         return accessToken.getHandle();

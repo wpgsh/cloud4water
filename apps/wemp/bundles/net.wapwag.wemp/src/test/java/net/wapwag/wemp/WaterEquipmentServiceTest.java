@@ -56,6 +56,7 @@ public class WaterEquipmentServiceTest {
 
     private static final AccessTokenId accessTokenId = new AccessTokenId(user, client);
     private static final AccessToken accessToken = new AccessToken();
+    private static final AccessToken accessToken_expired = new AccessToken();
     private static final AccessToken accessToken_nonWPGclientWithNoScope = new AccessToken();
     private static final AccessToken accessToken_nonWPGclientWithAuthzedScope = new AccessToken();
     private static final AccessToken accessToken_nonWPGclientWithNonAuthzedScope = new AccessToken();
@@ -101,6 +102,12 @@ public class WaterEquipmentServiceTest {
         accessToken.setAuthrizationCode(code);
         accessToken.setExpiration(Long.MAX_VALUE);
         accessToken.setScope(scope);
+
+        accessToken_expired.setAccessTokenId(accessTokenId);
+        accessToken_expired.setHandle(handle);
+        accessToken_expired.setAuthrizationCode(code);
+        accessToken_expired.setExpiration(0);
+        accessToken_expired.setScope(scope);
 
         accessToken_nonWPGclientWithNoScope.setAccessTokenId(accessTokenId);
         accessToken_nonWPGclientWithNoScope.setHandle(handle);
@@ -325,6 +332,17 @@ public class WaterEquipmentServiceTest {
         waterEquipmentService.getAuthorizationCode(userId, clientIdentity, redirectURI, scopes);
     }
 
+    @Test
+    public void testGetAccessToken() throws Exception {
+        when(waterEquipmentDao.getClientByRedirectURI(redirectURI)).thenReturn(client);
+        when(waterEquipmentDao.getAccessTokenByCode(code)).thenReturn(accessToken);
+        when(waterEquipmentDao.saveAccessToken(accessToken)).thenReturn(1L);
+
+        String token = waterEquipmentService.getAccessToken(clientIdentity, clientSecret,  code, redirectURI);
+
+        assertEquals(handle, token);
+    }
+
     @Test(expected = OAuthProblemException.class)
     public void testGetAccessToken_UnRegistredClient() throws Exception {
         when(waterEquipmentDao.getClientByRedirectURI(redirectURI)).thenReturn(null);
@@ -340,11 +358,19 @@ public class WaterEquipmentServiceTest {
     }
 
     @Test(expected = OAuthProblemException.class)
-    public void testGetAccessToken_InvalidateAuthorizationCode() throws Exception {
+    public void testGetAccessToken_InvalidAuthorizationCode() throws Exception {
         when(waterEquipmentDao.getClientByRedirectURI(redirectURI)).thenReturn(client);
-        when( waterEquipmentDao.getAccessTokenByCode(anyString())).thenReturn(null);
+        when(waterEquipmentDao.getAccessTokenByCode(anyString())).thenReturn(null);
 
         waterEquipmentService.getAccessToken(clientIdentity, clientSecret,  "invalidAuthorizationCode", redirectURI);
+    }
+
+    @Test(expected = OAuthProblemException.class)
+    public void testGetAccessToken_ExpiredAuthorizationCode() throws Exception {
+        when(waterEquipmentDao.getClientByRedirectURI(redirectURI)).thenReturn(client);
+        when(waterEquipmentDao.getAccessTokenByCode(code)).thenReturn(accessToken_expired);
+
+        waterEquipmentService.getAccessToken(clientIdentity, clientSecret,  code, redirectURI);
     }
 
     @Test(expected = OAuthProblemException.class)
