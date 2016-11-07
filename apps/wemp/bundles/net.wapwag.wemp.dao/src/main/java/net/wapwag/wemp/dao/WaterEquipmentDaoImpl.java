@@ -53,8 +53,8 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
                 StringBuilder from0 = new StringBuilder();
                 StringBuilder from1 = new StringBuilder();
 
-                from0.append("from ").append(clazz.getSimpleName()).append(" o0 left join o0.userObjectSet uo0");
-                from1.append("from ").append(clazz.getSimpleName()).append(" o0 left join o0.groupObjectSet go0 left join go0.groupObjectId.group.userGroupSet ug0");
+                from0.append("from ").append(clazz.getSimpleName()).append(" o0 left join o0.objectUserSet uo0");
+                from1.append("from ").append(clazz.getSimpleName()).append(" o0 left join o0.objectGroupSet go0 left join go0.groupObjectId.group.groupUserSet ug0");
 
                 StringBuilder where0 = new StringBuilder();
                 StringBuilder where1 = new StringBuilder();
@@ -74,11 +74,11 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
                                 objId = objId + "." + f.getName();
                                 if (clazz.isAnnotationPresent(Entity.class)) {
                                     select0.append(",uo").append(idx).append(".userObjectId.user.id");
-                                    from0.append(" left join ").append(objId).append(".userObjectSet uo").append(idx);
+                                    from0.append(" left join ").append(objId).append(".objectUserSet uo").append(idx);
                                     where0.append(" or (uo").append(idx).append(" is null or (uo").append(idx).append(".userObjectId.user.id = :userId and uo").append(idx).append(".actionId = :action and uo").append(idx).append(".transitive = 1))");
 
                                     select1.append(",go").append(idx).append(".groupObjectId.group.id");
-                                    from1.append(" left join ").append(objId).append(".groupObjectSet go").append(idx).append(" left join go").append(idx).append(".groupObjectId.group.userGroupSet ug").append(idx);
+                                    from1.append(" left join ").append(objId).append(".objectGroupSet go").append(idx).append(" left join go").append(idx).append(".groupObjectId.group.groupUserSet ug").append(idx);
                                     where1.append(" or (go").append(idx).append(" is null or (ug").append(idx).append(".userGroupId.user.id = :userId and go").append(idx).append(".actionId = :action and go").append(idx).append(".transitive = 1))");
 
                                     idx++;
