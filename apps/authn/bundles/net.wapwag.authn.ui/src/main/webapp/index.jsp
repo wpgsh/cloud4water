@@ -42,7 +42,7 @@
               </div>
               <div class="panel-body">
                 <div class="col-sm-3">
-                    <img id="upload-profile-imgShow" src="images/default.png" class="uploadImg" />
+                    <img id="upload-profile-imgShow" src="/authn/getAvatarByUserIdServlet?userId=<%=session.getAttribute("userId")%>" class="uploadImg" />
                 </div>
                 <div class="col-sm-9">
                     <form class="form-horizontal">

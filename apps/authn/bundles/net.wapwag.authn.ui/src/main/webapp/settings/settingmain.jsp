@@ -31,9 +31,9 @@
   <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar">
         <div class="list-group">
           <a href="javascript:;" class="list-group-item panel-title active">Personal settings</a>
-          <a href="profile.jsp" class="list-group-item choose">Profile</a>
-          <a href="account.jsp" class="list-group-item">Account</a>
-          <a href="emails.jsp" class="list-group-item">Emails</a>
+          <a href="profile.jsp" class="list-group-item" id="profile_choose">Profile</a>
+          <a href="account.jsp" class="list-group-item" id="account_choose">Account</a>
+          <!-- <a href="emails.jsp" class="list-group-item">Emails</a>
           <a href="#" class="list-group-item">Notifications</a>
           <a href="#" class="list-group-item">Billing</a>
           <a href="#" class="list-group-item">SSH and GPG keys</a>
@@ -43,6 +43,7 @@
           <a href="#" class="list-group-item">Repositories</a>
           <a href="#" class="list-group-item">Organizations</a>
           <a href="#" class="list-group-item">Saved replies</a>
+           -->
         </div>
       </div>
   </body>

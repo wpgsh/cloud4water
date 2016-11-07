@@ -44,14 +44,15 @@
               <div class="panel-heading">
                 <h3 class="panel-title font-color">Change password</h3>
               </div>
-              <div class="panel-body" data-example-id="simple-horizontal-form">
-                <form class="form-horizontal">
+              <div class="panel-body" data-example-id="simple-horizontal-form" id="form">
+                <form class="form-horizontal" method="post">
+                  <input type="hidden" name="userId" value="<%=session.getAttribute("userId")%>">
                   <div class="form-group">
                     <div class="col-sm-12 margin-bottom">
                       <label for="inputPassword" class="control-label">Old password</label>
                     </div>
                     <div class="col-sm-6">
-                      <input type="password" class="form-control" id="inputPassword" required>
+                      <input type="password" class="form-control" name="inputPassword" id="inputPassword" required>
                     </div>
                   </div>
                   <div class="form-group">
@@ -59,7 +60,7 @@
                       <label for="inputNewPassword" class="control-label">New password</label>
                     </div>
                     <div class="col-sm-6">
-                      <input type="password" class="form-control" id="inputNewPassword" required>
+                      <input type="password" class="form-control" name="inputNewPassword" id="inputNewPassword" required>
                     </div>
                   </div>
                   <div class="form-group">
@@ -67,12 +68,13 @@
                       <label for="inputConfirm" class="control-label">Confirm new password</label>
                     </div>
                     <div class="col-sm-6">
-                      <input type="password" class="form-control" id="inputConfirm" required>
+                      <input type="password" class="form-control" name="inputConfirm" id="inputConfirm" required>
                     </div>
                   </div>
                   <div class="form-group">
                     <div class="col-sm-12">
-                      <button type="submit" class="btn btn-success">Update password</button>
+                      <p id="submit" class="btn btn-success">Update password</p>
+                      <h2 class="form-signin-heading logo-title"></h2>
                     </div>
                   </div>
                 </form><!-- form -->
@@ -97,5 +99,88 @@
     <script src="../js/jquery-1.11.1.min.js"></script>
     <script src="../js/bootstrap.min.js"></script>
     <script src="../js/offcanvas.js"></script>
+    <script src="../scripts/jQuery.md5.js"></script>
+    <script type="text/javascript">
+    jQuery(document).ready(function() {
+    	$("#account_choose").addClass("choose");
+    	
+    	$("#submit").click(function() {
+    		var userId = $('input[name="userId"]').val();
+    		var inputPassword = $('input[name="inputPassword"]').val();
+    		var inputNewPassword = $('input[name="inputNewPassword"]').val();
+    		var inputConfirm = $('input[name="inputConfirm"]').val();
+    		if(isEmp(inputPassword) || isEmp(inputNewPassword) || isEmp(inputConfirm)){
+    			var message = "password can not be null";
+    			showError($(".logo-title"), message);
+    			return;
+    		}
+    		
+    		if(inputNewPassword != inputConfirm){
+    			var message = "new password is different with confirmation password";
+    			showError($(".logo-title"), message);
+    			return;
+    		}
+    		
+    		$.ajax({
+    			type:'post',
+    			url:'/authn/changePasswordServlet',
+    			dataType : 'json',
+    			data:{'userId':userId,'inputPassword':$.md5(inputPassword),'inputNewPassword':$.md5(inputNewPassword)},
+    			success:function(data){
+    				var errorCode = data.errorCode;
+    				if("1" == errorCode){
+    					var message = "old password is wrong";
+    	    			showError($(".logo-title"), message);
+    	    			return;
+    				}
+    				if("0" == errorCode){
+    					var message = "password change success";
+    	    			showError($(".logo-title"), message);
+    	    			return;
+    				}
+    			},
+    			error:function(data)
+    			{
+    				alert("error");
+    			}
+    		});
+    	});
+    	
+    	// 回车键事件 
+		// 绑定键盘按下事件  
+	    $(document).keypress(function(e) {  
+	    // 回车键事件  
+	    	if(e.which == 13) {  
+	    	   $("#submit").click();  
+	       }  
+	    }); 
+    	
+    });
+    
+    function isEmp(str){
+    	if(undefined == str || null == str || "" == str){
+    		return true;
+    	}
+    	str = str.trim();
+    	if(undefined == str || null == str || "" == str){
+    		return true;
+    	}
+    	return false;
+    }
+    
+    /* 消息提示模板 */
+	var showError = function(obj, msg){
+    	$("#errorMsg").remove();
+		var model = "<div id='errorMsg' class='errMesage'><span>"+msg+"</span><label></label></div>";
+		obj.after(model);
+
+		// 取消提示
+		$(".errMesage label").on("click", function(){
+			$(".errMesage").fadeOut(200, function(){
+				$(this).remove();
+			});
+		});
+	}
+    </script>
   </body>
 </html>

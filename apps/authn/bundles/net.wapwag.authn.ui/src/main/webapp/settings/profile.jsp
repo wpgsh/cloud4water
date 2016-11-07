@@ -44,18 +44,19 @@
                 <h3 class="panel-title font-color">Public profile</h3>
               </div>
               <div class="panel-body" data-example-id="simple-horizontal-form">
-                <form class="form-horizontal">
+                <form class="form-horizontal" action="/authn/updateProfileServlet" method="post" id="form" enctype="multipart/form-data">
+                  <input type="hidden" name="userId" id="userId" value="<%=session.getAttribute("userId")%>">
                   <div class="form-group">
                     <div class="col-sm-12 margin-bottom">
                       <label for="inputName" class="control-label">Profile picture</label>
                     </div>
                     <div class="col-sm-2">
-                        <img id="upload-profile-imgShow" src="../images/default.png" class="uploadImg" />
+                        <img id="upload-profile-imgShow" src="/authn/getAvatarByUserIdServlet?userId=<%=session.getAttribute("userId")%>" class="uploadImg" />
                     </div>
                     <div class="col-sm-4">
                       <label for="upload-profile-picture" class="btn btn-default upload-label">
                         Upload new picture
-                        <input id="upload-profile-picture" type="file" class="upload-input">
+                        <input id="upload-profile-picture" type="file" name="file" class="upload-input">
                       </label>
                     </div>
                   </div>
@@ -64,7 +65,7 @@
                       <label for="inputName" class="control-label">Name</label>
                     </div>
                     <div class="col-sm-6">
-                      <input type="text" class="form-control" id="inputName" required>
+                      <input type="text" class="form-control" id="inputName" name="inputName" value="<%=session.getAttribute("userName")%>" required>
                     </div>
                   </div>
                   <div class="form-group">
@@ -72,7 +73,15 @@
                       <label for="inputPhone" class="control-label">Phone</label>
                     </div>
                     <div class="col-sm-6">
-                      <input type="text" class="form-control" id="inputPhone" required>
+                      <input type="text" class="form-control" id="inputPhone" name="inputPhone" value="<%=session.getAttribute("phone")%>" required>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="col-sm-12 margin-bottom">
+                      <label for="inputEmail" class="control-label">Email</label>
+                    </div>
+                    <div class="col-sm-6">
+                      <input type="text" class="form-control" id="inputEmail" name="inputEmail" value="<%=session.getAttribute("email")%>" required>
                     </div>
                   </div>
                   <div class="form-group">
@@ -80,15 +89,16 @@
                       <label for="inputHomePage" class="control-label">Homepage</label>
                     </div>
                     <div class="col-sm-6">
-                      <input type="text" class="form-control" id="inputHomePage">
+                      <input type="text" class="form-control" id="inputHomePage" name="inputHomePage" value="<%=session.getAttribute("homePage")%>">
                     </div>
                   </div>
                   <div class="form-group">
                     <div class="col-sm-12">
-                      <button type="submit" class="btn btn-success">Update profile</button>
+                      <p id="submit1" class="btn btn-success">Update profile</p>
+                      <h2 class="form-signin-heading logo-title"></h2>
                     </div>
                   </div>
-                </form><!-- form -->
+                </form>
               </div><!-- panel-body -->
             </div><!-- panel -->
           </div><!--/row-->
@@ -110,6 +120,152 @@
     <script src="../js/jquery-1.11.1.min.js"></script>
     <script src="../js/bootstrap.min.js"></script>
     <script src="../js/offcanvas.js"></script>
+    <script src="../scripts/jquery-form.js"></script>
     <script src="../js/upload/uploadPreview.js"></script>
+    <script>
+    jQuery(document).ready(function() {
+    	$("#profile_choose").addClass("choose");
+    	var sign = 0;
+    	$("#submit1").click(function() {
+    		var flag = true;
+    		var filepath = $("input[name='file']").val();
+    		var userId = $('input[name="userId"]').val();
+    		var name = $('input[name="inputName"]').val();
+    		var phone = $('input[name="inputPhone"]').val();
+    		var email = $('input[name="inputEmail"]').val();
+    		var homePage = $('input[name="inputHomePage"]').val();
+    		
+    		if(!checkPic()){
+    			flag = false;
+    			return;
+    		}
+    		
+    		if(isEmp(name) || isEmp(phone)){
+    			var message = "Name or Phone can not be Null";
+    			flag = false;
+    			showError($(".logo-title"), message);
+    			return;
+    		}
+    		
+    		if(!CheckPhone(phone)){
+    			var message = "Phone Number is wrong";
+    			flag = false;
+    			showError($(".logo-title"), message);
+    			return;
+    		}
+    		
+    		if(name == '<%=session.getAttribute("userName")%>' && phone == '<%=session.getAttribute("phone")%>'
+    		&& email == '<%=session.getAttribute("email")%>' && homePage == '<%=session.getAttribute("homePage")%>' 
+    		&& isEmp(filepath)){
+    			var message = "data no change";
+    			flag = false;
+    			showError($(".logo-title"), message);
+    			return;
+    		}
+    		
+    		if(!CheckEmail(email)){
+    			var message = "Email Number is wrong";
+    			flag = false;
+    			showError($(".logo-title"), message);
+    			return;
+    		}
+    		
+    		if(flag){
+    			if(sign == 0){
+    			sign = 1;
+    			$("#submit1").attr("disabled","true");
+    			$("#form").ajaxSubmit({
+	    			type:'post',
+	    			dataType : 'json',
+	    			success:function(data){
+	    				sign = 0;
+	    				$("#submit1").removeAttr("disabled");
+	    				var errorCode = data.errorCode;
+	    				if("1" == errorCode){
+	    					var message = "time out";
+	    	    			showError($(".logo-title"), message);
+	    	    			return;
+	    				}
+	    				if("0" == errorCode){
+	    					var message = "save success";
+	    	    			showError($(".logo-title"), message);
+	    	    			return;
+	    				}
+	    				if("2" == errorCode){
+	    					var message = "file size over 2M";
+	    	    			showError($(".logo-title"), message);
+	    	    			return;
+	    				}
+	    			},
+	    			error:function(data)
+	    			{
+	    				$("#submit1").removeAttr("disabled");
+	    				alert("error");
+	    			}
+	    		});
+    			}else{
+    				alert("submitting ,please wait");
+    			}
+    		}
+    	});
+    	
+    	// 回车键事件 
+		// 绑定键盘按下事件  
+	    $(document).keypress(function(e) {  
+	    // 回车键事件  
+	    	if(e.which == 13) {  
+	    	   $("#submit1").click();  
+	       }  
+	    }); 
+    });
+    
+    function checkPic(){
+    	var filepath = $("input[name='file']").val();
+    	if(!isEmp(filepath)){
+	        var extStart = filepath.lastIndexOf(".");
+	        var ext = filepath.substring(extStart, filepath.length).toUpperCase();
+	        if (ext != ".BMP" && ext != ".PNG" && ext != ".GIF" && ext != ".JPG" && ext != ".JPEG") {
+	            showError($(".logo-title"), "only bmp,png,gif,jpeg,jpg");
+	            return false;
+	        }
+           
+    	}
+        return true;
+    }
+    
+    function isEmp(str){
+    	if(undefined == str || null == str || "" == str){
+    		return true;
+    	}
+    	str = str.trim();
+    	if(undefined == str || null == str || "" == str){
+    		return true;
+    	}
+    	return false;
+    }
+    
+    function CheckPhone(phone){
+    	var check = /^1[34578]\d{9}$/; 
+    	return check.test(phone);
+    }
+    
+    function CheckEmail(email){
+    	var check = /^(\w)+(\.\w+)*@(\w)+((\.\w+)+)$/; 
+    	return check.test(email);
+    }
+    /* 消息提示模板 */
+	var showError = function(obj, msg){
+    	$("#errorMsg").remove();
+		var model = "<div id='errorMsg' class='errMesage'><span>"+msg+"</span><label></label></div>";
+		obj.after(model);
+
+		// 取消提示
+		$(".errMesage label").on("click", function(){
+			$(".errMesage").fadeOut(200, function(){
+				$(this).remove();
+			});
+		});
+	}
+    </script>
   </body>
 </html>

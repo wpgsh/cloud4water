@@ -34,6 +34,9 @@ import com.google.gson.Gson;
  */
 @WebServlet(urlPatterns = "/loginServlet", name = "LoginServlet")
 public class LoginServlet extends HttpServlet {
+	
+	private static final long serialVersionUID = 5293268147114505088L;
+	
 	/** LOG */
 	private static final Logger logger = LoggerFactory
 			.getLogger(LoginServlet.class);
@@ -50,8 +53,8 @@ public class LoginServlet extends HttpServlet {
 				String checkCode = req.getParameter("checkCode");
 				ResultInfo info = new ResultInfo();
 				HttpSession session = req.getSession(false);
-				String redirectUri = (String) session
-						.getAttribute("redirect_uri");
+//				String redirectUri = (String) session
+//						.getAttribute("redirect_uri");
 
 				User user = authnService.getUserByName(userName);
 
@@ -67,6 +70,7 @@ public class LoginServlet extends HttpServlet {
 						session.setMaxInactiveInterval(30 * 60);
 						info.setErrorCode("0");
 					} else {
+						logger.info("Error password");
 						info.setErrorCode("1");
 					}
 				} else {
