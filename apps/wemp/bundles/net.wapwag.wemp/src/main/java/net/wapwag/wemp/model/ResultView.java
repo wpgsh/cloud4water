@@ -6,9 +6,9 @@ package net.wapwag.wemp.model;
  */
 public class ResultView {
 
-    private final long count;
+    public final long count;
 
-    private ResultView(long count) {
+    public ResultView(long count) {
         this.count = count;
     }
 

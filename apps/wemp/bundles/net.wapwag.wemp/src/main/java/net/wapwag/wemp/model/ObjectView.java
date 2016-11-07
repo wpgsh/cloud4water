@@ -9,11 +9,11 @@ import net.wapwag.wemp.dao.model.ObjectType;
  */
 public class ObjectView {
 
-    private final long id;
+    public final long id;
 
-    private final String name;
+    public final String name;
 
-    private final ObjectType objectType;
+    public final ObjectType objectType;
 
     private ObjectView(ObjectData objectData) {
         this.id = objectData.getId();

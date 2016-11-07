@@ -6,9 +6,9 @@ package net.wapwag.wemp.model;
  */
 public class CountryView {
 
-    private String id;
+    public String id;
 
-    private String name;
+    public String name;
 
     public String getId() {
         return id;

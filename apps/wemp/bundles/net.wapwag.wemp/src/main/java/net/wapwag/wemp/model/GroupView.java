@@ -8,9 +8,9 @@ import net.wapwag.wemp.dao.model.permission.Group;
  */
 public class GroupView {
 
-    private final long id;
+    public final long id;
 
-    private final String name;
+    public final String name;
 
     private GroupView(Group group) {
         this.id = group.getId();

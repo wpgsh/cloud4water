@@ -4,13 +4,13 @@ import java.util.Set;
 
 public class TokenView {
 
-	private final String userId;
+	public final String userId;
 	
-	private final String clientId;
+	public final String clientId;
 	
-	private final String handle;
+	public final String handle;
 	
-	private final Set<String> scope;
+	public final Set<String> scope;
 
 	public TokenView(String userId, String clientId, String handle, Set<String> scope) {
 		super();

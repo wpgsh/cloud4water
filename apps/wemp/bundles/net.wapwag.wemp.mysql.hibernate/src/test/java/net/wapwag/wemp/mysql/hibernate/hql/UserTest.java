@@ -1,10 +1,11 @@
-package net.wapwag.wemp.mysql.hibernate;
+package net.wapwag.wemp.mysql.hibernate.hql;
 
 import net.wapwag.wemp.dao.model.ObjectData;
 import net.wapwag.wemp.dao.model.permission.AccessToken;
 import net.wapwag.wemp.dao.model.permission.AccessTokenId;
 import net.wapwag.wemp.dao.model.permission.RegisteredClient;
 import net.wapwag.wemp.dao.model.permission.User;
+import net.wapwag.wemp.mysql.hibernate.BaseTestConfig;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -103,7 +104,7 @@ public class UserTest extends BaseTestConfig {
 
     @Test
     public void lookupAccessToken() throws Exception {
-        final String handle = "bcf2c4436d7d4f9ba76d9a4430d6e306";
+        final String handle = "authz_handle";
         final String hql = "select token from AccessToken token where token.handle = :handle";
 
 
@@ -144,7 +145,7 @@ public class UserTest extends BaseTestConfig {
 
     @Test
     public void getAccessTokenByCode() throws Exception {
-        final String code = "4e19edc1ccf04efb99828bd25e391361";
+        final String code = "authz_code";
         final String hql = "select token from AccessToken token where token.authrizationCode = :code";
 
         AccessToken accessToken = em.createQuery(hql, AccessToken.class)

@@ -7,10 +7,12 @@ import net.wapwag.wemp.dao.model.link.*;
 import net.wapwag.wemp.dao.model.org.Organization;
 import net.wapwag.wemp.dao.model.org.WaterManageAuth;
 import net.wapwag.wemp.dao.model.permission.*;
-import org.junit.Test;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
@@ -21,13 +23,24 @@ import static org.junit.Assert.assertTrue;
  * <p>Use {@link org.junit.Assert} instead of .{@link junit.framework.TestCase} which suggested for the junit4</p>
  * Created by Administrator on 2016/10/31 0031.
  */
-@SuppressWarnings("Duplicates")
-public class DataInsert extends BaseTestConfig {
+class DataInsert {
 
     private static final long orgId = 4L;
 
-    @Test
-    public void initialData() {
+    private static EntityManager em;
+
+    static {
+        try {
+            em = PrepareContext.createEMF().createEntityManager();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    static void initialData() {
+        EntityTransaction tx = em.getTransaction();
+        tx.begin();
+
         testAddObject();
         testAddGroup();
         testAddRegisteredClient();
@@ -42,9 +55,11 @@ public class DataInsert extends BaseTestConfig {
         testAddUsersByGroup();
         testAddUserByOrg();
         testAddObjectByOrg();
+
+        tx.commit();
     }
 
-    private void testAddUserOrg() {
+    private static void testAddUserOrg() {
 
         int i;
         User user;
@@ -64,7 +79,7 @@ public class DataInsert extends BaseTestConfig {
 
     }
 
-    private void testAddObject() {
+    private static void testAddObject() {
 
         User user = new User();
         user.setName("管理员");
@@ -87,7 +102,7 @@ public class DataInsert extends BaseTestConfig {
 
     }
 
-    private void testAddGroup() {
+    private static void testAddGroup() {
         Group group;
         int addCount = 21;
 
@@ -104,7 +119,7 @@ public class DataInsert extends BaseTestConfig {
         assertTrue(count == addCount);
     }
 
-    private void testAddRegisteredClient() {
+    private static void testAddRegisteredClient() {
         int addCount = 10;
         RegisteredClient client;
         for (int i = 0; i < addCount; i++) {
@@ -120,18 +135,18 @@ public class DataInsert extends BaseTestConfig {
         em.flush();
         long addedCount = em.createQuery("select count(client) from RegisteredClient client", Long.class)
                 .getSingleResult();
-        
+
         assertTrue("Added client count is not equal to the query client count", addCount == addedCount);
     }
 
-    private void testAddAccessToken() {
+    private static void testAddAccessToken() {
         List<User> userList = em.createQuery("select user from User user", User.class)
                 .getResultList();
 
         List<RegisteredClient> clientList = em.createQuery("select client from RegisteredClient client", RegisteredClient.class)
                 .getResultList();
 
-        AccessToken accessToken;
+        AccessToken accessToken = null;
 
         for (User user : userList) {
             for (RegisteredClient client : clientList) {
@@ -143,6 +158,10 @@ public class DataInsert extends BaseTestConfig {
                 em.persist(accessToken);
             }
         }
+
+        assert accessToken != null;
+        accessToken.setHandle("authz_handle");
+        accessToken.setAuthrizationCode("authz_code");
 
         long addedCount = em.createQuery("select count(token) from AccessToken token", Long.class).getSingleResult();
 
@@ -201,6 +220,7 @@ public class DataInsert extends BaseTestConfig {
             for (ObjectData objectData : objList) {
                 groupObject = new GroupObject();
                 groupObject.setGroupObjectId(new GroupObjectId(group, objectData));
+                groupObject.setActionId("read");
                 em.persist(groupObject);
             }
         }

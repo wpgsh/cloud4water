@@ -1,10 +1,11 @@
-package net.wapwag.wemp.mysql.hibernate;
+package net.wapwag.wemp.mysql.hibernate.hql;
 
 import net.wapwag.wemp.dao.model.ObjectData;
 import net.wapwag.wemp.dao.model.link.UserGroup;
 import net.wapwag.wemp.dao.model.org.Organization;
 import net.wapwag.wemp.dao.model.permission.Group;
 import net.wapwag.wemp.dao.model.permission.User;
+import net.wapwag.wemp.mysql.hibernate.BaseTestConfig;
 import org.junit.Test;
 
 import javax.persistence.Query;
