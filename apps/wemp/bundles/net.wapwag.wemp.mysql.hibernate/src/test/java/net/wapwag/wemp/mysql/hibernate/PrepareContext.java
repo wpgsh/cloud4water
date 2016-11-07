@@ -13,6 +13,7 @@ import javax.naming.spi.NamingManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.util.Hashtable;
+import java.util.Map;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -23,6 +24,10 @@ public class PrepareContext {
     private static final String JNDI_DATA_SOURCE = "osgi:service/javax.sql.DataSource/(osgi.jndi.service.name=jdbc/WaterEquipment_MySQL)";
     private static Context root = mock(Context.class);
     private static NameParser nameParser = mock(NameParser.class);
+	private static final Map<String, String> HIBERNATE_CONFIG = ImmutableMap.of(
+//        "hibernate.hbm2ddl.auto", "create",
+        "hibernate.show_sql", "true",
+        "hibernate.transaction.jta.platform", "org.hibernate.service.jta.platform.internal.SunOneJtaPlatform");
     
     private static boolean isJndiConfigured = false;
     
@@ -46,7 +51,15 @@ public class PrepareContext {
 	    	isJndiConfigured = true;
     	}
     }
-    
+
+    /**
+     * reduce the waste time of recreate and validate database by the hibernate
+     * @return return true if you don't want to empty the database every times
+     */
+    public static boolean cleanDatabase() {
+        return HIBERNATE_CONFIG.containsKey("hibernate.hbm2ddl.auto");
+    }
+
 	public static EntityManagerFactory createEMF() throws Exception {		
 		configureJNDI();
     	
@@ -60,11 +73,7 @@ public class PrepareContext {
 		when(nameParser.parse(JNDI_DATA_SOURCE)).thenReturn(dataSourceName);		
 		when(root.lookup(dataSourceName)).thenReturn(dataSource);
     	
-    	return Persistence.createEntityManagerFactory("waterequipment-jpa-mysql",
-    			ImmutableMap.of(
-//    					"hibernate.hbm2ddl.auto", "create",
-    					"hibernate.show_sql", "true",
-    					"hibernate.transaction.jta.platform", "org.hibernate.service.jta.platform.internal.SunOneJtaPlatform"));
+    	return Persistence.createEntityManagerFactory("waterequipment-jpa-mysql", HIBERNATE_CONFIG);
 	}
 
 }

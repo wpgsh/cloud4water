@@ -1,10 +1,11 @@
-package net.wapwag.wemp.mysql.hibernate;
+package net.wapwag.wemp.mysql.hibernate.hql;
 
 import net.wapwag.wemp.dao.model.ObjectData;
 import net.wapwag.wemp.dao.model.permission.AccessToken;
 import net.wapwag.wemp.dao.model.permission.AccessTokenId;
 import net.wapwag.wemp.dao.model.permission.RegisteredClient;
 import net.wapwag.wemp.dao.model.permission.User;
+import net.wapwag.wemp.mysql.hibernate.BaseTestConfig;
 import org.junit.Ignore;
 import org.junit.Test;
 

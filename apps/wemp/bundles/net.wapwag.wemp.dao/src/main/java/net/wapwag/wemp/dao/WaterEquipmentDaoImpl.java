@@ -310,7 +310,7 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
                         "userObject.userObjectId.user.id = :userId " +
                         "and userObject.userObjectId.objectData.id = :objId";
                 if (!action.isEmpty()) {
-                    hql  += " userObject.actionId = :action";
+                    hql  += " and userObject.actionId = :action";
                 }
 
                 Query query = em.createQuery(hql).setParameter("objId", objId)
@@ -393,11 +393,13 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
                         "and groupObject.groupObjectId.objectData.id = :objId";
 
                 if (!action.isEmpty()) {
-                    hql  += " userObject.actionId = :action";
+                    hql  += " and groupObject.actionId = :action";
                 }
 
-                Query query = em.createQuery(hql).setParameter("objId", objId)
-                        .setParameter("groupId", groupId);
+                Query query = em.createQuery(hql);
+
+                query.setParameter("objId", objId);
+                query.setParameter("groupId", groupId);
 
                 if (!action.isEmpty()) {
                     query.setParameter("action", action);
