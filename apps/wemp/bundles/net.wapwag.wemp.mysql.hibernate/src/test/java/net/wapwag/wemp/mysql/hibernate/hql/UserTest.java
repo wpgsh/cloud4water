@@ -104,7 +104,7 @@ public class UserTest extends BaseTestConfig {
 
     @Test
     public void lookupAccessToken() throws Exception {
-        final String handle = "0d1b320c48044ba2a1a377445b00e601";
+        final String handle = "authz_handle";
         final String hql = "select token from AccessToken token where token.handle = :handle";
 
 
@@ -145,7 +145,7 @@ public class UserTest extends BaseTestConfig {
 
     @Test
     public void getAccessTokenByCode() throws Exception {
-        final String code = "338f3d17cdc04685b3d41f0b7a364fd7";
+        final String code = "authz_code";
         final String hql = "select token from AccessToken token where token.authrizationCode = :code";
 
         AccessToken accessToken = em.createQuery(hql, AccessToken.class)
