@@ -13,6 +13,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import java.util.List;
 
 @Component(service = ObjectResource.class)
@@ -21,9 +22,10 @@ import java.util.List;
 public class ObjectResource {
 
     @Reference
-    private WaterEquipmentService waterEquipmentService;
+    protected WaterEquipmentService waterEquipmentService;
 
     @GET
+    @Produces(MediaType.APPLICATION_JSON)
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
     public ObjectView getObject(@PathParam("oid") long objId) throws Exception {
         return waterEquipmentService.getObject(objId);
@@ -31,6 +33,7 @@ public class ObjectResource {
 
     @Path("/users")
     @GET
+    @Produces(MediaType.APPLICATION_JSON)
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
     public List<UserView> getUsersByObject(@PathParam("oid") long objId, @QueryParam("action") String action) throws Exception {
         return waterEquipmentService.getUsersByObject(objId, action);
@@ -38,6 +41,7 @@ public class ObjectResource {
 
     @Path("/user/{uid}")
     @GET
+    @Produces(MediaType.APPLICATION_JSON)
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
     public ObjectView getObjectByUser(@PathParam("oid") long objId, @PathParam("uid") long userId) throws Exception {
         return waterEquipmentService.getObjectByUser(objId, userId);
@@ -45,6 +49,7 @@ public class ObjectResource {
 
     @Path("/user/{uid}")
     @POST
+    @Produces(MediaType.APPLICATION_JSON)
     @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
     public ResultView addObjectByUser(@PathParam("oid") long objId, @PathParam("uid") long userId) throws Exception {
         return waterEquipmentService.addObjectByUser(objId, userId);
@@ -52,20 +57,23 @@ public class ObjectResource {
 
     @Path("/user/{uid}")
     @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
     @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
-    public ResultView removeObjectByUser(@PathParam("oid") long objId, @PathParam("uid") long userId, @QueryParam("action") String actionId) throws Exception {
-        return waterEquipmentService.removeObjectByUser(objId, userId, actionId);
+    public ResultView removeObjectByUser(@PathParam("oid") long objId, @PathParam("uid") long userId, @QueryParam("action") String action) throws Exception {
+        return waterEquipmentService.removeObjectByUser(objId, userId, action);
     }
 
     @Path("/groups")
     @GET
+    @Produces(MediaType.APPLICATION_JSON)
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
-    public List<GroupView> getGroupsByObject(@PathParam("oid") long objId, @QueryParam("actionId") String actionId) throws Exception {
-        return waterEquipmentService.getGroupsByObject(objId, actionId);
+    public List<GroupView> getGroupsByObject(@PathParam("oid") long objId, @QueryParam("action") String action) throws Exception {
+        return waterEquipmentService.getGroupsByObject(objId, action);
     }
 
     @Path("/group/{gid}")
     @GET
+    @Produces(MediaType.APPLICATION_JSON)
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
     public ObjectView getObjectByGroup(@PathParam("oid") long objId, @PathParam("gid") long gid) throws Exception {
         return waterEquipmentService.getObjectByGroup(objId, gid);
@@ -73,6 +81,7 @@ public class ObjectResource {
 
     @Path("/group/{gid}")
     @POST
+    @Produces(MediaType.APPLICATION_JSON)
     @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
     public ResultView addObjectByGroup(@PathParam("oid") long objId, @PathParam("gid") long gid) throws Exception {
         return waterEquipmentService.addObjectByGroup(objId, gid);
@@ -80,6 +89,7 @@ public class ObjectResource {
 
     @Path("/group/{gid}")
     @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
     @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
     public ResultView removeObjectByGroup(@PathParam("oid") long objId, @PathParam("gid") long gid, @QueryParam("action") String action) throws Exception {
         return waterEquipmentService.removeObjectByGroup(objId, gid, action);

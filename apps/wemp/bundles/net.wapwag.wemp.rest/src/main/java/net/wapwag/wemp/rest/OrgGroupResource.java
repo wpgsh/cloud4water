@@ -16,6 +16,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import java.util.List;
 import java.util.Set;
 
@@ -25,10 +26,11 @@ import java.util.Set;
 public class OrgGroupResource {
 
     @Reference
-    private WaterEquipmentService waterEquipmentService;
+    protected WaterEquipmentService waterEquipmentService;
 
     @Path("/organizationGroups")
     @GET
+    @Produces(MediaType.APPLICATION_JSON)
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
     public List<GroupView> getGroupsByOrg(@PathParam("oid") long orgId) throws Exception {
         return waterEquipmentService.getGroupsByOrg(orgId);
@@ -36,6 +38,7 @@ public class OrgGroupResource {
 
     @Path("/organizationGroups")
     @POST
+    @Produces(MediaType.APPLICATION_JSON)
     @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
     public ResultView addGroupByOrg(@PathParam("oid") long orgId, Group group) throws Exception {
         return waterEquipmentService.addGroupByOrg(orgId, group);
@@ -43,6 +46,7 @@ public class OrgGroupResource {
 
     @Path("/organizationGroup/{gid}")
     @GET
+    @Produces(MediaType.APPLICATION_JSON)
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
     public GroupView getGroupByOrg(@PathParam("oid") long orgId, @PathParam("gid") long groupId) throws Exception {
         return waterEquipmentService.getGroupByOrg(orgId, groupId);
@@ -50,6 +54,7 @@ public class OrgGroupResource {
 
     @Path("/organizationGroup/{gid}")
     @PUT
+    @Produces(MediaType.APPLICATION_JSON)
     @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
     public ResultView updateGroupByOrg(@PathParam("oid") long orgId, @PathParam("gid") long groupId, Group group) throws Exception {
         return waterEquipmentService.updateGroupByOrg(orgId, groupId, group);
@@ -57,6 +62,7 @@ public class OrgGroupResource {
 
     @Path("/organizationGroup/{gid}")
     @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
     @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
     public ResultView removeGroupByOrg(@PathParam("oid") long orgId, @PathParam("gid") long groupId) throws Exception {
         return waterEquipmentService.removeGroupByOrg(orgId, groupId);
@@ -64,6 +70,7 @@ public class OrgGroupResource {
 
     @Path("/organizationGroup/{gid}/users")
     @GET
+    @Produces(MediaType.APPLICATION_JSON)
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
     public List<UserView> getUsersByGroup(@PathParam("oid") long orgId, @PathParam("gid") long groupId) throws Exception {
         return waterEquipmentService.getUsersByGroup(orgId, groupId);
@@ -71,6 +78,7 @@ public class OrgGroupResource {
 
     @Path("/organizationGroup/{gid}/user/{uid}")
     @POST
+    @Produces(MediaType.APPLICATION_JSON)
     @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
     public ResultView addUserByGroup(@PathParam("oid") long orgId, @PathParam("gid") long groupId, @PathParam("uid") long userId) throws Exception {
         return waterEquipmentService.addUserByGroup(orgId, groupId, userId);
@@ -78,6 +86,7 @@ public class OrgGroupResource {
 
     @Path("/organizationGroup/{gid}/user/{uid}")
     @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
     @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
     public ResultView removeUserByGroup(@PathParam("oid") long orgId, @PathParam("gid") long groupId, @PathParam("uid") long userId) throws Exception {
         return waterEquipmentService.removeUserByGroup(orgId, groupId, userId);
@@ -85,6 +94,7 @@ public class OrgGroupResource {
 
     @Path("/organizationGroup/{gid}/objects")
     @GET
+    @Produces(MediaType.APPLICATION_JSON)
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
     public List<ObjectView> getObjectsByGroup(@PathParam("oid") long orgId, @PathParam("gid") long groupId) throws Exception {
         return waterEquipmentService.getObjectsByGroup(orgId, groupId);
@@ -92,6 +102,7 @@ public class OrgGroupResource {
 
     @Path("/organizationGroup/{gid}/checkPermissions")
     @GET
+    @Produces(MediaType.APPLICATION_JSON)
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
     public ObjectView getObjectByGroup(@PathParam("oid") long orgId, @PathParam("gid") long groupId, @QueryParam("objId") long objId, @QueryParam("action") String action) throws Exception {
         return waterEquipmentService.getObjectByGroup(orgId, groupId, objId, action);
@@ -99,6 +110,7 @@ public class OrgGroupResource {
 
     @Path("/organizationUsers")
     @GET
+    @Produces(MediaType.APPLICATION_JSON)
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
     public List<UserView> getUsersByOrg(@PathParam("oid") long orgId) throws Exception {
         return waterEquipmentService.getUsersByOrg(orgId);
@@ -106,6 +118,7 @@ public class OrgGroupResource {
 
     @Path("/organizationUsers")
     @POST
+    @Produces(MediaType.APPLICATION_JSON)
     @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
     public ResultView addUserByOrg(@PathParam("oid") long orgId, User user) throws Exception {
         return waterEquipmentService.addUserByOrg(orgId, user);
@@ -113,6 +126,7 @@ public class OrgGroupResource {
 
     @Path("/organizationUser/{uid}")
     @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
     @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
     public ResultView removeUserByOrg(@PathParam("oid") long orgId, @PathParam("uid") long uid) throws Exception {
         return waterEquipmentService.removeUserByOrg(orgId, uid);
@@ -120,6 +134,7 @@ public class OrgGroupResource {
 
     @Path("/objects")
     @GET
+    @Produces(MediaType.APPLICATION_JSON)
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
     public List<ObjectView> getObjectsByOrg(@PathParam("oid") long orgId) throws Exception {
         return waterEquipmentService.getObjectsByOrg(orgId);
@@ -127,6 +142,7 @@ public class OrgGroupResource {
 
     @Path("/objects")
     @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
     @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
     public ResultView addObjectByOrg(@PathParam("oid") long orgId, ObjectData objectData) throws Exception {
         return waterEquipmentService.addObjectByOrg(orgId, objectData);
@@ -134,6 +150,7 @@ public class OrgGroupResource {
 
     @Path("/object/{objId}")
     @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
     @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
     public ResultView removeObjectByOrg(@PathParam("oid") long orgId, @PathParam("objId") long objId) throws Exception {
         return waterEquipmentService.removeObjectByOrg(orgId, objId);

@@ -12,6 +12,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import java.util.Set;
 
 @Component(service = UserResource.class)
@@ -20,10 +21,11 @@ import java.util.Set;
 public class UserResource {
 
     @Reference
-    private WaterEquipmentService waterEquipmentService;
+    protected WaterEquipmentService waterEquipmentService;
 
     @Path("/checkPermissions")
     @POST
+    @Produces(MediaType.APPLICATION_JSON)
     @FineGrainedAuthorization(permission = Permission.READ, target = "{uid}")
     public ResultView checkPermission(@PathParam("uid") long userId, ObjectData objectData) throws Exception {
         return waterEquipmentService.checkPermission(userId, objectData);
@@ -31,6 +33,7 @@ public class UserResource {
 
     @Path("/objects")
     @GET
+    @Produces(MediaType.APPLICATION_JSON)
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
     public Set<ObjectView> getObjectsByUser(@PathParam("uid") long userId, @QueryParam("action") String action) throws Exception {
         return waterEquipmentService.getObjectsByUser(userId, action);
