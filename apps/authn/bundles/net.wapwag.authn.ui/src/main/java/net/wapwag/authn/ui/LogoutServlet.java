@@ -9,8 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.osgi.service.component.annotations.Component;
-
 /*
  * Definition of a servlet. Use the following annotations so that
  * OPS4J PAX Web Whiteboard Extended can hook it up into the Jetty server:
@@ -23,6 +21,9 @@ import org.osgi.service.component.annotations.Component;
  */
 @WebServlet(urlPatterns="/logout", name="LogoutServlet")
 public class LogoutServlet extends HttpServlet {
+
+	
+	private static final long serialVersionUID = 88830150573318477L;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

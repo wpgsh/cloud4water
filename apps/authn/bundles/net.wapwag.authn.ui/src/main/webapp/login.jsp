@@ -49,11 +49,11 @@
           <a href="/authn/resetpassword/linkpwd.jsp" class="getpassword">Forgot password?</a>
         </div>
         <button id="submit" class="btn btn-lg btn-success btn-block" type="button">Sign in</button>
-        <div class="checkbox">
-          <label>
-            New to here? <a href="register.jsp">Create an account.</a>
-          </label>
-        </div>
+<!--         <div class="checkbox"> -->
+<!--           <label> -->
+<!--             New to here? <a href="register.jsp">Create an account.</a> -->
+<!--           </label> -->
+<!--         </div> -->
       </form>
       <div class="bottom-content">
         Copyright © 2016.Wei Pai Ge All rights reserved
