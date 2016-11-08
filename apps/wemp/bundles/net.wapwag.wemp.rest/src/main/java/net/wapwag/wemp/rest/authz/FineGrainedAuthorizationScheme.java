@@ -107,4 +107,8 @@ public class FineGrainedAuthorizationScheme implements AuthorizationScheme {
 		}
 	}
 
+	public void setWaterEquipmentService(WaterEquipmentService wes) {
+		this.waterEquipmentService = wes;
+	}
+	
 }

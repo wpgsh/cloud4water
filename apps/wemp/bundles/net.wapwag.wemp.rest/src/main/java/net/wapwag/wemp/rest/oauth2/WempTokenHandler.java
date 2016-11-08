@@ -12,7 +12,7 @@ public class WempTokenHandler implements TokenHandler {
 	public static final String NAME = "wemp";
 	
 	@Reference
-	private WaterEquipmentService service;
+	WaterEquipmentService service;
 
 	@Override
 	public String getName() {
@@ -33,6 +33,10 @@ public class WempTokenHandler implements TokenHandler {
 		} else {
             return null;
 		}
+	}
+	
+	public void setWaterEquipmentService(WaterEquipmentService service) {
+		this.service = service;
 	}
 
 }
