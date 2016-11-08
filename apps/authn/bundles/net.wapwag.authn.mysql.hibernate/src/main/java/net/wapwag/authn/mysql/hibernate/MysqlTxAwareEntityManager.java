@@ -79,7 +79,7 @@ public class MysqlTxAwareEntityManager implements TxAwareEntityManager {
 					//6
 					"create table if not exists image("
 							+ "  id varchar(32) primary key,"
-							+ "  image blob"
+							+ "  image MEDIUMBLOB"
 							+ ")"
 			);
 
