@@ -1,5 +1,6 @@
 package net.wapwag.authn.rest;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.Map;
 
@@ -16,8 +17,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
-//import org.glassfish.jersey.media.multipart.FormDataBodyPart;
-//import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -28,6 +27,7 @@ import net.wapwag.authn.AuthenticationService;
 import net.wapwag.authn.dao.model.Image;
 import net.wapwag.authn.dao.model.User;
 import net.wapwag.authn.rest.authz.AnyAuthenticatedUser;
+import net.wapwag.authn.rest.authz.AuthorizationOnlyUserId;
 import net.wapwag.authn.rest.dto.ImageResponse;
 import net.wapwag.authn.rest.dto.UserMsgResponse;
 import net.wapwag.authn.rest.dto.UserRequestJson;
@@ -52,7 +52,7 @@ public class AuthenticationResource {
 		User user = authnService.getUser(Long.valueOf(uid));
 		
 		if (user == null) {
-			throw new ResourceNotFoundException("User not found: "+uid);
+			throw new ResourceNotFoundException("User not found: " + uid);
 		}
 		
 		if(user != null && ("1").equals(user.getEnabled())){
@@ -78,7 +78,7 @@ public class AuthenticationResource {
 	@GET
 	@Path("/{userId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@Authorization
+	@Authorization @AuthorizationOnlyUserId
 	public UserResponse getPrivateUserProfile(@PathParam("userId") long uid) throws Exception {
 		User user = authnService.getUser(uid);
 		if (user == null) {
@@ -108,7 +108,7 @@ public class AuthenticationResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @Authorization
+//    @Authorization @AuthorizationOnlyUserId
     public UserMsgResponse createNewUser(@Context UserRequestJson userRequest) throws Exception {
         try {
             //Get the userRequest and convert it to User so the service layer could operate it.
@@ -144,7 +144,7 @@ public class AuthenticationResource {
     @Path("/{userId}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-//    @Authorization @AnyAuthenticatedUser
+    @Authorization @AuthorizationOnlyUserId
     public UserMsgResponse updateUserProfile(@Context UserRequestJson userRequest,@PathParam("userId") long uid) throws Exception {
         try {
         	User user = authnService.getUser(uid);
@@ -199,7 +199,7 @@ public class AuthenticationResource {
     @DELETE
     @Path("/{userId}")
     @Produces(MediaType.APPLICATION_JSON)
-    @Authorization
+    @Authorization @AuthorizationOnlyUserId
     public UserMsgResponse removeUserProfile(@PathParam("userId") long uid) throws Exception {
         try {
             //Get the userRequest and convert it to User so the service layer could operate it.
@@ -237,7 +237,7 @@ public class AuthenticationResource {
     @Path("/{userId}/image")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @Authorization
+    @Authorization @AuthorizationOnlyUserId
     public UserMsgResponse createNewAvatar(@PathParam("userId") long uid, MultipartFormDataInput input) throws Exception {
         try {
             User user = new User();
@@ -276,7 +276,7 @@ public class AuthenticationResource {
     @Path("/{userId}/image")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    @Authorization
+    @Authorization @AuthorizationOnlyUserId
     public UserMsgResponse updateUserAvatar(@PathParam("userId") long uid, MultipartFormDataInput input) throws Exception {
         try {
             //Get the userRequest and convert it to User so the service layer could operate it.
@@ -286,9 +286,14 @@ public class AuthenticationResource {
             
             //convert the uploaded file to inputstream   
             InputStream inputStream = inputPart.getBody(InputStream.class,null);
-        	byte[] photo = new byte[inputStream.available()];
-        	inputStream.read(photo);
-        	inputStream.close();
+
+            ByteArrayOutputStream output = new ByteArrayOutputStream();  
+            byte[] buf = new byte[1024];  
+            int numBytesRead = 0;  
+            while ((numBytesRead = inputStream.read(buf)) != -1) {  
+                output.write(buf, 0, numBytesRead);  
+            }
+            byte[] photo = output.toByteArray();
             
         	String avartarId = StringUtil.getUUID();
         	Image image = new Image();
@@ -314,7 +319,7 @@ public class AuthenticationResource {
     @DELETE
     @Path("/{userId}/image")
     @Produces(MediaType.APPLICATION_JSON)
-    @Authorization
+    @Authorization @AuthorizationOnlyUserId
     public UserMsgResponse removeUserAvatar(@PathParam("userId") long uid) throws Exception {
         try {
             //Get the userRequest and convert it to User so the service layer could operate it.
