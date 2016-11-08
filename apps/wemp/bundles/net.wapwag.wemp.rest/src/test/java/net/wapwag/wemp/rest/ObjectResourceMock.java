@@ -19,8 +19,10 @@ import static org.mockito.Mockito.when;
  */
 class ObjectResourceMock extends ObjectResource {
 
+    static WaterEquipmentService mockService = mock(WaterEquipmentService.class);
+
     public ObjectResourceMock() {
-        waterEquipmentService = mock(WaterEquipmentService.class);
+        waterEquipmentService = mockService;
 
         try {
             when(waterEquipmentService.getObject(objId))

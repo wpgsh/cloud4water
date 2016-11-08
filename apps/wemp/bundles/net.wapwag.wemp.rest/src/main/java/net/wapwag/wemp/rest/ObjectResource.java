@@ -1,5 +1,6 @@
 package net.wapwag.wemp.rest;
 
+import com.thingswise.appframework.jaxrs.utils.Authorization;
 import com.thingswise.appframework.jaxrs.utils.OAuth2;
 import net.wapwag.wemp.WaterEquipmentService;
 import net.wapwag.wemp.model.GroupView;
@@ -26,6 +27,7 @@ public class ObjectResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @Authorization
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
     public ObjectView getObject(@PathParam("oid") long objId) throws Exception {
         return waterEquipmentService.getObject(objId);
@@ -34,6 +36,7 @@ public class ObjectResource {
     @Path("/users")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @Authorization
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
     public List<UserView> getUsersByObject(@PathParam("oid") long objId, @QueryParam("action") String action) throws Exception {
         return waterEquipmentService.getUsersByObject(objId, action);
@@ -42,6 +45,7 @@ public class ObjectResource {
     @Path("/user/{uid}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @Authorization
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
     public ObjectView getObjectByUser(@PathParam("oid") long objId, @PathParam("uid") long userId) throws Exception {
         return waterEquipmentService.getObjectByUser(objId, userId);
@@ -50,6 +54,7 @@ public class ObjectResource {
     @Path("/user/{uid}")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
+    @Authorization
     @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
     public ResultView addObjectByUser(@PathParam("oid") long objId, @PathParam("uid") long userId) throws Exception {
         return waterEquipmentService.addObjectByUser(objId, userId);
@@ -58,6 +63,7 @@ public class ObjectResource {
     @Path("/user/{uid}")
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
+    @Authorization
     @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
     public ResultView removeObjectByUser(@PathParam("oid") long objId, @PathParam("uid") long userId, @QueryParam("action") String action) throws Exception {
         return waterEquipmentService.removeObjectByUser(objId, userId, action);
@@ -74,6 +80,7 @@ public class ObjectResource {
     @Path("/group/{gid}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @Authorization
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
     public ObjectView getObjectByGroup(@PathParam("oid") long objId, @PathParam("gid") long gid) throws Exception {
         return waterEquipmentService.getObjectByGroup(objId, gid);
@@ -90,6 +97,7 @@ public class ObjectResource {
     @Path("/group/{gid}")
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
+    @Authorization
     @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
     public ResultView removeObjectByGroup(@PathParam("oid") long objId, @PathParam("gid") long gid, @QueryParam("action") String action) throws Exception {
         return waterEquipmentService.removeObjectByGroup(objId, gid, action);

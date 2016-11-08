@@ -1,5 +1,6 @@
 package net.wapwag.wemp.rest;
 
+import com.thingswise.appframework.jaxrs.utils.Authorization;
 import com.thingswise.appframework.jaxrs.utils.OAuth2;
 import net.wapwag.wemp.WaterEquipmentService;
 import net.wapwag.wemp.dao.model.ObjectData;
@@ -26,6 +27,7 @@ public class UserResource {
     @Path("/checkPermissions")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
+    @Authorization
     @FineGrainedAuthorization(permission = Permission.READ, target = "{uid}")
     public ResultView checkPermission(@PathParam("uid") long userId, ObjectData objectData) throws Exception {
         return waterEquipmentService.checkPermission(userId, objectData);
@@ -34,6 +36,7 @@ public class UserResource {
     @Path("/objects")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @Authorization
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
     public Set<ObjectView> getObjectsByUser(@PathParam("uid") long userId, @QueryParam("action") String action) throws Exception {
         return waterEquipmentService.getObjectsByUser(userId, action);

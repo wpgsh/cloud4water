@@ -2,7 +2,9 @@ package net.wapwag.wemp.rest;
 
 import com.google.gson.reflect.TypeToken;
 import net.wapwag.wemp.WaterEquipmentServiceException;
-import net.wapwag.wemp.dao.WaterEquipmentDaoException;
+import net.wapwag.wemp.dao.model.ObjectData;
+import net.wapwag.wemp.dao.model.permission.Group;
+import net.wapwag.wemp.dao.model.permission.User;
 import net.wapwag.wemp.model.GroupView;
 import net.wapwag.wemp.model.ObjectView;
 import net.wapwag.wemp.model.ResultView;
@@ -10,15 +12,19 @@ import net.wapwag.wemp.model.UserView;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.Test;
 
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static net.wapwag.wemp.rest.MockData.*;
-import static org.eclipse.jetty.http.HttpStatus.*;
+import static net.wapwag.wemp.rest.OrgGroupResourceMock.mockService;
+import static org.eclipse.jetty.http.HttpStatus.INTERNAL_SERVER_ERROR_500;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 /**
@@ -34,310 +40,378 @@ public class OrgGroupResourceTest extends BaseResourceTest {
         return new ResourceConfig(OrgGroupResourceMock.class);
     }
 
-//    @Test
-//    public void testGetGroupsByOrg() throws Exception {
-//        when(waterEquipmentDao.getGroupsByOrg(orgId)).thenReturn(groupList);
-//
-//        List<GroupView> groupViewList = waterEquipmentService.getGroupsByOrg(orgId);
-//
-//        assertNotNull(groupViewList);
-//        assertEquals(count, groupViewList.size());
-//    }
-//
-//    @Test
-//    public void testGetGroupsByOrg_Exception() throws Exception {
-//        when(waterEquipmentDao.getGroupsByOrg(orgId)).thenThrow(WaterEquipmentDaoException.class);
-//
-//        List<GroupView> groupViewList = waterEquipmentService.getGroupsByOrg(orgId);
-//
-//        assertNull(groupViewList);
-//    }
-//
-//    @Test
-//    public void testAddGroupByOrg() throws Exception {
-//        when(waterEquipmentDao.addGroupByOrg(orgId, group)).thenReturn(addCount);
-//
-//        ResultView resultView = waterEquipmentService.addGroupByOrg(orgId, group);
-//
-//        assertNotNull(resultView);
-//        assertEquals(addCount, resultView.count);
-//    }
-//
-//    @Test
-//    public void testAddGroupByOrg_Exception() throws Exception {
-//        when(waterEquipmentDao.addGroupByOrg(orgId, group)).thenThrow(WaterEquipmentDaoException.class);
-//
-//        ResultView resultView = waterEquipmentService.addGroupByOrg(orgId, group);
-//
-//        assertNull(resultView);
-//    }
-//
-//    @Test
-//    public void testGetGroupByOrg() throws Exception {
-//        when(waterEquipmentDao.getGroupByOrg(orgId, groupId)).thenReturn(group);
-//
-//        GroupView groupView = waterEquipmentService.getGroupByOrg(orgId, groupId);
-//
-//        assertNotNull(groupView);
-//        assertEquals(group.getId(), groupView.id);
-//        assertEquals(group.getName(), groupView.name);
-//    }
-//
-//    @Test
-//    public void testGetGroupByOrg_Exception() throws Exception {
-//        when(waterEquipmentDao.getGroupByOrg(orgId, groupId)).thenThrow(WaterEquipmentDaoException.class);
-//
-//        GroupView groupView = waterEquipmentService.getGroupByOrg(orgId, groupId);
-//
-//        assertNull(groupView);
-//    }
-//
-//    @Test
-//    public void testUpdateGroupByOrg() throws Exception {
-//        when(waterEquipmentDao.updateGroupByOrg(orgId, groupId, group)).thenReturn(updateCount);
-//
-//        ResultView resultView = waterEquipmentService.updateGroupByOrg(orgId, groupId, group);
-//
-//        assertNotNull(resultView);
-//        assertEquals(updateCount, resultView.count);
-//    }
-//
-//    @Test
-//    public void testUpdateGroupByOrg_Exception() throws Exception {
-//        when(waterEquipmentDao.updateGroupByOrg(orgId, groupId, group)).thenThrow(WaterEquipmentDaoException.class);
-//
-//        ResultView resultView = waterEquipmentService.updateGroupByOrg(orgId, groupId, group);
-//
-//        assertNull(resultView);
-//    }
-//
-//    @Test
-//    public void removeGroupByOrg() throws Exception {
-//        when(waterEquipmentDao.removeGroupByOrg(orgId, groupId)).thenReturn(removeCount);
-//
-//        ResultView resultView = waterEquipmentService.removeGroupByOrg(orgId, groupId);
-//
-//        assertNotNull(resultView);
-//        assertEquals(removeCount, resultView.count);
-//    }
-//
-//    @Test
-//    public void removeGroupByOrg_Exception() throws Exception {
-//        when(waterEquipmentDao.removeGroupByOrg(orgId, groupId)).thenThrow(WaterEquipmentDaoException.class);
-//
-//        ResultView resultView = waterEquipmentService.removeGroupByOrg(orgId, groupId);
-//
-//        assertNull(resultView);
-//    }
-//
-//    @Test
-//    public void testGetUsersByGroup() throws Exception {
-//        when(waterEquipmentDao.getUsersByGroup(objId, groupId)).thenReturn(userList);
-//
-//        List<UserView> userViewList = waterEquipmentService.getUsersByGroup(orgId, groupId);
-//
-//        assertNotNull(userViewList);
-//        assertEquals(userList.size(), userViewList.size());
-//    }
-//
-//    @Test
-//    public void testGetUsersByGroup_Exception() throws Exception {
-//        when(waterEquipmentDao.getUsersByGroup(objId, groupId)).thenThrow(WaterEquipmentDaoException.class);
-//
-//        List<UserView> userViewList = waterEquipmentService.getUsersByGroup(orgId, groupId);
-//
-//        assertNull(userViewList);
-//    }
-//
-//    @Test
-//    public void testAddUserByGroup() throws Exception {
-//        when(waterEquipmentDao.addUserByGroup(orgId, groupId, userId)).thenReturn(addCount);
-//
-//        ResultView resultView = waterEquipmentService.addUserByGroup(orgId, groupId, userId);
-//
-//        assertNotNull(resultView);
-//        assertEquals(addCount, resultView.count);
-//    }
-//
-//    @Test
-//    public void testAddUserByGroup_Exception() throws Exception {
-//        when(waterEquipmentDao.addUserByGroup(orgId, groupId, userId)).thenThrow(WaterEquipmentDaoException.class);
-//
-//        ResultView resultView = waterEquipmentService.addUserByGroup(orgId, groupId, userId);
-//
-//        assertNull(resultView);
-//    }
-//
-//    @Test
-//    public void testRemoveUserByGroup() throws Exception {
-//        when(waterEquipmentDao.removeUserByGroup(orgId, groupId, userId)).thenReturn(removeCount);
-//
-//        ResultView resultView = waterEquipmentService.removeUserByGroup(orgId, groupId, userId);
-//
-//        assertNotNull(resultView);
-//        assertEquals(removeCount, resultView.count);
-//    }
-//
-//    @Test
-//    public void testRemoveUserByGroup_Exception() throws Exception {
-//        when(waterEquipmentDao.removeUserByGroup(orgId, groupId, userId)).thenThrow(WaterEquipmentDaoException.class);
-//
-//        ResultView resultView = waterEquipmentService.removeUserByGroup(orgId, groupId, userId);
-//
-//        assertNull(resultView);
-//    }
-//
-//    @Test
-//    public void testGetObjectsByGroup() throws Exception {
-//        when(waterEquipmentDao.getObjectsByGroup(orgId, groupId)).thenReturn(objectDataList);
-//
-//        List<ObjectView> objectViews = waterEquipmentService.getObjectsByGroup(orgId, groupId);
-//
-//        assertNotNull(objectViews);
-//        assertEquals(objectDataList.size(), objectViews.size());
-//    }
-//
-//    @Test
-//    public void testGetObjectsByGroup_Exception() throws Exception {
-//        when(waterEquipmentDao.getObjectsByGroup(orgId, groupId)).thenThrow(WaterEquipmentDaoException.class);
-//
-//        List<ObjectView> objectViews = waterEquipmentService.getObjectsByGroup(orgId, groupId);
-//
-//        assertNull(objectViews);
-//    }
-//
-//    @Test
-//    public void testGetObjectByGroupWithAction() throws Exception {
-//        when(waterEquipmentDao.getObjectByGroup(orgId, groupId, objId, action)).thenReturn(objectData);
-//
-//        ObjectView objectView = waterEquipmentService.getObjectByGroup(orgId, groupId, objId, action);
-//
-//        assertNotNull(objectView);
-//        assertEquals(objectData.getId(), objectView.id);
-//        assertEquals(objectData.getName(), objectView.name);
-//        assertEquals(objectData.getType(), objectView.objectType);
-//    }
-//
-//    @Test
-//    public void testGetObjectByGroupWithAction_Exception() throws Exception {
-//        when(waterEquipmentDao.getObjectByGroup(orgId, groupId, objId, action)).thenThrow(WaterEquipmentDaoException.class);
-//
-//        ObjectView objectView = waterEquipmentService.getObjectByGroup(orgId, groupId, objId, action);
-//
-//        assertNull(objectView);
-//    }
-//
-//    @Test
-//    public void testGetUsersByOrg() throws Exception {
-//        when(waterEquipmentDao.getUsersByOrg(orgId)).thenReturn(userList);
-//
-//        List<UserView> userViews = waterEquipmentService.getUsersByOrg(orgId);
-//
-//        assertNotNull(userViews);
-//        assertEquals(userList.size(), userViews.size());
-//    }
-//
-//    @Test
-//    public void testGetUsersByOrg_Exception() throws Exception {
-//        when(waterEquipmentDao.getUsersByOrg(orgId)).thenThrow(WaterEquipmentDaoException.class);
-//
-//        List<UserView> userViews = waterEquipmentService.getUsersByOrg(orgId);
-//
-//        assertNull(userViews);
-//    }
-//
-//    @Test
-//    public void testAddUserByOrg() throws Exception {
-//        when(waterEquipmentDao.addUserByOrg(orgId, user)).thenReturn(addCount);
-//
-//        ResultView resultView = waterEquipmentService.addUserByOrg(orgId, user);
-//
-//        assertNotNull(resultView);
-//        assertEquals(addCount, resultView.count);
-//    }
-//
-//    @Test
-//    public void testAddUserByOrg_Exception() throws Exception {
-//        when(waterEquipmentDao.addUserByOrg(orgId, user)).thenThrow(WaterEquipmentDaoException.class);
-//
-//        ResultView resultView = waterEquipmentService.addUserByOrg(orgId, user);
-//
-//        assertNull(resultView);
-//    }
-//
-//    @Test
-//    public void testRemoveUserByOrg() throws Exception {
-//        when(waterEquipmentDao.removeUserByOrg(orgId, userId)).thenReturn(removeCount);
-//
-//        ResultView resultView = waterEquipmentService.removeUserByOrg(orgId, userId);
-//
-//        assertNotNull(resultView);
-//        assertEquals(addCount, resultView.count);
-//    }
-//
-//    @Test
-//    public void testRemoveUserByOrg_Exception() throws Exception {
-//        when(waterEquipmentDao.removeUserByOrg(orgId, userId)).thenThrow(WaterEquipmentDaoException.class);
-//
-//        ResultView resultView = waterEquipmentService.removeUserByOrg(orgId, userId);
-//
-//        assertNull(resultView);
-//    }
-//
-//    @Test
-//    public void testGetObjectsByOrg() throws Exception {
-//        when(waterEquipmentDao.getObjectsByOrg(orgId)).thenReturn(objectDataList);
-//
-//        List<ObjectView> objectViews = waterEquipmentService.getObjectsByOrg(orgId);
-//
-//        assertNotNull(objectViews);
-//        assertEquals(objectDataList.size(), objectViews.size());
-//    }
-//
-//    @Test
-//    public void testGetObjectsByOrg_Exception() throws Exception {
-//        when(waterEquipmentDao.getObjectsByOrg(orgId)).thenThrow(WaterEquipmentDaoException.class);
-//
-//        List<ObjectView> objectViews = waterEquipmentService.getObjectsByOrg(orgId);
-//
-//        assertNull(objectViews);
-//    }
-//
-//    @Test
-//    public void testAddObjectByOrg() throws Exception {
-//        when(waterEquipmentDao.addObjectByOrg(orgId, objectData)).thenReturn(addCount);
-//
-//        ResultView resultView = waterEquipmentService.addObjectByOrg(orgId, objectData);
-//
-//        assertNotNull(resultView);
-//        assertEquals(addCount, resultView.count);
-//    }
-//
-//    @Test
-//    public void testAddObjectByOrg_Exception() throws Exception {
-//        when(waterEquipmentDao.addObjectByOrg(orgId, objectData)).thenThrow(WaterEquipmentDaoException.class);
-//
-//        ResultView resultView = waterEquipmentService.addObjectByOrg(orgId, objectData);
-//
-//        assertNull(resultView);
-//    }
-//
-//    @Test
-//    public void testRemoveObjectByOrg() throws Exception {
-//        when(waterEquipmentDao.removeObjectByOrg(orgId, objId)).thenReturn(removeCount);
-//
-//        ResultView resultView = waterEquipmentService.removeObjectByOrg(orgId, objId);
-//
-//        assertNotNull(resultView);
-//        assertEquals(removeCount, resultView.count);
-//    }
-//
-//    @Test
-//    public void testRemoveObjectByOrg_Exception() throws Exception {
-//        when(waterEquipmentDao.removeObjectByOrg(orgId, objId)).thenThrow(WaterEquipmentDaoException.class);
-//
-//        ResultView resultView = waterEquipmentService.removeObjectByOrg(orgId, objId);
-//
-//        assertNull(resultView);
-//    }
+    @Test
+    public void testGetGroupsByOrg() throws Exception {
+        when(mockService.getGroupsByOrg(orgId))
+                .thenReturn(groupList.stream().map(GroupView::newInstance).collect(Collectors.toList()));
+
+        path = String.format("/organization/%s/organizationGroups", orgId);
+        Type listType = new TypeToken<List<GroupView>>(){}.getType();
+
+        Response response = target(path).request().get();
+        List<GroupView> groupViewList = getResult(response, listType);
+
+        assertNotNull(groupViewList);
+        assertEquals(count, groupViewList.size());
+    }
+
+    @Test
+    public void testGetGroupsByOrg_Exception() throws Exception {
+        when(mockService.getGroupsByOrg(orgId)).thenThrow(WaterEquipmentServiceException.class);
+
+        path = String.format("/organization/%s/organizationGroups", orgId);
+        Response response = target(path).request().get();
+
+        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+    }
+
+    @Test
+    public void testAddGroupByOrg() throws Exception {
+        when(mockService.addGroupByOrg(anyLong(), any(Group.class))).thenReturn(ResultView.newInstance(addCount));
+
+        path = String.format("/organization/%s/organizationGroups", orgId);
+        Response response = target(path).request().post(Entity.entity(group, MediaType.APPLICATION_JSON));
+        ResultView resultView = getResult(response, ResultView.class);
+
+        assertNotNull(resultView);
+        assertEquals(addCount, resultView.count);
+    }
+
+    @Test
+    public void testAddGroupByOrg_Exception() throws Exception {
+        when(mockService.addGroupByOrg(anyLong(), any(Group.class))).thenThrow(WaterEquipmentServiceException.class);
+
+        path = String.format("/organization/%s/organizationGroups", orgId);
+        Response response = target(path).request().post(Entity.entity(group, MediaType.APPLICATION_JSON));
+
+        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+    }
+
+    @Test
+    public void testGetGroupByOrg() throws Exception {
+        when(mockService.getGroupByOrg(orgId, groupId)).thenReturn(GroupView.newInstance(group));
+
+        path = String.format("/organization/%s/organizationGroup/%s", orgId, groupId);
+        Response response = target(path).request().get();
+        GroupView groupView = getResult(response, GroupView.class);
+
+        assertNotNull(groupView);
+        assertEquals(group.getId(), groupView.id);
+        assertEquals(group.getName(), groupView.name);
+    }
+
+    @Test
+    public void testGetGroupByOrg_Exception() throws Exception {
+        when(mockService.getGroupByOrg(orgId, groupId)).thenThrow(WaterEquipmentServiceException.class);
+
+        path = String.format("/organization/%s/organizationGroup/%s", orgId, groupId);
+        Response response = target(path).request().get();
+
+        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+    }
+
+    @Test
+    public void testUpdateGroupByOrg() throws Exception {
+        when(mockService.updateGroupByOrg(eq(orgId), eq(groupId), any(Group.class))).thenReturn(ResultView.newInstance(updateCount));
+
+        path = String.format("/organization/%s/organizationGroup/%s", orgId, groupId);
+        Response response = target(path).request().put(Entity.entity(group, MediaType.APPLICATION_JSON));
+        ResultView resultView = getResult(response, ResultView.class);
+
+        assertNotNull(resultView);
+        assertEquals(updateCount, resultView.count);
+    }
+
+    @Test
+    public void testUpdateGroupByOrg_Exception() throws Exception {
+        when(mockService.updateGroupByOrg(eq(orgId), eq(groupId), any(Group.class))).thenThrow(WaterEquipmentServiceException.class);
+
+        path = String.format("/organization/%s/organizationGroup/%s", orgId, groupId);
+        Response response = target(path).request().put(Entity.entity(group, MediaType.APPLICATION_JSON));
+
+        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+    }
+
+    @Test
+    public void removeGroupByOrg() throws Exception {
+        when(mockService.removeGroupByOrg(orgId, groupId)).thenReturn(ResultView.newInstance(removeCount));
+
+        path = String.format("/organization/%s/organizationGroup/%s", orgId, groupId);
+        Response response = target(path).request().delete();
+        ResultView resultView = getResult(response, ResultView.class);
+
+        assertNotNull(resultView);
+        assertEquals(removeCount, resultView.count);
+    }
+
+    @Test
+    public void removeGroupByOrg_Exception() throws Exception {
+        when(mockService.removeGroupByOrg(orgId, groupId)).thenThrow(WaterEquipmentServiceException.class);
+
+        path = String.format("/organization/%s/organizationGroup/%s", orgId, groupId);
+        Response response = target(path).request().delete();
+
+        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+    }
+
+    @Test
+    public void testGetUsersByGroup() throws Exception {
+        when(mockService.getUsersByGroup(objId, groupId))
+                .thenReturn(userList.stream().map(UserView::newInstance).collect(Collectors.toList()));
+
+        path = String.format("/organization/%s/organizationGroup/%s/users", orgId, groupId);
+
+        Type listType = new TypeToken<List<UserView>>(){}.getType();
+        Response response = target(path).request().get();
+        List<UserView> userViewList = getResult(response, listType);
+
+        assertNotNull(userViewList);
+        assertEquals(userList.size(), userViewList.size());
+    }
+
+    @Test
+    public void testGetUsersByGroup_Exception() throws Exception {
+        when(mockService.getUsersByGroup(objId, groupId)).thenThrow(WaterEquipmentServiceException.class);
+
+        path = String.format("/organization/%s/organizationGroup/%s/users", orgId, groupId);
+        Response response = target(path).request().get();
+
+        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+    }
+
+    @Test
+    public void testAddUserByGroup() throws Exception {
+        when(mockService.addUserByGroup(orgId, groupId, userId)).thenReturn(ResultView.newInstance(addCount));
+
+        path = String.format("/organization/%s/organizationGroup/%s/user/%s", orgId, groupId, userId);
+        Response response = target(path).request().post(null);
+        ResultView resultView = getResult(response, ResultView.class);
+
+        assertNotNull(resultView);
+        assertEquals(addCount, resultView.count);
+    }
+
+    @Test
+    public void testAddUserByGroup_Exception() throws Exception {
+        when(mockService.addUserByGroup(orgId, groupId, userId)).thenThrow(WaterEquipmentServiceException.class);
+
+        path = String.format("/organization/%s/organizationGroup/%s/user/%s", orgId, groupId, userId);
+        Response response = target(path).request().post(null);
+
+        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+    }
+
+    @Test
+    public void testRemoveUserByGroup() throws Exception {
+        when(mockService.removeUserByGroup(orgId, groupId, userId)).thenReturn(ResultView.newInstance(removeCount));
+
+        path = String.format("/organization/%s/organizationGroup/%s/user/%s", orgId, groupId, userId);
+        Response response = target(path).request().delete();
+        ResultView resultView = getResult(response, ResultView.class);
+
+        assertNotNull(resultView);
+        assertEquals(removeCount, resultView.count);
+    }
+
+    @Test
+    public void testRemoveUserByGroup_Exception() throws Exception {
+        when(mockService.removeUserByGroup(orgId, groupId, userId)).thenThrow(WaterEquipmentServiceException.class);
+
+        path = String.format("/organization/%s/organizationGroup/%s/user/%s", orgId, groupId, userId);
+        Response response = target(path).request().delete();
+
+        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+    }
+
+    @Test
+    public void testGetObjectsByGroup() throws Exception {
+        when(mockService.getObjectsByGroup(orgId, groupId))
+                .thenReturn(objectDataList.stream().map(ObjectView::newInstance).collect(Collectors.toList()));
+
+        path = String.format("/organization/%s/organizationGroup/%s/objects", orgId, groupId);
+        Response response = target(path).request().get();
+        Type listType = new TypeToken<List<ObjectView>>(){}.getType();
+        List<ObjectView> objectViews = getResult(response, listType);
+
+        assertNotNull(objectViews);
+        assertEquals(objectDataList.size(), objectViews.size());
+    }
+
+    @Test
+    public void testGetObjectsByGroup_Exception() throws Exception {
+        when(mockService.getObjectsByGroup(orgId, groupId)).thenThrow(WaterEquipmentServiceException.class);
+
+        path = String.format("/organization/%s/organizationGroup/%s/objects", orgId, groupId);
+        Response response = target(path).request().get();
+
+        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+    }
+
+    @Test
+    public void testGetObjectByGroupWithAction() throws Exception {
+        when(mockService.getObjectByGroup(orgId, groupId, objId, action)).thenReturn(ObjectView.newInstance(objectData));
+
+        path = String.format("/organization/%s/organizationGroup/%s/checkPermissions", orgId, groupId);
+        Response response = target(path)
+                .queryParam("objId", objId)
+                .queryParam("action", action).request().get();
+        ObjectView objectView = getResult(response, ObjectView.class);
+
+        assertNotNull(objectView);
+        assertEquals(objectData.getId(), objectView.id);
+        assertEquals(objectData.getName(), objectView.name);
+        assertEquals(objectData.getType(), objectView.objectType);
+    }
+
+    @Test
+    public void testGetObjectByGroupWithAction_Exception() throws Exception {
+        when(mockService.getObjectByGroup(orgId, groupId, objId, action)).thenThrow(WaterEquipmentServiceException.class);
+
+        path = String.format("/organization/%s/organizationGroup/%s/checkPermissions", orgId, groupId);
+        Response response = target(path)
+                .queryParam("objId", objId)
+                .queryParam("action", action).request().get();
+
+        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+    }
+
+    @Test
+    public void testGetUsersByOrg() throws Exception {
+        when(mockService.getUsersByOrg(orgId))
+                .thenReturn(userList.stream().map(UserView::newInstance).collect(Collectors.toList()));
+
+        path = String.format("/organization/%s/organizationUsers", orgId);
+        Response response = target(path)
+                .queryParam("objId", objId)
+                .queryParam("action", action).request().get();
+        Type listType = new TypeToken<List<UserView>>(){}.getType();
+        List<UserView> userViews = getResult(response, listType);
+
+        assertNotNull(userViews);
+        assertEquals(userList.size(), userViews.size());
+    }
+
+    @Test
+    public void testGetUsersByOrg_Exception() throws Exception {
+        when(mockService.getUsersByOrg(orgId)).thenThrow(WaterEquipmentServiceException.class);
+
+        path = String.format("/organization/%s/organizationUsers", orgId);
+        Response response = target(path)
+                .queryParam("objId", objId)
+                .queryParam("action", action).request().get();
+
+        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+    }
+
+    @Test
+    public void testAddUserByOrg() throws Exception {
+        when(mockService.addUserByOrg(orgId, user)).thenReturn(ResultView.newInstance(addCount));
+
+        path = String.format("/organization/%s/organizationUsers", orgId);
+        Response response = target(path).request().post(Entity.entity(user, MediaType.APPLICATION_JSON));
+        ResultView resultView = getResult(response, ResultView.class);
+
+        assertNotNull(resultView);
+        assertEquals(addCount, resultView.count);
+    }
+
+    @Test
+    public void testAddUserByOrg_Exception() throws Exception {
+        when(mockService.addUserByOrg(eq(orgId), any(User.class))).thenThrow(WaterEquipmentServiceException.class);
+
+        path = String.format("/organization/%s/organizationUsers", orgId);
+        Response response = target(path).request().post(Entity.entity(user, MediaType.APPLICATION_JSON));
+
+        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+    }
+
+    @Test
+    public void testRemoveUserByOrg() throws Exception {
+        when(mockService.removeUserByOrg(orgId, userId)).thenReturn(ResultView.newInstance(removeCount));
+
+        path = String.format("/organization/%s/organizationUser/%s", orgId, userId);
+        Response response = target(path).request().delete();
+        ResultView resultView = getResult(response, ResultView.class);
+
+        assertNotNull(resultView);
+        assertEquals(removeCount, resultView.count);
+    }
+
+    @Test
+    public void testRemoveUserByOrg_Exception() throws Exception {
+        when(mockService.removeUserByOrg(orgId, userId)).thenThrow(WaterEquipmentServiceException.class);
+
+        path = String.format("/organization/%s/organizationUser/%s", orgId, userId);
+        Response response = target(path).request().delete();
+
+        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+    }
+
+    @Test
+    public void testGetObjectsByOrg() throws Exception {
+        when(mockService.getObjectsByOrg(orgId))
+                .thenReturn(objectDataList.stream().map(ObjectView::newInstance).collect(Collectors.toList()));
+
+        path = String.format("/organization/%s/objects", orgId);
+        Type listType = new TypeToken<List<ObjectView>>(){}.getType();
+        Response response = target(path).request().get();
+        List<ObjectView> objectViews = getResult(response, listType);
+
+        assertNotNull(objectViews);
+        assertEquals(objectDataList.size(), objectViews.size());
+    }
+
+    @Test
+    public void testGetObjectsByOrg_Exception() throws Exception {
+        when(mockService.getObjectsByOrg(orgId)).thenThrow(WaterEquipmentServiceException.class);
+
+        path = String.format("/organization/%s/objects", orgId);
+        Response response = target(path).request().get();
+
+        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+    }
+
+    @Test
+    public void testAddObjectByOrg() throws Exception {
+        when(mockService.addObjectByOrg(eq(orgId), any(ObjectData.class))).thenReturn(ResultView.newInstance(addCount));
+
+        path = String.format("/organization/%s/objects", orgId);
+        Response response = target(path).request().post(Entity.entity(objectData, MediaType.APPLICATION_JSON));
+        ResultView resultView = getResult(response, ResultView.class);
+
+        assertNotNull(resultView);
+        assertEquals(addCount, resultView.count);
+    }
+
+    @Test
+    public void testAddObjectByOrg_Exception() throws Exception {
+        when(mockService.addObjectByOrg(eq(orgId), any(ObjectData.class))).thenThrow(WaterEquipmentServiceException.class);
+
+        path = String.format("/organization/%s/objects", orgId);
+        Response response = target(path).request().post(Entity.entity(objectData, MediaType.APPLICATION_JSON));
+
+        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+    }
+
+    @Test
+    public void testRemoveObjectByOrg() throws Exception {
+        when(mockService.removeObjectByOrg(orgId, objId)).thenReturn(ResultView.newInstance(removeCount));
+
+        path = String.format("/organization/%s/object/%s", orgId, objId);
+        Response response = target(path).request().delete();
+        ResultView resultView = getResult(response, ResultView.class);
+
+        assertNotNull(resultView);
+        assertEquals(removeCount, resultView.count);
+    }
+
+    @Test
+    public void testRemoveObjectByOrg_Exception() throws Exception {
+        when(mockService.removeObjectByOrg(orgId, objId)).thenThrow(WaterEquipmentServiceException.class);
+
+        path = String.format("/organization/%s/object/%s", orgId, objId);
+        Response response = target(path).request().delete();
+
+        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+    }
 }

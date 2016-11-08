@@ -19,31 +19,10 @@ import static org.mockito.Mockito.when;
  */
 class OrgGroupResourceMock extends OrgGroupResource {
 
-    public OrgGroupResourceMock() {
-        waterEquipmentService = mock(WaterEquipmentService.class);
+    static WaterEquipmentService mockService = mock(WaterEquipmentService.class);
 
-        try {
-            when(waterEquipmentService.getObject(objId))
-                    .thenReturn(ObjectView.newInstance(objectData));
-            when(waterEquipmentService.getUsersByObject(objId, action))
-                    .thenReturn(userList.stream().map(UserView::newInstance).collect(Collectors.toList()));
-            when(waterEquipmentService.getObjectByUser(objId, userId))
-                    .thenReturn(ObjectView.newInstance(objectData));
-            when(waterEquipmentService.addObjectByUser(objId, userId))
-                    .thenReturn(ResultView.newInstance(addCount));
-            when(waterEquipmentService.removeObjectByUser(objId, userId, action))
-                    .thenReturn(ResultView.newInstance(removeCount));
-            when(waterEquipmentService.getGroupsByObject(objId, action))
-                    .thenReturn(groupList.stream().map(GroupView::newInstance).collect(Collectors.toList()));
-            when(waterEquipmentService.getObjectByGroup(objId, groupId))
-                    .thenReturn(ObjectView.newInstance(objectData));
-            when(waterEquipmentService.addObjectByGroup(objId, groupId))
-                    .thenReturn(ResultView.newInstance(addCount));
-            when(waterEquipmentService.removeObjectByGroup(objId, groupId, action))
-                    .thenReturn(ResultView.newInstance(removeCount));
-        } catch (WaterEquipmentServiceException e) {
-            e.printStackTrace();
-        }
+    public OrgGroupResourceMock() {
+        waterEquipmentService = mockService;
     }
 
 }
