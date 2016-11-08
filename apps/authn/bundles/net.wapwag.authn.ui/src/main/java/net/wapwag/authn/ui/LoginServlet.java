@@ -48,7 +48,6 @@ public class LoginServlet extends HttpServlet {
 		OSGIUtil.useAuthenticationService(authnService -> {
 			try {
 				String userName = req.getParameter("userName");
-				//Has been encrypted by MD5
 				String passwd = req.getParameter("passWord");
 				String checkCode = req.getParameter("checkCode");
 				ResultInfo info = new ResultInfo();
@@ -110,7 +109,7 @@ public class LoginServlet extends HttpServlet {
 	private boolean checkUser(User user, String passwd) {
 
 		if (null != user && null != user.getPasswordHash() && 
-				user.getPasswordHash().equals(StringUtil.strSHA1(passwd + user.getPasswordSalt()))) {
+				user.getPasswordHash().equals(StringUtil.strSHA1(StringUtil.strMd5(passwd) + user.getPasswordSalt()))) {
 			return true;
 		}
 		return false;

@@ -48,23 +48,12 @@ public class AuthenticationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Authorization @AnyAuthenticatedUser
 	public UserResponse getPublicUserProfile(@PathParam("userId") String uid) throws Exception {
-//		Ids.UserId _uid;
-//		try {
-//			_uid = Ids.UserId.fromString(uid);
-//		} catch (Exception e) {
-//			throw new InvalidRequestException("Invalid user id: "+e.getMessage(), e);
-//		}
-//		
-//		UserProfile user = authnService.getUserProfile(_uid);
-		
+
 		User user = authnService.getUser(Long.valueOf(uid));
 		
 		if (user == null) {
 			throw new ResourceNotFoundException("User not found: "+uid);
 		}
-		
-//		GetPublicUserProfileResponse response = new GetPublicUserProfileResponse();
-//		response.setId(user.id);
 		
 		if(user != null && ("1").equals(user.getEnabled())){
 			UserResponse userResponse = new UserResponse();
@@ -127,8 +116,8 @@ public class AuthenticationResource {
             user.setUsername(userRequest.getUsername());
             if(userRequest.getPasswordHash() != null){
 	            long pwdSalt = System.currentTimeMillis();
-	            //save passwordHash,rule -> SHA1(pwd By MD5 + pwdSalt)
-	            user.setPasswordHash(StringUtil.strSHA1(userRequest.getPasswordHash() + pwdSalt));
+	            //save passwordHash,rule -> SHA1(pwd + pwdSalt)
+	            user.setPasswordHash(StringUtil.strSHA1(StringUtil.strMd5(userRequest.getPasswordHash()) + pwdSalt));
 	            //save pwdSalt
 	            user.setPasswordSalt(pwdSalt + "");
             }
@@ -165,8 +154,8 @@ public class AuthenticationResource {
             }
             if(userRequest.getPasswordHash() != null){
             	long pwdSalt = System.currentTimeMillis();
-	            //save passwordHash,rule -> SHA1(pwd By MD5 + pwdSalt)
-	            user.setPasswordHash(StringUtil.strSHA1(userRequest.getPasswordHash() + pwdSalt));
+	            //save passwordHash,rule -> SHA1(pwd + pwdSalt)
+	            user.setPasswordHash(StringUtil.strSHA1(StringUtil.strMd5(userRequest.getPasswordHash()) + pwdSalt));
 	            //save pwdSalt
 	            user.setPasswordSalt(pwdSalt + "");
             }

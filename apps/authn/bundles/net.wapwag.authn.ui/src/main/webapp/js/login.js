@@ -25,10 +25,10 @@ jQuery(document).ready(function() {
 				showError("登录密码不可以为空");
 				return;
 			}
-			if(isEncoded){
-				var newPassWord = $.md5(passWord);
-				$('input[name="passWord"]').val(newPassWord);
-			}
+//			if(isEncoded){
+//				var newPassWord = $.md5(passWord);
+//				$('input[name="passWord"]').val(newPassWord);
+//			}
 			$("#form").ajaxSubmit({
 				type:'post',
 				dataType : 'json',  
