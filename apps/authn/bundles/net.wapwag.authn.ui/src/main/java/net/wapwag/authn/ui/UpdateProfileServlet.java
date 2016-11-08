@@ -24,6 +24,7 @@ import net.wapwag.authn.dao.model.Image;
 import net.wapwag.authn.dao.model.User;
 import net.wapwag.authn.info.ResultInfo;
 import net.wapwag.authn.util.OSGIUtil;
+import net.wapwag.authn.util.StringUtil;
 /*
  * Definition of a servlet. Use the following annotations so that
  * OPS4J PAX Web Whiteboard Extended can hook it up into the Jetty server:
@@ -98,13 +99,19 @@ public class UpdateProfileServlet extends HttpServlet{
 		                        int numBytesRead = 0;  
 		                        while ((numBytesRead = is.read(buf)) != -1) {  
 		                            output.write(buf, 0, numBytesRead);  
-		                        }  
+		                        }
 		                        byte[] photo = output.toByteArray();
 		                    	
 		                    	if(photo.length <= maxSize){
 			                    	user = authnService.getUser(Long.valueOf(userId));
 			                    	if(fis.getName() != null){
-				                    	image.setId(user.getAvartarId());
+			                    		if(user.getAvartarId() != null){
+			                    			image.setId(user.getAvartarId());
+			                    		}else{
+			                    			String avartarId = StringUtil.getUUID();
+			                    			image.setId(avartarId);
+			                    			user.setAvartarId(avartarId);
+			                    		}
 				                    	image.setImage(photo);
 				                    	System.out.println("photo detail byte : " + photo);
 				                    	
