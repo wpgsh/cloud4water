@@ -62,6 +62,7 @@ public class UpdateProfileServlet extends HttpServlet{
 		        User user = new User();
 		        Gson gson = new Gson();
 		        ResultInfo info = new ResultInfo();
+		        boolean flagImage = false;
 		        try {
 		            if (flag) {
 		                FileItemIterator iter = upload.getItemIterator(req);
@@ -104,8 +105,10 @@ public class UpdateProfileServlet extends HttpServlet{
 		                    	
 		                    	if(photo.length <= maxSize){
 			                    	user = authnService.getUser(Long.valueOf(userId));
+			                    	flagImage = true;
 			                    	if(fis.getName() != null){
-			                    		if(user.getAvartarId() != null){
+			                    		System.out.println("user.getAvartarId :" + user.getAvartarId());
+			                    		if(user.getAvartarId() != null && !user.getAvartarId().trim().equals("")){
 			                    			image.setId(user.getAvartarId());
 			                    		}else{
 			                    			String avartarId = StringUtil.getUUID();
@@ -137,7 +140,11 @@ public class UpdateProfileServlet extends HttpServlet{
 		            }
 		        }catch (Exception e){
 		        }
-				
+		        
+		        if(!flagImage){
+		        	user = authnService.getUser(Long.valueOf(userId));
+		        }
+		        user.setId(Long.valueOf(userId));
 				user.setUsername(userName);
 				user.setPhone1(phone);
 				user.setEmail(email);
