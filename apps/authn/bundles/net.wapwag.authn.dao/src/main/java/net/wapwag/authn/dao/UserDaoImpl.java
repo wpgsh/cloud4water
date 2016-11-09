@@ -145,13 +145,12 @@ public class UserDaoImpl implements UserDao {
                     AccessToken.class)
                     .setParameter("userId", userId)
                     .setParameter("clientId", clientId)
-                    .getSingleResult()
+                    .getResultList()
+                    .stream()
+                    .findFirst()
+                    .orElse(null)                    
             );
         } catch (Exception e) {
-            if (e.getCause() instanceof NoResultException) {
-                //if no result found,return null.
-                return null;
-            }
             throw new UserDaoException("cannot find access token", e);
         }
     }
