@@ -20,10 +20,10 @@ public class MysqlTxAwareEntityManager implements TxAwareEntityManager {
 	private static final ImmutableList<String> ddl =
 			ImmutableList.of(
 					//Reinitialize database
-					"drop table if exists users",
-					"drop table if exists access_tokens",
-					"drop table if exists registered_clients",
-					"drop table if exists image",
+//					"drop table if exists users",
+//					"drop table if exists access_tokens",
+//					"drop table if exists registered_clients",
+//					"drop table if exists image",
 					// 0
 					"create table if not exists users("
 							+ "  id bigint primary key AUTO_INCREMENT,"
