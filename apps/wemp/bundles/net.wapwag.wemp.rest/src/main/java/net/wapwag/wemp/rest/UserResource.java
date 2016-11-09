@@ -37,7 +37,7 @@ public class UserResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Authorization
-    @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
+    @FineGrainedAuthorization(permission = Permission.READ, target = "{uid}")
     public Set<ObjectView> getObjectsByUser(@PathParam("uid") long userId, @QueryParam("action") String action) throws Exception {
         return waterEquipmentService.getObjectsByUser(userId, action);
     }
