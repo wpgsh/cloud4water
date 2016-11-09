@@ -3,7 +3,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     version="2.0">
     <!--  RESOURCE_LOCAL -->
-    <persistence-unit name="user-jpa" transaction-type="JTA">
+    <persistence-unit name="user-jpa" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <jta-data-source>osgi:service/javax.sql.DataSource/(osgi.jndi.service.name=jdbc/User)</jta-data-source>
         <non-jta-data-source>osgi:service/javax.sql.DataSource/(osgi.jndi.service.name=jdbc/User)</non-jta-data-source>

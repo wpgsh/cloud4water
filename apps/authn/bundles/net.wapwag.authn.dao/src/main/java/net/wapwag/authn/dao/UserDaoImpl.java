@@ -27,7 +27,7 @@ public class UserDaoImpl implements UserDao {
 	private static final Logger logger = LoggerFactory.getLogger(UserDaoImpl.class);
 
 	@Reference(target = "(osgi.name=user)")
-	private TxAwareEntityManager entityManager;
+	protected TxAwareEntityManager entityManager;
 
 	@Activate
 	protected void init() throws Exception {
