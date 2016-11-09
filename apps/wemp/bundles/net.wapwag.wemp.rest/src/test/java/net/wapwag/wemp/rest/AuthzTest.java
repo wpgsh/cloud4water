@@ -10,6 +10,8 @@ import static org.eclipse.jetty.http.HttpStatus.OK_200;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Type;
@@ -95,7 +97,7 @@ public class AuthzTest extends BaseResourceTest {
 		TestAuthorizationAnnotationProcessor authz = new TestAuthorizationAnnotationProcessor();
 		authz.bindAuthorizationSchemes(schemes);
 		
-		when(mockService.lookupToken(any())).thenReturn(null);
+//		when(mockService.lookupToken(any())).thenReturn(null);
 		when(mockService.lookupToken(handle)).thenReturn(
 				new AccessTokenMapper(
 						Long.toString(accessToken.getAccessTokenId().getUser().getId()),
@@ -129,7 +131,7 @@ public class AuthzTest extends BaseResourceTest {
 	
 	@Override
 	ResourceConfig initResource() {
-		ResourceConfig cfg = new ResourceConfig(UserResource.class);
+		ResourceConfig cfg = new ResourceConfig(UserResourceMock.class);
 		
 		try {
 			cfg.register(createJAXRSProvider());
@@ -142,9 +144,10 @@ public class AuthzTest extends BaseResourceTest {
 	
 	String path;
 
-	@Ignore
 	@Test
     public void testGetObjectsByUser() throws Exception {
+        when(mockService.isAuthorized(anyString(), anyString(), anyString()))
+                .thenReturn(true);
         when(mockService.getObjectsByUser(userId, "read"))
                 .thenReturn(objectDataList.stream().map(ObjectView::newInstance).collect(Collectors.toSet()));
 
