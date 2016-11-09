@@ -259,40 +259,40 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		
 	}
 
-	@Override
-	public User getUserAvatar(long uid) throws AuthenticationServiceException {
-		User user;
-		try {
-			user = userDao.getUserAvatar(uid);
-		} catch (UserDaoException e) {
-			throw new AuthenticationServiceException("Cannot get user", e);
-		}
-
-		if (user != null) {
-			return new User();
-		} else {
-			return null;
-		}
-	}
-
-	@Override
-	public int saveUserAvatar(User user) throws AuthenticationServiceException {
-		try {
-			return  userDao.saveUserAvatar(user);
-		} catch (UserDaoException e) {
-			throw new AuthenticationServiceException("cannot add user");
-		}
-	}
-
-	@Override
-	public int removeUserAvatar(long uid)
-			throws AuthenticationServiceException {
-		try {
-			return userDao.removeUserAvatar(uid);
-		} catch (UserDaoException e) {
-			throw new AuthenticationServiceException("cannot remove user Avatar");
-		}
-	}
+//	@Override
+//	public User getUserAvatar(long uid) throws AuthenticationServiceException {
+//		User user;
+//		try {
+//			user = userDao.getUserAvatar(uid);
+//		} catch (UserDaoException e) {
+//			throw new AuthenticationServiceException("Cannot get user", e);
+//		}
+//
+//		if (user != null) {
+//			return new User();
+//		} else {
+//			return null;
+//		}
+//	}
+//
+//	@Override
+//	public int saveUserAvatar(User user) throws AuthenticationServiceException {
+//		try {
+//			return  userDao.saveUserAvatar(user);
+//		} catch (UserDaoException e) {
+//			throw new AuthenticationServiceException("cannot add user");
+//		}
+//	}
+//
+//	@Override
+//	public int removeUserAvatar(long uid)
+//			throws AuthenticationServiceException {
+//		try {
+//			return userDao.removeUserAvatar(uid);
+//		} catch (UserDaoException e) {
+//			throw new AuthenticationServiceException("cannot remove user Avatar");
+//		}
+//	}
 
     @Override
 	public User getUserByName(String userName)
