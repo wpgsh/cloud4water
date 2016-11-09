@@ -52,6 +52,7 @@ public class TestObjectModel {
 	        for (i = 0; i < 10; i++) {
 	            user = new User();
 	            user.setName("admin" + i);
+	            user.setExternalId(i);
 	            em.persist(user);
 	            sampleUserId = user.getId();
 	        }
@@ -102,6 +103,7 @@ public class TestObjectModel {
     		
 	        User user = new User();
 	        user.setName("管理员");
+	        user.setExternalId(11L);
 			em.persist(user);
 	
 			ObjectData china = new Country();

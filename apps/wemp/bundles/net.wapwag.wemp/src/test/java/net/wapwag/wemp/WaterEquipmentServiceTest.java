@@ -2,7 +2,10 @@ package net.wapwag.wemp;
 
 import net.wapwag.wemp.dao.WaterEquipmentDao;
 import net.wapwag.wemp.dao.WaterEquipmentDaoException;
+import net.wapwag.wemp.dao.model.ObjectData;
 import net.wapwag.wemp.dao.model.permission.AccessToken;
+import net.wapwag.wemp.dao.model.permission.Group;
+import net.wapwag.wemp.dao.model.permission.User;
 import net.wapwag.wemp.model.*;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.junit.Before;
@@ -46,27 +49,27 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testIsAuthorized() throws Exception {
-        when(waterEquipmentDao.isAuthorized(anyLong(), anyString(), anyLong())).thenReturn(true);
+        when(waterEquipmentDao.isAuthorized(userId, action, objId)).thenReturn(true);
 
-        boolean isAuthorized = waterEquipmentService.isAuthorized("userName", action, objId + "");
+        boolean isAuthorized = waterEquipmentService.isAuthorized(userId + "", action, objId + "");
 
         assertEquals(true, isAuthorized);
     }
 
     @Test
     public void testIsAuthorized_UnAuthorize() throws Exception {
-        when(waterEquipmentDao.isAuthorized(anyLong(), anyString(), anyLong())).thenReturn(false);
+        when(waterEquipmentDao.isAuthorized(userId, "write", objId)).thenReturn(false);
 
-        boolean isAuthorized = waterEquipmentService.isAuthorized("userName", action, objId + "");
+        boolean isAuthorized = waterEquipmentService.isAuthorized(userId + "", "write", objId + "");
 
         assertEquals(false, isAuthorized);
     }
 
     @Test
     public void testIsAuthorized_Exception() throws Exception {
-        when(waterEquipmentDao.isAuthorized(anyLong(), anyString(), anyLong())).thenThrow(WaterEquipmentDaoException.class);
+        when(waterEquipmentDao.isAuthorized(invalidId, invalidString, invalidId)).thenThrow(WaterEquipmentDaoException.class);
 
-        boolean isAuthorized = waterEquipmentService.isAuthorized("userName", action, objId + "");
+        boolean isAuthorized = waterEquipmentService.isAuthorized(invalidId + "", invalidString, invalidId + "");
 
         assertEquals(false, isAuthorized);
     }
@@ -101,9 +104,9 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testLookupToken_Exception() throws Exception {
-        when(waterEquipmentDao.lookupAccessToken(anyString())).thenThrow(WaterEquipmentDaoException.class);
+        when(waterEquipmentDao.lookupAccessToken(invalidString)).thenThrow(WaterEquipmentDaoException.class);
 
-        AccessTokenMapper accessTokenMapper = waterEquipmentService.lookupToken(encodeHandle);
+        AccessTokenMapper accessTokenMapper = waterEquipmentService.lookupToken(invalidEncodeHanlde);
 
         assertNull(accessTokenMapper);
     }
@@ -170,9 +173,9 @@ public class WaterEquipmentServiceTest {
 
     @Test(expected = OAuthProblemException.class)
     public void testGetAuthorizationCode_Exception() throws Exception {
-        when(waterEquipmentDao.getClientByRedirectURI(redirectURI)).thenThrow(WaterEquipmentDaoException.class);
+        when(waterEquipmentDao.getClientByRedirectURI(invalidString)).thenThrow(WaterEquipmentDaoException.class);
 
-        waterEquipmentService.getAuthorizationCode(userId, clientIdentity, redirectURI, scopes);
+        waterEquipmentService.getAuthorizationCode(userId, clientIdentity, invalidString, scopes);
     }
 
     @Test(expected = OAuthProblemException.class)
@@ -234,9 +237,9 @@ public class WaterEquipmentServiceTest {
 
     @Test(expected = OAuthProblemException.class)
     public void testGetAccessToken_Exception() throws Exception {
-        when(waterEquipmentDao.getClientByRedirectURI(redirectURI)).thenThrow(WaterEquipmentDaoException.class);
+        when(waterEquipmentDao.getClientByRedirectURI(invalidString)).thenThrow(WaterEquipmentDaoException.class);
 
-        waterEquipmentService.getAccessToken(clientIdentity, clientSecret, code, redirectURI);
+        waterEquipmentService.getAccessToken(clientIdentity, clientSecret, code, invalidString);
     }
 
     @Test
@@ -272,9 +275,9 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testGetUsersByObject_Exception() throws Exception {
-        when(waterEquipmentDao.getUsersByObject(anyLong(), anyString())).thenThrow(WaterEquipmentDaoException.class);
+        when(waterEquipmentDao.getUsersByObject(invalidId, invalidString)).thenThrow(WaterEquipmentDaoException.class);
 
-        List<UserView> userViewList = waterEquipmentService.getUsersByObject(objId, "");
+        List<UserView> userViewList = waterEquipmentService.getUsersByObject(invalidId, invalidString);
 
         assertNull(userViewList);
     }
@@ -292,9 +295,9 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testGetObjectByUser_Exception() throws Exception {
-        when(waterEquipmentDao.getObjectByUser(objId, userId)).thenThrow(WaterEquipmentDaoException.class);
+        when(waterEquipmentDao.getObjectByUser(invalidId, invalidId)).thenThrow(WaterEquipmentDaoException.class);
 
-        ObjectView objectView = waterEquipmentService.getObjectByUser(objId, userId);
+        ObjectView objectView = waterEquipmentService.getObjectByUser(invalidId, invalidId);
 
         assertNull(objectView);
     }
@@ -311,9 +314,9 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testAddObjectByUser_Exception() throws Exception {
-        when(waterEquipmentDao.addObjectByUser(objId, userId)).thenThrow(WaterEquipmentDaoException.class);
+        when(waterEquipmentDao.addObjectByUser(invalidId, invalidId)).thenThrow(WaterEquipmentDaoException.class);
 
-        ResultView resultView = waterEquipmentService.addObjectByUser(objId, userId);
+        ResultView resultView = waterEquipmentService.addObjectByUser(invalidId, invalidId);
 
         assertNull(resultView);
     }
@@ -330,9 +333,9 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testRemoveObjectByUser_Exception() throws Exception {
-        when(waterEquipmentDao.removeObjectByUser(objId, userId, action)).thenThrow(WaterEquipmentDaoException.class);
+        when(waterEquipmentDao.removeObjectByUser(invalidId, invalidId, action)).thenThrow(WaterEquipmentDaoException.class);
 
-        ResultView resultView = waterEquipmentService.removeObjectByUser(objId, userId, action);
+        ResultView resultView = waterEquipmentService.removeObjectByUser(invalidId, invalidId, action);
 
         assertNull(resultView);
     }
@@ -350,9 +353,9 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testGetGroupsByObject_Exception() throws Exception {
-        when(waterEquipmentDao.getGroupsByObject(objId, action)).thenThrow(WaterEquipmentDaoException.class);
+        when(waterEquipmentDao.getGroupsByObject(invalidId, action)).thenThrow(WaterEquipmentDaoException.class);
 
-        List<GroupView> groupViews = waterEquipmentService.getGroupsByObject(objId, action);
+        List<GroupView> groupViews = waterEquipmentService.getGroupsByObject(invalidId, action);
 
         assertNull(groupViews);
     }
@@ -369,9 +372,9 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testGetObjectByGroup_Exception() throws Exception {
-        when(waterEquipmentDao.getObjectByGroup(objId, groupId)).thenThrow(WaterEquipmentDaoException.class);
+        when(waterEquipmentDao.getObjectByGroup(invalidId, invalidId)).thenThrow(WaterEquipmentDaoException.class);
 
-        ObjectView objectView = waterEquipmentService.getObjectByGroup(objId, groupId);
+        ObjectView objectView = waterEquipmentService.getObjectByGroup(invalidId, invalidId);
 
         assertNull(objectView);
 
@@ -389,9 +392,9 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testAddObjectByGroup_Exception() throws Exception {
-        when(waterEquipmentDao.addObjectByGroup(objId, groupId)).thenThrow(WaterEquipmentDaoException.class);
+        when(waterEquipmentDao.addObjectByGroup(invalidId, invalidId)).thenThrow(WaterEquipmentDaoException.class);
 
-        ResultView resultView = waterEquipmentService.addObjectByGroup(objId, groupId);
+        ResultView resultView = waterEquipmentService.addObjectByGroup(invalidId, invalidId);
 
         assertNull(resultView);
     }
@@ -409,9 +412,9 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testRemoveObjectByGroup_Exception() throws Exception {
-        when(waterEquipmentDao.removeObjectByGroup(objId, groupId, action)).thenThrow(WaterEquipmentDaoException.class);
+        when(waterEquipmentDao.removeObjectByGroup(invalidId, invalidId, action)).thenThrow(WaterEquipmentDaoException.class);
 
-        ResultView resultView = waterEquipmentService.removeObjectByGroup(objId, groupId, action);
+        ResultView resultView = waterEquipmentService.removeObjectByGroup(invalidId, invalidId, action);
         
         assertNull(resultView);
     }
@@ -428,9 +431,9 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testGetGroupsByOrg_Exception() throws Exception {
-        when(waterEquipmentDao.getGroupsByOrg(orgId)).thenThrow(WaterEquipmentDaoException.class);
+        when(waterEquipmentDao.getGroupsByOrg(invalidId)).thenThrow(WaterEquipmentDaoException.class);
 
-        List<GroupView> groupViewList = waterEquipmentService.getGroupsByOrg(orgId);
+        List<GroupView> groupViewList = waterEquipmentService.getGroupsByOrg(invalidId);
 
         assertNull(groupViewList);
     }
@@ -447,9 +450,9 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testAddGroupByOrg_Exception() throws Exception {
-        when(waterEquipmentDao.addGroupByOrg(orgId, group)).thenThrow(WaterEquipmentDaoException.class);
+        when(waterEquipmentDao.addGroupByOrg(eq(invalidId), any(Group.class))).thenThrow(WaterEquipmentDaoException.class);
 
-        ResultView resultView = waterEquipmentService.addGroupByOrg(orgId, group);
+        ResultView resultView = waterEquipmentService.addGroupByOrg(invalidId, group);
 
         assertNull(resultView);
     }
@@ -467,9 +470,9 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testGetGroupByOrg_Exception() throws Exception {
-        when(waterEquipmentDao.getGroupByOrg(orgId, groupId)).thenThrow(WaterEquipmentDaoException.class);
+        when(waterEquipmentDao.getGroupByOrg(invalidId, invalidId)).thenThrow(WaterEquipmentDaoException.class);
 
-        GroupView groupView = waterEquipmentService.getGroupByOrg(orgId, groupId);
+        GroupView groupView = waterEquipmentService.getGroupByOrg(invalidId, invalidId);
 
         assertNull(groupView);
     }
@@ -486,9 +489,9 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testUpdateGroupByOrg_Exception() throws Exception {
-        when(waterEquipmentDao.updateGroupByOrg(orgId, groupId, group)).thenThrow(WaterEquipmentDaoException.class);
+        when(waterEquipmentDao.updateGroupByOrg(eq(invalidId), eq(invalidId), any(Group.class))).thenThrow(WaterEquipmentDaoException.class);
 
-        ResultView resultView = waterEquipmentService.updateGroupByOrg(orgId, groupId, group);
+        ResultView resultView = waterEquipmentService.updateGroupByOrg(invalidId, invalidId, group);
 
         assertNull(resultView);
     }
@@ -505,9 +508,9 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void removeGroupByOrg_Exception() throws Exception {
-        when(waterEquipmentDao.removeGroupByOrg(orgId, groupId)).thenThrow(WaterEquipmentDaoException.class);
+        when(waterEquipmentDao.removeGroupByOrg(invalidId, invalidId)).thenThrow(WaterEquipmentDaoException.class);
 
-        ResultView resultView = waterEquipmentService.removeGroupByOrg(orgId, groupId);
+        ResultView resultView = waterEquipmentService.removeGroupByOrg(invalidId, invalidId);
 
         assertNull(resultView);
     }
@@ -524,9 +527,9 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testGetUsersByGroup_Exception() throws Exception {
-        when(waterEquipmentDao.getUsersByGroup(objId, groupId)).thenThrow(WaterEquipmentDaoException.class);
+        when(waterEquipmentDao.getUsersByGroup(invalidId, invalidId)).thenThrow(WaterEquipmentDaoException.class);
 
-        List<UserView> userViewList = waterEquipmentService.getUsersByGroup(orgId, groupId);
+        List<UserView> userViewList = waterEquipmentService.getUsersByGroup(invalidId, invalidId);
 
         assertNull(userViewList);
     }
@@ -543,9 +546,9 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testAddUserByGroup_Exception() throws Exception {
-        when(waterEquipmentDao.addUserByGroup(orgId, groupId, userId)).thenThrow(WaterEquipmentDaoException.class);
+        when(waterEquipmentDao.addUserByGroup(invalidId, invalidId, invalidId)).thenThrow(WaterEquipmentDaoException.class);
 
-        ResultView resultView = waterEquipmentService.addUserByGroup(orgId, groupId, userId);
+        ResultView resultView = waterEquipmentService.addUserByGroup(invalidId, invalidId, invalidId);
 
         assertNull(resultView);
     }
@@ -562,9 +565,9 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testRemoveUserByGroup_Exception() throws Exception {
-        when(waterEquipmentDao.removeUserByGroup(orgId, groupId, userId)).thenThrow(WaterEquipmentDaoException.class);
+        when(waterEquipmentDao.removeUserByGroup(invalidId, invalidId, invalidId)).thenThrow(WaterEquipmentDaoException.class);
 
-        ResultView resultView = waterEquipmentService.removeUserByGroup(orgId, groupId, userId);
+        ResultView resultView = waterEquipmentService.removeUserByGroup(invalidId, invalidId, invalidId);
 
         assertNull(resultView);
     }
@@ -581,9 +584,9 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testGetObjectsByGroup_Exception() throws Exception {
-        when(waterEquipmentDao.getObjectsByGroup(orgId, groupId)).thenThrow(WaterEquipmentDaoException.class);
+        when(waterEquipmentDao.getObjectsByGroup(invalidId, invalidId)).thenThrow(WaterEquipmentDaoException.class);
 
-        List<ObjectView> objectViews = waterEquipmentService.getObjectsByGroup(orgId, groupId);
+        List<ObjectView> objectViews = waterEquipmentService.getObjectsByGroup(invalidId, invalidId);
 
         assertNull(objectViews);
     }
@@ -602,9 +605,9 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testGetObjectByGroupWithAction_Exception() throws Exception {
-        when(waterEquipmentDao.getObjectByGroup(orgId, groupId, objId, action)).thenThrow(WaterEquipmentDaoException.class);
+        when(waterEquipmentDao.getObjectByGroup(invalidId, invalidId, invalidId, action)).thenThrow(WaterEquipmentDaoException.class);
 
-        ObjectView objectView = waterEquipmentService.getObjectByGroup(orgId, groupId, objId, action);
+        ObjectView objectView = waterEquipmentService.getObjectByGroup(invalidId, invalidId, invalidId, action);
 
         assertNull(objectView);
     }
@@ -621,18 +624,18 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testGetUsersByOrg_Exception() throws Exception {
-        when(waterEquipmentDao.getUsersByOrg(orgId)).thenThrow(WaterEquipmentDaoException.class);
+        when(waterEquipmentDao.getUsersByOrg(invalidId)).thenThrow(WaterEquipmentDaoException.class);
 
-        List<UserView> userViews = waterEquipmentService.getUsersByOrg(orgId);
+        List<UserView> userViews = waterEquipmentService.getUsersByOrg(invalidId);
 
         assertNull(userViews);
     }
 
     @Test
     public void testAddUserByOrg() throws Exception {
-        when(waterEquipmentDao.addUserByOrg(orgId, user)).thenReturn(addCount);
+        when(waterEquipmentDao.addUserByOrg(eq(invalidId), any(User.class))).thenReturn(addCount);
 
-        ResultView resultView = waterEquipmentService.addUserByOrg(orgId, user);
+        ResultView resultView = waterEquipmentService.addUserByOrg(invalidId, user);
 
         assertNotNull(resultView);
         assertEquals(addCount, resultView.count);
@@ -640,9 +643,9 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testAddUserByOrg_Exception() throws Exception {
-        when(waterEquipmentDao.addUserByOrg(orgId, user)).thenThrow(WaterEquipmentDaoException.class);
+        when(waterEquipmentDao.addUserByOrg(eq(invalidId), any(User.class))).thenThrow(WaterEquipmentDaoException.class);
 
-        ResultView resultView = waterEquipmentService.addUserByOrg(orgId, user);
+        ResultView resultView = waterEquipmentService.addUserByOrg(invalidId, user);
 
         assertNull(resultView);
     }
@@ -659,9 +662,9 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testRemoveUserByOrg_Exception() throws Exception {
-        when(waterEquipmentDao.removeUserByOrg(orgId, userId)).thenThrow(WaterEquipmentDaoException.class);
+        when(waterEquipmentDao.removeUserByOrg(invalidId, invalidId)).thenThrow(WaterEquipmentDaoException.class);
 
-        ResultView resultView = waterEquipmentService.removeUserByOrg(orgId, userId);
+        ResultView resultView = waterEquipmentService.removeUserByOrg(invalidId, invalidId);
 
         assertNull(resultView);
     }
@@ -678,9 +681,9 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testGetObjectsByOrg_Exception() throws Exception {
-        when(waterEquipmentDao.getObjectsByOrg(orgId)).thenThrow(WaterEquipmentDaoException.class);
+        when(waterEquipmentDao.getObjectsByOrg(invalidId)).thenThrow(WaterEquipmentDaoException.class);
 
-        List<ObjectView> objectViews = waterEquipmentService.getObjectsByOrg(orgId);
+        List<ObjectView> objectViews = waterEquipmentService.getObjectsByOrg(invalidId);
 
         assertNull(objectViews);
     }
@@ -697,9 +700,9 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testAddObjectByOrg_Exception() throws Exception {
-        when(waterEquipmentDao.addObjectByOrg(orgId, objectData)).thenThrow(WaterEquipmentDaoException.class);
+        when(waterEquipmentDao.addObjectByOrg(eq(invalidId), any(ObjectData.class))).thenThrow(WaterEquipmentDaoException.class);
 
-        ResultView resultView = waterEquipmentService.addObjectByOrg(orgId, objectData);
+        ResultView resultView = waterEquipmentService.addObjectByOrg(invalidId, objectData);
 
         assertNull(resultView);
     }
@@ -716,9 +719,9 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testRemoveObjectByOrg_Exception() throws Exception {
-        when(waterEquipmentDao.removeObjectByOrg(orgId, objId)).thenThrow(WaterEquipmentDaoException.class);
+        when(waterEquipmentDao.removeObjectByOrg(invalidId, invalidId)).thenThrow(WaterEquipmentDaoException.class);
 
-        ResultView resultView = waterEquipmentService.removeObjectByOrg(orgId, objId);
+        ResultView resultView = waterEquipmentService.removeObjectByOrg(invalidId, invalidId);
 
         assertNull(resultView);
     }
@@ -745,9 +748,9 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testCheckPermission_Exception() throws Exception {
-        when(waterEquipmentDao.checkPermission(userId, objectData)).thenThrow(WaterEquipmentDaoException.class);
+        when(waterEquipmentDao.checkPermission(eq(invalidId), any(ObjectData.class))).thenThrow(WaterEquipmentDaoException.class);
 
-        ResultView resultView = waterEquipmentService.checkPermission(userId, objectData);
+        ResultView resultView = waterEquipmentService.checkPermission(invalidId, objectData);
 
         assertNull(resultView);
     }
@@ -764,9 +767,9 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testGetObjectsByUser_Exception() throws Exception {
-        when(waterEquipmentDao.getObjectsByUser(userId, "read")).thenThrow(WaterEquipmentDaoException.class);
+        when(waterEquipmentDao.getObjectsByUser(invalidId, "read")).thenThrow(WaterEquipmentDaoException.class);
 
-        Set<ObjectView> objectViews = waterEquipmentService.getObjectsByUser(userId, "read");
+        Set<ObjectView> objectViews = waterEquipmentService.getObjectsByUser(invalidId, "read");
 
         assertNull(objectViews);
     }

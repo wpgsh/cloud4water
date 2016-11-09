@@ -22,6 +22,7 @@ class MockData {
     static final long userId = 1L;
     static final long groupId = 1L;
     static final long orgId = 1L;
+    static final long invalidId = 0;
 
     static final int count = 5;
     static final int addCount = 1;

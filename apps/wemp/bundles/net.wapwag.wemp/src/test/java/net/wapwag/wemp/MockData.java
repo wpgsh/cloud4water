@@ -22,6 +22,7 @@ class MockData {
     static final long userId = 1L;
     static final long groupId = 1L;
     static final long orgId = 1L;
+    static final long invalidId = 0L;
 
     static final int count = 5;
     static final int addCount = 1;
@@ -38,6 +39,8 @@ class MockData {
     static final String scope = "user:name user:avatar";
     static final String nonAuthzedscope = "user:email";
     static final String action = "read";
+    static final String invalidString = "invalid_string";
+    static final String invalidEncodeHanlde = "aW52YWxpZF9zdHJpbmc=";
 
     static final User user = new User();
     static final RegisteredClient client = new RegisteredClient();

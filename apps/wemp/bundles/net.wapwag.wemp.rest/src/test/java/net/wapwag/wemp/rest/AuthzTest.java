@@ -20,6 +20,7 @@ import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.server.ResourceConfig;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.base.Optional;
@@ -141,6 +142,7 @@ public class AuthzTest extends BaseResourceTest {
 	
 	String path;
 
+	@Ignore
 	@Test
     public void testGetObjectsByUser() throws Exception {
         when(mockService.getObjectsByUser(userId, "read"))

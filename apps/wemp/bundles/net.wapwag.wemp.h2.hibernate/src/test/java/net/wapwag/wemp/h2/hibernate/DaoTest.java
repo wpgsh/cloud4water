@@ -1,16 +1,5 @@
 package net.wapwag.wemp.h2.hibernate;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-
-import org.apache.aries.jpa.template.EmFunction;
-import org.apache.aries.jpa.template.JpaTemplate;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.mockito.Mockito;
-
 import junit.framework.TestCase;
 import net.wapwag.wemp.dao.TxAwareEntityManager;
 import net.wapwag.wemp.dao.WaterEquipmentDao;
@@ -18,17 +7,23 @@ import net.wapwag.wemp.dao.WaterEquipmentDaoImpl;
 import net.wapwag.wemp.dao.model.ObjectType;
 import net.wapwag.wemp.dao.model.geo.Area;
 import net.wapwag.wemp.dao.model.geo.Country;
-import net.wapwag.wemp.dao.model.link.GroupObject;
-import net.wapwag.wemp.dao.model.link.GroupObjectId;
-import net.wapwag.wemp.dao.model.link.UserGroup;
-import net.wapwag.wemp.dao.model.link.UserGroupId;
-import net.wapwag.wemp.dao.model.link.UserObject;
-import net.wapwag.wemp.dao.model.link.UserObjectId;
+import net.wapwag.wemp.dao.model.link.*;
 import net.wapwag.wemp.dao.model.org.Organization;
 import net.wapwag.wemp.dao.model.permission.Group;
 import net.wapwag.wemp.dao.model.permission.User;
+import org.apache.aries.jpa.template.EmFunction;
+import org.apache.aries.jpa.template.JpaTemplate;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.mockito.Mockito;
 
-import static org.mockito.Mockito.*;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
 
 public class DaoTest {
 	
@@ -56,21 +51,25 @@ public class DaoTest {
     		
     		User user0 = new User();
     		user0.setName("user0");
+			user0.setExternalId(0L);
     		em.persist(user0);
     		user0Id = user0.getId();
     		
     		User user1 = new User();
     		user1.setName("user1");
+            user1.setExternalId(1L);
     		em.persist(user1);
     		user1Id = user1.getId();    		
 
     		User user2 = new User();
     		user2.setName("user2");
+            user2.setExternalId(2L);
     		em.persist(user2);
     		user2Id = user2.getId();
     		
     		User user3 = new User();
     		user3.setName("user3");
+            user3.setExternalId(3L);
     		em.persist(user3);
     		user3Id = user3.getId();    		
     		

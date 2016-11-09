@@ -57,9 +57,9 @@ public class OrgGroupResourceTest extends BaseResourceTest {
 
     @Test
     public void testGetGroupsByOrg_Exception() throws Exception {
-        when(mockService.getGroupsByOrg(orgId)).thenThrow(WaterEquipmentServiceException.class);
+        when(mockService.getGroupsByOrg(invalidId)).thenThrow(WaterEquipmentServiceException.class);
 
-        path = String.format("/organization/%s/organizationGroups", orgId);
+        path = String.format("/organization/%s/organizationGroups", invalidId);
         Response response = target(path).request().get();
 
         assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
@@ -79,9 +79,9 @@ public class OrgGroupResourceTest extends BaseResourceTest {
 
     @Test
     public void testAddGroupByOrg_Exception() throws Exception {
-        when(mockService.addGroupByOrg(anyLong(), any(Group.class))).thenThrow(WaterEquipmentServiceException.class);
+        when(mockService.addGroupByOrg(eq(invalidId), any(Group.class))).thenThrow(WaterEquipmentServiceException.class);
 
-        path = String.format("/organization/%s/organizationGroups", orgId);
+        path = String.format("/organization/%s/organizationGroups", invalidId);
         Response response = target(path).request().post(Entity.entity(group, MediaType.APPLICATION_JSON));
 
         assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
@@ -102,9 +102,9 @@ public class OrgGroupResourceTest extends BaseResourceTest {
 
     @Test
     public void testGetGroupByOrg_Exception() throws Exception {
-        when(mockService.getGroupByOrg(orgId, groupId)).thenThrow(WaterEquipmentServiceException.class);
+        when(mockService.getGroupByOrg(invalidId, invalidId)).thenThrow(WaterEquipmentServiceException.class);
 
-        path = String.format("/organization/%s/organizationGroup/%s", orgId, groupId);
+        path = String.format("/organization/%s/organizationGroup/%s", invalidId, invalidId);
         Response response = target(path).request().get();
 
         assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
@@ -124,9 +124,9 @@ public class OrgGroupResourceTest extends BaseResourceTest {
 
     @Test
     public void testUpdateGroupByOrg_Exception() throws Exception {
-        when(mockService.updateGroupByOrg(eq(orgId), eq(groupId), any(Group.class))).thenThrow(WaterEquipmentServiceException.class);
+        when(mockService.updateGroupByOrg(eq(invalidId), eq(invalidId), any(Group.class))).thenThrow(WaterEquipmentServiceException.class);
 
-        path = String.format("/organization/%s/organizationGroup/%s", orgId, groupId);
+        path = String.format("/organization/%s/organizationGroup/%s", invalidId, invalidId);
         Response response = target(path).request().put(Entity.entity(group, MediaType.APPLICATION_JSON));
 
         assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
@@ -146,9 +146,9 @@ public class OrgGroupResourceTest extends BaseResourceTest {
 
     @Test
     public void removeGroupByOrg_Exception() throws Exception {
-        when(mockService.removeGroupByOrg(orgId, groupId)).thenThrow(WaterEquipmentServiceException.class);
+        when(mockService.removeGroupByOrg(invalidId, invalidId)).thenThrow(WaterEquipmentServiceException.class);
 
-        path = String.format("/organization/%s/organizationGroup/%s", orgId, groupId);
+        path = String.format("/organization/%s/organizationGroup/%s", invalidId, invalidId);
         Response response = target(path).request().delete();
 
         assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
@@ -171,9 +171,9 @@ public class OrgGroupResourceTest extends BaseResourceTest {
 
     @Test
     public void testGetUsersByGroup_Exception() throws Exception {
-        when(mockService.getUsersByGroup(objId, groupId)).thenThrow(WaterEquipmentServiceException.class);
+        when(mockService.getUsersByGroup(invalidId, invalidId)).thenThrow(WaterEquipmentServiceException.class);
 
-        path = String.format("/organization/%s/organizationGroup/%s/users", orgId, groupId);
+        path = String.format("/organization/%s/organizationGroup/%s/users", invalidId, invalidId);
         Response response = target(path).request().get();
 
         assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
@@ -193,9 +193,9 @@ public class OrgGroupResourceTest extends BaseResourceTest {
 
     @Test
     public void testAddUserByGroup_Exception() throws Exception {
-        when(mockService.addUserByGroup(orgId, groupId, userId)).thenThrow(WaterEquipmentServiceException.class);
+        when(mockService.addUserByGroup(invalidId, invalidId, invalidId)).thenThrow(WaterEquipmentServiceException.class);
 
-        path = String.format("/organization/%s/organizationGroup/%s/user/%s", orgId, groupId, userId);
+        path = String.format("/organization/%s/organizationGroup/%s/user/%s", invalidId, invalidId, invalidId);
         Response response = target(path).request().post(null);
 
         assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
@@ -215,9 +215,9 @@ public class OrgGroupResourceTest extends BaseResourceTest {
 
     @Test
     public void testRemoveUserByGroup_Exception() throws Exception {
-        when(mockService.removeUserByGroup(orgId, groupId, userId)).thenThrow(WaterEquipmentServiceException.class);
+        when(mockService.removeUserByGroup(invalidId, invalidId, invalidId)).thenThrow(WaterEquipmentServiceException.class);
 
-        path = String.format("/organization/%s/organizationGroup/%s/user/%s", orgId, groupId, userId);
+        path = String.format("/organization/%s/organizationGroup/%s/user/%s", invalidId, invalidId, invalidId);
         Response response = target(path).request().delete();
 
         assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
@@ -239,9 +239,9 @@ public class OrgGroupResourceTest extends BaseResourceTest {
 
     @Test
     public void testGetObjectsByGroup_Exception() throws Exception {
-        when(mockService.getObjectsByGroup(orgId, groupId)).thenThrow(WaterEquipmentServiceException.class);
+        when(mockService.getObjectsByGroup(invalidId, invalidId)).thenThrow(WaterEquipmentServiceException.class);
 
-        path = String.format("/organization/%s/organizationGroup/%s/objects", orgId, groupId);
+        path = String.format("/organization/%s/organizationGroup/%s/objects", invalidId, invalidId);
         Response response = target(path).request().get();
 
         assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
@@ -265,11 +265,11 @@ public class OrgGroupResourceTest extends BaseResourceTest {
 
     @Test
     public void testGetObjectByGroupWithAction_Exception() throws Exception {
-        when(mockService.getObjectByGroup(orgId, groupId, objId, action)).thenThrow(WaterEquipmentServiceException.class);
+        when(mockService.getObjectByGroup(invalidId, invalidId, invalidId, action)).thenThrow(WaterEquipmentServiceException.class);
 
-        path = String.format("/organization/%s/organizationGroup/%s/checkPermissions", orgId, groupId);
+        path = String.format("/organization/%s/organizationGroup/%s/checkPermissions", invalidId, invalidId);
         Response response = target(path)
-                .queryParam("objId", objId)
+                .queryParam("objId", invalidId)
                 .queryParam("action", action).request().get();
 
         assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
@@ -293,9 +293,9 @@ public class OrgGroupResourceTest extends BaseResourceTest {
 
     @Test
     public void testGetUsersByOrg_Exception() throws Exception {
-        when(mockService.getUsersByOrg(orgId)).thenThrow(WaterEquipmentServiceException.class);
+        when(mockService.getUsersByOrg(invalidId)).thenThrow(WaterEquipmentServiceException.class);
 
-        path = String.format("/organization/%s/organizationUsers", orgId);
+        path = String.format("/organization/%s/organizationUsers", invalidId);
         Response response = target(path)
                 .queryParam("objId", objId)
                 .queryParam("action", action).request().get();
@@ -305,7 +305,7 @@ public class OrgGroupResourceTest extends BaseResourceTest {
 
     @Test
     public void testAddUserByOrg() throws Exception {
-        when(mockService.addUserByOrg(orgId, user)).thenReturn(ResultView.newInstance(addCount));
+        when(mockService.addUserByOrg(eq(orgId), any(User.class))).thenReturn(ResultView.newInstance(addCount));
 
         path = String.format("/organization/%s/organizationUsers", orgId);
         Response response = target(path).request().post(Entity.entity(user, MediaType.APPLICATION_JSON));
@@ -317,9 +317,9 @@ public class OrgGroupResourceTest extends BaseResourceTest {
 
     @Test
     public void testAddUserByOrg_Exception() throws Exception {
-        when(mockService.addUserByOrg(eq(orgId), any(User.class))).thenThrow(WaterEquipmentServiceException.class);
+        when(mockService.addUserByOrg(eq(invalidId), any(User.class))).thenThrow(WaterEquipmentServiceException.class);
 
-        path = String.format("/organization/%s/organizationUsers", orgId);
+        path = String.format("/organization/%s/organizationUsers", invalidId);
         Response response = target(path).request().post(Entity.entity(user, MediaType.APPLICATION_JSON));
 
         assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
@@ -339,9 +339,9 @@ public class OrgGroupResourceTest extends BaseResourceTest {
 
     @Test
     public void testRemoveUserByOrg_Exception() throws Exception {
-        when(mockService.removeUserByOrg(orgId, userId)).thenThrow(WaterEquipmentServiceException.class);
+        when(mockService.removeUserByOrg(invalidId, invalidId)).thenThrow(WaterEquipmentServiceException.class);
 
-        path = String.format("/organization/%s/organizationUser/%s", orgId, userId);
+        path = String.format("/organization/%s/organizationUser/%s", invalidId, invalidId);
         Response response = target(path).request().delete();
 
         assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
@@ -363,9 +363,9 @@ public class OrgGroupResourceTest extends BaseResourceTest {
 
     @Test
     public void testGetObjectsByOrg_Exception() throws Exception {
-        when(mockService.getObjectsByOrg(orgId)).thenThrow(WaterEquipmentServiceException.class);
+        when(mockService.getObjectsByOrg(invalidId)).thenThrow(WaterEquipmentServiceException.class);
 
-        path = String.format("/organization/%s/objects", orgId);
+        path = String.format("/organization/%s/objects", invalidId);
         Response response = target(path).request().get();
 
         assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
@@ -385,9 +385,9 @@ public class OrgGroupResourceTest extends BaseResourceTest {
 
     @Test
     public void testAddObjectByOrg_Exception() throws Exception {
-        when(mockService.addObjectByOrg(eq(orgId), any(ObjectData.class))).thenThrow(WaterEquipmentServiceException.class);
+        when(mockService.addObjectByOrg(eq(invalidId), any(ObjectData.class))).thenThrow(WaterEquipmentServiceException.class);
 
-        path = String.format("/organization/%s/objects", orgId);
+        path = String.format("/organization/%s/objects", invalidId);
         Response response = target(path).request().post(Entity.entity(objectData, MediaType.APPLICATION_JSON));
 
         assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
@@ -407,9 +407,9 @@ public class OrgGroupResourceTest extends BaseResourceTest {
 
     @Test
     public void testRemoveObjectByOrg_Exception() throws Exception {
-        when(mockService.removeObjectByOrg(orgId, objId)).thenThrow(WaterEquipmentServiceException.class);
+        when(mockService.removeObjectByOrg(invalidId, invalidId)).thenThrow(WaterEquipmentServiceException.class);
 
-        path = String.format("/organization/%s/object/%s", orgId, objId);
+        path = String.format("/organization/%s/object/%s", invalidId, invalidId);
         Response response = target(path).request().delete();
 
         assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());

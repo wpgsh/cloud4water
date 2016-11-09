@@ -22,7 +22,7 @@ import static org.eclipse.jetty.http.HttpStatus.OK_200;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 /**
@@ -40,7 +40,7 @@ public class UserResourceTest extends BaseResourceTest {
 
     @Test
     public void testCheckPermission_True() throws Exception {
-        when(mockService.checkPermission(anyLong(), any(ObjectData.class)))
+        when(mockService.checkPermission(eq(userId), any(ObjectData.class)))
                 .thenReturn(ResultView.newInstance(true));
 
         path = String.format("/user/%s/checkPermissions", userId);
@@ -58,7 +58,7 @@ public class UserResourceTest extends BaseResourceTest {
 
     @Test
     public void testCheckPermission_False() throws Exception {
-        when(mockService.checkPermission(anyLong(), any(ObjectData.class)))
+        when(mockService.checkPermission(eq(userId), any(ObjectData.class)))
                 .thenReturn(ResultView.newInstance(false));
 
         path = String.format("/user/%s/checkPermissions", userId);
@@ -76,9 +76,9 @@ public class UserResourceTest extends BaseResourceTest {
 
     @Test
     public void testCheckPermission_Exception() throws Exception {
-        when(mockService.checkPermission(anyLong(), any(ObjectData.class))).thenThrow(WaterEquipmentServiceException.class);
+        when(mockService.checkPermission(eq(invalidId), any(ObjectData.class))).thenThrow(WaterEquipmentServiceException.class);
 
-        path = String.format("/user/%s/checkPermissions", userId);
+        path = String.format("/user/%s/checkPermissions", invalidId);
 
         Entity<ObjectData> entity = Entity.entity(objectData, MediaType.APPLICATION_JSON);
 
@@ -105,9 +105,9 @@ public class UserResourceTest extends BaseResourceTest {
 
     @Test
     public void testGetObjectsByUser_Exception() throws Exception {
-        when(mockService.getObjectsByUser(userId, "read")).thenThrow(WaterEquipmentServiceException.class);
+        when(mockService.getObjectsByUser(invalidId, action)).thenThrow(WaterEquipmentServiceException.class);
 
-        path = String.format("/user/%s/objects", userId);
+        path = String.format("/user/%s/objects", invalidId);
 
         Response response = target(path).queryParam("action", action).request().get();
 
