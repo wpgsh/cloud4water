@@ -45,9 +45,9 @@ public class MysqlTxAwareEntityManager implements TxAwareEntityManager {
 							+ ")",
 					// 1
 					"insert into users(enabled, username, password_hash, password_salt, homepage, name, title, avatar, avatar_id, phone1, phone2, email, email_verified, email_verification_token, email_verification_expiration) values("
-							+ "'1', 'test1', 'bff5c1b718386f23ac472d983a02907671f8932d', '1478156919009', 'http://www.baidu.com', 'test', 'title', 'sds', 1, '121212', '121212', '1163525902@qq.com', '1', 'dfdf', '1')",
+							+ "'1', 'test1', 'bff5c1b718386f23ac472d983a02907671f8932d', '1478156919009', 'http://www.baidu.com', 'test', 'title', 'sds', 1, '15850817392', '15850817392', '1163525902@qq.com', '1', 'dfdf', '1')",
 					"insert into users(enabled, username, password_hash, password_salt, homepage, name, title, avatar, avatar_id, phone1, phone2, email, email_verified, email_verification_token, email_verification_expiration) values("
-							+ "'1', 'test2', 'bff5c1b718386f23ac472d983a02907671f8932d', '1478156919009', 'http://www.baidu.com', 'test', 'title', 'sds', 1, '121212', '121212', '1163525902@qq.com', '1', 'dfdf', '1')",
+							+ "'1', 'test2', 'bff5c1b718386f23ac472d983a02907671f8932d', '1478156919009', 'http://www.baidu.com', 'test', 'title', 'sds', 1, '15850817392', '15850817392', '1163525902@qq.com', '1', 'dfdf', '1')",
 					// 2
 					"create table if not exists access_tokens("
 							+ "  handle varchar(32) primary key,"
@@ -89,7 +89,7 @@ public class MysqlTxAwareEntityManager implements TxAwareEntityManager {
 	@Override
 	public void init() throws Exception {
 		for (String _sql : ddl) {
-			logger.info("H2 DB Initialization: {}", _sql);
+			logger.info("MySQL DB Initialization: {}", _sql);
 			try {			
 				final String sql = _sql;
 				tx(new EmConsumer() {
