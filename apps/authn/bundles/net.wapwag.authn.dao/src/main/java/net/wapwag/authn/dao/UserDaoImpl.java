@@ -273,6 +273,8 @@ public class UserDaoImpl implements UserDao {
 				public User apply(EntityManager em) {
 					User newUser =  em.find(User.class, uid);
 					newUser.setPasswordHash(user.getPasswordHash());
+					newUser.setPasswordSalt(user.getPasswordSalt());
+					em.merge(newUser);
 					return newUser;
 				}
 			});
