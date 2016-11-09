@@ -26,7 +26,7 @@ public class OSGIUtil {
      * @throws ServletException throws exceptions if not get the bundle or occured error in the process.
      */
     @SuppressWarnings("Duplicates")
-    public static final <T> void useWaterEquipmentService(Consumer<WaterEquipmentService> fn, Class<T> cls)
+    static final <T> void useWaterEquipmentService(Consumer<WaterEquipmentService> fn, Class<T> cls)
             throws ServletException {    	
     	WaterEquipmentService waterEquipmentService; 
     
@@ -62,7 +62,7 @@ public class OSGIUtil {
      * environment 
      * @param waterEquipmentService
      */
-    public static void setWaterEquipmentService(WaterEquipmentService waterEquipmentService) {
+    static void setWaterEquipmentService(WaterEquipmentService waterEquipmentService) {
         waterEquipmentTestService = waterEquipmentService;
     }
 

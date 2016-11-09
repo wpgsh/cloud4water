@@ -19,6 +19,12 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    /**
+     * Used to identify the user id defined in the authn
+     */
+    @Column(name = "external_id", unique = true)
+    private long externalId;
+
     @Column
     private String name;
 
@@ -40,6 +46,14 @@ public class User {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public long getExternalId() {
+        return externalId;
+    }
+
+    public void setExternalId(long externalId) {
+        this.externalId = externalId;
     }
 
     public String getName() {

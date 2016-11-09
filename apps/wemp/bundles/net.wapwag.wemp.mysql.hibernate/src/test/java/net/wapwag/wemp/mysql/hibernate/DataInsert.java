@@ -66,6 +66,7 @@ class DataInsert {
 
         for (i = 0; i < 10; i++) {
             user = new User();
+            user.setExternalId(i);
             user.setName("admin" + i);
             em.persist(user);
         }
@@ -83,6 +84,7 @@ class DataInsert {
 
         User user = new User();
         user.setName("管理员");
+        user.setExternalId(100);
         em.persist(user);
 
         ObjectData china = new Country();
@@ -96,6 +98,7 @@ class DataInsert {
         em.persist(america);
 
         ObjectData japan = new Country();
+        user.setExternalId(100);
         japan.setName("日本");
 
         em.persist(japan);
