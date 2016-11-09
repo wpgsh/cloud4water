@@ -79,6 +79,7 @@ public class AuthorizationServlet extends HttpServlet {
                     redirectURI = String.format(AUTHORIZE_PATH, clientId, type, redirectURI, clientId);
                     response.sendRedirect(redirectURI);
                 }
+                oAuthResponse = null;
             } catch (Exception e) {
                 if (e instanceof OAuthProblemException) {
                     try {
