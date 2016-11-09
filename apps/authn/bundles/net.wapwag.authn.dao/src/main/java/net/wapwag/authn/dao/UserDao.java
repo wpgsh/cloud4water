@@ -13,11 +13,11 @@ public interface UserDao {
 	
 	int removeUser(long uid) throws UserDaoException;
 
-	User getUserAvatar(long id) throws UserDaoException;
-
-	int saveUserAvatar(User user) throws UserDaoException;
-
-	int removeUserAvatar(long id) throws UserDaoException;
+//	User getUserAvatar(long id) throws UserDaoException;
+//
+//	int saveUserAvatar(User user) throws UserDaoException;
+//
+//	int removeUserAvatar(long id) throws UserDaoException;
 
 	RegisteredClient getClientByClientId(long clientId) throws UserDaoException;
 

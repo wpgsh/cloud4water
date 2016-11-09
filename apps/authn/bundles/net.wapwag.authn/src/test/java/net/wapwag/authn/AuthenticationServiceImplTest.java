@@ -97,24 +97,6 @@ public class AuthenticationServiceImplTest {
 			}
 
 			@Override
-			public User getUserAvatar(long id) throws UserDaoException {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public int saveUserAvatar(User user) throws UserDaoException {
-				// TODO Auto-generated method stub
-				return 0;
-			}
-
-			@Override
-			public int removeUserAvatar(long id) throws UserDaoException {
-				// TODO Auto-generated method stub
-				return 0;
-			}
-
-			@Override
 			public RegisteredClient getClientByClientId(long clientId) throws UserDaoException {
 				return clients.get(clientId);
 			}

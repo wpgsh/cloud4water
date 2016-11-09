@@ -27,7 +27,7 @@ public class UserDaoImpl implements UserDao {
 	private static final Logger logger = LoggerFactory.getLogger(UserDaoImpl.class);
 
 	@Reference(target = "(osgi.name=user)")
-	private TxAwareEntityManager entityManager;
+	protected TxAwareEntityManager entityManager;
 
 	@Activate
 	protected void init() throws Exception {
@@ -183,47 +183,45 @@ public class UserDaoImpl implements UserDao {
 		}
 	}
 
-	
-
-	@Override
-	public User getUserAvatar(final long uid) throws UserDaoException {
-		try {
-			return entityManager.txExpr(new EmFunction<User>() {
-				@Override
-				public User apply(EntityManager em) {
-					return em.find(User.class, uid);
-				}
-			});
-		} catch (Exception e) {
-			throw new UserDaoException("Cannot add user", e);
-		}
-	}
-
-	@Override
-	public int saveUserAvatar(final User user) throws UserDaoException {
-		try {
-			return entityManager.txExpr(em -> {
-				em.merge(user);
-				return 1;
-
-			});
-		} catch (Exception e) {
-			throw new UserDaoException("Cannot add user", e);
-		}
-	}
-
-	@Override
-	public int removeUserAvatar(final long uid) throws UserDaoException {
-		try {
-			return entityManager.txExpr(em -> {
-				User user = em.find(User.class, uid);
-				em.remove(user);
-				return 1;
-			});
-		} catch (Exception e) {
-			throw new UserDaoException("Cannot add user", e);
-		}
-	}
+//	@Override
+//	public User getUserAvatar(final long uid) throws UserDaoException {
+//		try {
+//			return entityManager.txExpr(new EmFunction<User>() {
+//				@Override
+//				public User apply(EntityManager em) {
+//					return em.find(User.class, uid);
+//				}
+//			});
+//		} catch (Exception e) {
+//			throw new UserDaoException("Cannot add user", e);
+//		}
+//	}
+//
+//	@Override
+//	public int saveUserAvatar(final User user) throws UserDaoException {
+//		try {
+//			return entityManager.txExpr(em -> {
+//				em.merge(user);
+//				return 1;
+//
+//			});
+//		} catch (Exception e) {
+//			throw new UserDaoException("Cannot add user", e);
+//		}
+//	}
+//
+//	@Override
+//	public int removeUserAvatar(final long uid) throws UserDaoException {
+//		try {
+//			return entityManager.txExpr(em -> {
+//				User user = em.find(User.class, uid);
+//				em.remove(user);
+//				return 1;
+//			});
+//		} catch (Exception e) {
+//			throw new UserDaoException("Cannot add user", e);
+//		}
+//	}
 
 
     @Override
