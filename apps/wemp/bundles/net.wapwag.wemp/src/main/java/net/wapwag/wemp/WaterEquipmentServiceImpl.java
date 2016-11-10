@@ -122,19 +122,21 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
                                 "requested scope is invalid");
                     } else {
                         defaultScope = scope;
-                        if (accessToken != null) {
-                            Set<String> originalScope = new HashSet<>(Arrays.asList(accessToken.getScope().split(" ")));
-                            //if no new scope need
-                            if (originalScope.containsAll(defaultScope)) {
-                                defaultScope = originalScope;
-                                valid = true;
-                            }
+                    }
+
+                    if (accessToken != null) {
+                        Set<String> originalScope = new HashSet<>(Arrays.asList(accessToken.getScope().split(" ")));
+                        //if no new scope need
+                        if (originalScope.containsAll(defaultScope)) {
+                            defaultScope = originalScope;
+                            valid = true;
                         }
+                    } else {
+                        accessToken = new AccessToken();
                     }
 
                     //if accessToken isn't exist or exist but need new scope,refresh accessToken
                     if (!valid) {
-                        accessToken = new AccessToken();
                         accessToken.setAccessTokenId(new AccessTokenId(waterEquipmentDao.getUser(userId), registeredClient));
                         accessToken.setHandle(StringUtils.replace(new UUID().toString(), "-", ""));
                     }

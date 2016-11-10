@@ -60,8 +60,8 @@ public class User {
     @Column(name = "email_verification_expiration")
     private String emailVerifiedExpiration;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private Set<AccessToken> accessTokenList;
+    @OneToMany(mappedBy = "accessTokenId.user")
+    private Set<AccessToken> userClientSet;
 
     public long getId() {
         return id;
@@ -191,12 +191,11 @@ public class User {
         this.emailVerifiedExpiration = emailVerifiedExpiration;
     }
 
-    public Set<AccessToken> getAccessTokenList() {
-        return accessTokenList;
+    public Set<AccessToken> getUserClientSet() {
+        return userClientSet;
     }
 
-    public void setAccessTokenList(Set<AccessToken> accessTokenList) {
-        this.accessTokenList = accessTokenList;
+    public void setUserClientSet(Set<AccessToken> userClientSet) {
+        this.userClientSet = userClientSet;
     }
-
 }

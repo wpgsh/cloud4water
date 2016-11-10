@@ -157,7 +157,10 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
         try {
             return entityManager.txExpr(em -> em.createQuery(hql, AccessToken.class)
                     .setParameter("handle", handle)
-                    .getSingleResult()
+                    .getResultList()
+                    .stream()
+                    .findFirst()
+                    .orElse(null)
             );
         } catch (Exception e) {
             throw new WaterEquipmentDaoException("can't get access token by the handle", e);
@@ -171,7 +174,10 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
             return entityManager.txExpr(em ->
                     em.createQuery(hql, RegisteredClient.class)
                             .setParameter("redirectURI", redirectURI)
-                            .getSingleResult()
+                            .getResultList()
+                            .stream()
+                            .findFirst()
+                            .orElse(null)
             );
         } catch (Exception e) {
             throw new WaterEquipmentDaoException("Cannot get client by redirect_uri", e);
@@ -187,13 +193,12 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
             return entityManager.txExpr(em -> em.createQuery(hql, AccessToken.class)
                     .setParameter("userId", userId)
                     .setParameter("clientId", clientId)
-                    .getSingleResult()
+                    .getResultList()
+                    .stream()
+                    .findFirst()
+                    .orElse(null)
             );
         } catch (Exception e) {
-            if (e.getCause() instanceof NoResultException) {
-                //if no result found,return null.
-                return null;
-            }
             throw new WaterEquipmentDaoException("can't find access token", e);
         }
     }
@@ -205,12 +210,12 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
         try {
             return entityManager.txExpr(em -> em.createQuery(hql, AccessToken.class)
                     .setParameter("code", code)
-                    .getSingleResult()
+                    .getResultList()
+                    .stream()
+                    .findFirst()
+                    .orElse(null)
             );
         } catch (Exception e) {
-            if (e.getCause() instanceof NoResultException) {
-                return null;
-            }
             throw new WaterEquipmentDaoException("can't find access token", e);
         }
     }
@@ -270,7 +275,11 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
 
                 return em.createQuery(hql, ObjectData.class)
                         .setParameter("objId", objId)
-                        .setParameter("userId", userId).getSingleResult();
+                        .setParameter("userId", userId)
+                        .getResultList()
+                        .stream()
+                        .findFirst()
+                        .orElse(null);
 
             });
         } catch (Exception e) {
@@ -352,7 +361,11 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
 
                 return em.createQuery(hql, ObjectData.class)
                         .setParameter("objId", objId)
-                        .setParameter("groupId", groupId).getSingleResult();
+                        .setParameter("groupId", groupId)
+                        .getResultList()
+                        .stream()
+                        .findFirst()
+                        .orElse(null);
             });
         } catch (Exception e) {
             throw new WaterEquipmentDaoException("can't get object by group", e);
@@ -446,7 +459,11 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
         try {
             return entityManager.txExpr(em -> em.createQuery(hql, Group.class)
                     .setParameter("groupId", groupId)
-                    .setParameter("orgId", orgId).getSingleResult()
+                    .setParameter("orgId", orgId)
+                    .getResultList()
+                    .stream()
+                    .findFirst()
+                    .orElse(null)
             );
         } catch (Exception e) {
             throw new WaterEquipmentDaoException("can't get object by group", e);
@@ -480,7 +497,10 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
                 Group group = em.createQuery(hql, Group.class)
                         .setParameter("groupId", groupId)
                         .setParameter("orgId", orgId)
-                        .getSingleResult();
+                        .getResultList()
+                        .stream()
+                        .findFirst()
+                        .orElse(null);
 
                 em.remove(group);
 
@@ -542,7 +562,11 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
                 UserGroup userGroup = em.createQuery(hql, UserGroup.class)
                         .setParameter("orgId", orgId)
                         .setParameter("groupId", groupId)
-                        .setParameter("userId", userId).getSingleResult();
+                        .setParameter("userId", userId)
+                        .getResultList()
+                        .stream()
+                        .findFirst()
+                        .orElse(null);
 
                 em.remove(userGroup);
 
@@ -581,7 +605,11 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
                         .setParameter("groupId", groupId)
                         .setParameter("orgId", orgId)
                         .setParameter("objId", objId)
-                        .setParameter("action", action).getSingleResult()
+                        .setParameter("action", action)
+                        .getResultList()
+                        .stream()
+                        .findFirst()
+                        .orElse(null)
             );
         } catch (Exception e) {
             throw new WaterEquipmentDaoException("can't get object by group", e);
@@ -696,7 +724,11 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
                         "and userObject.userObjectId.objectData.id = :objId";
                 havePermission = em.createQuery(userObjectHql, Long.class)
                         .setParameter("userId", userId)
-                        .setParameter("objId", objId).getSingleResult();
+                        .setParameter("objId", objId)
+                        .getResultList()
+                        .stream()
+                        .findFirst()
+                        .orElse(null);
 
                 if (havePermission == 0) {
                     String userGroupHql = "select count(userGroup) from UserGroup userGroup,GroupObject groupObject " +
@@ -705,7 +737,11 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
                             "and groupObject.groupObjectId.objectData.id = :objId";
                     havePermission = em.createQuery(userGroupHql, Long.class)
                             .setParameter("userId", userId)
-                            .setParameter("objId", objId).getSingleResult();
+                            .setParameter("objId", objId)
+                            .getResultList()
+                            .stream()
+                            .findFirst()
+                            .orElse(null);
 
                     if (havePermission == 0) {
                         String userOrgHql = "select count(userOrg) from UserOrg userOrg,GroupObject groupObject " +
@@ -714,7 +750,11 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
                                 "and groupObject.groupObjectId.objectData.id = :objId";
                         havePermission = em.createQuery(userOrgHql, Long.class)
                                 .setParameter("userId", userId)
-                                .setParameter("objId", objId).getSingleResult();
+                                .setParameter("objId", objId)
+                                .getResultList()
+                                .stream()
+                                .findFirst()
+                                .orElse(null);
                     }
                 }
                 return havePermission > 0;

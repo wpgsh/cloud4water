@@ -71,7 +71,10 @@ public class UserDaoImpl implements UserDao {
             return entityManager.txExpr(em ->
                 em.createQuery("select r from RegisteredClient r where r.redirectURI = :redirectURI",
                         RegisteredClient.class).setParameter("redirectURI", redirectURI)
-                        .getSingleResult()
+						.getResultList()
+						.stream()
+						.findFirst()
+						.orElse(null)
             );
         } catch (Exception e) {
             throw new UserDaoException("Cannot get client by redirect_uri", e);
@@ -85,7 +88,10 @@ public class UserDaoImpl implements UserDao {
                 em.createQuery("select r from RegisteredClient r where r.id = :clientId",
                     RegisteredClient.class)
                     .setParameter("clientId", clientId)
-                    .getSingleResult()
+					.getResultList()
+					.stream()
+					.findFirst()
+					.orElse(null)
             );
 		} catch (Exception e) {
 			throw new UserDaoException("Cannot add access token", e);
@@ -101,32 +107,16 @@ public class UserDaoImpl implements UserDao {
 		}
 	}
 
-    @Override
-    public AccessToken getAccessToken(final AccessToken accessToken) throws UserDaoException {
-        try {
-            return entityManager.txExpr(em -> em.createQuery(
-                "select at from AccessToken at where at.user.id = :userId and at.registeredClient.id = :clientId",
-                    AccessToken.class)
-                    .setParameter("userId", accessToken.getUser().getId())
-                    .setParameter("clientId", accessToken.getRegisteredClient().getId())
-                    .getSingleResult()
-            );
-        } catch (Exception e) {
-            if (e.getCause() instanceof NoResultException) {
-                //if no result found,return null.
-                return null;
-            }
-            throw new UserDaoException("cannot find access token", e);
-        }
-    }
-
 	@Override
 	public AccessToken getAccessTokenByCode(String code) throws UserDaoException {
         try {
             return entityManager.txExpr(em -> em.createQuery(
                     "select token from AccessToken token where token.authrizationCode = :code", AccessToken.class)
                     .setParameter("code", code)
-                    .getSingleResult()
+					.getResultList()
+					.stream()
+					.findFirst()
+					.orElse(null)
             );
         } catch (Exception e) {
             if (e.getCause() instanceof NoResultException) {
@@ -139,20 +129,21 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public AccessToken getAccessTokenByUserIdAndClientId(long userId, long clientId) throws UserDaoException {
-        try {
-            return entityManager.txExpr(em -> em.createQuery(
-                    "select at from AccessToken at where at.user.id = :userId and at.registeredClient.id = :clientId",
-                    AccessToken.class)
-                    .setParameter("userId", userId)
-                    .setParameter("clientId", clientId)
-                    .getResultList()
-                    .stream()
-                    .findFirst()
-                    .orElse(null)                    
-            );
-        } catch (Exception e) {
-            throw new UserDaoException("cannot find access token", e);
-        }
+		final String hql = "select token from AccessToken token " +
+				"where token.accessTokenId.user.id = :userId " +
+				"and token.accessTokenId.registeredClient.id = :clientId";
+		try {
+			return entityManager.txExpr(em -> em.createQuery(hql, AccessToken.class)
+					.setParameter("userId", userId)
+					.setParameter("clientId", clientId)
+					.getResultList()
+					.stream()
+					.findFirst()
+					.orElse(null)
+			);
+		} catch (Exception e) {
+			throw new UserDaoException("cannot find access token", e);
+		}
     }
 
     @Override
