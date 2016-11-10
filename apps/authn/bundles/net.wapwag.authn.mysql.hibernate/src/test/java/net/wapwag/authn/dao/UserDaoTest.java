@@ -9,6 +9,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import net.wapwag.authn.dao.model.AccessToken;
+import net.wapwag.authn.dao.model.AccessTokenId;
 import net.wapwag.authn.dao.model.Image;
 import net.wapwag.authn.dao.model.RegisteredClient;
 import net.wapwag.authn.dao.model.User;
@@ -47,7 +48,7 @@ public class UserDaoTest extends net.wapwag.authn.mysql.hibernate.BaseTestConfig
 		RegisteredClient registeredClient = userDao.getClientByClientId(clientId);
 		Assert.assertNotNull(registeredClient);
 	}
-
+	
 	@Test
 	public void testSaveAccessToken() throws UserDaoException {
 		AccessToken accessToken = new AccessToken();
@@ -61,28 +62,12 @@ public class UserDaoTest extends net.wapwag.authn.mysql.hibernate.BaseTestConfig
         accessToken.setExpiration(0L);
         accessToken.setAuthrizationCode(UUID.randomUUID().toString().replace("-", ""));
         accessToken.setHandle(UUID.randomUUID().toString().replace("-", ""));
-        accessToken.setUser(user);
-        accessToken.setRegisteredClient(client);
-        accessToken.setScope("1,2,3,4");
+        accessToken.setAccessTokenId(new AccessTokenId(user, client));
+        accessToken.setScope("user:*");
         
         long count = userDao.saveAccessToken(accessToken);
         
         assertTrue(count >= addCount);
-	}
-
-	@Test
-	public void testGetAccessToken() throws UserDaoException {
-		AccessToken accessToken = new AccessToken();
-		User user = new User();
-        user.setId(1L);
-		RegisteredClient client = new RegisteredClient();
-        client.setId(4L);
-        
-		accessToken.setUser(user);
-		accessToken.setRegisteredClient(client);
-		AccessToken accessToken1 = userDao.getAccessToken(accessToken);
-		
-		Assert.assertNotNull(accessToken1);
 	}
 
 	@Test

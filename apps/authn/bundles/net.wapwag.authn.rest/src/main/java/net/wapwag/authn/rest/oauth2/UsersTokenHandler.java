@@ -1,10 +1,13 @@
 package net.wapwag.authn.rest.oauth2;
 
-import com.thingswise.appframework.jaxrs.utils.TokenHandler;
-import net.wapwag.authn.AuthenticationService;
-import net.wapwag.authn.Ids;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import com.thingswise.appframework.jaxrs.utils.TokenHandler;
+
+import net.wapwag.authn.AuthenticationService;
+import net.wapwag.authn.Ids;
+import net.wapwag.authn.model.AccessTokenMapper;
 
 @Component
 public class UsersTokenHandler implements TokenHandler {
@@ -21,10 +24,10 @@ public class UsersTokenHandler implements TokenHandler {
 
 	@Override
 	public AccessToken lookupToken(String handle) throws Exception {
-		net.wapwag.authn.model.AccessToken accessToken = service.lookupToken(handle);
+		net.wapwag.authn.model.AccessTokenMapper accessToken = service.lookupToken(handle);
 		if (accessToken != null) {
 			return new AccessToken(
-					new Ids.UserId(accessToken.userId).toString(),
+					accessToken.userId,
 					Long.MAX_VALUE, //access_token will never expire.
 					accessToken.clientId,
 					accessToken.handle,

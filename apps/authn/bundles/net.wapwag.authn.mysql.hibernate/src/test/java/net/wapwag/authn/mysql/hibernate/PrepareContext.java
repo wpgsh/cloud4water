@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 @SuppressWarnings("Duplicates")
 public class PrepareContext {
 	
-    private static final String JNDI_DATA_SOURCE = "osgi:service/javax.sql.DataSource/(osgi.jndi.service.name=jdbc/User)";
+    private static final String JNDI_DATA_SOURCE = "osgi:service/javax.sql.DataSource/(osgi.jndi.service.name=jdbc/User_MySQL)";
     private static Context root = mock(Context.class);
     private static NameParser nameParser = mock(NameParser.class);
 	private static final Map<String, String> HIBERNATE_CONFIG = ImmutableMap.of(

@@ -2,9 +2,9 @@ package net.wapwag.authn.model;
 
 import com.google.common.collect.ImmutableSet;
 
-public class AccessToken {
+public class AccessTokenMapper {
 
-	public final long userId;
+	public final String userId;
 	
 	public final long expiration;
 	
@@ -14,7 +14,7 @@ public class AccessToken {
 	
 	public final ImmutableSet<String> scope;
 
-	public AccessToken(long userId, long expiration, String clientId, String handle, ImmutableSet<String> scope) {
+	public AccessTokenMapper(String userId, long expiration, String clientId, String handle, ImmutableSet<String> scope) {
 		super();
 		this.userId = userId;
 		this.expiration = expiration;

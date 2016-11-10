@@ -1,18 +1,10 @@
 package net.wapwag.authn;
 
-import com.eaio.uuid.UUID;
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
-import net.wapwag.authn.Ids.UserId;
-import net.wapwag.authn.dao.UserDao;
-import net.wapwag.authn.dao.UserDaoException;
-import net.wapwag.authn.dao.model.AccessTokenId;
-import net.wapwag.authn.dao.model.Image;
-import net.wapwag.authn.dao.model.RegisteredClient;
-import net.wapwag.authn.dao.model.User;
-import net.wapwag.authn.model.AccessToken;
-import net.wapwag.authn.model.UserProfile;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.oltu.oauth2.common.error.OAuthError;
@@ -23,9 +15,20 @@ import org.osgi.service.component.annotations.ServiceScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import com.eaio.uuid.UUID;
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+
+import net.wapwag.authn.Ids.UserId;
+import net.wapwag.authn.dao.UserDao;
+import net.wapwag.authn.dao.UserDaoException;
+import net.wapwag.authn.dao.model.AccessTokenId;
+import net.wapwag.authn.dao.model.Image;
+import net.wapwag.authn.dao.model.RegisteredClient;
+import net.wapwag.authn.dao.model.User;
+import net.wapwag.authn.model.AccessTokenMapper;
+import net.wapwag.authn.model.UserProfile;
 
 @Component(scope=ServiceScope.SINGLETON)
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -59,27 +62,38 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	}
 
 	@Override
-	public AccessToken lookupToken(String handle) throws AuthenticationServiceException {
-		net.wapwag.authn.dao.model.AccessToken accessToken;
-		try {
-			accessToken = userDao.lookupAccessToken(handle);
-		} catch (UserDaoException e) {
-			throw new AuthenticationServiceException("Cannot get access token", e);
-		}
-        AccessTokenId accessTokenId = accessToken.getAccessTokenId();
-        return new AccessToken(
-                accessTokenId.getUser().getId(),
-                Long.MAX_VALUE,
-                accessTokenId.getRegisteredClient().getClientId(),
-                accessToken.getHandle(),
-                ImmutableSet.copyOf(
-                		Optional.fromNullable(accessToken.getScope()).
-                		transform(String::trim).
-                		transform(s -> {
-                            assert s != null;
-                            return s.split(" ");
-                        }).
-                		or(new String[0])));
+	public AccessTokenMapper lookupToken(String handle) throws AuthenticationServiceException {
+		return userDao.txExpr(() -> {
+			net.wapwag.authn.dao.model.AccessToken accessToken;
+			try {
+				String token = new String(Base64.getDecoder().decode(handle));
+				
+				accessToken = userDao.lookupAccessToken(token);
+			
+				if (accessToken != null) {
+			        AccessTokenId accessTokenId = accessToken.getAccessTokenId();
+			        return new AccessTokenMapper(
+			        		Long.toString(accessTokenId.getUser().getId()),
+			                Long.MAX_VALUE,
+			                accessTokenId.getRegisteredClient().getClientId(),
+			                accessToken.getHandle(),
+			                ImmutableSet.copyOf(
+			                		Optional.fromNullable(accessToken.getScope()).
+			                		transform(String::trim).
+			                		transform(s -> {
+			                            assert s != null;
+			                            return s.split(" ");
+			                        }).
+			                		or(new String[0])));
+				}else{
+					return null;
+				}
+			} catch (UserDaoException e) {
+				throw new AuthenticationServiceException("Cannot get access token", e);
+			}catch (IllegalArgumentException e) {
+	            throw new AuthenticationServiceException("Illegal handle character");
+	        }
+		}, AuthenticationServiceException.class);
 	}
 
 	@Override
