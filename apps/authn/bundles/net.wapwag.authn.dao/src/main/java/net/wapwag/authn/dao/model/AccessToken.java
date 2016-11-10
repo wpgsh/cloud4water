@@ -1,11 +1,7 @@
 package net.wapwag.authn.dao.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * Access token data model.
@@ -13,19 +9,13 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="access_tokens")
-public class AccessToken {
+public class AccessToken implements Serializable {
 
-    @ManyToOne
-    @JoinColumn(name="user_id")
-	private User user;
+    @EmbeddedId
+    private AccessTokenId accessTokenId;
 
-    @ManyToOne
-    @JoinColumn(name = "client_id")
-    private RegisteredClient registeredClient;
-
-    @Id
-    @Column(name="handle")
-	private String handle;
+    @Column(name="handle", unique = true)
+    private String handle;
 
     @Column(name = "scope")
     private String scope;
@@ -36,20 +26,12 @@ public class AccessToken {
     @Column(name="ac_expiration")
 	private long expiration;
 
-    public User getUser() {
-        return user;
+    public AccessTokenId getAccessTokenId() {
+        return accessTokenId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public RegisteredClient getRegisteredClient() {
-        return registeredClient;
-    }
-
-    public void setRegisteredClient(RegisteredClient registeredClient) {
-        this.registeredClient = registeredClient;
+    public void setAccessTokenId(AccessTokenId accessTokenId) {
+        this.accessTokenId = accessTokenId;
     }
 
     public String getHandle() {

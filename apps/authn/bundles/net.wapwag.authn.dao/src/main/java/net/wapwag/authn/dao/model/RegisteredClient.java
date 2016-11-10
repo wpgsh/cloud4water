@@ -27,8 +27,8 @@ public class RegisteredClient {
     @Column(name = "client_vendor")
     private String clientVendor;
 
-    @OneToMany(mappedBy = "registeredClient", fetch = FetchType.EAGER)
-    private Set<AccessToken> accessTokenList;
+    @OneToMany(mappedBy = "accessTokenId.registeredClient")
+    private Set<AccessToken> clientUserSet;
 
     public long getId() {
         return id;
@@ -70,12 +70,11 @@ public class RegisteredClient {
         this.redirectURI = redirectURI;
     }
 
-    public Set<AccessToken> getAccessTokenList() {
-        return accessTokenList;
+    public Set<AccessToken> getClientUserSet() {
+        return clientUserSet;
     }
 
-    public void setAccessTokenList(Set<AccessToken> accessTokenList) {
-        this.accessTokenList = accessTokenList;
+    public void setClientUserSet(Set<AccessToken> clientUserSet) {
+        this.clientUserSet = clientUserSet;
     }
-
 }

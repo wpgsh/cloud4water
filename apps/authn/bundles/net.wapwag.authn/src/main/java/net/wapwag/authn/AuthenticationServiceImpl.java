@@ -1,9 +1,18 @@
 package net.wapwag.authn;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
+import com.eaio.uuid.UUID;
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+import net.wapwag.authn.Ids.UserId;
+import net.wapwag.authn.dao.UserDao;
+import net.wapwag.authn.dao.UserDaoException;
+import net.wapwag.authn.dao.model.AccessTokenId;
+import net.wapwag.authn.dao.model.Image;
+import net.wapwag.authn.dao.model.RegisteredClient;
+import net.wapwag.authn.dao.model.User;
+import net.wapwag.authn.model.AccessToken;
+import net.wapwag.authn.model.UserProfile;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.oltu.oauth2.common.error.OAuthError;
@@ -14,19 +23,9 @@ import org.osgi.service.component.annotations.ServiceScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.eaio.uuid.UUID;
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
-
-import net.wapwag.authn.Ids.UserId;
-import net.wapwag.authn.dao.UserDao;
-import net.wapwag.authn.dao.UserDaoException;
-import net.wapwag.authn.dao.model.Image;
-import net.wapwag.authn.dao.model.RegisteredClient;
-import net.wapwag.authn.dao.model.User;
-import net.wapwag.authn.model.AccessToken;
-import net.wapwag.authn.model.UserProfile;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 @Component(scope=ServiceScope.SINGLETON)
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -67,10 +66,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		} catch (UserDaoException e) {
 			throw new AuthenticationServiceException("Cannot get access token", e);
 		}
+        AccessTokenId accessTokenId = accessToken.getAccessTokenId();
         return new AccessToken(
-                accessToken.getUser().getId(),
+                accessTokenId.getUser().getId(),
                 Long.MAX_VALUE,
-                accessToken.getRegisteredClient().getClientId(),
+                accessTokenId.getRegisteredClient().getClientId(),
                 accessToken.getHandle(),
                 ImmutableSet.copyOf(
                 		Optional.fromNullable(accessToken.getScope()).
@@ -160,26 +160,27 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         throw OAuthProblemException.error(OAuthError.CodeResponse.INVALID_SCOPE,
                                 "requested scope is invalid");
                     } else {
-                            defaultScope = scope;
-                        if (accessToken != null) {
-                            Set<String> originalScope = new HashSet<>(Arrays.asList(accessToken.getScope().split(" ")));
-                            //if no new scope need
-                            if (originalScope.containsAll(defaultScope)) {
-                                defaultScope = originalScope;
-                                valid = true;
-                            }
+                        defaultScope = scope;
+                    }
+
+                    if (accessToken != null) {
+                        Set<String> originalScope = new HashSet<>(Arrays.asList(accessToken.getScope().split(" ")));
+                        //if no new scope need
+                        if (originalScope.containsAll(defaultScope)) {
+                            defaultScope = originalScope;
+                            valid = true;
                         }
+                    } else {
+                        accessToken = new net.wapwag.authn.dao.model.AccessToken();
                     }
 
                     //if accessToken isn't exist or exist but need new scope,refresh accessToken
                     if (!valid) {
-                        accessToken = new net.wapwag.authn.dao.model.AccessToken();
+                        accessToken.setAccessTokenId(new AccessTokenId(userDao.getUser(userId), registeredClient));
                         accessToken.setHandle(StringUtils.replace(new UUID().toString(), "-", ""));
                     }
 
                     accessToken.setScope(StringUtils.join(scope, " "));
-                    accessToken.setUser(userDao.getUser(userId));
-                    accessToken.setRegisteredClient(registeredClient);
 
                     //generate authorization code
                     accessToken.setAuthrizationCode(code);

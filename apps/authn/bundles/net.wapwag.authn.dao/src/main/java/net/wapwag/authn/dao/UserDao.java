@@ -23,8 +23,6 @@ public interface UserDao {
 
 	RegisteredClient getClientByRedirectURI(String redirectURI) throws UserDaoException;
 
-	AccessToken getAccessToken(AccessToken accessToken) throws UserDaoException;
-
 	AccessToken getAccessTokenByCode(String code) throws UserDaoException;
 
     AccessToken getAccessTokenByUserIdAndClientId(long userId, long clientId) throws UserDaoException;

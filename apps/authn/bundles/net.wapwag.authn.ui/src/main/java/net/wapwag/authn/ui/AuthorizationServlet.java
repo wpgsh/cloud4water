@@ -1,6 +1,7 @@
 package net.wapwag.authn.ui;
 
 import net.wapwag.authn.util.OSGIUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.oltu.oauth2.as.request.OAuthAuthzRequest;
 import org.apache.oltu.oauth2.as.response.OAuthASResponse;
@@ -37,7 +38,7 @@ public class AuthorizationServlet extends HttpServlet {
      * The path for /authorize.
      */
     private static final String AUTHORIZE_PATH = "/authn/login?client_id=%s" +
-            "&return_to=/authn/authorize?response_type=%s&redirect_uri=%s&client_id=%s";
+            "&return_to=/authn/authorize?response_type=%s&redirect_uri=%s&client_id=%s&scope=%s";
 
 	@Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -53,7 +54,6 @@ public class AuthorizationServlet extends HttpServlet {
 
                 OAuthAuthzRequest oauthRequest = new OAuthAuthzRequest(request);
 
-                String scope = request.getParameter("scope");
                 String code = null;
                 String type = oauthRequest.getResponseType();
                 String clientId = oauthRequest.getClientId();
@@ -76,7 +76,7 @@ public class AuthorizationServlet extends HttpServlet {
 
                 } else {
                     //build return_to uri if not login.
-                    redirectURI = String.format(AUTHORIZE_PATH, clientId, type, redirectURI, clientId);
+                    redirectURI = String.format(AUTHORIZE_PATH, clientId, type, redirectURI, clientId, StringUtils.join(scopes, " "));
                     response.sendRedirect(redirectURI);
                 }
                 oAuthResponse = null;
