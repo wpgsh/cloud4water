@@ -58,11 +58,19 @@ public class UserDaoImpl implements UserDao {
 
 	@Override
 	public AccessToken lookupAccessToken(final String handle) throws UserDaoException {
-		try {
-			return entityManager.txExpr(em -> em.find(AccessToken.class, handle));
-		} catch (Exception e) {
-			throw new UserDaoException("Cannot get access token", e);
-		}
+        final String hql = "select token from AccessToken token where token.handle = :handle";
+
+        try {
+            return entityManager.txExpr(em -> em.createQuery(hql, AccessToken.class)
+                    .setParameter("handle", handle)
+                    .getResultList()
+                    .stream()
+                    .findFirst()
+                    .orElse(null)
+            );
+        } catch (Exception e) {
+            throw new UserDaoException("can't get access token by the handle", e);
+        }
 	}
 
     @Override
