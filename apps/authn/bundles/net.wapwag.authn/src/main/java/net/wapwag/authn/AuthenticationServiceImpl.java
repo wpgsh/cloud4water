@@ -66,9 +66,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		return userDao.txExpr(() -> {
 			net.wapwag.authn.dao.model.AccessToken accessToken;
 			try {
-				String token = new String(Base64.getDecoder().decode(handle));
+//				String token = new String(Base64.getDecoder().decode(handle));
 				
-				accessToken = userDao.lookupAccessToken(token);
+				accessToken = userDao.lookupAccessToken(handle);
 			
 				if (accessToken != null) {
 			        AccessTokenId accessTokenId = accessToken.getAccessTokenId();
@@ -90,9 +90,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 				}
 			} catch (UserDaoException e) {
 				throw new AuthenticationServiceException("Cannot get access token", e);
-			}catch (IllegalArgumentException e) {
-	            throw new AuthenticationServiceException("Illegal handle character");
-	        }
+			}
 		}, AuthenticationServiceException.class);
 	}
 
