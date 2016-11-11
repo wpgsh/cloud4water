@@ -3,7 +3,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     version="2.0">
     <!--  RESOURCE_LOCAL -->
-    <persistence-unit name="waterequipment-jpa-h2" transaction-type="RESOURCE_LOCAL">
+    <persistence-unit name="waterequipment-jpa-h2" transaction-type="JTA">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <jta-data-source>osgi:service/javax.sql.DataSource/(osgi.jndi.service.name=jdbc/WaterEquipment_H2)</jta-data-source>
         <non-jta-data-source>osgi:service/javax.sql.DataSource/(osgi.jndi.service.name=jdbc/WaterEquipment_H2)</non-jta-data-source>

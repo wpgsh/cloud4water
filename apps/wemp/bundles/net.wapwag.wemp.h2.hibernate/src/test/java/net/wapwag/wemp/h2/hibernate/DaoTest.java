@@ -1,16 +1,13 @@
 package net.wapwag.wemp.h2.hibernate;
 
-import junit.framework.TestCase;
-import net.wapwag.wemp.dao.TxAwareEntityManager;
-import net.wapwag.wemp.dao.WaterEquipmentDao;
-import net.wapwag.wemp.dao.WaterEquipmentDaoImpl;
-import net.wapwag.wemp.dao.model.ObjectType;
-import net.wapwag.wemp.dao.model.geo.Area;
-import net.wapwag.wemp.dao.model.geo.Country;
-import net.wapwag.wemp.dao.model.link.*;
-import net.wapwag.wemp.dao.model.org.Organization;
-import net.wapwag.wemp.dao.model.permission.Group;
-import net.wapwag.wemp.dao.model.permission.User;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.transaction.Transaction;
+
 import org.apache.aries.jpa.template.EmFunction;
 import org.apache.aries.jpa.template.JpaTemplate;
 import org.junit.Before;
@@ -18,20 +15,28 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.mock;
+import junit.framework.TestCase;
+import net.wapwag.wemp.dao.TxAwareEntityManager;
+import net.wapwag.wemp.dao.WaterEquipmentDao;
+import net.wapwag.wemp.dao.WaterEquipmentDaoImpl;
+import net.wapwag.wemp.dao.model.ObjectType;
+import net.wapwag.wemp.dao.model.geo.Area;
+import net.wapwag.wemp.dao.model.geo.Country;
+import net.wapwag.wemp.dao.model.link.GroupObject;
+import net.wapwag.wemp.dao.model.link.GroupObjectId;
+import net.wapwag.wemp.dao.model.link.UserGroup;
+import net.wapwag.wemp.dao.model.link.UserGroupId;
+import net.wapwag.wemp.dao.model.link.UserObject;
+import net.wapwag.wemp.dao.model.link.UserObjectId;
+import net.wapwag.wemp.dao.model.org.Organization;
+import net.wapwag.wemp.dao.model.permission.Group;
+import net.wapwag.wemp.dao.model.permission.User;
 
 public class DaoTest {
 	
     private static EntityManagerFactory emf;
     
     private EntityManager em;
-
-    private EntityTransaction tx;	
 
     @BeforeClass
     public static void before() throws Exception {
@@ -43,95 +48,97 @@ public class DaoTest {
     private long countryId, areaId;
     
     @Before
-    public void prepareObjects() {
-    	em = emf.createEntityManager();    	    	
-    	try {
-    		tx = em.getTransaction();
-    		tx.begin();
-    		
-    		User user0 = new User();
-    		user0.setName("user0");
-			user0.setExternalId(0L);
-    		em.persist(user0);
-    		user0Id = user0.getId();
-    		
-    		User user1 = new User();
-    		user1.setName("user1");
-            user1.setExternalId(1L);
-    		em.persist(user1);
-    		user1Id = user1.getId();    		
+    public void prepareObjects() throws Exception {
+    	em = emf.createEntityManager();   
+    	WaterEquipmentDao dao = createDao(em);
+    	
+    	dao.tx(() -> {
+        	try {
+        		
+        		User user0 = new User();
+        		user0.setName("user0");
+    			user0.setExternalId(0L);
+        		em.persist(user0);
+        		user0Id = user0.getId();
+        		
+        		User user1 = new User();
+        		user1.setName("user1");
+                user1.setExternalId(1L);
+        		em.persist(user1);
+        		user1Id = user1.getId();    		
 
-    		User user2 = new User();
-    		user2.setName("user2");
-            user2.setExternalId(2L);
-    		em.persist(user2);
-    		user2Id = user2.getId();
-    		
-    		User user3 = new User();
-    		user3.setName("user3");
-            user3.setExternalId(3L);
-    		em.persist(user3);
-    		user3Id = user3.getId();    		
-    		
-    		Country country = new Country();
-    		country.setName("C");
-    		em.persist(country);
-    		countryId = country.getId();
-    		
-    		Area area = new Area();
-    		area.setName("A");
-    		area.setCountry(country);
-    		em.persist(area);
-    		areaId = area.getId();
-    		
-    		UserObject uo0 = new UserObject();
-    		uo0.setActionId("read");
-    		uo0.setTransitive(1);
-    		uo0.setUserObjectId(new UserObjectId(user0, country));
-    		em.persist(uo0);
-    		
-    		UserObject uo1 = new UserObject();
-    		uo1.setActionId("write");
-    		uo1.setTransitive(0);
-    		uo1.setUserObjectId(new UserObjectId(user1, area));
-    		em.persist(uo1);
-    		
-    		Organization org0 = new Organization(ObjectType.WATER_MANAGEMENT_COMPANY);
-    		org0.setName("COM");
-    		em.persist(org0);
-    		
-    		Group g0 = new Group();
-    		g0.setOrganization(org0);
-    		em.persist(g0);
-    		
-    		Group g1 = new Group();
-    		g1.setOrganization(org0);
-    		em.persist(g1);
-    		
-    		UserGroup ug0 = new UserGroup();
-    		ug0.setUserGroupId(new UserGroupId(user2, g0));
-    		em.persist(ug0);
-    		
-    		UserGroup ug1 = new UserGroup();
-    		ug1.setUserGroupId(new UserGroupId(user3, g1));
-    		em.persist(ug1);
-    		
-    		GroupObject go0 = new GroupObject();
-    		go0.setActionId("read");
-    		go0.setTransitive(1);
-    		go0.setGroupObjectId(new GroupObjectId(g0, country));
-    		em.persist(go0);
-    		
-    		GroupObject go1 = new GroupObject();
-    		go1.setActionId("write");
-    		go1.setTransitive(0);
-    		go1.setGroupObjectId(new GroupObjectId(g1, area));
-    		em.persist(go1);
-    		
-    		tx.commit();
-    	} finally {
-    		
-    	}
+        		User user2 = new User();
+        		user2.setName("user2");
+                user2.setExternalId(2L);
+        		em.persist(user2);
+        		user2Id = user2.getId();
+        		
+        		User user3 = new User();
+        		user3.setName("user3");
+                user3.setExternalId(3L);
+        		em.persist(user3);
+        		user3Id = user3.getId();    		
+        		
+        		Country country = new Country();
+        		country.setName("C");
+        		em.persist(country);
+        		countryId = country.getId();
+        		
+        		Area area = new Area();
+        		area.setName("A");
+        		area.setCountry(country);
+        		em.persist(area);
+        		areaId = area.getId();
+        		
+        		UserObject uo0 = new UserObject();
+        		uo0.setActionId("read");
+        		uo0.setTransitive(1);
+        		uo0.setUserObjectId(new UserObjectId(user0, country));
+        		em.persist(uo0);
+        		
+        		UserObject uo1 = new UserObject();
+        		uo1.setActionId("write");
+        		uo1.setTransitive(0);
+        		uo1.setUserObjectId(new UserObjectId(user1, area));
+        		em.persist(uo1);
+        		
+        		Organization org0 = new Organization(ObjectType.WATER_MANAGEMENT_COMPANY);
+        		org0.setName("COM");
+        		em.persist(org0);
+        		
+        		Group g0 = new Group();
+        		g0.setOrganization(org0);
+        		em.persist(g0);
+        		
+        		Group g1 = new Group();
+        		g1.setOrganization(org0);
+        		em.persist(g1);
+        		
+        		UserGroup ug0 = new UserGroup();
+        		ug0.setUserGroupId(new UserGroupId(user2, g0));
+        		em.persist(ug0);
+        		
+        		UserGroup ug1 = new UserGroup();
+        		ug1.setUserGroupId(new UserGroupId(user3, g1));
+        		em.persist(ug1);
+        		
+        		GroupObject go0 = new GroupObject();
+        		go0.setActionId("read");
+        		go0.setTransitive(1);
+        		go0.setGroupObjectId(new GroupObjectId(g0, country));
+        		em.persist(go0);
+        		
+        		GroupObject go1 = new GroupObject();
+        		go1.setActionId("write");
+        		go1.setTransitive(0);
+        		go1.setGroupObjectId(new GroupObjectId(g1, area));
+        		em.persist(go1);
+        		
+        	} finally {
+        		
+        	}
+
+    	}, Exception.class);
     }
     
     private static class TestWaterEquipmentDaoImpl extends WaterEquipmentDaoImpl {
@@ -157,29 +164,31 @@ public class DaoTest {
     protected JpaTemplate createJpaTemplate(EntityManager em) {
     	JpaTemplate jpa = mock(JpaTemplate.class);
     	Mockito.<Object>when(jpa.txExpr(any())).thenAnswer(iom -> {
-    		EmFunction<?> code = iom.<EmFunction<?>>getArgument(0);
-    		
-    		EntityTransaction tx = em.getTransaction();
-    		boolean isActive = tx.isActive(); 
-    		if (!isActive) {
-    	        tx.begin();    			
-    		}
-	        
-    		Object result;
-    		try {    			
-    			result = code.apply(em);
-    			
-    			if (!isActive) {
-    				tx.commit();
-    			}    		    			
-    		} catch (Exception e) {
-    			if (!isActive) {
-    				tx.rollback();
-    			}
-    			throw e;
-    		}
-    		
-    		return result;
+            EmFunction<?> code = iom.getArgument(0);
+            
+            Transaction tx = PrepareContext.transactionManager.getTransaction();
+            if (tx != null) {
+            	tx = null;
+            } else {
+            	PrepareContext.transactionManager.begin();
+            	tx = PrepareContext.transactionManager.getTransaction();
+            }
+            
+
+            Object result;
+            try {
+                result = code.apply(em);
+                if (tx != null) {
+                	tx.commit();
+                }
+            } catch (Exception e) {
+            	if (tx != null) {
+            		tx.rollback();
+            	}
+                throw e;
+            }
+
+            return result;
     	});
     	return jpa;
     }

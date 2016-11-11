@@ -22,14 +22,14 @@ import net.wapwag.wemp.dao.model.org.Organization;
 import net.wapwag.wemp.dao.model.org.WaterManageAuth;
 import net.wapwag.wemp.dao.model.permission.User;
 
+import static net.wapwag.wemp.h2.hibernate.PrepareContext.transactionManager;
+
 public class TestObjectModel {
 
     private static EntityManagerFactory emf;
 
     private EntityManager em;
     
-    private EntityTransaction tx;
-
 	@BeforeClass
 	public static void before() throws Exception {
 		emf = PrepareContext.createEMF();
@@ -38,13 +38,12 @@ public class TestObjectModel {
     private long sampleUserId;
 
     @Test
-    public void testManyToManyInsert() {
+    public void testManyToManyInsert() throws Exception {
     	
     	em = emf.createEntityManager();
     	
     	try {
-    		tx = em.getTransaction();
-    		tx.begin();
+    		transactionManager.begin();
     		
 	        int i;
 	        User user = null;
@@ -74,32 +73,31 @@ public class TestObjectModel {
 	            em.persist(userOrg);
 	        }
 	        
-	        tx.commit();
+	        transactionManager.commit();
 	        
-	        tx = em.getTransaction();
-	        tx.begin();
+	        transactionManager.begin();
 
 	        user = em.find(User.class, sampleUserId);
 	        List<Organization> orgList = em.createQuery(
 	                "select userOrg.userOrgId.organization from UserOrg userOrg where userOrg.userOrgId.user = :user", Organization.class)
 	                .setParameter("user", user).getResultList();
+	        
+	        transactionManager.commit();
 
 	        TestCase.assertTrue(orgList != null && orgList.size() > 0);
 	        
-	        tx.commit();
     	} finally {
     		em.close();
     	}
     }
 
     @Test
-	public void testModel() {
+	public void testModel() throws Exception {
     	
     	em = emf.createEntityManager();
     	
     	try {
-    		tx = em.getTransaction();
-    		tx.begin();
+    		transactionManager.begin();
     		
 	        User user = new User();
 	        user.setName("管理员");
@@ -123,7 +121,7 @@ public class TestObjectModel {
 	
 			em.flush();
 			
-			tx.commit();
+			transactionManager.commit();
     	} finally {
     		em.close();
     	}
