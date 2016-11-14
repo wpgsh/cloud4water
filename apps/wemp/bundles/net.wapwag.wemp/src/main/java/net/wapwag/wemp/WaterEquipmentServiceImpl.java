@@ -528,4 +528,22 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
             }
         }, WaterEquipmentServiceException.class);
     }
+
+    @Override
+    public int saveAuthnUser(AuthnUser authnUser) throws WaterEquipmentServiceException {
+        return waterEquipmentDao.txExpr(() -> {
+            try {
+                if (waterEquipmentDao.getUserByExternalId(authnUser.getId()) == null) {
+                    User user = new User();
+                    user.setExternalId(authnUser.getId());
+                    user.setName(authnUser.getUsername());
+                    return waterEquipmentDao.addUser(user);
+                } else {
+                    return 0;
+                }
+            } catch (WaterEquipmentDaoException e) {
+                return 0;
+            }
+        }, WaterEquipmentServiceException.class);
+    }
 }

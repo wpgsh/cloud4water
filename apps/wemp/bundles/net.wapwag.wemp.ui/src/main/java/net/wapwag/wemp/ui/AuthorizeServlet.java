@@ -68,8 +68,9 @@ public class AuthorizeServlet extends HttpServlet {
                     response.sendRedirect(oAuthResponse.getLocationUri());
 
                 } else {
-                    //build return_to uri if not login.
-                    redirectURI = String.format(AUTHORIZE_PATH, clientId, type, redirectURI, clientId, StringUtils.join(scopes, " "));
+                    session.setAttribute("wempRedirect", request.getQueryString());
+                    //redirect to authn app if there is no security session
+                    redirectURI = String.format(AUTHORIZE_PATH, "wemp", type, "http://localhost:8181/wemp/return", "wemp", StringUtils.join(scopes, " "));
                     response.sendRedirect(redirectURI);
                 }
 

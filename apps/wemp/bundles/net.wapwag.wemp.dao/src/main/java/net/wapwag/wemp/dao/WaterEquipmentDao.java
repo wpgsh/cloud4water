@@ -28,7 +28,11 @@ public interface WaterEquipmentDao {
 
     long saveAccessToken(AccessToken accessToken) throws WaterEquipmentDaoException;
 
+	int addUser(User user) throws WaterEquipmentDaoException;
+
     User getUser(long uid) throws WaterEquipmentDaoException;
+
+    User getUserByExternalId(long externalId) throws WaterEquipmentDaoException;
 
 	ObjectData getObjectData(long objId) throws WaterEquipmentDaoException;
 

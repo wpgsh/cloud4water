@@ -110,4 +110,6 @@ public interface WaterEquipmentService {
     ResultView checkPermission(long userId, ObjectData objectData) throws WaterEquipmentServiceException;
 
     Set<ObjectView> getObjectsByUser(long userId, String action) throws WaterEquipmentServiceException;
+
+	int saveAuthnUser(AuthnUser authnUser) throws WaterEquipmentServiceException;
 }

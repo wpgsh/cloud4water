@@ -29,6 +29,7 @@ import java.util.Set;
  * &scope=1&scope=2&scope=3
  * Authorization servlet.
  */
+@SuppressWarnings("Duplicates")
 @WebServlet(urlPatterns = "/authorize", name = "AuthorizationServlet")
 public class AuthorizationServlet extends HttpServlet {
 

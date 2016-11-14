@@ -1,10 +1,19 @@
 package net.wapwag.authn;
 
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.HashSet;
-import java.util.Set;
-
+import com.eaio.uuid.UUID;
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+import net.wapwag.authn.Ids.UserId;
+import net.wapwag.authn.dao.UserDao;
+import net.wapwag.authn.dao.UserDaoException;
+import net.wapwag.authn.dao.model.AccessTokenId;
+import net.wapwag.authn.dao.model.Image;
+import net.wapwag.authn.dao.model.RegisteredClient;
+import net.wapwag.authn.dao.model.User;
+import net.wapwag.authn.model.AccessTokenMapper;
+import net.wapwag.authn.model.UserProfile;
+import net.wapwag.authn.model.UserView;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.oltu.oauth2.common.error.OAuthError;
@@ -15,20 +24,9 @@ import org.osgi.service.component.annotations.ServiceScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.eaio.uuid.UUID;
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
-
-import net.wapwag.authn.Ids.UserId;
-import net.wapwag.authn.dao.UserDao;
-import net.wapwag.authn.dao.UserDaoException;
-import net.wapwag.authn.dao.model.AccessTokenId;
-import net.wapwag.authn.dao.model.Image;
-import net.wapwag.authn.dao.model.RegisteredClient;
-import net.wapwag.authn.dao.model.User;
-import net.wapwag.authn.model.AccessTokenMapper;
-import net.wapwag.authn.model.UserProfile;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 @Component(scope=ServiceScope.SINGLETON)
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -219,6 +217,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             }
         }, OAuthProblemException.class);
     }
+
+	@Override
+	public UserView getUserInfo(final String token) throws OAuthProblemException {
+            try {
+                if (StringUtils.isNotBlank(token)) {
+                    return UserView.newInstance(userDao.getUserByAccessToken(token));
+                } else {
+                    return null;
+                }
+            } catch (UserDaoException e) {
+                throw OAuthProblemException.error(OAuthError.CodeResponse.UNAUTHORIZED_CLIENT, "error client credential");
+            }
+	}
 
 	/**
 	 * Check the client is a valid wpg client.

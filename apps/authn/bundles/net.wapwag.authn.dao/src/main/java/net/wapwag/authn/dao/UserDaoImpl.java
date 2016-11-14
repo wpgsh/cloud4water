@@ -154,7 +154,24 @@ public class UserDaoImpl implements UserDao {
 		}
     }
 
-    @Override
+	@Override
+	public User getUserByAccessToken(String token) throws UserDaoException {
+		final String hql = "select token.accessTokenId.user from AccessToken token " +
+				"where token.handle = :token ";
+		try {
+			return entityManager.txExpr(em -> em.createQuery(hql, User.class)
+					.setParameter("token", token)
+					.getResultList()
+					.stream()
+					.findFirst()
+					.orElse(null)
+			);
+		} catch (Exception e) {
+			throw new UserDaoException("cannot get user by token", e);
+		}
+	}
+
+	@Override
 	public int saveUser(final User user) throws UserDaoException {
 		try {
 			return entityManager.txExpr(em -> {

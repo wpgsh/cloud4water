@@ -88,20 +88,20 @@ public class MysqlTxAwareEntityManager implements TxAwareEntityManager {
 	
 	@Override
 	public void init() throws Exception {
-		for (String _sql : ddl) {
-			logger.info("MySQL DB Initialization: {}", _sql);
-			try {			
-				final String sql = _sql;
-				tx(new EmConsumer() {
-					@Override
-					public void accept(EntityManager em) {
-						em.createNativeQuery(sql).executeUpdate();
-					}					
-				});				
-			} catch (Exception e) {
-				throw new Exception("Error executing DDL query: "+_sql, e);
-			}
-		}
+//		for (String _sql : ddl) {
+//			logger.info("MySQL DB Initialization: {}", _sql);
+//			try {
+//				final String sql = _sql;
+//				tx(new EmConsumer() {
+//					@Override
+//					public void accept(EntityManager em) {
+//						em.createNativeQuery(sql).executeUpdate();
+//					}
+//				});
+//			} catch (Exception e) {
+//				throw new Exception("Error executing DDL query: "+_sql, e);
+//			}
+//		}
 	}
 	
 	@Override

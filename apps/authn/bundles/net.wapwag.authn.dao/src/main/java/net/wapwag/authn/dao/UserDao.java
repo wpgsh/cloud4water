@@ -30,7 +30,9 @@ public interface UserDao {
 	long saveAccessToken(AccessToken accessToken) throws UserDaoException;
 
 	AccessToken lookupAccessToken(String handle) throws UserDaoException;
-	
+
+	User getUserByAccessToken(String token) throws UserDaoException;
+
 	User getUserByName(String userName)throws UserDaoException;
 	
 	User getUserByEmail(String email)throws UserDaoException;

@@ -1,15 +1,15 @@
 package net.wapwag.authn;
 
-import java.util.Set;
-
-import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
-
 import net.wapwag.authn.Ids.UserId;
 import net.wapwag.authn.dao.model.Image;
 import net.wapwag.authn.dao.model.RegisteredClient;
 import net.wapwag.authn.dao.model.User;
 import net.wapwag.authn.model.AccessTokenMapper;
 import net.wapwag.authn.model.UserProfile;
+import net.wapwag.authn.model.UserView;
+import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
+
+import java.util.Set;
 
 public interface AuthenticationService {
 
@@ -49,6 +49,14 @@ public interface AuthenticationService {
 	 * @throws AuthenticationServiceException
      */
 	RegisteredClient getClient(String redirectURI) throws AuthenticationServiceException;
+
+    /**
+     *
+     * @param token
+     * @return
+     * @throws OAuthProblemException
+     */
+    UserView getUserInfo(String token) throws OAuthProblemException;
 
 	UserProfile getUserProfile(UserId uid) throws AuthenticationServiceException;
 

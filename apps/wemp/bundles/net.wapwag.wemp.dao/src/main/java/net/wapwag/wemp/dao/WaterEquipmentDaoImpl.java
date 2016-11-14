@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.Entity;
-import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -230,11 +229,40 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
     }
 
     @Override
+    public int addUser(User user) throws WaterEquipmentDaoException {
+        try {
+            return entityManager.txExpr(em -> {
+                em.persist(user);
+                return 1;
+            });
+        } catch (Exception e) {
+            throw new WaterEquipmentDaoException("Cannot add user", e);
+        }
+    }
+
+    @Override
     public User getUser(long uid) throws WaterEquipmentDaoException {
         try {
             return entityManager.txExpr((em) -> em.find(User.class, uid));
         } catch (Exception e) {
             throw new WaterEquipmentDaoException("Cannot get user by id", e);
+        }
+    }
+
+    @Override
+    public User getUserByExternalId(long externalId) throws WaterEquipmentDaoException {
+        final String hql = "select user from User user where user.externalId = :externalId";
+
+        try {
+            return entityManager.txExpr((em) -> em.createQuery(hql, User.class)
+                    .setParameter("externalId", externalId)
+                    .getResultList()
+                    .stream()
+                    .findFirst()
+                    .orElse(null)
+            );
+        } catch (Exception e) {
+            throw new WaterEquipmentDaoException("Cannot get user by external id", e);
         }
     }
 

@@ -62,24 +62,12 @@
 			<groupId>org.apache.oltu.oauth2</groupId>
 			<artifactId>org.apache.oltu.oauth2.authzserver</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>commons-email</groupId>
-			<artifactId>commons-email</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.mail</groupId>
-			<artifactId>mail</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.activation</groupId>
-			<artifactId>activation</artifactId>
-		</dependency>
-		
+
+		<!-- Test -->
 		<dependency>
 		  <groupId>junit</groupId>
 		  <artifactId>junit</artifactId>
 		</dependency>
-		
 		<dependency>
 		  <groupId>org.eclipse.jetty</groupId>
 		  <artifactId>jetty-server</artifactId>
