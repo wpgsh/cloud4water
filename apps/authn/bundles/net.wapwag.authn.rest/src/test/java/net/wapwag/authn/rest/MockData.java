@@ -64,6 +64,7 @@ class MockData {
 		image.setImage("testImage".getBytes());
 		
 		user.setId(userId);
+		user.setEnabled("1");
         user.setName("test1");
 		user.setEmail(email);
 		user.setAvartarId(avantarId);
