@@ -2,7 +2,6 @@ package net.wapwag.authn.rest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -15,8 +14,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.jboss.resteasy.plugins.providers.multipart.InputPart;
-import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -108,36 +107,19 @@ public class AuthenticationResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-//    @Authorization @AuthorizationOnlyUserId
-    public UserMsgResponse createNewUser(@Context UserRequestJson userRequest) throws Exception {
-        try {
-            //Get the userRequest and convert it to User so the service layer could operate it.
-            User user = new User();
-            user.setUsername(userRequest.getUsername());
-            if(userRequest.getPasswordHash() != null){
-	            long pwdSalt = System.currentTimeMillis();
-	            //save passwordHash,rule -> SHA1(pwd + pwdSalt)
-	            user.setPasswordHash(StringUtil.strSHA1(StringUtil.strMd5(userRequest.getPasswordHash()) + pwdSalt));
-	            //save pwdSalt
-	            user.setPasswordSalt(pwdSalt + "");
-            }
-            user.setEnabled(userRequest.getEnabled());
-            user.setAvartarId(userRequest.getAvartarId());
-            user.setAvatar(userRequest.getAvatar());
-            user.setEmail(userRequest.getEmail());
-            user.setHomepage(userRequest.getHomepage());
-            user.setName(userRequest.getName());
-            user.setPhone1(userRequest.getPhone1());
-            user.setPhone2(userRequest.getPhone2());
-            user.setEmail(userRequest.getEmail());
-            
-        	int result = authnService.saveUser(user);
-        	String msg = (result == 1 ? "add success" : "add fail");
-            return new UserMsgResponse(msg);
-            
-        } catch (Exception e) {
-            throw new ResourceNotFoundException("Can not add user: " + userRequest.toString());
+    @Authorization @AuthorizationOnlyUserId
+    public UserMsgResponse createNewUser(User userRequest) throws Exception {
+        //Get the userRequest and convert it to User so the service layer could operate it.
+        if(userRequest.getPasswordHash() != null){
+            long pwdSalt = System.currentTimeMillis();
+            //save passwordHash,rule -> SHA1(pwd + pwdSalt)
+            userRequest.setPasswordHash(StringUtil.strSHA1(StringUtil.strMd5(userRequest.getPasswordHash()) + pwdSalt));
+            //save pwdSalt
+            userRequest.setPasswordSalt(pwdSalt + "");
         }
+    	int result = authnService.saveUser(userRequest);
+    	String msg = (result == 1 ? "add success" : "add fail");
+        return new UserMsgResponse(msg);
     }
     
     @PUT
@@ -145,55 +127,50 @@ public class AuthenticationResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Authorization @AuthorizationOnlyUserId
-    public UserMsgResponse updateUserProfile(@Context UserRequestJson userRequest,@PathParam("userId") long uid) throws Exception {
-        try {
-        	User user = authnService.getUser(uid);
-            //Get the userRequest and convert it to User so the service layer could operate it.
-            if(userRequest.getUsername() != null){
-            	user.setUsername(userRequest.getUsername());
-            }
-            if(userRequest.getPasswordHash() != null){
-            	long pwdSalt = System.currentTimeMillis();
-	            //save passwordHash,rule -> SHA1(pwd + pwdSalt)
-	            user.setPasswordHash(StringUtil.strSHA1(StringUtil.strMd5(userRequest.getPasswordHash()) + pwdSalt));
-	            //save pwdSalt
-	            user.setPasswordSalt(pwdSalt + "");
-            }
-            if(userRequest.getEnabled() != null){
-            	user.setEnabled(userRequest.getEnabled());
-            }
-            if(userRequest.getAvartarId() != null){
-            	user.setAvartarId(userRequest.getAvartarId());
-            }
-            if(userRequest.getAvatar() != null){
-            	user.setAvatar(userRequest.getAvatar());
-            }
-            if(userRequest.getEmail() != null){
-            	user.setEmail(userRequest.getEmail());
-            }
-            if(userRequest.getHomepage() != null){
-            	user.setHomepage(userRequest.getHomepage());
-            }
-            if(userRequest.getName() != null){
-            	user.setName(userRequest.getName());
-            }
-            if(userRequest.getPhone1() != null){
-            	user.setPhone1(userRequest.getPhone1());
-            }
-            if(userRequest.getPhone2() != null){
-            	user.setPhone2(userRequest.getPhone2());
-            }
-            if(userRequest.getEmail() != null){
-            	user.setEmail(userRequest.getEmail());
-            }
-
-            int result = authnService.saveUser(user);
-            String msg = (result == 1 ? "update success" : "update fail");
-            return new UserMsgResponse(msg);
-
-        } catch (Exception e) {
-            throw new ResourceNotFoundException("Can not add user: " + userRequest.toString());
+    public UserMsgResponse updateUserProfile(User userRequest, @PathParam("userId") long uid) throws Exception {
+    	User user = authnService.getUser(uid);
+        //Get the userRequest and convert it to User so the service layer could operate it.
+        if(userRequest.getUsername() != null){
+        	user.setUsername(userRequest.getUsername());
         }
+        if(userRequest.getPasswordHash() != null){
+        	long pwdSalt = System.currentTimeMillis();
+            //save passwordHash,rule -> SHA1(pwd + pwdSalt)
+            user.setPasswordHash(StringUtil.strSHA1(StringUtil.strMd5(userRequest.getPasswordHash()) + pwdSalt));
+            //save pwdSalt
+            user.setPasswordSalt(pwdSalt + "");
+        }
+        if(userRequest.getEnabled() != null){
+        	user.setEnabled(userRequest.getEnabled());
+        }
+        if(userRequest.getAvartarId() != null){
+        	user.setAvartarId(userRequest.getAvartarId());
+        }
+        if(userRequest.getAvatar() != null){
+        	user.setAvatar(userRequest.getAvatar());
+        }
+        if(userRequest.getEmail() != null){
+        	user.setEmail(userRequest.getEmail());
+        }
+        if(userRequest.getHomepage() != null){
+        	user.setHomepage(userRequest.getHomepage());
+        }
+        if(userRequest.getName() != null){
+        	user.setName(userRequest.getName());
+        }
+        if(userRequest.getPhone1() != null){
+        	user.setPhone1(userRequest.getPhone1());
+        }
+        if(userRequest.getPhone2() != null){
+        	user.setPhone2(userRequest.getPhone2());
+        }
+        if(userRequest.getEmail() != null){
+        	user.setEmail(userRequest.getEmail());
+        }
+
+        int result = authnService.saveUser(user);
+        String msg = (result == 1 ? "update success" : "update fail");
+        return new UserMsgResponse(msg);
     }
     
     @DELETE
@@ -201,14 +178,10 @@ public class AuthenticationResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Authorization @AuthorizationOnlyUserId
     public UserMsgResponse removeUserProfile(@PathParam("userId") long uid) throws Exception {
-        try {
-            //Get the userRequest and convert it to User so the service layer could operate it.
-        	int result = authnService.removeUser(uid);
-        	String msg = (result == 1 ? "remove success" : "remove fail");
-            return new UserMsgResponse(msg);
-        } catch (Exception e) {
-            throw new ResourceNotFoundException("Can not remove user " );
-        }
+        //Get the userRequest and convert it to User so the service layer could operate it.
+    	int result = authnService.removeUser(uid);
+    	String msg = (result == 1 ? "remove success" : "remove fail");
+        return new UserMsgResponse(msg);
     }
     
     @GET
@@ -238,38 +211,35 @@ public class AuthenticationResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Authorization @AuthorizationOnlyUserId
-    public UserMsgResponse createNewAvatar(@PathParam("userId") long uid, MultipartFormDataInput input) throws Exception {
-        try {
-            User user = new User();
-            Map<String, InputPart> uploadForm = input.getFormData();  
-            InputPart inputPart = uploadForm.get("file");
-            
-            //convert the uploaded file to inputstream   
-            InputStream inputStream = inputPart.getBody(InputStream.class,null);   
-    
-        	byte[] photo = new byte[inputStream.available()];
-        	inputStream.read(photo);
-        	inputStream.close();
-            
-        	String avartarId = StringUtil.getUUID();
-        	Image image = new Image();
-        	image.setId(avartarId);
-        	image.setImage(photo);
-        	
-            int result = authnService.saveImg(image);
-            
-            if(result > 0){
-            	user = authnService.getUser(uid);
-            	user.setAvartarId(avartarId);
-            	authnService.saveUser(user);
-            }
-            
-            String msg = (result == 1 ? "add success" : "add fail");
-            return new UserMsgResponse(msg);
-        } catch (Exception e) {
-            throw new ResourceNotFoundException("Can not add Image: " + uid);
-        }
+    public UserMsgResponse createNewAvatar(@PathParam("userId") long uid, FormDataMultiPart input) throws Exception {
+        User user = new User();
+        
+        FormDataBodyPart filePart = input.getField("file");
+        InputStream inputStream = filePart.getValueAs(InputStream.class);
 
+    	ByteArrayOutputStream output = new ByteArrayOutputStream();  
+        byte[] buf = new byte[1024];  
+        int numBytesRead = 0;  
+        while ((numBytesRead = inputStream.read(buf)) != -1) {  
+            output.write(buf, 0, numBytesRead);  
+        }
+        byte[] photo = output.toByteArray();
+    	
+    	String avartarId = StringUtil.getUUID();
+    	Image image = new Image();
+    	image.setId(avartarId);
+    	image.setImage(photo);
+    	
+        int result = authnService.saveImg(image);
+        
+        if(result > 0){
+        	user = authnService.getUser(uid);
+        	user.setAvartarId(avartarId);
+        	authnService.saveUser(user);
+        }
+        
+        String msg = (result == 1 ? "add success" : "add fail");
+        return new UserMsgResponse(msg);
     }
     
     @PUT
@@ -277,23 +247,21 @@ public class AuthenticationResource {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
     @Authorization @AuthorizationOnlyUserId
-    public UserMsgResponse updateUserAvatar(@PathParam("userId") long uid, MultipartFormDataInput input) throws Exception {
+    public UserMsgResponse updateUserAvatar(@PathParam("userId") long uid, FormDataMultiPart input) throws Exception {
         try {
             //Get the userRequest and convert it to User so the service layer could operate it.
         	User user = new User();
-        	Map<String, InputPart> uploadForm = input.getFormData();  
-            InputPart inputPart = uploadForm.get("file");
-            
-            //convert the uploaded file to inputstream   
-            InputStream inputStream = inputPart.getBody(InputStream.class,null);
-
-            ByteArrayOutputStream output = new ByteArrayOutputStream();  
-            byte[] buf = new byte[1024];  
-            int numBytesRead = 0;  
-            while ((numBytesRead = inputStream.read(buf)) != -1) {  
-                output.write(buf, 0, numBytesRead);  
-            }
-            byte[] photo = output.toByteArray();
+        	
+        	FormDataBodyPart filePart = input.getField("file");
+            InputStream inputStream = filePart.getValueAs(InputStream.class);
+    
+        	ByteArrayOutputStream output = new ByteArrayOutputStream();  
+	        byte[] buf = new byte[1024];  
+	        int numBytesRead = 0;  
+	        while ((numBytesRead = inputStream.read(buf)) != -1) {  
+	            output.write(buf, 0, numBytesRead);  
+	        }
+	        byte[] photo = output.toByteArray();
             
         	String avartarId = StringUtil.getUUID();
         	Image image = new Image();
@@ -321,21 +289,16 @@ public class AuthenticationResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Authorization @AuthorizationOnlyUserId
     public UserMsgResponse removeUserAvatar(@PathParam("userId") long uid) throws Exception {
-        try {
-            //Get the userRequest and convert it to User so the service layer could operate it.
-        	User user = authnService.getUser(uid);
-        	
-        	int result = authnService.deleteImg(user.getAvartarId());
-        	if(result > 0){
-        		user.setAvartarId("");
-            	authnService.saveUser(user);
-        	}
-        	String msg = (result == 1 ? "remove success" : "remove fail");
-            return new UserMsgResponse(msg);
-        } catch (Exception e) {
-            throw new ResourceNotFoundException("Can not remove user " );
-        }
-
+        //Get the userRequest and convert it to User so the service layer could operate it.
+    	User user = authnService.getUser(uid);
+    	
+    	int result = authnService.deleteImg(user.getAvartarId());
+    	if(result > 0){
+    		user.setAvartarId("");
+        	authnService.saveUser(user);
+    	}
+    	String msg = (result == 1 ? "remove success" : "remove fail");
+        return new UserMsgResponse(msg);
     }
   
     @GET

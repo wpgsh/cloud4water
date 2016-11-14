@@ -2,6 +2,7 @@ package net.wapwag.authn.ui;
 
 import net.wapwag.authn.dao.UserDao;
 import net.wapwag.authn.dao.model.AccessToken;
+import net.wapwag.authn.dao.model.AccessTokenId;
 import net.wapwag.authn.dao.model.RegisteredClient;
 import net.wapwag.authn.dao.model.User;
 
@@ -39,9 +40,8 @@ public class UserDaoMock {
 		accessToken.setAuthrizationCode(AUTHORIZATION_CODE);
 		accessToken.setExpiration(EXPIRATION);
 		accessToken.setHandle(ACCESS_TOKEN);
-		accessToken.setRegisteredClient(client1);
 		accessToken.setScope(SCOPE);
-		accessToken.setUser(user1);
+//		accessToken.setAccessTokenId(new AccessTokenId());
 		return accessToken;
 	}
 	/**

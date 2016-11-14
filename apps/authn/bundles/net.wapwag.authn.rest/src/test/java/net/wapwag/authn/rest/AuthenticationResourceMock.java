@@ -18,17 +18,17 @@ public class AuthenticationResourceMock extends AuthenticationResource{
     public AuthenticationResourceMock() {
     	authnService = mockService;
 
-        try {
-			when(authnService.getUser(userId))
-			        .thenReturn(user);
-			when(authnService.saveUser(user)).thenReturn(1);
-			when(authnService.removeUser(userId)).thenReturn(1);
-			when(authnService.getAvatar(avantarId)).thenReturn(image);
-			when(authnService.saveImg(image)).thenReturn(1);
-			when(authnService.deleteImg(avantarId)).thenReturn(1);
-			
-		} catch (AuthenticationServiceException e) {
-			e.printStackTrace();
-		}
+//        try {
+//			when(authnService.getUser(userId))
+//			        .thenReturn(user);
+//			when(authnService.saveUser(user)).thenReturn(1);
+//			when(authnService.removeUser(userId)).thenReturn(1);
+//			when(authnService.getAvatar(avantarId)).thenReturn(image);
+//			when(authnService.saveImg(image)).thenReturn(1);
+//			when(authnService.deleteImg(avantarId)).thenReturn(1);
+//			
+//		} catch (AuthenticationServiceException e) {
+//			e.printStackTrace();
+//		}
     }
 }
