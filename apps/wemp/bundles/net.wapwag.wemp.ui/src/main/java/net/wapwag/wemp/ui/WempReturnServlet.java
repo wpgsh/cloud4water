@@ -15,6 +15,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.apache.oltu.oauth2.common.OAuth;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -26,6 +27,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javax.servlet.http.HttpServletResponse.SC_OK;
+import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+import static net.wapwag.wemp.ui.WempConstant.*;
+
 /**
  * WEMP return Servlet
  * Created by Administrator on 2016/11/13.
@@ -33,9 +38,8 @@ import java.util.List;
 @WebServlet(urlPatterns = "/return", name = "WEMP_ReturnServlet")
 public class WempReturnServlet extends HttpServlet {
 
-    private static final String WEMP_ID = "wemp";
-    private static final String WEMP_SECRET = "wemp_secret";
-    private static final String WEMP_BASIC_CREDENTIAL = "Basic d2VtcDp3ZW1wX3NlY3JldA==";
+    private static final String AUTHN_USERINFO_PATH = "http://localhost:8181/authn/userinfo";
+    private static final String AUTHN_GET_ACCESSTOKEN_PATH = "http://localhost:8181/authn/access_token";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -58,16 +62,16 @@ public class WempReturnServlet extends HttpServlet {
                     if (StringUtils.isNotBlank(wempRedirect)) {
                         request.getRequestDispatcher(String.format("/authorize?%s", wempRedirect)).forward(request, response);
                     } else {
-                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                        response.sendError(SC_UNAUTHORIZED);
                     }
                 } else {
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.sendError(SC_UNAUTHORIZED);
                 }
             } else {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                response.sendError(SC_UNAUTHORIZED);
             }
         } else {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            response.sendError(SC_UNAUTHORIZED);
         }
 
     }
@@ -75,10 +79,10 @@ public class WempReturnServlet extends HttpServlet {
     @SuppressWarnings("Duplicates")
     private AuthnUser getUserInfo(String token) throws IOException, ServletException {
         HttpClient client = HttpClientBuilder.create().build();
-        HttpGet get = new HttpGet("http://localhost:8181/authn/userinfo");
+        HttpGet get = new HttpGet(AUTHN_USERINFO_PATH);
         get.setHeader("Authorization", "Bearer " + token);
         HttpResponse result = client.execute(get);
-        if (result.getStatusLine().getStatusCode() == HttpServletResponse.SC_OK) {
+        if (result.getStatusLine().getStatusCode() == SC_OK) {
 
             String userJson = EntityUtils.toString(result.getEntity(), "utf-8");
             AuthnUser authnUser = new Gson().fromJson(userJson, AuthnUser.class);
@@ -99,19 +103,19 @@ public class WempReturnServlet extends HttpServlet {
 
     private String getAcessToken(String authzCode) throws IOException {
         HttpClient client = HttpClientBuilder.create().build();
-        HttpPost post = new HttpPost("http://localhost:8181/authn/access_token");
-        post.setHeader("authorization", WEMP_BASIC_CREDENTIAL);
+        HttpPost post = new HttpPost(AUTHN_GET_ACCESSTOKEN_PATH);
+        post.setHeader("authorization", WEMP_BASIC_ENCODED_CREDENTIAL);
         List<NameValuePair> forms = new ArrayList<>();
         forms.add(new BasicNameValuePair("code", authzCode));
-        forms.add(new BasicNameValuePair("grant_type", "authorization_code"));
-        forms.add(new BasicNameValuePair("clientId", WEMP_ID));
-        forms.add(new BasicNameValuePair("redirect_uri", "http://localhost:8181/wemp/return"));
+        forms.add(new BasicNameValuePair(OAuth.OAUTH_GRANT_TYPE, "authorization_code"));
+        forms.add(new BasicNameValuePair("client_id", WEMP_ID));
         forms.add(new BasicNameValuePair("client_secret", WEMP_SECRET));
+        forms.add(new BasicNameValuePair("redirect_uri", WEMP_RETURN_PATH));
 
         post.setEntity(new UrlEncodedFormEntity(forms));
         HttpResponse result = client.execute(post);
 
-        if (result.getStatusLine().getStatusCode() == HttpServletResponse.SC_OK) {
+        if (result.getStatusLine().getStatusCode() == SC_OK) {
             String tokenJson = EntityUtils.toString(result.getEntity(), "utf-8");
             if (StringUtils.isNotBlank(tokenJson) && tokenJson.contains("access_token")) {
                 JsonObject jsonObject = new JsonParser().parse(tokenJson).getAsJsonObject();

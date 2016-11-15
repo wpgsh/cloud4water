@@ -10,15 +10,17 @@ import org.apache.oltu.oauth2.common.message.OAuthResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.Set;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.Set;
+
+import static javax.servlet.http.HttpServletResponse.SC_FOUND;
+import static net.wapwag.wemp.ui.WempConstant.*;
 
 // See https://tools.ietf.org/html/rfc6749#section-4.1.1
 @WebServlet(urlPatterns = "/authorize", name = "WEMP_AuthorizeServlet")
@@ -29,8 +31,7 @@ public class AuthorizeServlet extends HttpServlet {
     /**
      * The path for /authorize.
      */
-    private static final String AUTHORIZE_PATH = "/authn/login?client_id=%s" +
-            "&return_to=/authn/authorize?response_type=%s&redirect_uri=%s&client_id=%s&scope=%s";
+    private static final String AUTHORIZE_PATH = "/authn/authorize?response_type=%s&redirect_uri=%s&client_id=%s&scope=%s";
 
     @SuppressWarnings("Duplicates")
     @Override
@@ -61,7 +62,7 @@ public class AuthorizeServlet extends HttpServlet {
                     code = waterEquipmentService.getAuthorizationCode(userId, clientId, redirectURI, scopes);
 
                     oAuthResponse = OAuthASResponse
-                            .authorizationResponse(request, HttpServletResponse.SC_FOUND)
+                            .authorizationResponse(request, SC_FOUND)
                             .setCode(code)
                             .location(oauthRequest.getRedirectURI())
                             .buildQueryMessage();
@@ -70,7 +71,7 @@ public class AuthorizeServlet extends HttpServlet {
                 } else {
                     session.setAttribute("wempRedirect", request.getQueryString());
                     //redirect to authn app if there is no security session
-                    redirectURI = String.format(AUTHORIZE_PATH, "wemp", type, "http://localhost:8181/wemp/return", "wemp", StringUtils.join(scopes, " "));
+                    redirectURI = String.format(AUTHORIZE_PATH, type, WEMP_RETURN_PATH, WEMP_ID, StringUtils.join(scopes, " "));
                     response.sendRedirect(redirectURI);
                 }
 
@@ -80,9 +81,9 @@ public class AuthorizeServlet extends HttpServlet {
                     try {
                         redirectURI = ((OAuthProblemException) e).getRedirectUri();
                         oAuthResponse = OAuthASResponse
-                                .errorResponse(HttpServletResponse.SC_FOUND)
+                                .errorResponse(SC_FOUND)
                                 .error((OAuthProblemException) e)
-                                .location(redirectURI == null ? "http://www.baidu.com" : redirectURI)
+                                .location(redirectURI == null ? WEMP_ERROR_PATH : redirectURI)
                                 .buildQueryMessage();
                     } catch (OAuthSystemException ex) {
                         if (logger.isErrorEnabled()) {

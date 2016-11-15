@@ -101,7 +101,6 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<_wab>src/main/webapp/</_wab>
 						<Web-ContextPath>/wemp</Web-ContextPath>
 						<Webapp-Context>wemp</Webapp-Context>
 					</instructions>
