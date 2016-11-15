@@ -2,14 +2,14 @@ package net.wapwag.authn.rest;
 
 import java.lang.reflect.Type;
 
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
 
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
-import org.junit.Before;
 
 import com.google.gson.Gson;
 
@@ -19,12 +19,15 @@ import com.google.gson.Gson;
  */
 abstract class BaseResourceTest extends JerseyTest {
 
-    static final long userId = 1L;
-
     private Gson gson = new Gson();
 
     abstract ResourceConfig initResource();
 
+    @Override
+    protected void configureClient(ClientConfig config) {
+        config.register(MultiPartFeature.class);
+    }
+    
     @Override
     protected Application configure() {
         enable(TestProperties.LOG_TRAFFIC);

@@ -9,6 +9,7 @@ import net.wapwag.authn.dao.model.AccessTokenId;
 import net.wapwag.authn.dao.model.Image;
 import net.wapwag.authn.dao.model.RegisteredClient;
 import net.wapwag.authn.dao.model.User;
+import net.wapwag.authn.rest.dto.UserRequestJson;
 
 /**
  * mock data
@@ -22,7 +23,7 @@ class MockData {
     static final long groupId = 1L;
     static final long orgId = 1L;
     static final long invalidId = 0L;
-
+    static final String userName = "test1";
     static final int count = 5;
     static final int addCount = 1;
     static final int removeCount = 1;
@@ -41,8 +42,12 @@ class MockData {
     static final String invalidString = "invalid_string";
     static final String invalidEncodeHanlde = "aW52YWxpZF9zdHJpbmc=";
 	
+    static Image image_null = null;
     static Image image = new Image();
     static final User user = new User();
+    static final User user_null = null;
+    static final User user_not_enabled = new User();
+    static final User user_password = new User();
 	static final AccessToken accessToken = new AccessToken();
 	static final AccessToken accessToken_expired = new AccessToken();
 	static final RegisteredClient wpgClient = new RegisteredClient();
@@ -56,6 +61,8 @@ class MockData {
     static final AccessToken accessToken_nonWPGclientWithAuthzedScope = new AccessToken();
     static final AccessToken accessToken_nonWPGclientWithNonAuthzedScope = new AccessToken();
 	
+    static UserRequestJson userRequestJson = new UserRequestJson();
+    
 	static final Set<String> scopes = new HashSet<>();
     static final Set<String> nonAuthzedscopes = new HashSet<>();
 	
@@ -66,11 +73,44 @@ class MockData {
 		user.setId(userId);
 		user.setEnabled("1");
         user.setName("test1");
+        user.setUsername("test1");
+        user.setPhone2("15850817392");
 		user.setEmail(email);
 		user.setAvartarId(avantarId);
+		user.setAvatar("avatar");
 		user.setEmail("jiangzehu@163.com");
 		user.setHomepage("http://www.baidu.com");
 		user.setPhone1("15850817392");
+		
+		user_not_enabled.setId(userId);
+		user_not_enabled.setName("test1");
+		user_not_enabled.setEmail(email);
+		user_not_enabled.setAvartarId(avantarId);
+		user_not_enabled.setEmail("jiangzehu@163.com");
+		user_not_enabled.setHomepage("http://www.baidu.com");
+		user_not_enabled.setPhone1("15850817392");
+		
+		userRequestJson.setId(userId);
+		userRequestJson.setEnabled("1");
+		userRequestJson.setName("test1");
+		userRequestJson.setEmail(email);
+		userRequestJson.setAvartarId(avantarId);
+		userRequestJson.setEmail("jiangzehu@163.com");
+		userRequestJson.setHomepage("http://www.baidu.com");
+		userRequestJson.setPhone1("15850817392");
+		
+		
+		user_password.setEnabled("1");
+		user_password.setPasswordHash("dfdf");
+		user_password.setName("test1");
+		user_password.setUsername("test1");
+		user_password.setPhone2("15850817392");
+		user_password.setEmail(email);
+		user_password.setAvartarId(avantarId);
+		user_password.setAvatar("avatar");
+		user_password.setEmail("jiangzehu@163.com");
+		user_password.setHomepage("http://www.baidu.com");
+		user_password.setPhone1("15850817392");
 		
         wpgClient.setId(clientId);
         wpgClient.setClientId(clientIdentity);
