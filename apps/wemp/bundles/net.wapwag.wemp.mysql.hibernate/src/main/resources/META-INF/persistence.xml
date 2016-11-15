@@ -2,7 +2,6 @@
 <persistence xmlns="http://java.sun.com/xml/ns/persistence"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     version="2.0">
-    <!--  RESOURCE_LOCAL -->
     <persistence-unit name="waterequipment-jpa-mysql" transaction-type="JTA">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <jta-data-source>osgi:service/javax.sql.DataSource/(osgi.jndi.service.name=jdbc/WaterEquipment_MySQL)</jta-data-source>

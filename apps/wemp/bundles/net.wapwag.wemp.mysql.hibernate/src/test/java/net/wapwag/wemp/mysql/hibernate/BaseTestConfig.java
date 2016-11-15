@@ -13,6 +13,8 @@ import org.mockito.Mockito;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
+import javax.transaction.Status;
+import javax.transaction.Transaction;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -26,8 +28,6 @@ public class BaseTestConfig {
     private static EntityManagerFactory emf;
 
     protected EntityManager em;
-
-    private EntityTransaction tx;
 
     WaterEquipmentDao waterEquipmentDao;
 
@@ -56,24 +56,28 @@ public class BaseTestConfig {
         JpaTemplate jpa = mock(JpaTemplate.class);
         Mockito.when(jpa.txExpr(any())).thenAnswer(iom -> {
             EmFunction<?> code = iom.getArgument(0);
-
-            EntityTransaction tx = em.getTransaction();
-            boolean isActive = tx.isActive();
-            if (!isActive) {
-                tx.begin();
+            
+            // assuming the transaction has begun already
+            
+            Transaction tx = PrepareContext.transactionManager.getTransaction();
+            if (tx != null) {
+            	tx = null;
+            } else {
+            	PrepareContext.transactionManager.begin();
+            	tx = PrepareContext.transactionManager.getTransaction();
             }
+            
 
             Object result;
             try {
                 result = code.apply(em);
-
-                if (!isActive) {
-                    tx.commit();
+                if (tx != null) {
+                	tx.commit();
                 }
             } catch (Exception e) {
-                if (!isActive) {
-                    tx.rollback();
-                }
+            	if (tx != null) {
+            		tx.rollback();
+            	}
                 throw e;
             }
 
@@ -92,16 +96,13 @@ public class BaseTestConfig {
     }
 
     @Before
-    public void beforeMethod() {
-        em = emf.createEntityManager();
-        tx = em.getTransaction();
-        waterEquipmentDao = createDao(em);
-        tx.begin();
+    public void beforeMethod() throws Exception {
+        em = emf.createEntityManager();        
+        waterEquipmentDao = createDao(em); 
     }
 
     @After
-    public void afterMethod() {
-        tx.rollback();
+    public void afterMethod() throws Exception {
     }
 
 }
