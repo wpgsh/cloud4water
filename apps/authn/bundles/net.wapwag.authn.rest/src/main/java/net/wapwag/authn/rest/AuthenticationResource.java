@@ -11,11 +11,11 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -29,7 +29,6 @@ import net.wapwag.authn.rest.authz.AnyAuthenticatedUser;
 import net.wapwag.authn.rest.authz.AuthorizationOnlyUserId;
 import net.wapwag.authn.rest.dto.ImageResponse;
 import net.wapwag.authn.rest.dto.UserMsgResponse;
-import net.wapwag.authn.rest.dto.UserRequestJson;
 import net.wapwag.authn.rest.dto.UserResponse;
 import net.wapwag.authn.rest.oauth2.UsersTokenHandler;
 import net.wapwag.authn.rest.util.StringUtil;
@@ -247,14 +246,12 @@ public class AuthenticationResource {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
     @Authorization @AuthorizationOnlyUserId
-    public UserMsgResponse updateUserAvatar(@PathParam("userId") long uid, FormDataMultiPart input) throws Exception {
+    public UserMsgResponse updateUserAvatar(@PathParam("userId") long uid, 
+    		@FormDataParam("file") InputStream inputStream) throws Exception {
         try {
             //Get the userRequest and convert it to User so the service layer could operate it.
         	User user = new User();
-        	
-        	FormDataBodyPart filePart = input.getField("file");
-            InputStream inputStream = filePart.getValueAs(InputStream.class);
-    
+        	    
         	ByteArrayOutputStream output = new ByteArrayOutputStream();  
 	        byte[] buf = new byte[1024];  
 	        int numBytesRead = 0;  
