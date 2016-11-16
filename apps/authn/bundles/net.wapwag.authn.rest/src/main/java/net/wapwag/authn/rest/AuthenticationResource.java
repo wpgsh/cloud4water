@@ -210,12 +210,10 @@ public class AuthenticationResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Authorization @AuthorizationOnlyUserId
-    public UserMsgResponse createNewAvatar(@PathParam("userId") long uid, FormDataMultiPart input) throws Exception {
+    public UserMsgResponse createNewAvatar(@PathParam("userId") long uid, 
+    		@FormDataParam("file") InputStream inputStream) throws Exception {
         User user = new User();
         
-        FormDataBodyPart filePart = input.getField("file");
-        InputStream inputStream = filePart.getValueAs(InputStream.class);
-
     	ByteArrayOutputStream output = new ByteArrayOutputStream();  
         byte[] buf = new byte[1024];  
         int numBytesRead = 0;  
@@ -248,37 +246,33 @@ public class AuthenticationResource {
     @Authorization @AuthorizationOnlyUserId
     public UserMsgResponse updateUserAvatar(@PathParam("userId") long uid, 
     		@FormDataParam("file") InputStream inputStream) throws Exception {
-        try {
-            //Get the userRequest and convert it to User so the service layer could operate it.
-        	User user = new User();
-        	    
-        	ByteArrayOutputStream output = new ByteArrayOutputStream();  
-	        byte[] buf = new byte[1024];  
-	        int numBytesRead = 0;  
-	        while ((numBytesRead = inputStream.read(buf)) != -1) {  
-	            output.write(buf, 0, numBytesRead);  
-	        }
-	        byte[] photo = output.toByteArray();
-            
-        	String avartarId = StringUtil.getUUID();
-        	Image image = new Image();
-        	image.setId(avartarId);
-        	image.setImage(photo);
         	
-            int result = authnService.saveImg(image);
-            
-            if(result > 0){
-            	user = authnService.getUser(uid);
-            	user.setAvartarId(avartarId);
-            	authnService.saveUser(user);
-            }
-            
-            String msg = (result == 1 ? "update success" : "update fail");
-            return new UserMsgResponse(msg);
-
-        } catch (Exception e) {
-            throw new ResourceNotFoundException("Can not add Image: " + uid);
+        //Get the userRequest and convert it to User so the service layer could operate it.
+    	User user = new User();
+    	    
+    	ByteArrayOutputStream output = new ByteArrayOutputStream();  
+        byte[] buf = new byte[1024];  
+        int numBytesRead = 0;  
+        while ((numBytesRead = inputStream.read(buf)) != -1) {  
+            output.write(buf, 0, numBytesRead);  
         }
+        byte[] photo = output.toByteArray();
+        
+    	String avartarId = StringUtil.getUUID();
+    	Image image = new Image();
+    	image.setId(avartarId);
+    	image.setImage(photo);
+    	
+        int result = authnService.saveImg(image);
+        
+        if(result > 0){
+        	user = authnService.getUser(uid);
+        	user.setAvartarId(avartarId);
+        	authnService.saveUser(user);
+        }
+        
+        String msg = (result == 1 ? "update success" : "update fail");
+        return new UserMsgResponse(msg);
     }
     
     @DELETE
