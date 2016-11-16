@@ -1,7 +1,5 @@
 package net.wapwag.authn.rest;
 
-import java.lang.reflect.Type;
-
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
 
@@ -36,11 +34,6 @@ abstract class BaseResourceTest extends JerseyTest {
     }
 
     <T> T getResult(Response response, Class<T> type) {
-        String jsonResult = response.readEntity(String.class);
-        return gson.fromJson(jsonResult, type);
-    }
-
-    <T> T getResult(Response response, Type type) {
         String jsonResult = response.readEntity(String.class);
         return gson.fromJson(jsonResult, type);
     }

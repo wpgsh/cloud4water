@@ -48,6 +48,7 @@ class MockData {
     static final User user_null = null;
     static final User user_not_enabled = new User();
     static final User user_password = new User();
+    static final User user_null_avatarId = new User();
 	static final AccessToken accessToken = new AccessToken();
 	static final AccessToken accessToken_expired = new AccessToken();
 	static final RegisteredClient wpgClient = new RegisteredClient();
@@ -81,6 +82,17 @@ class MockData {
 		user.setEmail("jiangzehu@163.com");
 		user.setHomepage("http://www.baidu.com");
 		user.setPhone1("15850817392");
+		
+		user_null_avatarId.setId(userId);
+		user_null_avatarId.setEnabled("1");
+		user_null_avatarId.setName("test1");
+		user_null_avatarId.setUsername("test1");
+		user_null_avatarId.setPhone2("15850817392");
+		user_null_avatarId.setEmail(email);
+		user_null_avatarId.setAvatar("avatar");
+		user_null_avatarId.setEmail("jiangzehu@163.com");
+		user_null_avatarId.setHomepage("http://www.baidu.com");
+		user_null_avatarId.setPhone1("15850817392");
 		
 		user_not_enabled.setId(userId);
 		user_not_enabled.setName("test1");
