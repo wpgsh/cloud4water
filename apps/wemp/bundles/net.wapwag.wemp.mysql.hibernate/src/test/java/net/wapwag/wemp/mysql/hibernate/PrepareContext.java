@@ -2,6 +2,8 @@ package net.wapwag.wemp.mysql.hibernate;
 
 import com.google.common.collect.ImmutableMap;
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
+import org.apache.geronimo.transaction.GeronimoUserTransaction;
+import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
 
 import javax.naming.Context;
 import javax.naming.Name;
@@ -12,17 +14,13 @@ import javax.naming.spi.InitialContextFactoryBuilder;
 import javax.naming.spi.NamingManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-
-import org.apache.aries.transaction.internal.AriesPlatformTransactionManager;
-import org.apache.geronimo.transaction.GeronimoUserTransaction;
-import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
-
 import java.util.Hashtable;
 import java.util.Map;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@SuppressWarnings("Duplicates")
 public class PrepareContext {
 	
     private static final String JNDI_DATA_SOURCE = "osgi:service/javax.sql.DataSource/(osgi.jndi.service.name=jdbc/WaterEquipment_MySQL)";
@@ -91,8 +89,13 @@ public class PrepareContext {
 		when(nameParser.parse("java/SampleUserTransaction")).thenReturn(txName);
 		when(root.lookup(txmName)).thenReturn(transactionManager);
 		when(root.lookup(txName)).thenReturn(userTransaction);
-    	
-    	return Persistence.createEntityManagerFactory("waterequipment-jpa-mysql", HIBERNATE_CONFIG);
+
+		transactionManager.begin();
+		try {
+			return Persistence.createEntityManagerFactory("waterequipment-jpa-mysql", HIBERNATE_CONFIG);
+		} finally {
+			transactionManager.commit();
+		}
 	}
 
 }

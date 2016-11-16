@@ -72,6 +72,7 @@ public class ObjectResource {
     @Path("/groups")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @Authorization
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
     public List<GroupView> getGroupsByObject(@PathParam("oid") long objId, @QueryParam("action") String action) throws Exception {
         return waterEquipmentService.getGroupsByObject(objId, action);
@@ -89,6 +90,7 @@ public class ObjectResource {
     @Path("/group/{gid}")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
+    @Authorization
     @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
     public ResultView addObjectByGroup(@PathParam("oid") long objId, @PathParam("gid") long gid) throws Exception {
         return waterEquipmentService.addObjectByGroup(objId, gid);

@@ -23,6 +23,7 @@ class MockData {
     static final long groupId = 1L;
     static final long orgId = 1L;
     static final long invalidId = 0;
+    static final long exceptionId = -1;
 
     static final int count = 5;
     static final int addCount = 1;
@@ -31,6 +32,7 @@ class MockData {
 
     static final String redirectURI = "http://wwww.baidu.com";
     static final String handle = "testToken";
+    static final String invalidHandle = "invalidHandle";
     //Use base64 encoding handle:testToken
     static final String encodeHandle = "dGVzdFRva2Vu";
     static final String code = "testCode";

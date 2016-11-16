@@ -5,7 +5,6 @@ import net.wapwag.wemp.WaterEquipmentServiceException;
 import net.wapwag.wemp.dao.model.ObjectData;
 import net.wapwag.wemp.model.ObjectView;
 import net.wapwag.wemp.model.ResultView;
-import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.Test;
 
 import javax.ws.rs.client.Entity;
@@ -17,8 +16,7 @@ import java.util.stream.Collectors;
 
 import static net.wapwag.wemp.rest.MockData.*;
 import static net.wapwag.wemp.rest.UserResourceMock.mockService;
-import static org.eclipse.jetty.http.HttpStatus.INTERNAL_SERVER_ERROR_500;
-import static org.eclipse.jetty.http.HttpStatus.OK_200;
+import static org.eclipse.jetty.http.HttpStatus.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -33,9 +31,22 @@ public class UserResourceTest extends BaseResourceTest {
 
     private String path;
 
-    @Override
-    ResourceConfig initResource() {
-        return new ResourceConfig(UserResourceMock.class);
+    @Test
+    public void testCheckPermission_InvalidToken() throws Exception {
+        path = String.format("/user/%s/checkPermissions", userId);
+
+        Response response = invalidToken(target(path)).post(null);
+
+        assertEquals(FORBIDDEN_403, response.getStatus());
+    }
+
+    @Test
+    public void testCheckPermission_NotAuthorized() throws Exception {
+        path = String.format("/user/%s/checkPermissions", invalidId);
+
+        Response response = validToken(target(path)).post(null);
+
+        assertEquals(FORBIDDEN_403, response.getStatus());
     }
 
     @Test
@@ -47,7 +58,7 @@ public class UserResourceTest extends BaseResourceTest {
 
         Entity<ObjectData> entity = Entity.entity(objectData, MediaType.APPLICATION_JSON);
 
-        Response response = target(path).request().post(entity);
+        Response response = validToken(target(path)).post(entity);
 
         ResultView resultView = getResult(response, ResultView.class);
 
@@ -65,7 +76,7 @@ public class UserResourceTest extends BaseResourceTest {
 
         Entity<ObjectData> entity = Entity.entity(objectData, MediaType.APPLICATION_JSON);
 
-        Response response = target(path).request().post(entity);
+        Response response = validToken(target(path)).post(entity);
 
         ResultView resultView = getResult(response, ResultView.class);
 
@@ -76,15 +87,33 @@ public class UserResourceTest extends BaseResourceTest {
 
     @Test
     public void testCheckPermission_Exception() throws Exception {
-        when(mockService.checkPermission(eq(invalidId), any(ObjectData.class))).thenThrow(WaterEquipmentServiceException.class);
+        when(mockService.checkPermission(eq(exceptionId), any(ObjectData.class))).thenThrow(WaterEquipmentServiceException.class);
 
-        path = String.format("/user/%s/checkPermissions", invalidId);
+        path = String.format("/user/%s/checkPermissions", exceptionId);
 
         Entity<ObjectData> entity = Entity.entity(objectData, MediaType.APPLICATION_JSON);
 
-        Response response = target(path).request().post(entity);
+        Response response = validToken(target(path)).post(entity);
 
         assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+    }
+
+    @Test
+    public void testGetObjectsByUser_InvalidToken() throws Exception {
+        path = String.format("/user/%s/objects", userId);
+
+        Response response = invalidToken(target(path).queryParam("action", action)).get();
+
+        assertEquals(FORBIDDEN_403, response.getStatus());
+    }
+
+    @Test
+    public void testGetObjectsByUser_NotAuthorized() throws Exception {
+        path = String.format("/user/%s/objects", invalidId);
+
+        Response response = validToken(target(path).queryParam("action", action)).get();
+
+        assertEquals(FORBIDDEN_403, response.getStatus());
     }
 
     @Test
@@ -94,7 +123,7 @@ public class UserResourceTest extends BaseResourceTest {
 
         path = String.format("/user/%s/objects", userId);
 
-        Response response = target(path).queryParam("action", action).request().get();
+        Response response = validToken(target(path).queryParam("action", action)).get();
         Type type = new TypeToken<Set<ObjectView>>(){}.getType();
         Set<ObjectView> objectViews = getResult(response, type);
 
@@ -105,11 +134,11 @@ public class UserResourceTest extends BaseResourceTest {
 
     @Test
     public void testGetObjectsByUser_Exception() throws Exception {
-        when(mockService.getObjectsByUser(invalidId, action)).thenThrow(WaterEquipmentServiceException.class);
+        when(mockService.getObjectsByUser(exceptionId, action)).thenThrow(WaterEquipmentServiceException.class);
 
-        path = String.format("/user/%s/objects", invalidId);
+        path = String.format("/user/%s/objects", exceptionId);
 
-        Response response = target(path).queryParam("action", action).request().get();
+        Response response = validToken(target(path).queryParam("action", action)).get();
 
         assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
     }

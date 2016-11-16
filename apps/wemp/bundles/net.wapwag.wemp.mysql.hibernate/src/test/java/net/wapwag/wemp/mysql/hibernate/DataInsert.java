@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static net.wapwag.wemp.mysql.hibernate.PrepareContext.transactionManager;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -37,26 +38,29 @@ class DataInsert {
         }
     }
 
-    static void initialData() {
-        EntityTransaction tx = em.getTransaction();
-        tx.begin();
+    static void initialData() throws Exception {
+        try {
+            transactionManager.begin();
 
-        testAddObject();
-        testAddGroup();
-        testAddRegisteredClient();
+            testAddObject();
+            testAddGroup();
+            testAddRegisteredClient();
 
-        testAddUserOrg();
-        testAddAccessToken();
-        testAddUserObject();
-        testAddObjectByUser();
-        testAddObjectByGroup();
-        testAddGroupByOrg();
-        testUpdateGroupsByOrg();
-        testAddUsersByGroup();
-        testAddUserByOrg();
-        testAddObjectByOrg();
+            testAddUserOrg();
+            testAddAccessToken();
+            testAddUserObject();
+            testAddObjectByUser();
+            testAddObjectByGroup();
+            testAddGroupByOrg();
+            testUpdateGroupsByOrg();
+            testAddUsersByGroup();
+            testAddUserByOrg();
+            testAddObjectByOrg();
 
-        tx.commit();
+            transactionManager.commit();
+        } finally {
+            em.close();
+        }
     }
 
     private static void testAddUserOrg() {

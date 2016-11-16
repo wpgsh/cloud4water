@@ -9,7 +9,6 @@ import net.wapwag.wemp.model.GroupView;
 import net.wapwag.wemp.model.ObjectView;
 import net.wapwag.wemp.model.ResultView;
 import net.wapwag.wemp.model.UserView;
-import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.Test;
 
 import javax.ws.rs.client.Entity;
@@ -34,11 +33,6 @@ import static org.mockito.Mockito.when;
 public class OrgGroupResourceTest extends BaseResourceTest {
 
     private String path;
-
-    @Override
-    ResourceConfig initResource() {
-        return new ResourceConfig(OrgGroupResourceMock.class);
-    }
 
     @Test
     public void testGetGroupsByOrg() throws Exception {

@@ -12,10 +12,9 @@ import org.mockito.Mockito;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.transaction.Status;
 import javax.transaction.Transaction;
 
+import static net.wapwag.wemp.mysql.hibernate.PrepareContext.transactionManager;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 
@@ -98,11 +97,13 @@ public class BaseTestConfig {
     @Before
     public void beforeMethod() throws Exception {
         em = emf.createEntityManager();        
-        waterEquipmentDao = createDao(em); 
+        waterEquipmentDao = createDao(em);
+        transactionManager.begin();
     }
 
     @After
     public void afterMethod() throws Exception {
+        transactionManager.rollback();
     }
 
 }
