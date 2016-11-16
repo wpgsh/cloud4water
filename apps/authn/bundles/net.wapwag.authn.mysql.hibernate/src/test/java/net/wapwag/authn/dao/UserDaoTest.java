@@ -6,13 +6,16 @@ import static org.junit.Assert.assertTrue;
 import java.util.UUID;
 
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import net.wapwag.authn.dao.model.AccessToken;
 import net.wapwag.authn.dao.model.AccessTokenId;
 import net.wapwag.authn.dao.model.Image;
 import net.wapwag.authn.dao.model.RegisteredClient;
 import net.wapwag.authn.dao.model.User;
+import static org.mockito.Mockito.when;
 
 public class UserDaoTest extends net.wapwag.authn.mysql.hibernate.BaseTestConfig {
 
@@ -22,12 +25,15 @@ public class UserDaoTest extends net.wapwag.authn.mysql.hibernate.BaseTestConfig
 	
 	private static final int addCount = 1;
 	
+	@Rule
+	public ExpectedException exception = ExpectedException.none();
+	
 	@Test
 	public void testGetUser() throws UserDaoException {
 		User user = userDao.getUser(userId);
 		Assert.assertNotNull(user);
 	}
-
+	
 	@Test
 	public void testLookupAccessToken() throws UserDaoException {
 		final String handle = "token2";
@@ -88,6 +94,12 @@ public class UserDaoTest extends net.wapwag.authn.mysql.hibernate.BaseTestConfig
         assertNotNull(accessToken);
 	}
 
+	@Test
+	public void testGetUserByAccessToken() throws UserDaoException{
+		User user = userDao.getUserByAccessToken("token2");
+		assertNotNull(user);
+	}
+	
 	@Test
 	public void testSaveUser() throws UserDaoException {
 		User user = new User();

@@ -1,8 +1,15 @@
 package net.wapwag.authn.mysql.hibernate;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static net.wapwag.authn.mysql.hibernate.PrepareContext.*;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
+import javax.transaction.NotSupportedException;
+import javax.transaction.SystemException;
+import javax.transaction.Transaction;
 
 import org.apache.aries.jpa.template.EmFunction;
 import org.apache.aries.jpa.template.JpaTemplate;
@@ -14,9 +21,6 @@ import org.mockito.Mockito;
 import net.wapwag.authn.dao.TxAwareEntityManager;
 import net.wapwag.authn.dao.UserDao;
 import net.wapwag.authn.dao.UserDaoImpl;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 /**
  * Base test configuration
  * Created by Administrator on 2016/10/28 0028.
@@ -57,23 +61,24 @@ public class BaseTestConfig {
         Mockito.when(jpa.txExpr(any())).thenAnswer(iom -> {
             EmFunction<?> code = iom.getArgument(0);
 
-            EntityTransaction tx = em.getTransaction();
-            boolean isActive = tx.isActive();
-            if (!isActive) {
-                tx.begin();
+            Transaction tx = PrepareContext.transactionManager.getTransaction();
+            if (tx != null) {
+            	tx = null;
+            } else {
+            	PrepareContext.transactionManager.begin();
+            	tx = PrepareContext.transactionManager.getTransaction();
             }
-
+            
             Object result;
             try {
                 result = code.apply(em);
-
-                if (!isActive) {
-                    tx.commit();
+                if (tx != null) {
+                	tx.commit();
                 }
             } catch (Exception e) {
-                if (!isActive) {
-                    tx.rollback();
-                }
+            	if (tx != null) {
+            		tx.rollback();
+            	}
                 throw e;
             }
 
@@ -92,16 +97,15 @@ public class BaseTestConfig {
     }
 
     @Before
-    public void beforeMethod() {
+    public void beforeMethod() throws NotSupportedException, SystemException {
         em = emf.createEntityManager();
-        tx = em.getTransaction();
         userDao = createDao(em);
-        tx.begin();
+        transactionManager.begin();
     }
 
     @After
-    public void afterMethod() {
-        tx.rollback();
+    public void afterMethod() throws IllegalStateException, SecurityException, SystemException {
+    	transactionManager.rollback();
     }
 
 }

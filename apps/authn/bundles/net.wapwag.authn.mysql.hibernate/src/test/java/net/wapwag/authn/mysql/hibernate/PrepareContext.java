@@ -1,7 +1,10 @@
 package net.wapwag.authn.mysql.hibernate;
 
-import com.google.common.collect.ImmutableMap;
-import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.Hashtable;
+import java.util.Map;
 
 import javax.naming.Context;
 import javax.naming.Name;
@@ -12,11 +15,12 @@ import javax.naming.spi.InitialContextFactoryBuilder;
 import javax.naming.spi.NamingManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import java.util.Hashtable;
-import java.util.Map;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.apache.geronimo.transaction.GeronimoUserTransaction;
+import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
+
+import com.google.common.collect.ImmutableMap;
+import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 
 @SuppressWarnings("Duplicates")
 public class PrepareContext {
@@ -27,7 +31,7 @@ public class PrepareContext {
 	private static final Map<String, String> HIBERNATE_CONFIG = ImmutableMap.of(
 //        "hibernate.hbm2ddl.auto", "create",
         "hibernate.show_sql", "true",
-        "hibernate.transaction.jta.platform", "org.hibernate.service.jta.platform.internal.SunOneJtaPlatform");
+        "hibernate.transaction.jta.platform", SimpleJTAPlatform.class.getName());
     
     private static boolean isJndiConfigured = false;
     
@@ -59,6 +63,9 @@ public class PrepareContext {
     public static boolean cleanDatabase() {
         return HIBERNATE_CONFIG.containsKey("hibernate.hbm2ddl.auto");
     }
+    
+    public static GeronimoTransactionManager transactionManager;
+    public static GeronimoUserTransaction userTransaction;
 
 	public static EntityManagerFactory createEMF() throws Exception {		
 		configureJNDI();
@@ -73,7 +80,24 @@ public class PrepareContext {
 		when(nameParser.parse(JNDI_DATA_SOURCE)).thenReturn(dataSourceName);		
 		when(root.lookup(dataSourceName)).thenReturn(dataSource);
     	
-    	return Persistence.createEntityManagerFactory("user-jpa", HIBERNATE_CONFIG);
+		transactionManager = new GeronimoTransactionManager();
+		userTransaction = new GeronimoUserTransaction(transactionManager);
+		
+		final Name txmName = mock(Name.class);
+		final Name txName = mock(Name.class);
+		
+		when(nameParser.parse("java/SampleTransactionManager")).thenReturn(txmName);
+		when(nameParser.parse("java/SampleUserTransaction")).thenReturn(txName);
+		when(root.lookup(txmName)).thenReturn(transactionManager);
+		when(root.lookup(txName)).thenReturn(userTransaction);
+
+		transactionManager.begin();
+		
+		try{
+			return Persistence.createEntityManagerFactory("user-jpa", HIBERNATE_CONFIG);
+		} finally {
+			transactionManager.commit();
+		}
 	}
 
 }
