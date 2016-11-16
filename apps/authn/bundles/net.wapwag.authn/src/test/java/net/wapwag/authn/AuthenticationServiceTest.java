@@ -1,29 +1,6 @@
 package net.wapwag.authn;
 
-import static net.wapwag.authn.MockData.accessToken;
-import static net.wapwag.authn.MockData.accessToken_expired;
-import static net.wapwag.authn.MockData.accessToken_nonWPGclientWithAuthzedScope;
-import static net.wapwag.authn.MockData.accessToken_nonWPGclientWithNoScope;
-import static net.wapwag.authn.MockData.accessToken_nonWPGclientWithNonAuthzedScope;
-import static net.wapwag.authn.MockData.client;
-import static net.wapwag.authn.MockData.clientId;
-import static net.wapwag.authn.MockData.clientIdentity;
-import static net.wapwag.authn.MockData.clientSecret;
-import static net.wapwag.authn.MockData.code;
-import static net.wapwag.authn.MockData.email;
-import static net.wapwag.authn.MockData.encodeHandle;
-import static net.wapwag.authn.MockData.handle;
-import static net.wapwag.authn.MockData.image;
-import static net.wapwag.authn.MockData.invalidString;
-import static net.wapwag.authn.MockData.nonAuthzedscopes;
-import static net.wapwag.authn.MockData.nonWPGclientWithAuthzedScope;
-import static net.wapwag.authn.MockData.nonWPGclientWithNoScope;
-import static net.wapwag.authn.MockData.nonWPGclientWithNonAuthzedScope;
-import static net.wapwag.authn.MockData.redirectURI;
-import static net.wapwag.authn.MockData.scopes;
-import static net.wapwag.authn.MockData.user;
-import static net.wapwag.authn.MockData.userId;
-import static net.wapwag.authn.MockData.wpgClient;
+import static net.wapwag.authn.MockData.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -51,6 +28,7 @@ import net.wapwag.authn.dao.model.RegisteredClient;
 import net.wapwag.authn.dao.model.User;
 import net.wapwag.authn.model.AccessTokenMapper;
 import net.wapwag.authn.model.UserProfile;
+import net.wapwag.authn.model.UserView;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AuthenticationServiceTest {
@@ -81,6 +59,14 @@ public class AuthenticationServiceTest {
 		when(userDao.getUser(userId)).thenReturn(user);
 		UserProfile userProfile = authenticationServiceImpl.getUserProfile(userid);
 		Assert.assertNotNull(userProfile);
+	}
+	
+	@Test
+	public void testGetUserProfile_null() throws UserDaoException, AuthenticationServiceException {
+		UserId userid = new UserId(userId);
+		when(userDao.getUser(userId)).thenReturn(user_null);
+		UserProfile userProfile = authenticationServiceImpl.getUserProfile(userid);
+		Assert.assertNull(userProfile);
 	}
 	
 	@Test(expected = AuthenticationServiceException.class)
@@ -174,6 +160,26 @@ public class AuthenticationServiceTest {
     }
     
     @Test
+    public void testGetUserInfo() throws Exception{
+    	when(userDao.getUserByAccessToken(handle)).thenReturn(user);
+    	UserView userView = authenticationServiceImpl.getUserInfo(handle);
+    	assertNotNull(userView);
+    }
+    
+    @Test
+    public void testGetUserInfo_null() throws Exception{
+//    	when(userDao.getUserByAccessToken(handle_null)).thenReturn(user);
+    	UserView userView = authenticationServiceImpl.getUserInfo(handle_null);
+    	assertNull(userView);
+    }
+    
+    @Test(expected = OAuthProblemException.class)
+    public void testGetUserInfo_exception() throws Exception{
+    	when(userDao.getUserByAccessToken(handle)).thenThrow(UserDaoException.class);
+    	UserView userView = authenticationServiceImpl.getUserInfo(handle);
+    }
+    
+    @Test
     public void testGetAuthorizationCode_WPGClient() throws Exception {
         ArgumentCaptor<AccessToken> tokenArgumentCaptor = ArgumentCaptor.forClass(AccessToken.class);
 
@@ -264,6 +270,15 @@ public class AuthenticationServiceTest {
 		assertEquals("client3", client.getClientId());
 	}
 	
+	@Test
+	public void testGetClient_null() throws AuthenticationServiceException, UserDaoException {
+//		when(userDao.getClientByRedirectURI(redirectURI)).thenReturn(client);
+		
+		RegisteredClient client = authenticationServiceImpl.getClient(redirectURI_null);
+		
+		assertNull(client);
+	}
+	
 	@Test(expected = AuthenticationServiceException.class)
 	public void testGetClient_Exception() throws AuthenticationServiceException, UserDaoException {
 		when(userDao.getClientByRedirectURI(redirectURI)).thenThrow(UserDaoException.class);
@@ -276,6 +291,13 @@ public class AuthenticationServiceTest {
 		when(userDao.getUser(userId)).thenReturn(user);
 		User user = authenticationServiceImpl.getUser(userId);
 		assertNotNull(user);
+	}
+	
+	@Test
+	public void testGetUser_null() throws AuthenticationServiceException, UserDaoException {
+		when(userDao.getUser(userId)).thenReturn(user_null);
+		User user = authenticationServiceImpl.getUser(userId);
+		assertNull(user);
 	}
 	
 	@Test(expected = AuthenticationServiceException.class)
@@ -329,6 +351,12 @@ public class AuthenticationServiceTest {
 		when(userDao.getUserByEmail(email)).thenReturn(user);
 		User user = authenticationServiceImpl.getUserByEmail(email);
 		assertEquals(email, user.getEmail());
+	}
+	
+	@Test(expected = AuthenticationServiceException.class)
+	public void testGetUserByEmail_exception() throws AuthenticationServiceException, UserDaoException {
+		when(userDao.getUserByEmail(email)).thenThrow(UserDaoException.class);
+		authenticationServiceImpl.getUserByEmail(email);
 	}
 	
 	@Test

@@ -1,9 +1,7 @@
 package net.wapwag.authn;
 
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import net.wapwag.authn.dao.model.AccessToken;
@@ -11,6 +9,7 @@ import net.wapwag.authn.dao.model.AccessTokenId;
 import net.wapwag.authn.dao.model.Image;
 import net.wapwag.authn.dao.model.RegisteredClient;
 import net.wapwag.authn.dao.model.User;
+import net.wapwag.authn.model.UserView;
 
 /**
  * mock data
@@ -33,6 +32,8 @@ class MockData {
 
     static final String email = "1163525902@qq.com";
     static final String redirectURI = "http://www.baidu.com3";
+    static final String redirectURI_null = null;
+    static final String handle_null = null;
     static final String handle = "dfa8aea0a6ee11e68635247703754e80";
     static final String encodeHandle = Base64.getEncoder().encodeToString(handle.getBytes());
     static final String code = "dsfjdjfk23skjdsds3";
@@ -45,7 +46,8 @@ class MockData {
     static final String invalidEncodeHanlde = "aW52YWxpZF9zdHJpbmc=";
 	
     static Image image = new Image();
-    static final User user = new User();
+    public static final User user = new User();
+    static final User user_null = null;
 	static final AccessToken accessToken = new AccessToken();
 	static final AccessToken accessToken_expired = new AccessToken();
 	static final RegisteredClient wpgClient = new RegisteredClient();
@@ -54,6 +56,8 @@ class MockData {
     static final RegisteredClient nonWPGclientWithAuthzedScope = new RegisteredClient();
     static final RegisteredClient nonWPGclientWithNonAuthzedScope = new RegisteredClient();
 	static final AccessTokenId accessTokenId = new AccessTokenId(user, client);
+	
+	static final UserView userView = UserView.newInstance(user);
 	
 	static final AccessToken accessToken_nonWPGclientWithNoScope = new AccessToken();
     static final AccessToken accessToken_nonWPGclientWithAuthzedScope = new AccessToken();

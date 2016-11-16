@@ -131,9 +131,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                             "error client credential");
 	            }
 	        } catch (UserDaoException e) {
-                if (logger.isErrorEnabled()) {
-                    logger.error(ExceptionUtils.getStackTrace(e));
-                }
 	            throw OAuthProblemException.error(OAuthError.CodeResponse.SERVER_ERROR,
                         "authorization server encountered an unexpected exception");
 	        }
@@ -209,9 +206,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     throw new UserDaoException("Can't save authorization code");
                 }
             } catch (UserDaoException e) {
-                if (logger.isErrorEnabled()) {
-                    logger.error(ExceptionUtils.getStackTrace(e));
-                }
                 throw OAuthProblemException.error(OAuthError.CodeResponse.UNAUTHORIZED_CLIENT,
                         "error client credential");
             }
