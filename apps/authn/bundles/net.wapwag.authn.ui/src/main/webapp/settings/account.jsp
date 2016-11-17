@@ -138,6 +138,9 @@
     	    			showError($(".logo-title"), message);
     	    			return;
     				}
+    				if("3" == errorCode){
+    					window.location.href = "../login.jsp";
+    				}
     			},
     			error:function(data)
     			{

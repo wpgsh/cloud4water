@@ -128,6 +128,12 @@
     	var sign = 0;
     	$("#submit1").click(function() {
     		var flag = true;
+    		
+    		var userId = <%=session.getAttribute("userId")%>;
+    		if(!userId){
+    			window.location.href = "../login.jsp";
+    		}
+    		
     		var filepath = $("input[name='file']").val();
     		var userId = $('input[name="userId"]').val();
     		var name = $('input[name="inputName"]').val();
@@ -154,14 +160,14 @@
     			return;
     		}
     		
-    		if(name == '<%=session.getAttribute("userName")%>' && phone == '<%=session.getAttribute("phone")%>'
-    		&& email == '<%=session.getAttribute("email")%>' && homePage == '<%=session.getAttribute("homePage")%>' 
-    		&& isEmp(filepath)){
-    			var message = "data no change";
-    			flag = false;
-    			showError($(".logo-title"), message);
-    			return;
-    		}
+<%--     		if(name == '<%=session.getAttribute("userName")%>' && phone == '<%=session.getAttribute("phone")%>' --%>
+<%--     		&& email == '<%=session.getAttribute("email")%>' && homePage == '<%=session.getAttribute("homePage")%>'  --%>
+//     		&& isEmp(filepath)){
+//     			var message = "data no change";
+//     			flag = false;
+//     			showError($(".logo-title"), message);
+//     			return;
+//     		}
     		
     		if(!CheckEmail(email)){
     			var message = "Email Number is wrong";
@@ -195,6 +201,9 @@
 	    					var message = "file size over 2M";
 	    	    			showError($(".logo-title"), message);
 	    	    			return;
+	    				}
+	    				if("3" == errorCode){
+	    					window.location.href = "../login.jsp";
 	    				}
 	    			},
 	    			error:function(data)

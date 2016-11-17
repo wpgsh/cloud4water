@@ -41,12 +41,12 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
           <ul class="nav navbar-nav navbar-right">
             <li><a href="/authn/index.jsp">Home</a></li>
             <li><a href="/authn/settings/profile.jsp">Settings</a></li>
-            <li><a href="#">Help</a></li>
+<!--             <li><a href="#">Help</a></li> -->
             <li><a href="/authn/logout">Sign out</a></li>
           </ul>
-          <form class="navbar-form navbar-right">
-            <input type="text" class="form-control" placeholder="Search...">
-          </form>
+<!--           <form class="navbar-form navbar-right"> -->
+<!--             <input type="text" class="form-control" placeholder="Search..."> -->
+<!--           </form> -->
         </div><!-- /.nav-collapse -->
       </div><!-- /.container -->
     </nav><!-- /.navbar -->

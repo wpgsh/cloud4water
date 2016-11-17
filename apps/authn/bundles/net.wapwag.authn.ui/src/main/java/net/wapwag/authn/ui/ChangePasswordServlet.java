@@ -8,6 +8,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.google.gson.Gson;
 
@@ -37,39 +38,55 @@ public class ChangePasswordServlet extends HttpServlet{
 			throws ServletException, IOException {
 		OSGIUtil.useAuthenticationService(authnService -> {
 			try {
-				String userId = req.getParameter("userId");
-				String inputPassword = req.getParameter("inputPassword");
-				String inputNewPassword = req.getParameter("inputNewPassword");
-				
-				User user = authnService.getUser(Long.valueOf(userId));
-				ResultInfo info = new ResultInfo();
-				boolean flag = true;
-				//check the old password
-				if(!StringUtil.strSHA1(inputPassword + user.getPasswordSalt()).equals(user.getPasswordHash())){
-					info.setErrorCode("1");
-					info.setErrorMsg("old password Incorrect");
-					flag = false;
-				};
-				if(flag){
-					user.setPasswordHash(StringUtil.strSHA1(inputNewPassword + user.getPasswordSalt()));
-					int result = authnService.saveUser(user);
-					
-					if(result > 0){
-						info.setErrorCode("0");
-					}else{
-						info.setErrorCode("2");
-						info.setErrorMsg("save failure");
-					}
-				}
 				Gson gson = new Gson();
-				PrintWriter out = null;
-				try {
-					out = resp.getWriter();
-				} catch (Exception e) {
-					e.printStackTrace();
+				ResultInfo info = new ResultInfo();
+				//check session
+				HttpSession session = req.getSession(false);
+				
+				if(session != null){
+					String userId = req.getParameter("userId");
+					String inputPassword = req.getParameter("inputPassword");
+					String inputNewPassword = req.getParameter("inputNewPassword");
+					
+					User user = authnService.getUser(Long.valueOf(userId));
+					boolean flag = true;
+					//check the old password
+					if(!StringUtil.strSHA1(inputPassword + user.getPasswordSalt()).equals(user.getPasswordHash())){
+						info.setErrorCode("1");
+						info.setErrorMsg("old password Incorrect");
+						flag = false;
+					};
+					if(flag){
+						user.setPasswordHash(StringUtil.strSHA1(inputNewPassword + user.getPasswordSalt()));
+						int result = authnService.saveUser(user);
+						
+						if(result > 0){
+							info.setErrorCode("0");
+						}else{
+							info.setErrorCode("2");
+							info.setErrorMsg("save failure");
+						}
+					}
+					
+					PrintWriter out = null;
+					try {
+						out = resp.getWriter();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					out.println(gson.toJson(info));
+					out.close();
+				}else{
+					PrintWriter out = null;
+					info.setErrorCode("3");
+					try {
+						out = resp.getWriter();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					out.println(gson.toJson(info));
+					out.close();
 				}
-				out.println(gson.toJson(info));
-				out.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
