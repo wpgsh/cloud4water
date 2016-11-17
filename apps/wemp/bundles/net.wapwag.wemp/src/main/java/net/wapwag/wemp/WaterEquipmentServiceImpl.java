@@ -52,9 +52,7 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
 	public AccessTokenMapper lookupToken(String handle) throws WaterEquipmentServiceException {
 		return waterEquipmentDao.txExpr(() -> {
             try {
-                String token = new String(Base64.getDecoder().decode(handle));
-
-                AccessToken accessToken = waterEquipmentDao.lookupAccessToken(token);
+                AccessToken accessToken = waterEquipmentDao.lookupAccessToken(handle);
 
                 if (accessToken != null) {
                     AccessTokenId accessTokenId = accessToken.getAccessTokenId();
