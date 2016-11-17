@@ -32,7 +32,8 @@ class MockData {
     static final String avantarId = "qwe123";
     static final String email = "1163525902@qq.com";
     static final String redirectURI = "http://www.baidu.com3";
-    static final String handle = "dfa8aea0a6ee11e68635247703754e80";
+    static final String handle = "token2";
+    static final String ivalid_handle = "token2_ivalid";
     static final String encodeHandle = Base64.getEncoder().encodeToString(handle.getBytes());
     static final String code = "dsfjdjfk23skjdsds3";
     static final String clientIdentity = "client3";

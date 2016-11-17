@@ -37,4 +37,8 @@ public class UsersTokenHandler implements TokenHandler {
 		}
 	}
 
+	public void setService(AuthenticationService service) {
+		this.service = service;
+	}
+	
 }
