@@ -116,6 +116,7 @@ abstract class BaseResourceTest extends JerseyTest {
 
         when(mockService.isAuthorized(anyString(), anyString(), anyString())).thenReturn(false);
         when(mockService.isAuthorized(userId + "", action, objId + "")).thenReturn(true);
+        when(mockService.isAuthorized(userId + "", "write", objId + "")).thenReturn(true);
         when(mockService.isAuthorized(userId + "", action, exceptionId + "")).thenReturn(true);
 
         WempTokenHandler tokenHandler = new WempTokenHandler();

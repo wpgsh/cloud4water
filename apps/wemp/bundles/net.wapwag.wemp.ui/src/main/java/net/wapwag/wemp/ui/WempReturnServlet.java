@@ -108,8 +108,6 @@ public class WempReturnServlet extends HttpServlet {
         List<NameValuePair> forms = new ArrayList<>();
         forms.add(new BasicNameValuePair("code", authzCode));
         forms.add(new BasicNameValuePair(OAuth.OAUTH_GRANT_TYPE, "authorization_code"));
-        forms.add(new BasicNameValuePair("client_id", WEMP_ID));
-        forms.add(new BasicNameValuePair("client_secret", WEMP_SECRET));
         forms.add(new BasicNameValuePair("redirect_uri", WEMP_RETURN_PATH));
 
         post.setEntity(new UrlEncodedFormEntity(forms));

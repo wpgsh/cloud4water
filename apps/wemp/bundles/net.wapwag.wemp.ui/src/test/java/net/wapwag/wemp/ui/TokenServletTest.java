@@ -45,7 +45,7 @@ public class TokenServletTest extends BaseServletTest {
 
     private void noBasicHttpAuth() throws Exception {
         BaseServletTest.JsonResponse res = postAcceptJson(ACCESSTOKEN, false, null, APPLICATION_X_WWW_FORM_URLENCODED, "");
-        assertEquals(SC_UNAUTHORIZED, res.responseCode);
+        assertEquals(SC_BAD_REQUEST, res.responseCode);
     }
 
     //====================== invalid_request ========================

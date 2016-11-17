@@ -42,7 +42,7 @@ public class AccessTokenServletTest extends BaseServletTest {
 
     private void noBasicHttpAuth() throws Exception {
         JsonResponse res = postAcceptJson(ACCESSTOKEN, false, null, APPLICATION_X_WWW_FORM_URLENCODED, "");
-        TestCase.assertEquals(SC_UNAUTHORIZED, res.responseCode);
+        TestCase.assertEquals(SC_BAD_REQUEST, res.responseCode);
     }
 
     //====================== invalid_request ========================

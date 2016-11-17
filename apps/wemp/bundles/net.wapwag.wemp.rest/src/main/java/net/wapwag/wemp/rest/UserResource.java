@@ -17,7 +17,7 @@ import javax.ws.rs.core.MediaType;
 import java.util.Set;
 
 @Component(service = UserResource.class)
-@Path("/user/{uid}")
+@Path("/wemp/user/{uid}")
 @OAuth2(tokenHandler = WempTokenHandler.NAME)
 public class UserResource {
 

@@ -13,7 +13,8 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 import static net.wapwag.wemp.rest.MockData.*;
-import static org.eclipse.jetty.http.HttpStatus.*;
+import static org.eclipse.jetty.http.HttpStatus.FORBIDDEN_403;
+import static org.eclipse.jetty.http.HttpStatus.OK_200;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -64,7 +65,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
         Response response = validToken(target(path)).get();
 
-        assertEquals(NOT_FOUND_404, response.getStatus());
+        assertEquals(FORBIDDEN_403, response.getStatus());
     }
 
     @Test
@@ -73,7 +74,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
         Response response = validToken(target(path)).get();
 
-        assertEquals(NO_CONTENT_204, response.getStatus());
+        assertEquals(FORBIDDEN_403, response.getStatus());
     }
 
     @Test
@@ -164,6 +165,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
         ResultView resultView = getResult(response, ResultView.class);
 
+        assertEquals(OK_200, response.getStatus());
         assertNotNull(resultView);
         assertEquals(addCount, resultView.count);
     }
@@ -194,6 +196,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
         ResultView resultView = getResult(response, ResultView.class);
 
+        assertEquals(OK_200, response.getStatus());
         assertNotNull(resultView);
         assertEquals(removeCount, resultView.count);
     }
@@ -293,6 +296,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
         ResultView resultView = getResult(response, ResultView.class);
 
+        assertEquals(OK_200, response.getStatus());
         assertNotNull(resultView);
         assertEquals(addCount, resultView.count);
 
@@ -324,6 +328,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
         ResultView resultView = getResult(response, ResultView.class);
 
+        assertEquals(OK_200, response.getStatus());
         assertNotNull(resultView);
         assertEquals(removeCount, resultView.count);
     }

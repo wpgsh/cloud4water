@@ -33,7 +33,7 @@ public class UserResourceTest extends BaseResourceTest {
 
     @Test
     public void testCheckPermission_InvalidToken() throws Exception {
-        path = String.format("/user/%s/checkPermissions", userId);
+        path = String.format("/wemp/user/%s/checkPermissions", userId);
 
         Response response = invalidToken(target(path)).post(null);
 
@@ -42,7 +42,7 @@ public class UserResourceTest extends BaseResourceTest {
 
     @Test
     public void testCheckPermission_NotAuthorized() throws Exception {
-        path = String.format("/user/%s/checkPermissions", invalidId);
+        path = String.format("/wemp/user/%s/checkPermissions", invalidId);
 
         Response response = validToken(target(path)).post(null);
 
@@ -54,7 +54,7 @@ public class UserResourceTest extends BaseResourceTest {
         when(mockService.checkPermission(eq(userId), any(ObjectData.class)))
                 .thenReturn(ResultView.newInstance(true));
 
-        path = String.format("/user/%s/checkPermissions", userId);
+        path = String.format("/wemp/user/%s/checkPermissions", userId);
 
         Entity<ObjectData> entity = Entity.entity(objectData, MediaType.APPLICATION_JSON);
 
@@ -72,7 +72,7 @@ public class UserResourceTest extends BaseResourceTest {
         when(mockService.checkPermission(eq(userId), any(ObjectData.class)))
                 .thenReturn(ResultView.newInstance(false));
 
-        path = String.format("/user/%s/checkPermissions", userId);
+        path = String.format("/wemp/user/%s/checkPermissions", userId);
 
         Entity<ObjectData> entity = Entity.entity(objectData, MediaType.APPLICATION_JSON);
 
@@ -89,7 +89,7 @@ public class UserResourceTest extends BaseResourceTest {
     public void testCheckPermission_Exception() throws Exception {
         when(mockService.checkPermission(eq(exceptionId), any(ObjectData.class))).thenThrow(WaterEquipmentServiceException.class);
 
-        path = String.format("/user/%s/checkPermissions", exceptionId);
+        path = String.format("/wemp/user/%s/checkPermissions", exceptionId);
 
         Entity<ObjectData> entity = Entity.entity(objectData, MediaType.APPLICATION_JSON);
 
@@ -100,7 +100,7 @@ public class UserResourceTest extends BaseResourceTest {
 
     @Test
     public void testGetObjectsByUser_InvalidToken() throws Exception {
-        path = String.format("/user/%s/objects", userId);
+        path = String.format("/wemp/user/%s/objects", userId);
 
         Response response = invalidToken(target(path).queryParam("action", action)).get();
 
@@ -109,7 +109,7 @@ public class UserResourceTest extends BaseResourceTest {
 
     @Test
     public void testGetObjectsByUser_NotAuthorized() throws Exception {
-        path = String.format("/user/%s/objects", invalidId);
+        path = String.format("/wemp/user/%s/objects", invalidId);
 
         Response response = validToken(target(path).queryParam("action", action)).get();
 
@@ -121,7 +121,7 @@ public class UserResourceTest extends BaseResourceTest {
         when(mockService.getObjectsByUser(userId, "read"))
                 .thenReturn(objectDataList.stream().map(ObjectView::newInstance).collect(Collectors.toSet()));
 
-        path = String.format("/user/%s/objects", userId);
+        path = String.format("/wemp/user/%s/objects", userId);
 
         Response response = validToken(target(path).queryParam("action", action)).get();
         Type type = new TypeToken<Set<ObjectView>>(){}.getType();
@@ -136,7 +136,7 @@ public class UserResourceTest extends BaseResourceTest {
     public void testGetObjectsByUser_Exception() throws Exception {
         when(mockService.getObjectsByUser(exceptionId, action)).thenThrow(WaterEquipmentServiceException.class);
 
-        path = String.format("/user/%s/objects", exceptionId);
+        path = String.format("/wemp/user/%s/objects", exceptionId);
 
         Response response = validToken(target(path).queryParam("action", action)).get();
 

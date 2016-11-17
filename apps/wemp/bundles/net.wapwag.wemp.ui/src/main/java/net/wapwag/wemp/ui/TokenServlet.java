@@ -1,32 +1,26 @@
 package net.wapwag.wemp.ui;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.oltu.oauth2.as.request.OAuthTokenRequest;
 import org.apache.oltu.oauth2.as.response.OAuthASResponse;
 import org.apache.oltu.oauth2.common.OAuth;
-import org.apache.oltu.oauth2.common.error.OAuthError;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.message.OAuthResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.Base64;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 // See https://github.com/wpgsh/cloud4water/wiki/Authentication-Application#invocation-of-access-token-endpoint
 @WebServlet(urlPatterns = "/token", name = "WEMP_TokenServlet")
 public class TokenServlet extends HttpServlet {
 
 	private static final Logger logger = LoggerFactory.getLogger(TokenServlet.class);
-
-	private static final String BASIC_CREDENTIAL = "Basic %s";
 
 	@SuppressWarnings("Duplicates")
 	@Override
@@ -45,12 +39,6 @@ public class TokenServlet extends HttpServlet {
 				String code = oAuthTokenRequest.getCode();
 				String clientSecret = oAuthTokenRequest.getClientSecret();
 				redirectURI = oAuthTokenRequest.getRedirectURI();
-
-                // Validate basic http authentication clientId:clientSecret using base64 encoding
-                String basicCredential = String.format(BASIC_CREDENTIAL, Base64.getEncoder().encodeToString((clientId + ":" + clientSecret).getBytes()));
-                if (StringUtils.isBlank(auth) || !auth.equals(basicCredential)) {
-                    throw OAuthProblemException.error(OAuthError.TokenResponse.UNAUTHORIZED_CLIENT, "error client credential");
-                }
 
 				String accessToken = waterEquipmentService.getAccessToken(clientId, clientSecret, code, redirectURI);
 

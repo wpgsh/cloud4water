@@ -11,7 +11,7 @@ final class WempConstant {
 
     static final String WEMP_ID = "wemp";
 
-    static final String WEMP_SECRET = "wemp_secret";
+    private static final String WEMP_SECRET = "wemp_secret";
 
     private static final String WEMP_BAISC_ORIGIN = String.format("%s:%s", WEMP_ID, WEMP_SECRET);
 

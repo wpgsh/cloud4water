@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 import static net.wapwag.wemp.rest.MockData.*;
 import static net.wapwag.wemp.rest.OrgGroupResourceMock.mockService;
-import static org.eclipse.jetty.http.HttpStatus.INTERNAL_SERVER_ERROR_500;
+import static org.eclipse.jetty.http.HttpStatus.FORBIDDEN_403;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.*;
@@ -35,6 +35,24 @@ public class OrgGroupResourceTest extends BaseResourceTest {
     private String path;
 
     @Test
+    public void testGetGroupsByOrg_InvalidToken() throws Exception {
+        path = String.format("/organization/%s/organizationGroups", orgId);
+
+        Response response = invalidToken(target(path)).get();
+
+        assertEquals(FORBIDDEN_403, response.getStatus());
+    }
+
+    @Test
+    public void testGetGroupsByOrg_NotAuthorized() throws Exception {
+        path = String.format("/organization/%s/organizationGroups", invalidId);
+
+        Response response = validToken(target(path)).get();
+
+        assertEquals(FORBIDDEN_403, response.getStatus());
+    }
+
+    @Test
     public void testGetGroupsByOrg() throws Exception {
         when(mockService.getGroupsByOrg(orgId))
                 .thenReturn(groupList.stream().map(GroupView::newInstance).collect(Collectors.toList()));
@@ -42,7 +60,7 @@ public class OrgGroupResourceTest extends BaseResourceTest {
         path = String.format("/organization/%s/organizationGroups", orgId);
         Type listType = new TypeToken<List<GroupView>>(){}.getType();
 
-        Response response = target(path).request().get();
+        Response response = validToken(target(path)).get();
         List<GroupView> groupViewList = getResult(response, listType);
 
         assertNotNull(groupViewList);
@@ -54,9 +72,27 @@ public class OrgGroupResourceTest extends BaseResourceTest {
         when(mockService.getGroupsByOrg(invalidId)).thenThrow(WaterEquipmentServiceException.class);
 
         path = String.format("/organization/%s/organizationGroups", invalidId);
-        Response response = target(path).request().get();
+        Response response = validToken(target(path)).get();
 
-        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+        assertEquals(FORBIDDEN_403, response.getStatus());
+    }
+
+    @Test
+    public void testAddGroupByOrg_InvalidToken() throws Exception {
+        path = String.format("/organization/%s/organizationGroups", orgId);
+
+        Response response = invalidToken(target(path)).post(null);
+
+        assertEquals(FORBIDDEN_403, response.getStatus());
+    }
+
+    @Test
+    public void testAddGroupByOrg_NotAuthorized() throws Exception {
+        path = String.format("/organization/%s/organizationGroups", invalidId);
+
+        Response response = validToken(target(path)).post(null);
+
+        assertEquals(FORBIDDEN_403, response.getStatus());
     }
 
     @Test
@@ -64,7 +100,7 @@ public class OrgGroupResourceTest extends BaseResourceTest {
         when(mockService.addGroupByOrg(anyLong(), any(Group.class))).thenReturn(ResultView.newInstance(addCount));
 
         path = String.format("/organization/%s/organizationGroups", orgId);
-        Response response = target(path).request().post(Entity.entity(group, MediaType.APPLICATION_JSON));
+        Response response = validToken(target(path)).post(Entity.entity(group, MediaType.APPLICATION_JSON));
         ResultView resultView = getResult(response, ResultView.class);
 
         assertNotNull(resultView);
@@ -76,9 +112,27 @@ public class OrgGroupResourceTest extends BaseResourceTest {
         when(mockService.addGroupByOrg(eq(invalidId), any(Group.class))).thenThrow(WaterEquipmentServiceException.class);
 
         path = String.format("/organization/%s/organizationGroups", invalidId);
-        Response response = target(path).request().post(Entity.entity(group, MediaType.APPLICATION_JSON));
+        Response response = validToken(target(path)).post(Entity.entity(group, MediaType.APPLICATION_JSON));
 
-        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+        assertEquals(FORBIDDEN_403, response.getStatus());
+    }
+
+    @Test
+    public void testGetGroupByOrg_InvalidToken() throws Exception {
+        path = String.format("/organization/%s/organizationGroup/%s", orgId, groupId);
+
+        Response response = invalidToken(target(path)).get();
+
+        assertEquals(FORBIDDEN_403, response.getStatus());
+    }
+
+    @Test
+    public void testGetGroupByOrg_NotAuthorized() throws Exception {
+        path = String.format("/organization/%s/organizationGroup/%s", invalidId, invalidId);
+
+        Response response = validToken(target(path)).get();
+
+        assertEquals(FORBIDDEN_403, response.getStatus());
     }
 
     @Test
@@ -86,7 +140,7 @@ public class OrgGroupResourceTest extends BaseResourceTest {
         when(mockService.getGroupByOrg(orgId, groupId)).thenReturn(GroupView.newInstance(group));
 
         path = String.format("/organization/%s/organizationGroup/%s", orgId, groupId);
-        Response response = target(path).request().get();
+        Response response = validToken(target(path)).get();
         GroupView groupView = getResult(response, GroupView.class);
 
         assertNotNull(groupView);
@@ -99,9 +153,27 @@ public class OrgGroupResourceTest extends BaseResourceTest {
         when(mockService.getGroupByOrg(invalidId, invalidId)).thenThrow(WaterEquipmentServiceException.class);
 
         path = String.format("/organization/%s/organizationGroup/%s", invalidId, invalidId);
-        Response response = target(path).request().get();
+        Response response = validToken(target(path)).get();
 
-        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+        assertEquals(FORBIDDEN_403, response.getStatus());
+    }
+
+    @Test
+    public void testUpdateGroupByOrg_InvalidToken() throws Exception {
+        path = String.format("/organization/%s/organizationGroup/%s", orgId, groupId);
+
+        Response response = invalidToken(target(path)).put(Entity.entity(group, MediaType.APPLICATION_JSON));
+
+        assertEquals(FORBIDDEN_403, response.getStatus());
+    }
+
+    @Test
+    public void testUpdateGroupByOrg_NotAuthorized() throws Exception {
+        path = String.format("/organization/%s/organizationGroup/%s", invalidId, invalidId);
+
+        Response response = validToken(target(path)).put(Entity.entity(group, MediaType.APPLICATION_JSON));
+
+        assertEquals(FORBIDDEN_403, response.getStatus());
     }
 
     @Test
@@ -109,7 +181,7 @@ public class OrgGroupResourceTest extends BaseResourceTest {
         when(mockService.updateGroupByOrg(eq(orgId), eq(groupId), any(Group.class))).thenReturn(ResultView.newInstance(updateCount));
 
         path = String.format("/organization/%s/organizationGroup/%s", orgId, groupId);
-        Response response = target(path).request().put(Entity.entity(group, MediaType.APPLICATION_JSON));
+        Response response = validToken(target(path)).put(Entity.entity(group, MediaType.APPLICATION_JSON));
         ResultView resultView = getResult(response, ResultView.class);
 
         assertNotNull(resultView);
@@ -121,9 +193,27 @@ public class OrgGroupResourceTest extends BaseResourceTest {
         when(mockService.updateGroupByOrg(eq(invalidId), eq(invalidId), any(Group.class))).thenThrow(WaterEquipmentServiceException.class);
 
         path = String.format("/organization/%s/organizationGroup/%s", invalidId, invalidId);
-        Response response = target(path).request().put(Entity.entity(group, MediaType.APPLICATION_JSON));
+        Response response = validToken(target(path)).put(Entity.entity(group, MediaType.APPLICATION_JSON));
 
-        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+        assertEquals(FORBIDDEN_403, response.getStatus());
+    }
+
+    @Test
+    public void removeGroupByOrg_InvalidToken() throws Exception {
+        path = String.format("/organization/%s/organizationGroup/%s", orgId, groupId);
+
+        Response response = invalidToken(target(path)).delete();
+
+        assertEquals(FORBIDDEN_403, response.getStatus());
+    }
+
+    @Test
+    public void removeGroupByOrg_NotAuthorized() throws Exception {
+        path = String.format("/organization/%s/organizationGroup/%s", invalidId, invalidId);
+
+        Response response = validToken(target(path)).delete();
+
+        assertEquals(FORBIDDEN_403, response.getStatus());
     }
 
     @Test
@@ -131,7 +221,7 @@ public class OrgGroupResourceTest extends BaseResourceTest {
         when(mockService.removeGroupByOrg(orgId, groupId)).thenReturn(ResultView.newInstance(removeCount));
 
         path = String.format("/organization/%s/organizationGroup/%s", orgId, groupId);
-        Response response = target(path).request().delete();
+        Response response = validToken(target(path)).delete();
         ResultView resultView = getResult(response, ResultView.class);
 
         assertNotNull(resultView);
@@ -143,9 +233,27 @@ public class OrgGroupResourceTest extends BaseResourceTest {
         when(mockService.removeGroupByOrg(invalidId, invalidId)).thenThrow(WaterEquipmentServiceException.class);
 
         path = String.format("/organization/%s/organizationGroup/%s", invalidId, invalidId);
-        Response response = target(path).request().delete();
+        Response response = validToken(target(path)).delete();
 
-        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+        assertEquals(FORBIDDEN_403, response.getStatus());
+    }
+
+    @Test
+    public void testGetUsersByGroup_InvalidToken() throws Exception {
+        path = String.format("/organization/%s/organizationGroup/%s/users", orgId, groupId);
+
+        Response response = invalidToken(target(path)).get();
+
+        assertEquals(FORBIDDEN_403, response.getStatus());
+    }
+
+    @Test
+    public void testGetUsersByGroup_NotAuthorized() throws Exception {
+        path = String.format("/organization/%s/organizationGroup/%s/users", invalidId, invalidId);
+
+        Response response = validToken(target(path)).get();
+
+        assertEquals(FORBIDDEN_403, response.getStatus());
     }
 
     @Test
@@ -156,7 +264,7 @@ public class OrgGroupResourceTest extends BaseResourceTest {
         path = String.format("/organization/%s/organizationGroup/%s/users", orgId, groupId);
 
         Type listType = new TypeToken<List<UserView>>(){}.getType();
-        Response response = target(path).request().get();
+        Response response = validToken(target(path)).get();
         List<UserView> userViewList = getResult(response, listType);
 
         assertNotNull(userViewList);
@@ -168,9 +276,27 @@ public class OrgGroupResourceTest extends BaseResourceTest {
         when(mockService.getUsersByGroup(invalidId, invalidId)).thenThrow(WaterEquipmentServiceException.class);
 
         path = String.format("/organization/%s/organizationGroup/%s/users", invalidId, invalidId);
-        Response response = target(path).request().get();
+        Response response = validToken(target(path)).get();
 
-        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+        assertEquals(FORBIDDEN_403, response.getStatus());
+    }
+
+    @Test
+    public void testAddUserByGroup_InvalidToken() throws Exception {
+        path = String.format("/organization/%s/organizationGroup/%s/user/%s", orgId, groupId, userId);
+
+        Response response = invalidToken(target(path)).post(null);
+
+        assertEquals(FORBIDDEN_403, response.getStatus());
+    }
+
+    @Test
+    public void testAddUserByGroup_NotAuthorized() throws Exception {
+        path = String.format("/organization/%s/organizationGroup/%s/user/%s", invalidId, invalidId, invalidId);
+
+        Response response = validToken(target(path)).post(null);
+
+        assertEquals(FORBIDDEN_403, response.getStatus());
     }
 
     @Test
@@ -178,7 +304,7 @@ public class OrgGroupResourceTest extends BaseResourceTest {
         when(mockService.addUserByGroup(orgId, groupId, userId)).thenReturn(ResultView.newInstance(addCount));
 
         path = String.format("/organization/%s/organizationGroup/%s/user/%s", orgId, groupId, userId);
-        Response response = target(path).request().post(null);
+        Response response = validToken(target(path)).post(null);
         ResultView resultView = getResult(response, ResultView.class);
 
         assertNotNull(resultView);
@@ -190,9 +316,27 @@ public class OrgGroupResourceTest extends BaseResourceTest {
         when(mockService.addUserByGroup(invalidId, invalidId, invalidId)).thenThrow(WaterEquipmentServiceException.class);
 
         path = String.format("/organization/%s/organizationGroup/%s/user/%s", invalidId, invalidId, invalidId);
-        Response response = target(path).request().post(null);
+        Response response = validToken(target(path)).post(null);
 
-        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+        assertEquals(FORBIDDEN_403, response.getStatus());
+    }
+
+    @Test
+    public void testRemoveUserByGroup_InvalidToken() throws Exception {
+        path = String.format("/organization/%s/organizationGroup/%s/user/%s", orgId, groupId, userId);
+
+        Response response = invalidToken(target(path)).delete();
+
+        assertEquals(FORBIDDEN_403, response.getStatus());
+    }
+
+    @Test
+    public void testRemoveUserByGroup_NotAuthorized() throws Exception {
+        path = String.format("/organization/%s/organizationGroup/%s/user/%s", invalidId, invalidId, invalidId);
+
+        Response response = validToken(target(path)).delete();
+
+        assertEquals(FORBIDDEN_403, response.getStatus());
     }
 
     @Test
@@ -200,7 +344,7 @@ public class OrgGroupResourceTest extends BaseResourceTest {
         when(mockService.removeUserByGroup(orgId, groupId, userId)).thenReturn(ResultView.newInstance(removeCount));
 
         path = String.format("/organization/%s/organizationGroup/%s/user/%s", orgId, groupId, userId);
-        Response response = target(path).request().delete();
+        Response response = validToken(target(path)).delete();
         ResultView resultView = getResult(response, ResultView.class);
 
         assertNotNull(resultView);
@@ -212,9 +356,27 @@ public class OrgGroupResourceTest extends BaseResourceTest {
         when(mockService.removeUserByGroup(invalidId, invalidId, invalidId)).thenThrow(WaterEquipmentServiceException.class);
 
         path = String.format("/organization/%s/organizationGroup/%s/user/%s", invalidId, invalidId, invalidId);
-        Response response = target(path).request().delete();
+        Response response = validToken(target(path)).delete();
 
-        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+        assertEquals(FORBIDDEN_403, response.getStatus());
+    }
+
+    @Test
+    public void testGetObjectsByGroup_InvalidToken() throws Exception {
+        path = String.format("/organization/%s/organizationGroup/%s/objects", orgId, groupId);
+
+        Response response = invalidToken(target(path)).get();
+
+        assertEquals(FORBIDDEN_403, response.getStatus());
+    }
+
+    @Test
+    public void testGetObjectsByGroup_NotAuthorized() throws Exception {
+        path = String.format("/organization/%s/organizationGroup/%s/objects", invalidId, invalidId);
+
+        Response response = validToken(target(path)).get();
+
+        assertEquals(FORBIDDEN_403, response.getStatus());
     }
 
     @Test
@@ -223,7 +385,7 @@ public class OrgGroupResourceTest extends BaseResourceTest {
                 .thenReturn(objectDataList.stream().map(ObjectView::newInstance).collect(Collectors.toList()));
 
         path = String.format("/organization/%s/organizationGroup/%s/objects", orgId, groupId);
-        Response response = target(path).request().get();
+        Response response = validToken(target(path)).get();
         Type listType = new TypeToken<List<ObjectView>>(){}.getType();
         List<ObjectView> objectViews = getResult(response, listType);
 
@@ -236,9 +398,9 @@ public class OrgGroupResourceTest extends BaseResourceTest {
         when(mockService.getObjectsByGroup(invalidId, invalidId)).thenThrow(WaterEquipmentServiceException.class);
 
         path = String.format("/organization/%s/organizationGroup/%s/objects", invalidId, invalidId);
-        Response response = target(path).request().get();
+        Response response = validToken(target(path)).get();
 
-        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+        assertEquals(FORBIDDEN_403, response.getStatus());
     }
 
     @Test
@@ -246,9 +408,9 @@ public class OrgGroupResourceTest extends BaseResourceTest {
         when(mockService.getObjectByGroup(orgId, groupId, objId, action)).thenReturn(ObjectView.newInstance(objectData));
 
         path = String.format("/organization/%s/organizationGroup/%s/checkPermissions", orgId, groupId);
-        Response response = target(path)
+        Response response = validToken(target(path)
                 .queryParam("objId", objId)
-                .queryParam("action", action).request().get();
+                .queryParam("action", action)).get();
         ObjectView objectView = getResult(response, ObjectView.class);
 
         assertNotNull(objectView);
@@ -262,11 +424,33 @@ public class OrgGroupResourceTest extends BaseResourceTest {
         when(mockService.getObjectByGroup(invalidId, invalidId, invalidId, action)).thenThrow(WaterEquipmentServiceException.class);
 
         path = String.format("/organization/%s/organizationGroup/%s/checkPermissions", invalidId, invalidId);
-        Response response = target(path)
+        Response response = validToken(target(path)
                 .queryParam("objId", invalidId)
-                .queryParam("action", action).request().get();
+                .queryParam("action", action)).get();
 
-        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+        assertEquals(FORBIDDEN_403, response.getStatus());
+    }
+
+    @Test
+    public void testGetUsersByOrg_InvalidToken() throws Exception {
+        path = String.format("/organization/%s/organizationUsers", orgId);
+
+        Response response = invalidToken(target(path)
+                .queryParam("objId", objId)
+                .queryParam("action", action)).get();
+
+        assertEquals(FORBIDDEN_403, response.getStatus());
+    }
+
+    @Test
+    public void testGetUsersByOrg_NotAuthorized() throws Exception {
+        path = String.format("/organization/%s/organizationUsers", invalidId);
+
+        Response response = validToken(target(path)
+                .queryParam("objId", objId)
+                .queryParam("action", action)).get();
+
+        assertEquals(FORBIDDEN_403, response.getStatus());
     }
 
     @Test
@@ -275,9 +459,9 @@ public class OrgGroupResourceTest extends BaseResourceTest {
                 .thenReturn(userList.stream().map(UserView::newInstance).collect(Collectors.toList()));
 
         path = String.format("/organization/%s/organizationUsers", orgId);
-        Response response = target(path)
+        Response response = validToken(target(path)
                 .queryParam("objId", objId)
-                .queryParam("action", action).request().get();
+                .queryParam("action", action)).get();
         Type listType = new TypeToken<List<UserView>>(){}.getType();
         List<UserView> userViews = getResult(response, listType);
 
@@ -290,11 +474,29 @@ public class OrgGroupResourceTest extends BaseResourceTest {
         when(mockService.getUsersByOrg(invalidId)).thenThrow(WaterEquipmentServiceException.class);
 
         path = String.format("/organization/%s/organizationUsers", invalidId);
-        Response response = target(path)
+        Response response = validToken(target(path)
                 .queryParam("objId", objId)
-                .queryParam("action", action).request().get();
+                .queryParam("action", action)).get();
 
-        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+        assertEquals(FORBIDDEN_403, response.getStatus());
+    }
+
+    @Test
+    public void testAddUserByOrg_InvalidToken() throws Exception {
+        path = String.format("/organization/%s/organizationUsers", orgId);
+
+        Response response = invalidToken(target(path)).post(null);
+
+        assertEquals(FORBIDDEN_403, response.getStatus());
+    }
+
+    @Test
+    public void testAddUserByOrg_NotAuthorized() throws Exception {
+        path = String.format("/organization/%s/organizationUsers", invalidId);
+
+        Response response = validToken(target(path)).post(null);
+
+        assertEquals(FORBIDDEN_403, response.getStatus());
     }
 
     @Test
@@ -302,7 +504,7 @@ public class OrgGroupResourceTest extends BaseResourceTest {
         when(mockService.addUserByOrg(eq(orgId), any(User.class))).thenReturn(ResultView.newInstance(addCount));
 
         path = String.format("/organization/%s/organizationUsers", orgId);
-        Response response = target(path).request().post(Entity.entity(user, MediaType.APPLICATION_JSON));
+        Response response = validToken(target(path)).post(Entity.entity(user, MediaType.APPLICATION_JSON));
         ResultView resultView = getResult(response, ResultView.class);
 
         assertNotNull(resultView);
@@ -314,9 +516,27 @@ public class OrgGroupResourceTest extends BaseResourceTest {
         when(mockService.addUserByOrg(eq(invalidId), any(User.class))).thenThrow(WaterEquipmentServiceException.class);
 
         path = String.format("/organization/%s/organizationUsers", invalidId);
-        Response response = target(path).request().post(Entity.entity(user, MediaType.APPLICATION_JSON));
+        Response response = validToken(target(path)).post(Entity.entity(user, MediaType.APPLICATION_JSON));
 
-        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+        assertEquals(FORBIDDEN_403, response.getStatus());
+    }
+
+    @Test
+    public void testRemoveUserByOrg_InvalidToken() throws Exception {
+        path = String.format("/organization/%s/organizationUser/%s", orgId, userId);
+
+        Response response = invalidToken(target(path)).delete();
+
+        assertEquals(FORBIDDEN_403, response.getStatus());
+    }
+
+    @Test
+    public void testRemoveUserByOrg_NotAuthorized() throws Exception {
+        path = String.format("/organization/%s/organizationUser/%s", invalidId, invalidId);
+
+        Response response = validToken(target(path)).delete();
+
+        assertEquals(FORBIDDEN_403, response.getStatus());
     }
 
     @Test
@@ -324,7 +544,7 @@ public class OrgGroupResourceTest extends BaseResourceTest {
         when(mockService.removeUserByOrg(orgId, userId)).thenReturn(ResultView.newInstance(removeCount));
 
         path = String.format("/organization/%s/organizationUser/%s", orgId, userId);
-        Response response = target(path).request().delete();
+        Response response = validToken(target(path)).delete();
         ResultView resultView = getResult(response, ResultView.class);
 
         assertNotNull(resultView);
@@ -336,9 +556,27 @@ public class OrgGroupResourceTest extends BaseResourceTest {
         when(mockService.removeUserByOrg(invalidId, invalidId)).thenThrow(WaterEquipmentServiceException.class);
 
         path = String.format("/organization/%s/organizationUser/%s", invalidId, invalidId);
-        Response response = target(path).request().delete();
+        Response response = validToken(target(path)).delete();
 
-        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+        assertEquals(FORBIDDEN_403, response.getStatus());
+    }
+
+    @Test
+    public void testGetObjectsByOrg_InvalidToken() throws Exception {
+        path = String.format("/organization/%s/objects", orgId);
+
+        Response response = invalidToken(target(path)).get();
+
+        assertEquals(FORBIDDEN_403, response.getStatus());
+    }
+
+    @Test
+    public void testGetObjectsByOrg_NotAuthorized() throws Exception {
+        path = String.format("/organization/%s/objects", invalidId);
+
+        Response response = validToken(target(path)).get();
+
+        assertEquals(FORBIDDEN_403, response.getStatus());
     }
 
     @Test
@@ -348,7 +586,7 @@ public class OrgGroupResourceTest extends BaseResourceTest {
 
         path = String.format("/organization/%s/objects", orgId);
         Type listType = new TypeToken<List<ObjectView>>(){}.getType();
-        Response response = target(path).request().get();
+        Response response = validToken(target(path)).get();
         List<ObjectView> objectViews = getResult(response, listType);
 
         assertNotNull(objectViews);
@@ -360,9 +598,27 @@ public class OrgGroupResourceTest extends BaseResourceTest {
         when(mockService.getObjectsByOrg(invalidId)).thenThrow(WaterEquipmentServiceException.class);
 
         path = String.format("/organization/%s/objects", invalidId);
-        Response response = target(path).request().get();
+        Response response = validToken(target(path)).get();
 
-        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+        assertEquals(FORBIDDEN_403, response.getStatus());
+    }
+
+    @Test
+    public void testAddObjectByOrg_InvalidToken() throws Exception {
+        path = String.format("/organization/%s/objects", orgId);
+
+        Response response = invalidToken(target(path)).post(null);
+
+        assertEquals(FORBIDDEN_403, response.getStatus());
+    }
+
+    @Test
+    public void testAddObjectByOrg_NotAuthorized() throws Exception {
+        path = String.format("/organization/%s/objects", invalidId);
+
+        Response response = validToken(target(path)).post(null);
+
+        assertEquals(FORBIDDEN_403, response.getStatus());
     }
 
     @Test
@@ -370,7 +626,7 @@ public class OrgGroupResourceTest extends BaseResourceTest {
         when(mockService.addObjectByOrg(eq(orgId), any(ObjectData.class))).thenReturn(ResultView.newInstance(addCount));
 
         path = String.format("/organization/%s/objects", orgId);
-        Response response = target(path).request().post(Entity.entity(objectData, MediaType.APPLICATION_JSON));
+        Response response = validToken(target(path)).post(Entity.entity(objectData, MediaType.APPLICATION_JSON));
         ResultView resultView = getResult(response, ResultView.class);
 
         assertNotNull(resultView);
@@ -382,9 +638,27 @@ public class OrgGroupResourceTest extends BaseResourceTest {
         when(mockService.addObjectByOrg(eq(invalidId), any(ObjectData.class))).thenThrow(WaterEquipmentServiceException.class);
 
         path = String.format("/organization/%s/objects", invalidId);
-        Response response = target(path).request().post(Entity.entity(objectData, MediaType.APPLICATION_JSON));
+        Response response = validToken(target(path)).post(Entity.entity(objectData, MediaType.APPLICATION_JSON));
 
-        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+        assertEquals(FORBIDDEN_403, response.getStatus());
+    }
+
+    @Test
+    public void testRemoveObjectByOrg_InvalidToken() throws Exception {
+        path = String.format("/organization/%s/object/%s", orgId, objId);
+
+        Response response = invalidToken(target(path)).delete();
+
+        assertEquals(FORBIDDEN_403, response.getStatus());
+    }
+
+    @Test
+    public void testRemoveObjectByOrg_NotAuthorized() throws Exception {
+        path = String.format("/organization/%s/object/%s", invalidId, invalidId);
+
+        Response response = validToken(target(path)).delete();
+
+        assertEquals(FORBIDDEN_403, response.getStatus());
     }
 
     @Test
@@ -392,7 +666,7 @@ public class OrgGroupResourceTest extends BaseResourceTest {
         when(mockService.removeObjectByOrg(orgId, objId)).thenReturn(ResultView.newInstance(removeCount));
 
         path = String.format("/organization/%s/object/%s", orgId, objId);
-        Response response = target(path).request().delete();
+        Response response = validToken(target(path)).delete();
         ResultView resultView = getResult(response, ResultView.class);
 
         assertNotNull(resultView);
@@ -404,8 +678,8 @@ public class OrgGroupResourceTest extends BaseResourceTest {
         when(mockService.removeObjectByOrg(invalidId, invalidId)).thenThrow(WaterEquipmentServiceException.class);
 
         path = String.format("/organization/%s/object/%s", invalidId, invalidId);
-        Response response = target(path).request().delete();
+        Response response = validToken(target(path)).delete();
 
-        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+        assertEquals(FORBIDDEN_403, response.getStatus());
     }
 }
