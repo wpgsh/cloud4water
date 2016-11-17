@@ -125,7 +125,7 @@
     			type:'post',
     			url:'/authn/changePasswordServlet',
     			dataType : 'json',
-    			data:{'userId':userId,'inputPassword':$.md5(inputPassword),'inputNewPassword':$.md5(inputNewPassword)},
+    			data:{'userId':userId,'inputPassword':inputPassword,'inputNewPassword':inputNewPassword},
     			success:function(data){
     				var errorCode = data.errorCode;
     				if("1" == errorCode){

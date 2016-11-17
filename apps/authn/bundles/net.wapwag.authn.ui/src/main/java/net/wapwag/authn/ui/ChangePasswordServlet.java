@@ -51,13 +51,13 @@ public class ChangePasswordServlet extends HttpServlet{
 					User user = authnService.getUser(Long.valueOf(userId));
 					boolean flag = true;
 					//check the old password
-					if(!StringUtil.strSHA1(inputPassword + user.getPasswordSalt()).equals(user.getPasswordHash())){
+					if(!StringUtil.strSHA1(StringUtil.strMd5(inputPassword) + user.getPasswordSalt()).equals(user.getPasswordHash())){
 						info.setErrorCode("1");
 						info.setErrorMsg("old password Incorrect");
 						flag = false;
 					};
 					if(flag){
-						user.setPasswordHash(StringUtil.strSHA1(inputNewPassword + user.getPasswordSalt()));
+						user.setPasswordHash(StringUtil.strSHA1(StringUtil.strMd5(inputNewPassword) + user.getPasswordSalt()));
 						int result = authnService.saveUser(user);
 						
 						if(result > 0){
