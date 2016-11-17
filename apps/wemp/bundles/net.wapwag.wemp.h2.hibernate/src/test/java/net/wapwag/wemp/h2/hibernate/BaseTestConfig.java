@@ -94,14 +94,15 @@ public class BaseTestConfig {
 
     @Before
     public void beforeMethod() throws Exception {
+    	PrepareContext.newTransaction();
         em = emf.createEntityManager();        
         waterEquipmentDao = createDao(em);
-        transactionManager.begin();
+        //transactionManager.begin();        
     }
 
     @After
     public void afterMethod() throws Exception {
-        transactionManager.rollback();
+        //transactionManager.rollback();
     }
 
 }

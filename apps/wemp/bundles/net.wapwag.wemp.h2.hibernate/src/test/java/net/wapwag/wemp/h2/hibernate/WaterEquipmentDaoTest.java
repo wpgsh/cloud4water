@@ -211,7 +211,7 @@ public class WaterEquipmentDaoTest extends BaseTestConfig {
         long groupId = 12L;
 
         Group group = new Group();
-        group.setName("添加组到研发部");
+        group.setName("���������������������");
 
         count = waterEquipmentDao.updateGroupByOrg(orgId, groupId , group);
 
@@ -239,7 +239,7 @@ public class WaterEquipmentDaoTest extends BaseTestConfig {
 
     @Test
     public void testAddUserByGroup() throws WaterEquipmentDaoException {
-        long groupId = 12L;
+        long groupId = 13L;
 
         count = waterEquipmentDao.addUserByGroup(orgId, groupId, userId);
 
@@ -288,9 +288,9 @@ public class WaterEquipmentDaoTest extends BaseTestConfig {
 
     @Test
     public void testAddUserByOrg() throws WaterEquipmentDaoException {
-        long groupId = 12L;
+        long groupId = 14L;
 
-        count = waterEquipmentDao.addUserByGroup(orgId, userId, groupId);
+        count = waterEquipmentDao.addUserByGroup(orgId, groupId, userId);
 
         assertEquals(addCount, count);
     }
