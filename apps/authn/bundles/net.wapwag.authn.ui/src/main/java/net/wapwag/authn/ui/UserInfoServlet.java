@@ -5,6 +5,7 @@ import net.wapwag.authn.model.UserView;
 import net.wapwag.authn.util.OSGIUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.oltu.oauth2.common.OAuth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,8 +18,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- * http://localhost:8181/authn/access_token?code=925fac4f958a4085b3b61988a72606b3
- * Access token servlet.
+ * User info servlet.
  * Created by Administrator on 2016/7/14.
  */
 @SuppressWarnings("Duplicates")
@@ -42,12 +42,12 @@ public class UserInfoServlet extends HttpServlet {
                         PrintWriter writer = response.getWriter();
                         writer.write(new Gson().toJson(user));
                     } else {
-                        response.setContentType("application/json");
-                        response.sendError(HttpServletResponse.SC_FORBIDDEN);
+                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                        response.setHeader(OAuth.HeaderType.WWW_AUTHENTICATE, "error=\"invalid_token\"");
                     }
                 } else {
-                    response.setContentType("application/json");
-                    response.sendError(HttpServletResponse.SC_FORBIDDEN);
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.setHeader(OAuth.HeaderType.WWW_AUTHENTICATE, "realm=\"authn\"");
                 }
             } catch (Exception e) {
                 logger.error(ExceptionUtils.getStackTrace(e));

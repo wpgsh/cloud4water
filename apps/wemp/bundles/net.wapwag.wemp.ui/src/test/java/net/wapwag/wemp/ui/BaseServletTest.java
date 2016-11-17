@@ -22,6 +22,7 @@ import javax.servlet.Servlet;
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.EnumSet;
@@ -148,6 +149,30 @@ public abstract class BaseServletTest {
         System.out.println(conn.getHeaderFields());
         if (respCode == HttpServletResponse.SC_FOUND) {
             result.put("redirectURI", conn.getHeaderField("Location"));
+        }
+
+        result.put("statusCode", respCode);
+
+        conn.disconnect();
+
+        return new QueryComponentResponse(respCode, result);
+    }
+
+    public static QueryComponentResponse getAcceptQueryComponent(String _url, boolean auth, String basicAuth, String contentType, Type type) throws Exception {
+        URL url = new URL(_url);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.addRequestProperty("content-type", contentType);
+        if (auth) {
+            conn.addRequestProperty("Authorization",
+                    "Bearer "+ basicAuth);
+        }
+        conn.setInstanceFollowRedirects(false);
+        conn.connect();
+        int respCode = conn.getResponseCode();
+        Map<String, Object> result = Maps.newHashMap();
+        System.out.println(conn.getHeaderFields());
+        if (respCode == HttpServletResponse.SC_OK) {
+            result.put("result", new Gson().fromJson(new InputStreamReader(conn.getInputStream()), type));
         }
 
         result.put("statusCode", respCode);

@@ -97,13 +97,6 @@ public class AuthenticationServiceTest {
         assertNull(accessTokenMapper);
     }
 	
-//	@Test(expected = AuthenticationServiceException.class)
-//    public void testLookupToken_handle_illegalBase64Format() throws Exception {
-//        AccessTokenMapper accessTokenMapper = authenticationServiceImpl.lookupToken("invalid_handle");
-//
-//        assertNull(accessTokenMapper);
-//    }
-
     @Test(expected = AuthenticationServiceException.class)
     public void testLookupToken_Exception() throws Exception {
         when(userDao.lookupAccessToken(invalidString)).thenThrow(UserDaoException.class);

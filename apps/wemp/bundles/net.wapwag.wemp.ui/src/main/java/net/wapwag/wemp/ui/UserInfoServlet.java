@@ -1,9 +1,11 @@
 package net.wapwag.wemp.ui;
 
 import com.google.gson.Gson;
+import net.wapwag.wemp.model.AccessTokenMapper;
 import net.wapwag.wemp.model.AuthnUser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.oltu.oauth2.common.OAuth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,21 +36,24 @@ public class UserInfoServlet extends HttpServlet {
                 if (StringUtils.isNotBlank(tokenHeader) && tokenHeader.contains("Bearer ")) {
                     String token = tokenHeader.replace("Bearer ", "");
 
+                    AccessTokenMapper accessTokenMapper = waterEquipmentService.lookupToken(token);
+
                     HttpSession session = request.getSession();
                     AuthnUser authnUser = (AuthnUser) session.getAttribute("authnUser");
-                    int result = waterEquipmentService.saveAuthnUser(authnUser);
 
-                    if (result > 0) {
+                    if (authnUser != null
+                            && accessTokenMapper != null
+                            && authnUser.getId() == Long.valueOf(accessTokenMapper.userId)) {
                         response.setContentType("application/json");
                         PrintWriter writer = response.getWriter();
                         writer.write(new Gson().toJson(authnUser));
                     } else {
-                        response.setContentType("application/json");
-                        response.sendError(HttpServletResponse.SC_FORBIDDEN);
+                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                        response.setHeader(OAuth.HeaderType.WWW_AUTHENTICATE, "error=\"invalid_token\"");
                     }
                 } else {
-                    response.setContentType("application/json");
-                    response.sendError(HttpServletResponse.SC_FORBIDDEN);
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.setHeader(OAuth.HeaderType.WWW_AUTHENTICATE, "realm=\"authn\"");
                 }
             } catch (Exception e) {
                 logger.error(ExceptionUtils.getStackTrace(e));
