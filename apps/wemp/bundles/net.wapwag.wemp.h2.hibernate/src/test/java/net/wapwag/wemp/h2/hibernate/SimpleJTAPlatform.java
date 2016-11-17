@@ -1,9 +1,9 @@
 package net.wapwag.wemp.h2.hibernate;
 
+import org.hibernate.engine.transaction.jta.platform.internal.AbstractJtaPlatform;
+
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
-
-import org.hibernate.engine.transaction.jta.platform.internal.AbstractJtaPlatform;
 
 public class SimpleJTAPlatform extends AbstractJtaPlatform {
 
