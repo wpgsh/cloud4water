@@ -4,6 +4,7 @@ import net.wapwag.wemp.dao.model.ObjectData;
 import net.wapwag.wemp.dao.model.ObjectType;
 import net.wapwag.wemp.dao.model.org.Organization;
 import net.wapwag.wemp.dao.model.permission.*;
+import net.wapwag.wemp.model.AuthnUser;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -31,8 +32,6 @@ class MockData {
 
     static final String redirectURI = "http://wwww.baidu.com";
     static final String handle = "testToken";
-    //Use base64 encoding handle:testToken
-    static final String encodeHandle = "dGVzdFRva2Vu";
     static final String code = "testCode";
     static final String clientIdentity = "clientId";
     static final String clientSecret = "clientSecret";
@@ -43,6 +42,7 @@ class MockData {
     static final String invalidEncodeHanlde = "aW52YWxpZF9zdHJpbmc=";
 
     static final User user = new User();
+    static final AuthnUser authnUser = new AuthnUser();
     static final RegisteredClient client = new RegisteredClient();
     static final RegisteredClient wpgClient = new RegisteredClient();
     static final RegisteredClient nonWPGclientWithNoScope = new RegisteredClient();
@@ -158,5 +158,9 @@ class MockData {
             group.setName("groupName" + i);
             groupList.add(group);
         }
+
+
+        authnUser.setId(userId);
+        authnUser.setUsername("authnUser");
     }
 }

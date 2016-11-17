@@ -74,11 +74,12 @@ public class WaterEquipmentServiceTest {
         assertEquals(false, isAuthorized);
     }
 
+    @SuppressWarnings("Duplicates")
     @Test
     public void testLookupToken() throws Exception {
         when(waterEquipmentDao.lookupAccessToken(handle)).thenReturn(accessToken);
 
-        AccessTokenMapper accessTokenMapper = waterEquipmentService.lookupToken(encodeHandle);
+        AccessTokenMapper accessTokenMapper = waterEquipmentService.lookupToken(handle);
 
         assertNotNull(accessTokenMapper);
         assertTrue(Long.parseLong(accessTokenMapper.userId) == userId);
@@ -90,14 +91,7 @@ public class WaterEquipmentServiceTest {
     public void testLookupToken_CanNotFindToken() throws Exception {
         when(waterEquipmentDao.lookupAccessToken(anyString())).thenReturn(null);
 
-        AccessTokenMapper accessTokenMapper = waterEquipmentService.lookupToken(encodeHandle);
-
-        assertNull(accessTokenMapper);
-    }
-
-    @Test(expected = WaterEquipmentServiceException.class)
-    public void testLookupToken_handle_illegalBase64Format() throws Exception {
-        AccessTokenMapper accessTokenMapper = waterEquipmentService.lookupToken("invalid_handle");
+        AccessTokenMapper accessTokenMapper = waterEquipmentService.lookupToken(handle);
 
         assertNull(accessTokenMapper);
     }
@@ -106,7 +100,7 @@ public class WaterEquipmentServiceTest {
     public void testLookupToken_Exception() throws Exception {
         when(waterEquipmentDao.lookupAccessToken(invalidString)).thenThrow(WaterEquipmentDaoException.class);
 
-        AccessTokenMapper accessTokenMapper = waterEquipmentService.lookupToken(invalidEncodeHanlde);
+        AccessTokenMapper accessTokenMapper = waterEquipmentService.lookupToken(invalidString);
 
         assertNull(accessTokenMapper);
     }
@@ -194,6 +188,7 @@ public class WaterEquipmentServiceTest {
         waterEquipmentService.getAuthorizationCode(userId, clientIdentity, redirectURI, scopes);
     }
 
+    @SuppressWarnings("Duplicates")
     @Test
     public void testGetAccessToken() throws Exception {
         when(waterEquipmentDao.getClientByRedirectURI(redirectURI)).thenReturn(client);
@@ -772,5 +767,33 @@ public class WaterEquipmentServiceTest {
         Set<ObjectView> objectViews = waterEquipmentService.getObjectsByUser(invalidId, "read");
 
         assertNull(objectViews);
+    }
+
+    @Test
+    public void testSaveAuthnUser_ExistUser() throws Exception {
+        when(waterEquipmentDao.getUserByExternalId(userId)).thenReturn(user);
+
+        int exist = waterEquipmentService.saveAuthnUser(authnUser);
+
+        assertEquals(exist, 0);
+    }
+
+    @Test
+    public void testSaveAuthnUser_NonExistUser() throws Exception {
+        when(waterEquipmentDao.getUserByExternalId(userId)).thenReturn(null);
+        when(waterEquipmentDao.addUser(any(User.class))).thenReturn(1);
+
+        int exist = waterEquipmentService.saveAuthnUser(authnUser);
+
+        assertEquals(exist, 1);
+    }
+
+    @Test
+    public void testSaveAuthnUser_Exception() throws Exception {
+        when(waterEquipmentDao.getUserByExternalId(userId)).thenThrow(WaterEquipmentDaoException.class);
+
+        int exist = waterEquipmentService.saveAuthnUser(authnUser);
+
+        assertEquals(exist, 0);
     }
 }
