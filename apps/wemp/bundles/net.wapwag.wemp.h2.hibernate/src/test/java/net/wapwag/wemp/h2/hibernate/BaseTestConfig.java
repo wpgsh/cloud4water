@@ -97,12 +97,12 @@ public class BaseTestConfig {
     	PrepareContext.newTransaction();
         em = emf.createEntityManager();        
         waterEquipmentDao = createDao(em);
-        //transactionManager.begin();        
+        transactionManager.begin();
     }
 
     @After
     public void afterMethod() throws Exception {
-        //transactionManager.rollback();
+        transactionManager.rollback();
     }
 
 }

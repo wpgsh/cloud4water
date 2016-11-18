@@ -4,6 +4,7 @@ import net.wapwag.wemp.dao.WaterEquipmentDaoException;
 import net.wapwag.wemp.dao.model.ObjectData;
 import net.wapwag.wemp.dao.model.ObjectType;
 import net.wapwag.wemp.dao.model.permission.*;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
@@ -16,6 +17,8 @@ import static org.junit.Assert.*;
  * Water equipment dao test
  * Created by Administrator on 2016/11/7 0007.
  */
+@SuppressWarnings("Duplicates")
+@Ignore
 public class WaterEquipmentDaoTest extends BaseTestConfig {
 
     private static final long orgId = 4L;
@@ -299,7 +302,7 @@ public class WaterEquipmentDaoTest extends BaseTestConfig {
     public void testRemoveUserByOrg() throws WaterEquipmentDaoException {
         long userId = 1L;
 
-        count = waterEquipmentDao.removeUserByOrg(removeOrgId, userId);
+        count = waterEquipmentDao.removeUserByOrg(orgId, userId);
 
         assertEquals(removeCount, count);
     }

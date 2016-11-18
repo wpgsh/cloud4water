@@ -1,6 +1,9 @@
 package net.wapwag.wemp.h2.hibernate;
 
-import java.util.Hashtable;
+import com.google.common.collect.ImmutableMap;
+import org.apache.geronimo.transaction.GeronimoUserTransaction;
+import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
+import org.h2.jdbcx.JdbcDataSource;
 
 import javax.naming.Context;
 import javax.naming.Name;
@@ -11,15 +14,10 @@ import javax.naming.spi.InitialContextFactoryBuilder;
 import javax.naming.spi.NamingManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import javax.transaction.xa.XAException;
+import java.util.Hashtable;
 
-import org.apache.geronimo.transaction.GeronimoUserTransaction;
-import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
-import org.h2.jdbcx.JdbcDataSource;
-
-import com.google.common.collect.ImmutableMap;
-
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class PrepareContext {
 	
