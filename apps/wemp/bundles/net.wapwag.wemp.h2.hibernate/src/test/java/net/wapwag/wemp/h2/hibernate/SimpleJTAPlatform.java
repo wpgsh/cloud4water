@@ -16,5 +16,13 @@ public class SimpleJTAPlatform extends AbstractJtaPlatform {
 	protected UserTransaction locateUserTransaction() {
 		return (UserTransaction) jndiService().locate("java/UserTransaction");
 	}
+	
+	protected boolean canCacheTransactionManager() {
+		return false;
+	}
+
+	protected boolean canCacheUserTransaction() {
+		return false;
+	}
 
 }

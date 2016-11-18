@@ -1,6 +1,9 @@
 package net.wapwag.wemp.h2.hibernate;
 
-import java.util.Hashtable;
+import com.google.common.collect.ImmutableMap;
+import org.apache.geronimo.transaction.GeronimoUserTransaction;
+import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
+import org.h2.jdbcx.JdbcDataSource;
 
 import javax.naming.Context;
 import javax.naming.Name;
@@ -11,14 +14,10 @@ import javax.naming.spi.InitialContextFactoryBuilder;
 import javax.naming.spi.NamingManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import java.util.Hashtable;
 
-import org.apache.geronimo.transaction.GeronimoUserTransaction;
-import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
-import org.h2.jdbcx.JdbcDataSource;
-
-import com.google.common.collect.ImmutableMap;
-
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class PrepareContext {
 	
@@ -51,7 +50,11 @@ public class PrepareContext {
     
     public static GeronimoTransactionManager transactionManager;
     public static GeronimoUserTransaction userTransaction;
-
+    
+    public static void newTransaction() throws Exception {
+		transactionManager = new GeronimoTransactionManager();
+		userTransaction = new GeronimoUserTransaction(transactionManager);		
+    }
     
 	public static EntityManagerFactory createEMF() throws Exception {		
 		configureJNDI();
@@ -64,18 +67,16 @@ public class PrepareContext {
 		when(nameParser.parse(JNDI_DATA_SOURCE)).thenReturn(dataSourceName);		
 		when(root.lookup(dataSourceName)).thenReturn(dataSource);
 		
-		transactionManager = new GeronimoTransactionManager();
-		userTransaction = new GeronimoUserTransaction(transactionManager);
-		
 		final Name txmName = mock(Name.class);
 		final Name txName = mock(Name.class);
 		
 		when(nameParser.parse("java/SampleTransactionManager")).thenReturn(txmName);
 		when(nameParser.parse("java/SampleUserTransaction")).thenReturn(txName);
-		when(root.lookup(txmName)).thenReturn(transactionManager);
-		when(root.lookup(txName)).thenReturn(userTransaction);
+		when(root.lookup(txmName)).then(__ -> transactionManager);
+		when(root.lookup(txName)).then(__ -> userTransaction);
 		
     	
+		newTransaction();
 		transactionManager.begin();
 		try {
 	    	return Persistence.createEntityManagerFactory("waterequipment-jpa-h2",

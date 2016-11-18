@@ -16,6 +16,7 @@ import static org.junit.Assert.*;
  * Water equipment dao test
  * Created by Administrator on 2016/11/7 0007.
  */
+@SuppressWarnings("Duplicates")
 public class WaterEquipmentDaoTest extends BaseTestConfig {
 
     private static final long orgId = 4L;
@@ -77,7 +78,7 @@ public class WaterEquipmentDaoTest extends BaseTestConfig {
     }
 
     @Test
-    public void saveAccessToken() throws Exception {
+    public void testSaveAccessToken() throws Exception {
         AccessToken accessToken = new AccessToken();
 
         User user = new User();
@@ -97,10 +98,24 @@ public class WaterEquipmentDaoTest extends BaseTestConfig {
     }
 
     @Test
-    public void getUser() throws Exception {
+    public void testGetUser() throws Exception {
         User user = waterEquipmentDao.getUser(userId);
 
         assertNotNull(user);
+    }
+
+    @Test
+    public void testGetUserByExternalId() throws Exception {
+        User user = waterEquipmentDao.getUserByExternalId(1L);
+
+        assertNotNull(user);
+    }
+
+    @Test
+    public void testGetObjectData() throws Exception {
+        ObjectData objectData = waterEquipmentDao.getObjectData(1L);
+
+        assertNotNull(objectData);
     }
 
     @Test
@@ -211,7 +226,7 @@ public class WaterEquipmentDaoTest extends BaseTestConfig {
         long groupId = 12L;
 
         Group group = new Group();
-        group.setName("添加组到研发部");
+        group.setName("���������������������");
 
         count = waterEquipmentDao.updateGroupByOrg(orgId, groupId , group);
 
@@ -239,7 +254,7 @@ public class WaterEquipmentDaoTest extends BaseTestConfig {
 
     @Test
     public void testAddUserByGroup() throws WaterEquipmentDaoException {
-        long groupId = 12L;
+        long groupId = 13L;
 
         count = waterEquipmentDao.addUserByGroup(orgId, groupId, userId);
 
@@ -288,9 +303,9 @@ public class WaterEquipmentDaoTest extends BaseTestConfig {
 
     @Test
     public void testAddUserByOrg() throws WaterEquipmentDaoException {
-        long groupId = 12L;
+        long groupId = 14L;
 
-        count = waterEquipmentDao.addUserByGroup(orgId, userId, groupId);
+        count = waterEquipmentDao.addUserByGroup(orgId, groupId, userId);
 
         assertEquals(addCount, count);
     }

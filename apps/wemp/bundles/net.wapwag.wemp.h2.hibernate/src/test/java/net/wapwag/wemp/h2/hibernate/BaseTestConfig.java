@@ -94,6 +94,7 @@ public class BaseTestConfig {
 
     @Before
     public void beforeMethod() throws Exception {
+    	PrepareContext.newTransaction();
         em = emf.createEntityManager();        
         waterEquipmentDao = createDao(em);
         transactionManager.begin();
