@@ -65,7 +65,7 @@
                       <label for="inputName" class="control-label">Name</label>
                     </div>
                     <div class="col-sm-6">
-                      <input type="text" class="form-control" id="inputName" name="inputName" value="<%=session.getAttribute("userName")%>" required>
+                      <input type="text" class="form-control" id="inputName" onkeyup="value=value.replace(/[^\a-\z\A-\Z0-9]/g,'')" onpaste="value=value.replace(/[^\a-\z\A-\Z0-9]/g,'')" oncontextmenu = "value=value.replace(/[^\a-\z\A-\Z0-9]/g,'')" name="inputName" value="<%=session.getAttribute("userName")%>" required>
                     </div>
                   </div>
                   <div class="form-group">
@@ -73,7 +73,7 @@
                       <label for="inputPhone" class="control-label">Phone</label>
                     </div>
                     <div class="col-sm-6">
-                      <input type="text" class="form-control" id="inputPhone" name="inputPhone" value="<%=session.getAttribute("phone")%>" required>
+                      <input type="text" class="form-control" id="inputPhone" onkeyup="value=value.replace(/[^0-9]/g,'')" onpaste="value=value.replace(/[^0-9]/g,'')" oncontextmenu = "value=value.replace(/[^0-9]/g,'')" name="inputPhone" value="<%=session.getAttribute("phone")%>" required>
                     </div>
                   </div>
                   <div class="form-group">

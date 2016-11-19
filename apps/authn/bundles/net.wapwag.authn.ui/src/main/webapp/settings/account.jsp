@@ -115,6 +115,12 @@
     			return;
     		}
     		
+    		if(inputNewPassword.length < 6){
+    			var message = "new password must be greater than 6";
+    			showError($(".logo-title"), message);
+    			return;
+    		}
+    		
     		if(inputNewPassword != inputConfirm){
     			var message = "new password is different with confirmation password";
     			showError($(".logo-title"), message);
