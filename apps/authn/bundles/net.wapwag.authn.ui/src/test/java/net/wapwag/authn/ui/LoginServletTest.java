@@ -62,11 +62,11 @@ public class LoginServletTest extends BaseServletTest{
 					throws IOException, ServletException {
 				if (request instanceof HttpServletRequest) {
                     HttpServletRequest httpRequest = (HttpServletRequest) request;
-//                    HttpSession session = httpRequest.getSession();
-//                    if (session != null && session.getAttribute("Authenticated") == null) {
-//                        session.setAttribute("userId", 1L);
-//                        session.setAttribute("authenticated", true);
-//                    }
+                    HttpSession session = httpRequest.getSession();
+                    if (session != null && session.getAttribute("Authenticated") == null) {
+                        session.setAttribute("userId", 1L);
+                        session.setAttribute("authenticated", true);
+                    }
                 }
                 request.setCharacterEncoding("UTF-8");
                 response.setCharacterEncoding("UTF-8");
