@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.UUID;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -17,6 +18,7 @@ import net.wapwag.authn.dao.model.RegisteredClient;
 import net.wapwag.authn.dao.model.User;
 import static org.mockito.Mockito.when;
 
+@Ignore
 public class UserDaoTest extends net.wapwag.authn.mysql.hibernate.BaseTestConfig {
 
 	private static final long userId = 1L;
