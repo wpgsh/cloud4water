@@ -1,5 +1,6 @@
 package net.wapwag.wemp.ui;
 
+import com.google.common.collect.Maps;
 import net.wapwag.wemp.WaterEquipmentServiceImpl;
 import net.wapwag.wemp.dao.WaterEquipmentDao;
 import org.junit.Test;
@@ -8,13 +9,14 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
-public class WempReturnServletTest extends BaseServletTest {
+public class WempReturnServletTest extends BaseMultipleServletTest {
 
-    private static final int port = 9100;
+    private static final int port = 8181;
 
     private static final int maxServerThreads = 10;
 
@@ -41,7 +43,7 @@ public class WempReturnServletTest extends BaseServletTest {
                     HttpServletRequest httpRequest = (HttpServletRequest) request;
                     HttpSession session = httpRequest.getSession();
                     if (session != null && session.getAttribute("wempRedirect") == null) {
-                        session.setAttribute("wempRedirect", "authorize?response_type=code&client_id=swm&redirect_uri=http://www.baidu.com&scope=user:*");
+                        session.setAttribute("wempRedirect", "response_type=code&client_id=swm&redirect_uri=http://www.baidu.com&scope=user:*");
                     }
                 }
                 request.setCharacterEncoding("UTF-8");
@@ -56,15 +58,21 @@ public class WempReturnServletTest extends BaseServletTest {
         };
     }
 
-    protected Servlet createServlet() {
-        return new WempReturnServlet();
+    @Override
+    Map<String, Servlet> createMultipleServlet() throws Exception {
+        Map<String, Servlet> servletMap = Maps.newHashMap();
+        servletMap.put("/wemp/return", new WempReturnServlet());
+        servletMap.put("/authorize", new AuthorizeServlet());
+        servletMap.put("/authn/access_token", new MockAccessTokenServlet());
+        servletMap.put("/authn/userinfo", new MockUserInfoServlet());
+        return servletMap;
     }
 
     protected WaterEquipmentDao createWaterEquipmentDao() throws Exception {
         return WaterEquipmentDaoMock.getWaterEquipmentDao();
     }
 
-    private static final String USER_INFO_PATH = "http://localhost:" + port + "/wemp/return";
+    private static final String WEMP_RETURN_PATH = "http://localhost:" + port + "/wemp/return";
 
     @Override
     public void setupAuthenticationService() throws Exception {
@@ -73,9 +81,17 @@ public class WempReturnServletTest extends BaseServletTest {
 
     @Test
     public void noAuthorizationCode() throws Exception {
-        QueryComponentResponse response = getAcceptQueryComponent(USER_INFO_PATH, false, null, APPLICATION_X_WWW_FORM_URLENCODED, null);
+        QueryComponentResponse response = getAcceptQueryComponent(WEMP_RETURN_PATH, APPLICATION_X_WWW_FORM_URLENCODED);
 
         assertEquals(SC_UNAUTHORIZED, response.responseCode);
+    }
+
+    @Test
+    public void processReturn() throws Exception {
+        QueryComponentResponse response = getAcceptQueryComponent(String.format(WEMP_RETURN_PATH + "?code=%s", "code"),
+                APPLICATION_X_WWW_FORM_URLENCODED);
+
+        assertEquals(SC_FOUND, response.responseCode);
     }
 
 }
