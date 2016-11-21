@@ -29,7 +29,8 @@ import java.util.List;
 
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
-import static net.wapwag.wemp.ui.WempConstant.*;
+import static net.wapwag.wemp.ui.WempConstant.WEMP_BASIC_ENCODED_CREDENTIAL;
+import static net.wapwag.wemp.ui.WempConstant.WEMP_RETURN_PATH;
 
 /**
  * WEMP return Servlet
@@ -38,19 +39,24 @@ import static net.wapwag.wemp.ui.WempConstant.*;
 @WebServlet(urlPatterns = "/return", name = "WEMP_ReturnServlet")
 public class WempReturnServlet extends HttpServlet {
 
-    private static final String AUTHN_USERINFO_PATH = "http://localhost:8181/authn/userinfo";
-    private static final String AUTHN_GET_ACCESSTOKEN_PATH = "http://localhost:8181/authn/access_token";
+    private static final String AUTHN_GET_ACCESSTOKEN_PATH = "http://%s:%s/authn/access_token";
+    private static final String AUTHN_USERINFO_PATH = "http://%s:%s/authn/userinfo";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String authzCode = request.getParameter("code");
+        String serverIp = request.getLocalAddr();
+        int serverPort = request.getLocalPort();
 
         if (StringUtils.isNotBlank(authzCode)) {
-            String token = getAcessToken(authzCode);
+            String authnTokenPath = String.format(AUTHN_GET_ACCESSTOKEN_PATH, serverIp, serverPort);
+            String token = getAcessToken(authzCode, authnTokenPath);
 
             if (StringUtils.isNotBlank(token)) {
                 HttpSession session = request.getSession();
-                AuthnUser authnUser = getUserInfo(token);
+                String authnUserInfoPath = String.format(AUTHN_USERINFO_PATH, serverIp, serverPort);
+
+                AuthnUser authnUser = getUserInfo(token, authnUserInfoPath);
 
                 if (authnUser != null) {
                     session.setAttribute("authnUser", authnUser);
@@ -77,9 +83,9 @@ public class WempReturnServlet extends HttpServlet {
     }
 
     @SuppressWarnings("Duplicates")
-    private AuthnUser getUserInfo(String token) throws IOException, ServletException {
+    private AuthnUser getUserInfo(String token, String path) throws IOException, ServletException {
         HttpClient client = HttpClientBuilder.create().build();
-        HttpGet get = new HttpGet(AUTHN_USERINFO_PATH);
+        HttpGet get = new HttpGet(path);
         get.setHeader("Authorization", "Bearer " + token);
         HttpResponse result = client.execute(get);
         if (result.getStatusLine().getStatusCode() == SC_OK) {
@@ -101,9 +107,9 @@ public class WempReturnServlet extends HttpServlet {
         }
     }
 
-    private String getAcessToken(String authzCode) throws IOException {
+    private String getAcessToken(String authzCode, String path) throws IOException {
         HttpClient client = HttpClientBuilder.create().build();
-        HttpPost post = new HttpPost(AUTHN_GET_ACCESSTOKEN_PATH);
+        HttpPost post = new HttpPost(path);
         post.setHeader("authorization", WEMP_BASIC_ENCODED_CREDENTIAL);
         List<NameValuePair> forms = new ArrayList<>();
         forms.add(new BasicNameValuePair("code", authzCode));

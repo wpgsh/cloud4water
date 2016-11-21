@@ -16,7 +16,7 @@ import static org.mockito.Mockito.mock;
 
 public class WempReturnServletTest extends BaseMultipleServletTest {
 
-    private static final int port = 8181;
+    private static final int port = 9100;
 
     private static final int maxServerThreads = 10;
 
