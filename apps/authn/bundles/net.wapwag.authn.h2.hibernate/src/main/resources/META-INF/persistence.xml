@@ -5,11 +5,12 @@
     <!--  RESOURCE_LOCAL -->
     <persistence-unit name="user-jpa" transaction-type="JTA">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <jta-data-source>osgi:service/javax.sql.DataSource/(osgi.jndi.service.name=jdbc/User)</jta-data-source>
-        <non-jta-data-source>osgi:service/javax.sql.DataSource/(osgi.jndi.service.name=jdbc/User)</non-jta-data-source>
+        <jta-data-source>osgi:service/javax.sql.DataSource/(osgi.jndi.service.name=jdbc/User_H2)</jta-data-source>
+        <non-jta-data-source>osgi:service/javax.sql.DataSource/(osgi.jndi.service.name=jdbc/User_H2)</non-jta-data-source>
         <class>net.wapwag.authn.dao.model.User</class>
         <class>net.wapwag.authn.dao.model.AccessToken</class>
         <class>net.wapwag.authn.dao.model.RegisteredClient</class>
+        <class>net.wapwag.authn.dao.model.Image</class>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
         </properties>
