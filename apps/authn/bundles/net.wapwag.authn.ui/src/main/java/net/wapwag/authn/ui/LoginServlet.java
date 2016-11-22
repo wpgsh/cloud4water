@@ -51,10 +51,8 @@ public class LoginServlet extends HttpServlet {
 				String passwd = req.getParameter("passWord");
 				String checkCode = req.getParameter("checkCode");
 				ResultInfo info = new ResultInfo();
-				HttpSession session = req.getSession(false);
-//				String redirectUri = (String) session
-//						.getAttribute("redirect_uri");
-
+				HttpSession session = req.getSession();
+				
 				User user = authnService.getUserByName(userName);
 
 				if (checkCode(session, checkCode)) {
@@ -80,7 +78,6 @@ public class LoginServlet extends HttpServlet {
 				try {
 					out = resp.getWriter();
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				out.println(gson.toJson(info));

@@ -28,10 +28,14 @@ public class LogoutServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		HttpSession session = req.getSession();
-		session.setAttribute("authenticated", "");
-		session.setAttribute("userId", "");
-		session.setAttribute("loginTime", "");
-		session.setAttribute("userName", "");
+		session.removeAttribute("userName");
+		session.removeAttribute("authenticated");
+		session.removeAttribute("userId");
+		session.removeAttribute("phone");
+		session.removeAttribute("email");
+		session.removeAttribute("homePage");
+		session.removeAttribute("loginTime");
+		
 		req.getRequestDispatcher("login.jsp").forward(req, resp);
 	}
 	
