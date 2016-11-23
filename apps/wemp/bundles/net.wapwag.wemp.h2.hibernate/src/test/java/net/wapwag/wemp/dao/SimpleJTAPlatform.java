@@ -1,4 +1,4 @@
-package net.wapwag.wemp.h2.hibernate;
+package net.wapwag.wemp.dao;
 
 import org.hibernate.engine.transaction.jta.platform.internal.AbstractJtaPlatform;
 

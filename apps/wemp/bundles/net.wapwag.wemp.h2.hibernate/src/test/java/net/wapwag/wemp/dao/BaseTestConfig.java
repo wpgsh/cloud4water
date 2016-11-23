@@ -1,8 +1,6 @@
-package net.wapwag.wemp.h2.hibernate;
+package net.wapwag.wemp.dao;
 
-import net.wapwag.wemp.dao.TxAwareEntityManager;
-import net.wapwag.wemp.dao.WaterEquipmentDao;
-import net.wapwag.wemp.dao.WaterEquipmentDaoImpl;
+import net.wapwag.wemp.h2.hibernate.H2TxAwareEntityManager;
 import org.apache.aries.jpa.template.EmFunction;
 import org.apache.aries.jpa.template.JpaTemplate;
 import org.junit.After;
@@ -14,7 +12,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.transaction.Transaction;
 
-import static net.wapwag.wemp.h2.hibernate.PrepareContext.transactionManager;
+import static net.wapwag.wemp.dao.PrepareContext.transactionManager;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 

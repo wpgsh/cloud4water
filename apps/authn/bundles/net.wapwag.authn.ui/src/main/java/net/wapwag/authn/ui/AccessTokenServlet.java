@@ -31,7 +31,7 @@ public class AccessTokenServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         OSGIUtil.useAuthenticationService(authnService -> {
-            String redirectURI = null;
+            String redirectURI;
             OAuthResponse oAuthResponse = null;
 
             try {

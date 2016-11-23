@@ -1,4 +1,4 @@
-package net.wapwag.wemp.h2.hibernate;
+package net.wapwag.wemp.dao;
 
 import net.wapwag.wemp.dao.model.ObjectData;
 import net.wapwag.wemp.dao.model.ObjectType;
@@ -13,7 +13,7 @@ import javax.persistence.Query;
 import java.util.List;
 import java.util.UUID;
 
-import static net.wapwag.wemp.h2.hibernate.PrepareContext.transactionManager;
+import static net.wapwag.wemp.dao.PrepareContext.transactionManager;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 

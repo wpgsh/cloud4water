@@ -43,19 +43,19 @@ public class AuthorizationServlet extends HttpServlet {
 
 	@Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        OSGIUtil.useAuthenticationService(authnService  -> {
+        OSGIUtil.useAuthenticationService(authnService -> {
             OAuthResponse oAuthResponse = null;
-            String redirectURI = null;
+            String redirectURI;
 
             HttpSession session = request.getSession();
 
-            boolean authenticated = Boolean.valueOf(String.valueOf(session.getAttribute("authenticated")));
+            boolean authenticated = Boolean.valueOf((String) session.getAttribute("authenticated"));
 
 	        try {
 
                 OAuthAuthzRequest oauthRequest = new OAuthAuthzRequest(request);
 
-                String code = null;
+                String code;
                 String type = oauthRequest.getResponseType();
                 String clientId = oauthRequest.getClientId();
                 redirectURI = oauthRequest.getRedirectURI();
@@ -63,7 +63,7 @@ public class AuthorizationServlet extends HttpServlet {
 
                 if (authenticated) {
 
-                    long userId = Long.valueOf(String.valueOf(session.getAttribute("userId")));
+                    long userId = Long.valueOf((String) session.getAttribute("userId"));
 
                     //Get authorization code.
                     code = authnService.getAuthorizationCode(userId, clientId, redirectURI, scopes);

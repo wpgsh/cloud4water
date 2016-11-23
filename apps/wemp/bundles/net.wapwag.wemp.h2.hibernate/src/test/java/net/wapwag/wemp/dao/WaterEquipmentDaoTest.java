@@ -1,6 +1,5 @@
-package net.wapwag.wemp.h2.hibernate;
+package net.wapwag.wemp.dao;
 
-import net.wapwag.wemp.dao.WaterEquipmentDaoException;
 import net.wapwag.wemp.dao.model.ObjectData;
 import net.wapwag.wemp.dao.model.ObjectType;
 import net.wapwag.wemp.dao.model.permission.*;

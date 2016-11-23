@@ -63,7 +63,7 @@ public class WempReturnServlet extends HttpServlet {
                     session.setAttribute("userId", authnUser.getId());
                     session.setAttribute("authenticated", true);
 
-                    String wempRedirect = String.valueOf(session.getAttribute("wempRedirect"));
+                    String wempRedirect = (String) session.getAttribute("wempRedirect");
 
                     if (StringUtils.isNotBlank(wempRedirect)) {
                         request.getRequestDispatcher(String.format("/authorize?%s", wempRedirect)).forward(request, response);

@@ -1,4 +1,4 @@
-package net.wapwag.wemp.h2.hibernate;
+package net.wapwag.wemp.dao;
 
 import com.google.common.collect.ImmutableMap;
 import org.apache.geronimo.transaction.GeronimoUserTransaction;

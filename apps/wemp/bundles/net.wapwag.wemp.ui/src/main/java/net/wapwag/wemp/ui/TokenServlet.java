@@ -26,12 +26,10 @@ public class TokenServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		OSGIUtil.useWaterEquipmentService(waterEquipmentService -> {
-			String redirectURI = null;
+			String redirectURI;
 			OAuthResponse oAuthResponse = null;
 
 			try {
-
-				String auth = request.getHeader("Authorization");
 
 				OAuthTokenRequest oAuthTokenRequest = new OAuthTokenRequest(request);
 

@@ -36,9 +36,9 @@ public class AuthorizeServlet extends HttpServlet {
     @SuppressWarnings("Duplicates")
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        OSGIUtil.useWaterEquipmentService(waterEquipmentService  -> {
+        OSGIUtil.useWaterEquipmentService(waterEquipmentService -> {
             OAuthResponse oAuthResponse = null;
-            String redirectURI = null;
+            String redirectURI;
 
             HttpSession session = request.getSession();
 
@@ -48,7 +48,7 @@ public class AuthorizeServlet extends HttpServlet {
 
                 OAuthAuthzRequest oauthRequest = new OAuthAuthzRequest(request);
 
-                String code = null;
+                String code;
                 String type = oauthRequest.getResponseType();
                 String clientId = oauthRequest.getClientId();
                 redirectURI = oauthRequest.getRedirectURI();
@@ -56,7 +56,7 @@ public class AuthorizeServlet extends HttpServlet {
 
                 if (authenticated) {
 
-                    long userId = Long.valueOf(String.valueOf(session.getAttribute("userId")));
+                    long userId = Long.valueOf((String) session.getAttribute("userId"));
 
                     //Get authorization code.
                     code = waterEquipmentService.getAuthorizationCode(userId, clientId, redirectURI, scopes);
