@@ -1,27 +1,7 @@
 package net.wapwag.authn.rest;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
-import org.glassfish.jersey.media.multipart.FormDataBodyPart;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-import org.glassfish.jersey.media.multipart.FormDataParam;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-
 import com.thingswise.appframework.jaxrs.utils.Authorization;
 import com.thingswise.appframework.jaxrs.utils.OAuth2;
-
 import net.wapwag.authn.AuthenticationService;
 import net.wapwag.authn.dao.model.Image;
 import net.wapwag.authn.dao.model.User;
@@ -32,6 +12,14 @@ import net.wapwag.authn.rest.dto.UserMsgResponse;
 import net.wapwag.authn.rest.dto.UserResponse;
 import net.wapwag.authn.rest.oauth2.UsersTokenHandler;
 import net.wapwag.authn.rest.util.StringUtil;
+import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 
 @Component(service=AuthenticationResource.class)
 @Path("/user")
@@ -53,7 +41,7 @@ public class AuthenticationResource {
 			throw new ResourceNotFoundException("User not found: " + uid);
 		}
 		
-		if(user != null && ("1").equals(user.getEnabled())){
+		if(user.getEnabled()){
 			UserResponse userResponse = new UserResponse();
 	        userResponse.setId(user.getId());
 	        userResponse.setUsername(user.getUsername());
@@ -83,7 +71,7 @@ public class AuthenticationResource {
 			throw new ResourceNotFoundException("User not found: "+uid);
 		}
 		
-		if(user != null && ("1").equals(user.getEnabled())){
+		if(user.getEnabled()){
 			UserResponse userResponse = new UserResponse();
 	        //Get the user from service and convert it to UserResponse so the browser could read the json response.
 	        userResponse.setId(user.getId());
@@ -139,7 +127,7 @@ public class AuthenticationResource {
             //save pwdSalt
             user.setPasswordSalt(pwdSalt + "");
         }
-        if(userRequest.getEnabled() != null){
+        if(userRequest.getEnabled()){
         	user.setEnabled(userRequest.getEnabled());
         }
         if(userRequest.getAvartarId() != null){

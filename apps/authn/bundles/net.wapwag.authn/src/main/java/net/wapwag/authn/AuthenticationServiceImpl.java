@@ -1,21 +1,16 @@
 package net.wapwag.authn;
 
 import com.eaio.uuid.UUID;
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import net.wapwag.authn.Ids.UserId;
 import net.wapwag.authn.dao.UserDao;
 import net.wapwag.authn.dao.UserDaoException;
-import net.wapwag.authn.dao.model.AccessTokenId;
-import net.wapwag.authn.dao.model.Image;
-import net.wapwag.authn.dao.model.RegisteredClient;
-import net.wapwag.authn.dao.model.User;
+import net.wapwag.authn.dao.model.*;
 import net.wapwag.authn.model.AccessTokenMapper;
 import net.wapwag.authn.model.UserProfile;
 import net.wapwag.authn.model.UserView;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.oltu.oauth2.common.error.OAuthError;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.osgi.service.component.annotations.Component;
@@ -26,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Component(scope=ServiceScope.SINGLETON)
@@ -62,10 +58,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	@Override
 	public AccessTokenMapper lookupToken(String handle) throws AuthenticationServiceException {
 		return userDao.txExpr(() -> {
-			net.wapwag.authn.dao.model.AccessToken accessToken;
+			AccessToken accessToken;
 			try {
-//				String token = new String(Base64.getDecoder().decode(handle));
-				
 				accessToken = userDao.lookupAccessToken(handle);
 			
 				if (accessToken != null) {
@@ -76,13 +70,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			                accessTokenId.getRegisteredClient().getClientId(),
 			                accessToken.getHandle(),
 			                ImmutableSet.copyOf(
-			                		Optional.fromNullable(accessToken.getScope()).
-			                		transform(String::trim).
-			                		transform(s -> {
-			                            assert s != null;
-			                            return s.split(" ");
-			                        }).
-			                		or(new String[0])));
+									Optional.ofNullable(accessToken.getScope()).map(String::trim).map(s -> s.split(" ")).orElse(new String[0])));
 				}else{
 					return null;
 				}
@@ -109,7 +97,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         && cliendId.equals(registeredClient.getClientId())
                         && clientSecret.equals(registeredClient.getClientSecret())) {
 
-	                net.wapwag.authn.dao.model.AccessToken accessToken;
+	                AccessToken accessToken;
 	                accessToken = userDao.getAccessTokenByCode(code);
 
                     //validate authorization code and if match then invalidate it.
@@ -137,6 +125,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		}, OAuthProblemException.class);
 	}
 
+	@SuppressWarnings("Duplicates")
 	@Override
 	public String getAuthorizationCode(long userId, String cliendId, String redirectURI, final Set<String> scope)
             throws OAuthProblemException {
@@ -144,7 +133,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             long result;
             boolean valid = false;
             Set<String> defaultScope = Sets.newHashSet();
-            net.wapwag.authn.dao.model.AccessToken accessToken;
+            AccessToken accessToken;
 
             try {
 
@@ -174,11 +163,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         Set<String> originalScope = new HashSet<>(Arrays.asList(accessToken.getScope().split(" ")));
                         //if no new scope need
                         if (originalScope.containsAll(defaultScope)) {
-                            defaultScope = originalScope;
-                            valid = true;
+							valid = true;
                         }
                     } else {
-                        accessToken = new net.wapwag.authn.dao.model.AccessToken();
+                        accessToken = new AccessToken();
                     }
 
                     //if accessToken isn't exist or exist but need new scope,refresh accessToken

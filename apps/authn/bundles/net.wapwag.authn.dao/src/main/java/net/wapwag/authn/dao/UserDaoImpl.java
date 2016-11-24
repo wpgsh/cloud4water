@@ -1,30 +1,20 @@
 package net.wapwag.authn.dao;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-
-import org.apache.aries.jpa.template.EmFunction;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ServiceScope;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.wapwag.authn.dao.model.AccessToken;
 import net.wapwag.authn.dao.model.Image;
 import net.wapwag.authn.dao.model.RegisteredClient;
 import net.wapwag.authn.dao.model.User;
+import org.apache.aries.jpa.template.EmFunction;
+import org.osgi.service.component.annotations.*;
+
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component(scope=ServiceScope.SINGLETON)
 public class UserDaoImpl implements UserDao {
-
-	private static final Logger logger = LoggerFactory.getLogger(UserDaoImpl.class);
 
 	@Reference(target = "(osgi.name=user)")
 	protected TxAwareEntityManager entityManager;
@@ -41,16 +31,16 @@ public class UserDaoImpl implements UserDao {
 
 	@Override
 	public User getUser(final long uid) throws UserDaoException {
+		final String hql = "select user from User user where user.id = :userId and user.enabled = :enabled";
+
 		try {
-			/*return entityManager.txExpr((em -> {
-				return em.find(User.class, uid);
-			}));*/
-			return entityManager.txExpr(new EmFunction<User>() {
-				@Override
-				public User apply(EntityManager em) {
-					return em.find(User.class, uid);
-				}
-			});
+			return entityManager.txExpr(em -> em.createQuery(hql, User.class)
+					.setParameter("userId", uid)
+					.setParameter("enabled", true)
+					.getResultList()
+					.stream()
+					.findFirst()
+					.orElse(null));
 		} catch (Exception e) {
 			throw new UserDaoException("Cannot get user entity", e);
 		}
@@ -58,11 +48,14 @@ public class UserDaoImpl implements UserDao {
 
 	@Override
 	public AccessToken lookupAccessToken(final String handle) throws UserDaoException {
-        final String hql = "select token from AccessToken token where token.handle = :handle";
+        final String hql = "select token from AccessToken token " +
+				"where token.handle = :handle " +
+                "AND token.accessTokenId.user.enabled = :enabled";
 
         try {
             return entityManager.txExpr(em -> em.createQuery(hql, AccessToken.class)
                     .setParameter("handle", handle)
+                    .setParameter("enabled", true)
                     .getResultList()
                     .stream()
                     .findFirst()

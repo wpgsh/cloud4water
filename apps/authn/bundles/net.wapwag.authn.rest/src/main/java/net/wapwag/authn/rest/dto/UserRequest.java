@@ -8,7 +8,7 @@ public class UserRequest {
 	private long id;
 
     @FormParam("enabled")
-    private String enabled;
+    private boolean enabled;
 
     @FormParam("username")
     private String username;
@@ -60,11 +60,11 @@ public class UserRequest {
         this.id = id;
     }
 
-    public String getEnabled() {
+    public boolean getEnabled() {
         return enabled;
     }
 
-    public void setEnabled(String enabled) {
+    public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
 
