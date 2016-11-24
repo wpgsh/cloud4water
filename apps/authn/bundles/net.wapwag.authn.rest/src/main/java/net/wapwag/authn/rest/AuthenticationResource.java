@@ -1,31 +1,25 @@
 package net.wapwag.authn.rest;
 
-import java.io.InputStream;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
+import com.thingswise.appframework.jaxrs.utils.Authorization;
+import com.thingswise.appframework.jaxrs.utils.OAuth2;
+import net.wapwag.authn.AuthenticationService;
+import net.wapwag.authn.dao.model.Image;
+import net.wapwag.authn.dao.model.User;
+import net.wapwag.authn.rest.authz.AnyAuthenticatedUser;
+import net.wapwag.authn.rest.authz.AuthorizationOnlyUserId;
+import net.wapwag.authn.rest.dto.ImageResponse;
+import net.wapwag.authn.rest.dto.UserMsgResponse;
+import net.wapwag.authn.rest.dto.UserResponse;
+import net.wapwag.authn.rest.oauth2.UsersTokenHandler;
+import net.wapwag.authn.rest.util.StringUtil;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.thingswise.appframework.jaxrs.utils.Authorization;
-import com.thingswise.appframework.jaxrs.utils.OAuth2;
-
-import net.wapwag.authn.AuthenticationService;
-import net.wapwag.authn.dao.model.User;
-import net.wapwag.authn.model.UserMsgResponse;
-import net.wapwag.authn.rest.authz.AnyAuthenticatedUser;
-import net.wapwag.authn.rest.authz.AuthorizationOnlyUserId;
-import net.wapwag.authn.rest.dto.UserResponse;
-import net.wapwag.authn.rest.oauth2.UsersTokenHandler;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 
 @Component(service=AuthenticationResource.class)
 @Path("/user")
@@ -121,7 +115,7 @@ public class AuthenticationResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Authorization @AuthorizationOnlyUserId(target="{userId}")
-    public net.wapwag.authn.model.UserMsgResponse createNewAvatar(@PathParam("userId") long uid, 
+    public net.wapwag.authn.model.UserMsgResponse createNewAvatar(@PathParam("userId") long uid,
     		@FormDataParam("file") InputStream inputStream) throws Exception {
         return authnService.createNewAvatar(uid, inputStream);
     }
@@ -131,7 +125,7 @@ public class AuthenticationResource {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
     @Authorization @AuthorizationOnlyUserId(target="{userId}")
-    public net.wapwag.authn.model.UserMsgResponse updateUserAvatar(@PathParam("userId") long uid, 
+    public net.wapwag.authn.model.UserMsgResponse updateUserAvatar(@PathParam("userId") long uid,
     		@FormDataParam("file") InputStream inputStream) throws Exception {
     	return authnService.updateUserAvatar(uid, inputStream);
     }
@@ -143,5 +137,5 @@ public class AuthenticationResource {
     public net.wapwag.authn.model.UserMsgResponse removeUserAvatar(@PathParam("userId") long uid) throws Exception {
         return authnService.removeUserAvatar(uid);
     }
-    
+
 }

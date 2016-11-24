@@ -1,11 +1,15 @@
 package net.wapwag.authn;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
+import com.eaio.uuid.UUID;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+import net.wapwag.authn.Ids.UserId;
+import net.wapwag.authn.dao.UserDao;
+import net.wapwag.authn.dao.UserDaoException;
+import net.wapwag.authn.dao.model.*;
+import net.wapwag.authn.model.AccessTokenMapper;
+import net.wapwag.authn.model.UserProfile;
+import net.wapwag.authn.model.UserView;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.oltu.oauth2.common.error.OAuthError;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
@@ -15,24 +19,10 @@ import org.osgi.service.component.annotations.ServiceScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.eaio.uuid.UUID;
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
-
-import net.wapwag.authn.Ids.UserId;
-import net.wapwag.authn.dao.UserDao;
-import net.wapwag.authn.dao.UserDaoException;
-import net.wapwag.authn.dao.model.AccessTokenId;
-import net.wapwag.authn.dao.model.Image;
-import net.wapwag.authn.dao.model.RegisteredClient;
-import net.wapwag.authn.dao.model.User;
-import net.wapwag.authn.model.AccessTokenMapper;
-import net.wapwag.authn.model.ImageResponse;
-import net.wapwag.authn.model.StringUtil;
-import net.wapwag.authn.model.UserMsgResponse;
-import net.wapwag.authn.model.UserProfile;
-import net.wapwag.authn.model.UserView;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 @Component(scope=ServiceScope.SINGLETON)
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -58,7 +48,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			} catch (UserDaoException e) {
 				throw new AuthenticationServiceException("Cannot get public user profile", e);
 			}
-			
+
 			if (user != null) {
 				return new UserProfile(user.getId());
 			} else {
@@ -70,10 +60,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	@Override
 	public AccessTokenMapper lookupToken(String handle) throws AuthenticationServiceException {
 		return userDao.txExpr(() -> {
-			net.wapwag.authn.dao.model.AccessToken accessToken;
+			AccessToken accessToken;
 			try {
-//				String token = new String(Base64.getDecoder().decode(handle));
-				
 				accessToken = userDao.lookupAccessToken(handle);
 			
 				if (accessToken != null) {
@@ -84,13 +72,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			                accessTokenId.getRegisteredClient().getClientId(),
 			                accessToken.getHandle(),
 			                ImmutableSet.copyOf(
-			                		Optional.fromNullable(accessToken.getScope()).
-			                		transform(String::trim).
-			                		transform(s -> {
-			                            assert s != null;
-			                            return s.split(" ");
-			                        }).
-			                		or(new String[0])));
+									Optional.ofNullable(accessToken.getScope())
+											.map(String::trim)
+											.map(s -> s.split(" "))
+											.orElse(new String[0])));
 				}else{
 					return null;
 				}
@@ -117,7 +102,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         && cliendId.equals(registeredClient.getClientId())
                         && clientSecret.equals(registeredClient.getClientSecret())) {
 
-	                net.wapwag.authn.dao.model.AccessToken accessToken;
+	                AccessToken accessToken;
 	                accessToken = userDao.getAccessTokenByCode(code);
 
                     //validate authorization code and if match then invalidate it.
@@ -145,6 +130,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		}, OAuthProblemException.class);
 	}
 
+	@SuppressWarnings("Duplicates")
 	@Override
 	public String getAuthorizationCode(long userId, String cliendId, String redirectURI, final Set<String> scope)
             throws OAuthProblemException {
@@ -152,11 +138,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             long result;
             boolean valid = false;
             Set<String> defaultScope = Sets.newHashSet();
-            net.wapwag.authn.dao.model.AccessToken accessToken;
+            AccessToken accessToken;
 
             try {
 
                 RegisteredClient registeredClient = userDao.getClientByRedirectURI(redirectURI);
+                User user = userDao.getUser(userId);
+
+                if (user == null) {
+                    throw OAuthProblemException.error(OAuthError.CodeResponse.INVALID_REQUEST, "invalid user");
+                } else if (!user.getEnabled()) {
+                    throw OAuthProblemException.error(OAuthError.CodeResponse.INVALID_REQUEST, "user is disabled now");
+                }
 
                 //validate client.
                 if (registeredClient != null
@@ -182,16 +175,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         Set<String> originalScope = new HashSet<>(Arrays.asList(accessToken.getScope().split(" ")));
                         //if no new scope need
                         if (originalScope.containsAll(defaultScope)) {
-                            defaultScope = originalScope;
-                            valid = true;
+							valid = true;
                         }
                     } else {
-                        accessToken = new net.wapwag.authn.dao.model.AccessToken();
+                        accessToken = new AccessToken();
                     }
 
                     //if accessToken isn't exist or exist but need new scope,refresh accessToken
                     if (!valid) {
-                        accessToken.setAccessTokenId(new AccessTokenId(userDao.getUser(userId), registeredClient));
+                        accessToken.setAccessTokenId(new AccessTokenId(user, registeredClient));
                         accessToken.setHandle(StringUtils.replace(new UUID().toString(), "-", ""));
                     }
 
@@ -263,7 +255,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			} catch (UserDaoException e) {
 				throw new AuthenticationServiceException("Cannot get user", e);
 			}
-	
+
 			if (user != null) {
 				return user;
 			} else {
@@ -321,8 +313,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	        return user;
     	},AuthenticationServiceException.class);
     }
-    
-    @Override  
+
+    @Override
 	public User updateUserPwd(User user)
 			throws AuthenticationServiceException {
     	return userDao.txExpr(() -> {
@@ -412,7 +404,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		        if(userRequest.getEmail() != null){
 		        	user.setEmail(userRequest.getEmail());
 		        }
-		
+
 		        int result = userDao.saveUser(user);
 		        String msg = (result == 1 ? "update success" : "update fail");
 		        return new UserMsgResponse(result == 1, msg);
@@ -427,35 +419,35 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		return userDao.txExpr(() -> {
 			try{
 				User user = new User();
-		        
-		    	ByteArrayOutputStream output = new ByteArrayOutputStream();  
-		        byte[] buf = new byte[1024];  
-		        int numBytesRead = 0;  
+
+		    	ByteArrayOutputStream output = new ByteArrayOutputStream();
+		        byte[] buf = new byte[1024];
+		        int numBytesRead = 0;
 		        while ((numBytesRead = inputStream.read(buf)) != -1) {
-		            output.write(buf, 0, numBytesRead);  
+		            output.write(buf, 0, numBytesRead);
 		        }
 		        byte[] photo = output.toByteArray();
-		    	
+
 		    	String avartarId = StringUtil.getUUID();
 		    	Image image = new Image();
 		    	image.setId(avartarId);
 		    	image.setImage(photo);
-		    	
+
 		        int result = userDao.saveImg(image);
-		        
+
 		        if(result > 0){
 		        	user = userDao.getUser(userId);
 		        	user.setAvartarId(avartarId);
 		        	userDao.saveUser(user);
 		        }
-		        
+
 		        String msg = (result == 1 ? "add success" : "add fail");
 		        return new UserMsgResponse(result == 1, msg);
-				
+
 			}catch(Exception e){
 				throw new AuthenticationServiceException("Cannot createNewAvatar", e);
 			}
-		
+
 		},AuthenticationServiceException.class);
 	}
 
@@ -465,31 +457,31 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		return userDao.txExpr(() -> {
 			try{
 				User user = new User();
-	    	    
-		    	ByteArrayOutputStream output = new ByteArrayOutputStream();  
-		        byte[] buf = new byte[1024];  
-		        int numBytesRead = 0;  
-		        while ((numBytesRead = inputStream.read(buf)) != -1) {  
-		            output.write(buf, 0, numBytesRead);  
+
+		    	ByteArrayOutputStream output = new ByteArrayOutputStream();
+		        byte[] buf = new byte[1024];
+		        int numBytesRead = 0;
+		        while ((numBytesRead = inputStream.read(buf)) != -1) {
+		            output.write(buf, 0, numBytesRead);
 		        }
 		        byte[] photo = output.toByteArray();
-		        
+
 		    	String avartarId = StringUtil.getUUID();
 		    	Image image = new Image();
 		    	image.setId(avartarId);
 		    	image.setImage(photo);
-		    	
+
 		        int result = userDao.saveImg(image);
-		        
+
 		        if(result > 0){
 		        	user = userDao.getUser(userId);
 		        	user.setAvartarId(avartarId);
 		        	userDao.saveUser(user);
 		        }
-		        
+
 		        String msg = (result == 1 ? "update success" : "update fail");
 		        return new UserMsgResponse(result == 1, msg);
-				
+
 			}catch(Exception e){
 				throw new AuthenticationServiceException("Cannot updateUserAvatar", e);
 			}
@@ -521,7 +513,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		return userDao.txExpr(() -> {
 			try{
 		    	User user = userDao.getUser(userId);
-		    	
+
 		    	int result = userDao.deleteImg(user.getAvartarId());
 		    	if(result > 0){
 		    		user.setAvartarId("");
@@ -575,11 +567,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 	@Override
 	public boolean isAuthorized(String userName, String token) throws AuthenticationServiceException {
-		
-		
+
+
 		return false;
 	}
-	
-	
+
+
 
 }

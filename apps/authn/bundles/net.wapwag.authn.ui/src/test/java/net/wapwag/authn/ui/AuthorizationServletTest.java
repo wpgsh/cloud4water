@@ -13,6 +13,7 @@ import java.io.IOException;
  * Test for AuhtorizationServlet class
  * Created by Administrator on 2016/8/11.
  */
+@SuppressWarnings("Duplicates")
 public class AuthorizationServletTest extends BaseServletTest {
 
     private static final int port = 9100;
@@ -73,6 +74,7 @@ public class AuthorizationServletTest extends BaseServletTest {
         emptyRequest();
         missingResponseType();
         missingClientId();
+        missingState();
     }
 
     private void emptyRequest() throws Exception {
@@ -99,6 +101,16 @@ public class AuthorizationServletTest extends BaseServletTest {
         TestCase.assertEquals(SC_FOUND, response.responseCode);
         TestCase.assertEquals(
                 "http://www.baidu.com?error_description=Missing+parameters%3A+client_id&error=invalid_request",
+                response.body.get("redirectURI"));
+    }
+
+    private void missingState() throws Exception {
+        String path = AUTHORIZE_CONTEXT_PATH + "?response_type=code&client_id=swm&redirect_uri=http://www.baidu.com&scope=user:*";
+        QueryComponentResponse response = getAcceptQueryComponent(path,
+                APPLICATION_X_WWW_FORM_URLENCODED);
+        TestCase.assertEquals(SC_FOUND, response.responseCode);
+        TestCase.assertEquals(
+                "http://www.baidu.com/?error_description=invalid+state&error=invalid_request",
                 response.body.get("redirectURI"));
     }
 
@@ -158,6 +170,18 @@ public class AuthorizationServletTest extends BaseServletTest {
 
     public void testError_TemporarilyUnavalible() throws Exception {
         //There is no scenario at this time
+    }
+
+    @Test
+    public void test() {
+        String uri = null;
+        try {
+            uri = "http://www.baidu.com?error_description=error+client+credential&error=unauthorized_client";
+            int a = 0;
+            a = 10 / a;
+        } catch (Exception e) {
+            System.out.println(uri);
+        }
     }
 
 }

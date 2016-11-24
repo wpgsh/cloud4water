@@ -16,7 +16,7 @@ public class User {
 	private long id;
 
     @Column(name = "enabled")
-    private String enabled;
+    private boolean enabled;
 
     @Column(name = "username")
     private String username;
@@ -71,11 +71,11 @@ public class User {
         this.id = id;
     }
 
-    public String getEnabled() {
+    public boolean getEnabled() {
         return enabled;
     }
 
-    public void setEnabled(String enabled) {
+    public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
 

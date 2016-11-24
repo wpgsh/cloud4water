@@ -1,7 +1,6 @@
 package net.wapwag.wemp;
 
 import com.eaio.uuid.UUID;
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import net.wapwag.wemp.dao.WaterEquipmentDao;
@@ -62,13 +61,10 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
                             accessTokenId.getRegisteredClient().getClientId(),
                             accessToken.getHandle(),
                             ImmutableSet.copyOf(
-                                    Optional.fromNullable(accessToken.getScope()).
-                                            transform(String::trim).
-                                            transform(s -> {
-                                                assert s != null;
-                                                return s.split(" ");
-                                            }).
-                                            or(new String[0])));
+                                    Optional.ofNullable(accessToken.getScope())
+                                            .map(String::trim)
+                                            .map(s -> s.split(" "))
+                                            .orElse(new String[0])));
                 } else {
                     return  null;
                 }
