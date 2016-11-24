@@ -97,7 +97,4 @@ public interface AuthenticationService {
 	UserMsgResponse removeUserProfile(long userId) throws AuthenticationServiceException;
 	
 	ImageResponse getUserAvatar(long userId) throws AuthenticationServiceException;
-	
-	boolean isAuthorized(String userName, String token) throws AuthenticationServiceException;
-	
 }

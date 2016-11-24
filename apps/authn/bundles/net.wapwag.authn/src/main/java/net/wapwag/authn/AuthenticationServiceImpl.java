@@ -1,12 +1,13 @@
 package net.wapwag.authn;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-
+import com.eaio.uuid.UUID;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+import net.wapwag.authn.Ids.UserId;
+import net.wapwag.authn.dao.UserDao;
+import net.wapwag.authn.dao.UserDaoException;
+import net.wapwag.authn.dao.model.*;
+import net.wapwag.authn.model.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.oltu.oauth2.common.error.OAuthError;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
@@ -16,24 +17,12 @@ import org.osgi.service.component.annotations.ServiceScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.eaio.uuid.UUID;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
-
-import net.wapwag.authn.Ids.UserId;
-import net.wapwag.authn.dao.UserDao;
-import net.wapwag.authn.dao.UserDaoException;
-import net.wapwag.authn.dao.model.AccessToken;
-import net.wapwag.authn.dao.model.AccessTokenId;
-import net.wapwag.authn.dao.model.Image;
-import net.wapwag.authn.dao.model.RegisteredClient;
-import net.wapwag.authn.dao.model.User;
-import net.wapwag.authn.model.AccessTokenMapper;
-import net.wapwag.authn.model.ImageResponse;
-import net.wapwag.authn.model.StringUtil;
-import net.wapwag.authn.model.UserMsgResponse;
-import net.wapwag.authn.model.UserProfile;
-import net.wapwag.authn.model.UserView;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 @Component(scope=ServiceScope.SINGLETON)
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -78,15 +67,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 				if (accessToken != null) {
 			        AccessTokenId accessTokenId = accessToken.getAccessTokenId();
 			        return new AccessTokenMapper(
-			        		Long.toString(accessTokenId.getUser().getId()),
-			                Long.MAX_VALUE,
-			                accessTokenId.getRegisteredClient().getClientId(),
-			                accessToken.getHandle(),
-			                ImmutableSet.copyOf(
-									Optional.ofNullable(accessToken.getScope())
-											.map(String::trim)
-											.map(s -> s.split(" "))
-											.orElse(new String[0])));
+                        Long.toString(accessTokenId.getUser().getId()),
+                        Long.MAX_VALUE,
+                        accessTokenId.getRegisteredClient().getClientId(),
+                        accessToken.getHandle(),
+                        ImmutableSet.copyOf(
+                            Optional.ofNullable(accessToken.getScope())
+                                .map(String::trim)
+                                .map(s -> s.split(" "))
+                                .orElse(new String[0])));
 				}else{
 					return null;
 				}
@@ -573,14 +562,5 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			}
 		},AuthenticationServiceException.class);
 	}
-
-	@Override
-	public boolean isAuthorized(String userName, String token) throws AuthenticationServiceException {
-
-
-		return false;
-	}
-
-
 
 }
