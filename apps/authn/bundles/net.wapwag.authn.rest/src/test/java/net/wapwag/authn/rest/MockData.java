@@ -9,6 +9,7 @@ import net.wapwag.authn.dao.model.AccessTokenId;
 import net.wapwag.authn.dao.model.Image;
 import net.wapwag.authn.dao.model.RegisteredClient;
 import net.wapwag.authn.dao.model.User;
+import net.wapwag.authn.model.ImageResponse;
 import net.wapwag.authn.rest.dto.UserRequestJson;
 
 /**
@@ -64,6 +65,7 @@ class MockData {
     static final AccessToken accessToken_nonWPGclientWithNonAuthzedScope = new AccessToken();
 	
     static UserRequestJson userRequestJson = new UserRequestJson();
+    static ImageResponse imageResponse = new ImageResponse();
     
 	static final Set<String> scopes = new HashSet<>();
     static final Set<String> nonAuthzedscopes = new HashSet<>();
@@ -71,6 +73,10 @@ class MockData {
 	static{
 		image.setId(avantarId);
 		image.setImage("testImage".getBytes());
+		
+		imageResponse.setId(avantarId);
+		imageResponse.setImage("testImage".getBytes());
+		
 		
 		user.setId(userId);
 		user.setEnabled("1");

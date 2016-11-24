@@ -1,7 +1,8 @@
 package net.wapwag.authn.rest;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 import static net.wapwag.authn.rest.MockData.*;
 import static net.wapwag.authn.rest.AuthenticationResourceMock.*;
 
@@ -34,6 +35,7 @@ import com.thingswise.appframework.jaxrs.utils.TokenHandler;
 import com.thingswise.appframework.jaxrs.utils.TokenHandlers;
 
 import net.wapwag.authn.model.AccessTokenMapper;
+import net.wapwag.authn.model.UserView;
 import net.wapwag.authn.rest.authz.AnyAuthenticatedUserScheme;
 import net.wapwag.authn.rest.authz.AuthorizationOnlyUserId;
 import net.wapwag.authn.rest.authz.AuthorizationOnlyUserIdScheme;
@@ -107,13 +109,13 @@ abstract class BaseResourceTest extends JerseyTest {
     private DynamicFeature createJAXRSProvider() throws Exception {
 
         AnyAuthenticatedUserScheme anyAuthz = new AnyAuthenticatedUserScheme();
-//        anyAuthz.setWaterEquipmentService(mockService);
-
-        AuthorizationOnlyUserIdScheme authorizationOnlyUserIdScheme = new AuthorizationOnlyUserIdScheme();
         
+        AuthorizationOnlyUserIdScheme userIdScheme = new AuthorizationOnlyUserIdScheme();
+        userIdScheme.setAuthnService(mockService);
+
         TestAuthorizationSchemes schemes = new TestAuthorizationSchemes();
         schemes.bindAuthorizationScheme(anyAuthz);
-        schemes.bindAuthorizationScheme(authorizationOnlyUserIdScheme);
+        schemes.bindAuthorizationScheme(userIdScheme);
 
         TestAuthorizationAnnotationProcessor authz = new TestAuthorizationAnnotationProcessor();
         authz.bindAuthorizationSchemes(schemes);
@@ -134,7 +136,8 @@ abstract class BaseResourceTest extends JerseyTest {
                                         }).
                                         or(new String[0]))));
 
-        
+        when(mockService.getUserInfo(eq("token2_ivalid"))).thenReturn(null);
+        when(mockService.getUserInfo(eq("token2"))).thenReturn(UserView.newInstance(user));
 
         UsersTokenHandler tokenHandler = new UsersTokenHandler();
         tokenHandler.setService(mockService);

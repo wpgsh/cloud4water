@@ -8,5 +8,7 @@ import com.thingswise.appframework.jaxrs.utils.Authorization;
 @Authorization
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AuthorizationOnlyUserId {
-
+	
+	public String target();
+	
 }
