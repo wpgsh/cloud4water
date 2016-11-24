@@ -36,7 +36,7 @@ public class GetAvatarByUserIdServlet extends HttpServlet{
 		OSGIUtil.useAuthenticationService(authnService -> {
 			try {
 				String userId = req.getParameter("userId");
-				if(StringUtils.isNotEmpty(userId) && !"null".equals(userId)){
+				if(StringUtils.isNotEmpty(userId)){
 					User user = authnService.getUser(Long.valueOf(userId));
 					Image image = authnService.getAvatar(user.getAvartarId());
 					if(image != null){

@@ -44,12 +44,29 @@ public class LoginServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		PrintWriter out = null;
+		ResultInfo info = new ResultInfo();
+		Gson gson = new Gson();
+		info.setErrorCode("11");
+		info.setErrorMsg("Do not support GET method");
+		try {
+			out = resp.getWriter();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		out.println(gson.toJson(info));
+		out.close();
+	}
 
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
 		OSGIUtil.useAuthenticationService(authnService -> {
 			try {
 				String userName = req.getParameter("userName");
 				String passwd = req.getParameter("passWord");
 				String checkCode = req.getParameter("checkCode");
+				
 				ResultInfo info = new ResultInfo();
 				HttpSession session = req.getSession();
 				
@@ -86,12 +103,6 @@ public class LoginServlet extends HttpServlet {
 				e.printStackTrace();
 			}
 		}, LoginServlet.class);
-	}
-
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		doGet(req, resp);
 	}
 
 	private boolean checkCode(HttpSession session, String checkCode) {
