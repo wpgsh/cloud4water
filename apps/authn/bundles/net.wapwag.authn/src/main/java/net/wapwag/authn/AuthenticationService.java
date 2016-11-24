@@ -97,5 +97,4 @@ public interface AuthenticationService {
 	UserMsgResponse removeUserProfile(long userId) throws AuthenticationServiceException;
 	
 	ImageResponse getUserAvatar(long userId) throws AuthenticationServiceException;
-	
 }
