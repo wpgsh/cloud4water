@@ -1,25 +1,30 @@
 package net.wapwag.authn.rest;
 
-import com.thingswise.appframework.jaxrs.utils.Authorization;
-import com.thingswise.appframework.jaxrs.utils.OAuth2;
-import net.wapwag.authn.AuthenticationService;
-import net.wapwag.authn.dao.model.Image;
-import net.wapwag.authn.dao.model.User;
-import net.wapwag.authn.rest.authz.AnyAuthenticatedUser;
-import net.wapwag.authn.rest.authz.AuthorizationOnlyUserId;
-import net.wapwag.authn.rest.dto.ImageResponse;
-import net.wapwag.authn.rest.dto.UserMsgResponse;
-import net.wapwag.authn.rest.dto.UserResponse;
-import net.wapwag.authn.rest.oauth2.UsersTokenHandler;
-import net.wapwag.authn.rest.util.StringUtil;
+import java.io.InputStream;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
+import com.thingswise.appframework.jaxrs.utils.Authorization;
+import com.thingswise.appframework.jaxrs.utils.OAuth2;
+
+import net.wapwag.authn.AuthenticationService;
+import net.wapwag.authn.dao.model.User;
+import net.wapwag.authn.rest.authz.AnyAuthenticatedUser;
+import net.wapwag.authn.rest.authz.AuthorizationOnlyUserId;
+import net.wapwag.authn.rest.dto.UserResponse;
+import net.wapwag.authn.rest.oauth2.UsersTokenHandler;
 
 @Component(service=AuthenticationResource.class)
 @Path("/user")
@@ -81,7 +86,7 @@ public class AuthenticationResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Authorization @AnyAuthenticatedUser
-    public UserMsgResponse createNewUser(User userRequest) throws Exception {
+    public net.wapwag.authn.model.UserMsgResponse createNewUser(User userRequest) throws Exception {
         return authnService.createNewUser(userRequest);
     }
     

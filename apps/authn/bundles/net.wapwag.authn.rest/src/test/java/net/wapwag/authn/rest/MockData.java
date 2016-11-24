@@ -79,7 +79,7 @@ class MockData {
 		
 		
 		user.setId(userId);
-		user.setEnabled("1");
+		user.setEnabled(true);
         user.setName("test1");
         user.setUsername("test1");
         user.setPhone2("15850817392");
@@ -91,7 +91,7 @@ class MockData {
 		user.setPhone1("15850817392");
 		
 		user_null_avatarId.setId(userId);
-		user_null_avatarId.setEnabled("1");
+		user_null_avatarId.setEnabled(true);
 		user_null_avatarId.setName("test1");
 		user_null_avatarId.setUsername("test1");
 		user_null_avatarId.setPhone2("15850817392");
@@ -119,7 +119,7 @@ class MockData {
 		userRequestJson.setPhone1("15850817392");
 		
 		
-		user_password.setEnabled("1");
+		user_password.setEnabled(true);
 		user_password.setPasswordHash("dfdf");
 		user_password.setName("test1");
 		user_password.setUsername("test1");
