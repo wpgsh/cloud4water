@@ -1,15 +1,19 @@
 package net.wapwag.authn;
 
+import java.io.InputStream;
+import java.util.Set;
+
+import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
+
 import net.wapwag.authn.Ids.UserId;
 import net.wapwag.authn.dao.model.Image;
 import net.wapwag.authn.dao.model.RegisteredClient;
 import net.wapwag.authn.dao.model.User;
 import net.wapwag.authn.model.AccessTokenMapper;
+import net.wapwag.authn.model.ImageResponse;
+import net.wapwag.authn.model.UserMsgResponse;
 import net.wapwag.authn.model.UserProfile;
 import net.wapwag.authn.model.UserView;
-import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
-
-import java.util.Set;
 
 public interface AuthenticationService {
 
@@ -68,14 +72,6 @@ public interface AuthenticationService {
 	
 	int removeUser(long uid) throws AuthenticationServiceException;
 
-//	User getUserAvatar(long uid) throws AuthenticationServiceException;
-//	
-//	
-//
-//	int saveUserAvatar(User user) throws AuthenticationServiceException;
-//
-//	int removeUserAvatar(long uid) throws AuthenticationServiceException;
-
     User getUserByName(String userName) throws AuthenticationServiceException;
     
     User getUserByEmail(String email) throws AuthenticationServiceException;
@@ -87,5 +83,21 @@ public interface AuthenticationService {
 	int deleteImg(String avartarId) throws AuthenticationServiceException;
 
 	Image getAvatar(String avartarId) throws AuthenticationServiceException;
+	
+	UserMsgResponse updateUserProfile(User user, long userId) throws AuthenticationServiceException;
+	
+	UserMsgResponse createNewAvatar(long userId, InputStream inputStream) throws AuthenticationServiceException;
 
+	UserMsgResponse createNewUser(User user) throws AuthenticationServiceException;
+	
+	UserMsgResponse updateUserAvatar(long userId, InputStream inputStream) throws AuthenticationServiceException;
+	
+	UserMsgResponse removeUserAvatar(long userId) throws AuthenticationServiceException;
+	
+	UserMsgResponse removeUserProfile(long userId) throws AuthenticationServiceException;
+	
+	ImageResponse getUserAvatar(long userId) throws AuthenticationServiceException;
+	
+	boolean isAuthorized(String userName, String token) throws AuthenticationServiceException;
+	
 }

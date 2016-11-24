@@ -28,6 +28,7 @@ import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import net.wapwag.authn.AuthenticationServiceException;
@@ -36,7 +37,7 @@ import net.wapwag.authn.dao.model.User;
 import net.wapwag.authn.rest.dto.UserMsgResponse;
 import net.wapwag.authn.rest.dto.UserResponse;
 
-
+@Ignore
 public class AuthenticationResourceTest extends BaseResourceTest{
 
 	private String path;

@@ -2,23 +2,20 @@ package net.wapwag.authn.rest;
 
 import static net.wapwag.authn.rest.AuthenticationResourceMock.mockService;
 import static net.wapwag.authn.rest.MockData.avantarId;
-import static net.wapwag.authn.rest.MockData.image;
-import static net.wapwag.authn.rest.MockData.image_null;
+import static net.wapwag.authn.rest.MockData.imageResponse;
 import static net.wapwag.authn.rest.MockData.user;
 import static net.wapwag.authn.rest.MockData.userId;
-import static net.wapwag.authn.rest.MockData.userName;
-import static net.wapwag.authn.rest.MockData.user_not_enabled;
 import static net.wapwag.authn.rest.MockData.user_null;
-import static net.wapwag.authn.rest.MockData.user_null_avatarId;
 import static net.wapwag.authn.rest.MockData.user_password;
 import static org.eclipse.jetty.http.HttpStatus.INTERNAL_SERVER_ERROR_500;
 import static org.eclipse.jetty.http.HttpStatus.OK_200;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.io.InputStream;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
@@ -31,9 +28,8 @@ import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.junit.Test;
 
 import net.wapwag.authn.AuthenticationServiceException;
-import net.wapwag.authn.dao.model.Image;
 import net.wapwag.authn.dao.model.User;
-import net.wapwag.authn.rest.dto.UserMsgResponse;
+import net.wapwag.authn.model.UserMsgResponse;
 import net.wapwag.authn.rest.dto.UserResponse;
 
 
@@ -74,21 +70,13 @@ public class AuthenticationResourceAnnotationTest extends BaseResourceTest{
 		path = String.format("/user/%s/public", userId);
 
         Response response = validToken(target(path)).get();
+        
+        UserResponse response2 = getResult(response, UserResponse.class);
 
-        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+        assertEquals(OK_200, response.getStatus());
+        assertEquals(null, response2.getAvartarId());
 	}
 	
-	@Test
-	public void testGetPublicUserProfile_UserNotEnabled_Exception() throws AuthenticationServiceException {
-		when(mockService.getUser(userId)).thenReturn(user_not_enabled);
-		
-		path = String.format("/user/%s/public", userId);
-
-        Response response = validToken(target(path)).get();
-
-        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
-	}
-
 	@Test
 	public void testGetPrivateUserProfile() throws AuthenticationServiceException {
 		when(mockService.getUser(eq(userId))).thenReturn(user);
@@ -123,23 +111,17 @@ public class AuthenticationResourceAnnotationTest extends BaseResourceTest{
 
         Response response = validToken(target(path)).get();
         
-        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+        UserResponse response2 = getResult(response, UserResponse.class);
+
+        assertEquals(OK_200, response.getStatus());
+        assertEquals(null, response2.getAvartarId());
 	}
 	
 	@Test
-	public void testGetPrivateUserProfile_UserNotEnabled_Exception() throws AuthenticationServiceException {
-		when(mockService.getUser(userId)).thenReturn(user_not_enabled);
-		
-		path = String.format("/user/%s", userId);
-
-        Response response = validToken(target(path)).get();
-        
-        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
-	}
-
-	@Test
 	public void testCreateNewUser_true() throws AuthenticationServiceException {
-		when(mockService.saveUser(any(User.class))).thenReturn(1);
+//		when(mockService.saveUser(any(User.class))).thenReturn(1);
+		
+		when(mockService.createNewUser(any(User.class))).thenReturn(new UserMsgResponse(true, "add success"));
 		
 		Entity<User> entity = Entity.entity(user, MediaType.APPLICATION_JSON);
 		
@@ -165,11 +147,13 @@ public class AuthenticationResourceAnnotationTest extends BaseResourceTest{
 	
 	@Test
 	public void testCreateNewUser_false() throws AuthenticationServiceException {
-		when(mockService.saveUser(any(User.class))).thenReturn(0);
+//		when(mockService.saveUser(any(User.class))).thenReturn(0);
+		
+		when(mockService.createNewUser(any(User.class))).thenReturn(new UserMsgResponse(false, "add fail"));
 		
 		Entity<User> entity = Entity.entity(user, MediaType.APPLICATION_JSON);
 		
-		Response response = validToken(target("/user")).post(entity);
+		Response response = validToken(target("/user/")).post(entity);
 		
 		UserMsgResponse response2 = getResult(response, UserMsgResponse.class);
 		
@@ -179,23 +163,9 @@ public class AuthenticationResourceAnnotationTest extends BaseResourceTest{
 	}
 	
 	@Test
-	public void testCreateNewUser_password() throws AuthenticationServiceException {
-		when(mockService.saveUser(any(User.class))).thenReturn(1);
-		
-		Entity<User> entity = Entity.entity(user_password, MediaType.APPLICATION_JSON);
-		
-		Response response = validToken(target("/user")).post(entity);
-		
-		UserMsgResponse response2 = getResult(response, UserMsgResponse.class);
-		
-		assertEquals(OK_200, response.getStatus());
-		
-		assertEquals("add success", response2.getMsg());
-	}
-	
-	@Test
 	public void testCreateNewUser_password_fail() throws AuthenticationServiceException {
-		when(mockService.saveUser(any(User.class))).thenReturn(0);
+//		when(mockService.saveUser(any(User.class))).thenReturn(0);
+		when(mockService.createNewUser(any(User.class))).thenReturn(new UserMsgResponse(false, "add fail"));
 		
 		Entity<User> entity = Entity.entity(user_password, MediaType.APPLICATION_JSON);
 		
@@ -210,8 +180,9 @@ public class AuthenticationResourceAnnotationTest extends BaseResourceTest{
 	
 	@Test
 	public void testUpdateUserProfile() throws AuthenticationServiceException {
-		when(mockService.getUser(userId)).thenReturn(user);
-		when(mockService.saveUser(user)).thenReturn(1);
+//		when(mockService.getUser(userId)).thenReturn(user);
+//		when(mockService.saveUser(user)).thenReturn(1);
+		when(mockService.updateUserProfile(any(User.class), eq(userId))).thenReturn(new UserMsgResponse(true, "update success"));
 		
 		String path = String.format("/user/%s", userId);
 		
@@ -242,8 +213,10 @@ public class AuthenticationResourceAnnotationTest extends BaseResourceTest{
 	
 	@Test
 	public void testUpdateUserProfile_fail() throws AuthenticationServiceException {
-		when(mockService.getUser(userId)).thenReturn(user);
-		when(mockService.saveUser(user)).thenReturn(0);
+//		when(mockService.getUser(userId)).thenReturn(user);
+//		when(mockService.saveUser(user)).thenReturn(0);
+		
+		when(mockService.updateUserProfile(any(User.class), eq(userId))).thenReturn(new UserMsgResponse(false, "update fail"));
 		
 		String path = String.format("/user/%s", userId);
 		
@@ -260,8 +233,10 @@ public class AuthenticationResourceAnnotationTest extends BaseResourceTest{
 	
 	@Test
 	public void testUpdateUserProfile_password() throws AuthenticationServiceException {
-		when(mockService.getUser(userId)).thenReturn(user);
-		when(mockService.saveUser(user)).thenReturn(1);
+//		when(mockService.getUser(userId)).thenReturn(user);
+//		when(mockService.saveUser(user)).thenReturn(1);
+		
+		when(mockService.updateUserProfile(any(User.class), eq(userId))).thenReturn(new UserMsgResponse(true,"update success"));
 		
 		String path = String.format("/user/%s", userId);
 		
@@ -278,7 +253,9 @@ public class AuthenticationResourceAnnotationTest extends BaseResourceTest{
 
 	@Test
 	public void testRemoveUserProfile() throws AuthenticationServiceException {
-		when(mockService.removeUser(userId)).thenReturn(1);
+//		when(mockService.removeUser(userId)).thenReturn(1);
+		
+		when(mockService.removeUserProfile(eq(userId))).thenReturn(new UserMsgResponse(true, "remove success"));
 		
 		String path = String.format("/user/%s", userId);
 		
@@ -293,7 +270,8 @@ public class AuthenticationResourceAnnotationTest extends BaseResourceTest{
 	
 	@Test
 	public void testRemoveUserProfile_invalidToken() throws AuthenticationServiceException {
-		when(mockService.removeUser(userId)).thenReturn(1);
+//		when(mockService.removeUser(userId)).thenReturn(1);
+		when(mockService.removeUserProfile(eq(userId))).thenReturn(new UserMsgResponse(true, "remove success"));
 		
 		String path = String.format("/user/%s", userId);
 		
@@ -304,7 +282,9 @@ public class AuthenticationResourceAnnotationTest extends BaseResourceTest{
 	
 	@Test
 	public void testRemoveUserProfile_fail() throws AuthenticationServiceException {
-		when(mockService.removeUser(userId)).thenReturn(0);
+//		when(mockService.removeUser(userId)).thenReturn(0);
+		
+		when(mockService.removeUserProfile(eq(userId))).thenReturn(new UserMsgResponse(false, "remove fail"));
 		
 		String path = String.format("/user/%s", userId);
 		
@@ -319,56 +299,66 @@ public class AuthenticationResourceAnnotationTest extends BaseResourceTest{
 	
 	@Test
 	public void testGetUserAvatar() throws AuthenticationServiceException {
-		when(mockService.getUser(userId)).thenReturn(user);
-		when(mockService.getAvatar(user.getAvartarId())).thenReturn(image);
+//		when(mockService.getUser(userId)).thenReturn(user);
+//		when(mockService.getAvatar(user.getAvartarId())).thenReturn(image);
+		when(mockService.getUserAvatar(eq(userId))).thenReturn(imageResponse);
+		
 		String path = String.format("/user/%s/image", userId);
 		Response response = validToken(target(path)).get();
+		
 		assertEquals(OK_200, response.getStatus());
+		assertEquals(avantarId, imageResponse.getId());
 	}
 	
 	@Test
 	public void testGetUserAvatar_invalidToken() throws AuthenticationServiceException {
-		when(mockService.getUser(userId)).thenReturn(user);
-		when(mockService.getAvatar(user.getAvartarId())).thenReturn(image);
+//		when(mockService.getUser(userId)).thenReturn(user);
+//		when(mockService.getAvatar(user.getAvartarId())).thenReturn(image);
+		
+		when(mockService.getUserAvatar(eq(userId))).thenReturn(imageResponse);
 		String path = String.format("/user/%s/image", userId);
 		Response response = invalidToken(target(path)).get();
 		assertEquals(HttpStatus.FORBIDDEN_403, response.getStatus());
 	}
 	
 	@Test
-	public void testGetUserAvatar_avatarId_null() throws AuthenticationServiceException {
-		when(mockService.getUser(userId)).thenReturn(user_null_avatarId);
-		when(mockService.getAvatar(avantarId)).thenReturn(image);
-		String path = String.format("/user/%s/image", userId);
-		Response response = validToken(target(path)).get();
-		assertEquals(OK_200, response.getStatus());
-	}
-	
-	@Test
-	public void testGetUserAvatar_user_null() throws AuthenticationServiceException {
-		when(mockService.getUser(userId)).thenReturn(user_null);
-		when(mockService.getAvatar(avantarId)).thenReturn(image);
+	public void testGetUserAvatar_false() throws AuthenticationServiceException {
+//		when(mockService.getUser(userId)).thenReturn(user_null_avatarId);
+//		when(mockService.getAvatar(avantarId)).thenReturn(image);
+		
+		when(mockService.getUserAvatar(eq(userId))).thenThrow(AuthenticationServiceException.class);
 		String path = String.format("/user/%s/image", userId);
 		Response response = validToken(target(path)).get();
 		assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
 	}
 	
-	@Test
-	public void testGetUserAvatar_image_null() throws AuthenticationServiceException {
-		when(mockService.getUser(userId)).thenReturn(user);
-		when(mockService.getAvatar(avantarId)).thenReturn(image_null);
-		String path = String.format("/user/%s/image", userId);
-		Response response = validToken(target(path)).get();
-		assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
-	}
+//	@Test
+//	public void testGetUserAvatar_user_null() throws AuthenticationServiceException {
+//		when(mockService.getUser(userId)).thenReturn(user_null);
+//		when(mockService.getAvatar(avantarId)).thenReturn(image);
+//		String path = String.format("/user/%s/image", userId);
+//		Response response = validToken(target(path)).get();
+//		assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+//	}
+//	
+//	@Test
+//	public void testGetUserAvatar_image_null() throws AuthenticationServiceException {
+//		when(mockService.getUser(userId)).thenReturn(user);
+//		when(mockService.getAvatar(avantarId)).thenReturn(image_null);
+//		String path = String.format("/user/%s/image", userId);
+//		Response response = validToken(target(path)).get();
+//		assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
+//	}
 	
 
 	@SuppressWarnings("resource")
 	@Test
 	public void testCreateNewAvatar() throws AuthenticationServiceException {
-		when(mockService.saveImg(any(Image.class))).thenReturn(1);
-		when(mockService.getUser(eq(userId))).thenReturn(user);
-		when(mockService.saveUser(any(User.class))).thenReturn(1);
+//		when(mockService.saveImg(any(Image.class))).thenReturn(1);
+//		when(mockService.getUser(eq(userId))).thenReturn(user);
+//		when(mockService.saveUser(any(User.class))).thenReturn(1);
+		
+		when(mockService.createNewAvatar(eq(userId), any(InputStream.class))).thenReturn(new UserMsgResponse(true, "add success"));
 		
 		String path = String.format("/user/%s/image", userId);
 		final FileDataBodyPart filePart = new FileDataBodyPart("file", new File("pom.xml"));
@@ -388,9 +378,11 @@ public class AuthenticationResourceAnnotationTest extends BaseResourceTest{
 	@SuppressWarnings("resource")
 	@Test
 	public void testCreateNewAvatar_invalidToken() throws AuthenticationServiceException {
-		when(mockService.saveImg(any(Image.class))).thenReturn(1);
-		when(mockService.getUser(eq(userId))).thenReturn(user);
-		when(mockService.saveUser(any(User.class))).thenReturn(1);
+//		when(mockService.saveImg(any(Image.class))).thenReturn(1);
+//		when(mockService.getUser(eq(userId))).thenReturn(user);
+//		when(mockService.saveUser(any(User.class))).thenReturn(1);
+		
+		when(mockService.createNewAvatar(eq(userId), any(InputStream.class))).thenReturn(new UserMsgResponse(true, "add success"));
 		
 		String path = String.format("/user/%s/image", userId);
 		final FileDataBodyPart filePart = new FileDataBodyPart("file", new File("pom.xml"));
@@ -407,13 +399,15 @@ public class AuthenticationResourceAnnotationTest extends BaseResourceTest{
 	@SuppressWarnings("resource")
 	@Test
 	public void testCreateNewAvatar_fail() throws AuthenticationServiceException {
-		when(mockService.saveImg(any(Image.class))).thenReturn(0);
-		when(mockService.getUser(userId)).thenReturn(user);
-		when(mockService.saveUser(any(User.class))).thenReturn(1);
+//		when(mockService.saveImg(any(Image.class))).thenReturn(0);
+//		when(mockService.getUser(userId)).thenReturn(user);
+//		when(mockService.saveUser(any(User.class))).thenReturn(1);
+		UserMsgResponse msgResponse = new UserMsgResponse(true, "add fail");
+		when(mockService.createNewAvatar(eq(userId), any(InputStream.class))).thenReturn(msgResponse);
 		
 		String path = String.format("/user/%s/image", userId);
 		final FileDataBodyPart filePart = new FileDataBodyPart("file", new File("pom.xml"));
-		 
+
 		final MultiPart multipart = new FormDataMultiPart().bodyPart(filePart);
 		 
 		Response response = validToken(target(path))
@@ -428,9 +422,11 @@ public class AuthenticationResourceAnnotationTest extends BaseResourceTest{
 	@SuppressWarnings("resource")
 	@Test
 	public void testUpdateUserAvatar() throws AuthenticationServiceException {
-		when(mockService.saveImg(any(Image.class))).thenReturn(1);
-		when(mockService.getUser(userId)).thenReturn(user);
-		when(mockService.saveUser(any(User.class))).thenReturn(1);
+//		when(mockService.saveImg(any(Image.class))).thenReturn(1);
+//		when(mockService.getUser(userId)).thenReturn(user);
+//		when(mockService.saveUser(any(User.class))).thenReturn(1);
+		
+		when(mockService.updateUserAvatar(eq(userId), any(InputStream.class))).thenReturn(new UserMsgResponse(true, "update success"));
 		
 		String path = String.format("/user/%s/image", userId);
 		final FileDataBodyPart filePart = new FileDataBodyPart("file", new File("pom.xml"));
@@ -449,9 +445,11 @@ public class AuthenticationResourceAnnotationTest extends BaseResourceTest{
 	@SuppressWarnings("resource")
 	@Test
 	public void testUpdateUserAvatar_invalidToken() throws AuthenticationServiceException {
-		when(mockService.saveImg(any(Image.class))).thenReturn(1);
-		when(mockService.getUser(userId)).thenReturn(user);
-		when(mockService.saveUser(any(User.class))).thenReturn(1);
+//		when(mockService.saveImg(any(Image.class))).thenReturn(1);
+//		when(mockService.getUser(userId)).thenReturn(user);
+//		when(mockService.saveUser(any(User.class))).thenReturn(1);
+		
+		when(mockService.updateUserAvatar(eq(userId), any(InputStream.class))).thenReturn(new UserMsgResponse(true, "update success"));
 		
 		String path = String.format("/user/%s/image", userId);
 		final FileDataBodyPart filePart = new FileDataBodyPart("file", new File("pom.xml"));
@@ -467,9 +465,11 @@ public class AuthenticationResourceAnnotationTest extends BaseResourceTest{
 	@SuppressWarnings("resource")
 	@Test
 	public void testUpdateUserAvatar_fail() throws AuthenticationServiceException {
-		when(mockService.saveImg(any(Image.class))).thenReturn(0);
-		when(mockService.getUser(userId)).thenReturn(user);
-		when(mockService.saveUser(any(User.class))).thenReturn(1);
+//		when(mockService.saveImg(any(Image.class))).thenReturn(0);
+//		when(mockService.getUser(userId)).thenReturn(user);
+//		when(mockService.saveUser(any(User.class))).thenReturn(1);
+		
+		when(mockService.updateUserAvatar(eq(userId), any(InputStream.class))).thenReturn(new UserMsgResponse(false, "update fail"));
 		
 		String path = String.format("/user/%s/image", userId);
 		final FileDataBodyPart filePart = new FileDataBodyPart("file", new File("pom.xml"));
@@ -487,9 +487,11 @@ public class AuthenticationResourceAnnotationTest extends BaseResourceTest{
 
 	@Test
 	public void testRemoveUserAvatar() throws AuthenticationServiceException {
-		when(mockService.getUser(userId)).thenReturn(user);
-		when(mockService.deleteImg(user.getAvartarId())).thenReturn(1);
-		when(mockService.saveUser(user)).thenReturn(1);
+//		when(mockService.getUser(userId)).thenReturn(user);
+//		when(mockService.deleteImg(user.getAvartarId())).thenReturn(1);
+//		when(mockService.saveUser(user)).thenReturn(1);
+		
+		when(mockService.removeUserAvatar(eq(userId))).thenReturn(new UserMsgResponse(true, "remove success"));
 		
 		String path = String.format("/user/%s/image", userId);
 		Response response = validToken(target(path)).delete();
@@ -500,9 +502,11 @@ public class AuthenticationResourceAnnotationTest extends BaseResourceTest{
 	
 	@Test
 	public void testRemoveUserAvatar_invalidToken() throws AuthenticationServiceException {
-		when(mockService.getUser(userId)).thenReturn(user);
-		when(mockService.deleteImg(user.getAvartarId())).thenReturn(1);
-		when(mockService.saveUser(user)).thenReturn(1);
+//		when(mockService.getUser(userId)).thenReturn(user);
+//		when(mockService.deleteImg(user.getAvartarId())).thenReturn(1);
+//		when(mockService.saveUser(user)).thenReturn(1);
+		
+		when(mockService.removeUserAvatar(eq(userId))).thenReturn(new UserMsgResponse(true, "remove success"));
 		
 		String path = String.format("/user/%s/image", userId);
 		Response response = invalidToken(target(path)).delete();
@@ -511,9 +515,11 @@ public class AuthenticationResourceAnnotationTest extends BaseResourceTest{
 	
 	@Test
 	public void testRemoveUserAvatar_fail() throws AuthenticationServiceException {
-		when(mockService.getUser(userId)).thenReturn(user);
-		when(mockService.deleteImg(user.getAvartarId())).thenReturn(0);
-		when(mockService.saveUser(user)).thenReturn(1);
+//		when(mockService.getUser(userId)).thenReturn(user);
+//		when(mockService.deleteImg(user.getAvartarId())).thenReturn(0);
+//		when(mockService.saveUser(user)).thenReturn(1);
+		
+		when(mockService.removeUserAvatar(eq(userId))).thenReturn(new UserMsgResponse(false, "remove fail"));
 		
 		String path = String.format("/user/%s/image", userId);
 		Response response = validToken(target(path)).delete();
@@ -522,21 +528,4 @@ public class AuthenticationResourceAnnotationTest extends BaseResourceTest{
 		assertEquals("remove fail", response2.getMsg());
 	}
 
-	@Test
-	public void testGetUserByName() throws AuthenticationServiceException {
-		when(mockService.getUserByName(userName)).thenReturn(user);
-		String path = String.format("/user/getUserByName/%s", userName);
-		Response response = validToken(target(path)).get();
-		UserResponse response2 = getResult(response, UserResponse.class);
-		assertEquals(OK_200, response.getStatus());
-		assertEquals(userName, response2.getUsername());
-	}
-	
-	@Test
-	public void testGetUserByName_null() throws AuthenticationServiceException {
-		when(mockService.getUserByName(userName)).thenReturn(user_null);
-		String path = String.format("/user/getUserByName/%s", userName);
-		Response response = validToken(target(path)).get();
-		assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
-	}
 }
