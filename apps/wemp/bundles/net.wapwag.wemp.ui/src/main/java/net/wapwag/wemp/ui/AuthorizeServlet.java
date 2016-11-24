@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.Set;
 
 import static javax.servlet.http.HttpServletResponse.SC_FOUND;
@@ -28,11 +27,6 @@ import static net.wapwag.wemp.ui.WempConstant.*;
 public class AuthorizeServlet extends HttpServlet {
 
 	private static final Logger logger = LoggerFactory.getLogger(AuthorizeServlet.class);
-
-    /**
-     * The path for /authorize.
-     */
-    private static final String AUTHORIZE_PATH = "/authn/authorize?response_type=%s&redirect_uri=%s&client_id=%s&scope=%s&state=%s";
 
     @SuppressWarnings("Duplicates")
     @Override
@@ -50,7 +44,6 @@ public class AuthorizeServlet extends HttpServlet {
                 OAuthAuthzRequest oauthRequest = new OAuthAuthzRequest(request);
 
                 String code;
-                String type = oauthRequest.getResponseType();
                 String clientId = oauthRequest.getClientId();
                 String state = oauthRequest.getState();
                 redirectURI = oauthRequest.getRedirectURI();
@@ -76,9 +69,11 @@ public class AuthorizeServlet extends HttpServlet {
 
                 } else {
                     session.setAttribute("wempRedirect", request.getQueryString());
+
                     //redirect to authn app if there is no security session
-                    redirectURI = String.format(AUTHORIZE_PATH, type, WEMP_RETURN_PATH, WEMP_ID, StringUtils.join(scopes, " "), WEMP_STATE);
-                    response.sendRedirect(URLEncoder.encode(redirectURI, "UTF-8"));
+                    redirectURI = AUTHORIZE_PATH + encodeURL(StringUtils.join(scopes, " "));
+
+                    response.sendRedirect(redirectURI);
                 }
 
                 oAuthResponse = null;

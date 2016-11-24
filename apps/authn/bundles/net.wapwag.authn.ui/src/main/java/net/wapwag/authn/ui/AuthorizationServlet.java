@@ -42,7 +42,7 @@ public class AuthorizationServlet extends HttpServlet {
     /**
      * The path for /authorize.
      */
-    private static final String AUTHORIZE_PATH = "/authn/login?return_to=%s?%s";
+    private static final String AUTHORIZE_PATH = "/authn/login?return_to=%s";
 
 	@Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -84,8 +84,9 @@ public class AuthorizationServlet extends HttpServlet {
 
                 } else {
                     //build return_to uri if not login.
-                    redirectURI = String.format(AUTHORIZE_PATH, request.getRequestURI(), request.getQueryString());
-                    response.sendRedirect(URLEncoder.encode(redirectURI, "UTF-8"));
+                    redirectURI = String.format(AUTHORIZE_PATH,
+                            URLEncoder.encode(request.getRequestURI() + request.getQueryString(), "UTF-8"));
+                    response.sendRedirect(redirectURI);
                 }
                 oAuthResponse = null;
             } catch (Exception e) {

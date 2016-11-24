@@ -31,12 +31,11 @@ public class UserDaoImpl implements UserDao {
 
 	@Override
 	public User getUser(final long uid) throws UserDaoException {
-		final String hql = "select user from User user where user.id = :userId and user.enabled = :enabled";
+		final String hql = "select user from User user where user.id = :userId";
 
 		try {
 			return entityManager.txExpr(em -> em.createQuery(hql, User.class)
 					.setParameter("userId", uid)
-					.setParameter("enabled", true)
 					.getResultList()
 					.stream()
 					.findFirst()
@@ -110,10 +109,15 @@ public class UserDaoImpl implements UserDao {
 
 	@Override
 	public AccessToken getAccessTokenByCode(String code) throws UserDaoException {
+	    final String hql = "select token from AccessToken token " +
+                "where token.authrizationCode = :code " +
+                "and token.accessTokenId.user.enabled = :enabled";
+
         try {
             return entityManager.txExpr(em -> em.createQuery(
-                    "select token from AccessToken token where token.authrizationCode = :code", AccessToken.class)
+                    hql, AccessToken.class)
                     .setParameter("code", code)
+                    .setParameter("enabled", true)
 					.getResultList()
 					.stream()
 					.findFirst()
@@ -150,7 +154,7 @@ public class UserDaoImpl implements UserDao {
 	@Override
 	public User getUserByAccessToken(String token) throws UserDaoException {
 		final String hql = "select token.accessTokenId.user from AccessToken token " +
-				"where token.handle = :token ";
+				"where token.handle = :token";
 		try {
 			return entityManager.txExpr(em -> em.createQuery(hql, User.class)
 					.setParameter("token", token)

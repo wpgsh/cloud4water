@@ -70,7 +70,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			                accessTokenId.getRegisteredClient().getClientId(),
 			                accessToken.getHandle(),
 			                ImmutableSet.copyOf(
-									Optional.ofNullable(accessToken.getScope()).map(String::trim).map(s -> s.split(" ")).orElse(new String[0])));
+									Optional.ofNullable(accessToken.getScope())
+											.map(String::trim)
+											.map(s -> s.split(" "))
+											.orElse(new String[0])));
 				}else{
 					return null;
 				}
@@ -138,6 +141,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             try {
 
                 RegisteredClient registeredClient = userDao.getClientByRedirectURI(redirectURI);
+                User user = userDao.getUser(userId);
+
+                if (user == null) {
+                    throw OAuthProblemException.error(OAuthError.CodeResponse.INVALID_REQUEST, "invalid user");
+                } else if (!user.getEnabled()) {
+                    throw OAuthProblemException.error(OAuthError.CodeResponse.INVALID_REQUEST, "user is disabled now");
+                }
 
                 //validate client.
                 if (registeredClient != null
@@ -171,7 +181,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
                     //if accessToken isn't exist or exist but need new scope,refresh accessToken
                     if (!valid) {
-                        accessToken.setAccessTokenId(new AccessTokenId(userDao.getUser(userId), registeredClient));
+                        accessToken.setAccessTokenId(new AccessTokenId(user, registeredClient));
                         accessToken.setHandle(StringUtils.replace(new UUID().toString(), "-", ""));
                     }
 
