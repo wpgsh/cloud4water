@@ -574,13 +574,4 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		},AuthenticationServiceException.class);
 	}
 
-	@Override
-	public boolean isAuthorized(String userName, String token) throws AuthenticationServiceException {
-
-
-		return false;
-	}
-
-
-
 }

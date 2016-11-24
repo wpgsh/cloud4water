@@ -98,6 +98,4 @@ public interface AuthenticationService {
 	
 	ImageResponse getUserAvatar(long userId) throws AuthenticationServiceException;
 	
-	boolean isAuthorized(String userName, String token) throws AuthenticationServiceException;
-	
 }
