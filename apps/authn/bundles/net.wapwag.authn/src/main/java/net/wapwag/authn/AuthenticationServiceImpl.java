@@ -1,15 +1,12 @@
 package net.wapwag.authn;
 
-import com.eaio.uuid.UUID;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
-import net.wapwag.authn.Ids.UserId;
-import net.wapwag.authn.dao.UserDao;
-import net.wapwag.authn.dao.UserDaoException;
-import net.wapwag.authn.dao.model.*;
-import net.wapwag.authn.model.AccessTokenMapper;
-import net.wapwag.authn.model.UserProfile;
-import net.wapwag.authn.model.UserView;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.oltu.oauth2.common.error.OAuthError;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
@@ -19,10 +16,24 @@ import org.osgi.service.component.annotations.ServiceScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import com.eaio.uuid.UUID;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+
+import net.wapwag.authn.Ids.UserId;
+import net.wapwag.authn.dao.UserDao;
+import net.wapwag.authn.dao.UserDaoException;
+import net.wapwag.authn.dao.model.AccessToken;
+import net.wapwag.authn.dao.model.AccessTokenId;
+import net.wapwag.authn.dao.model.Image;
+import net.wapwag.authn.dao.model.RegisteredClient;
+import net.wapwag.authn.dao.model.User;
+import net.wapwag.authn.model.AccessTokenMapper;
+import net.wapwag.authn.model.ImageResponse;
+import net.wapwag.authn.model.StringUtil;
+import net.wapwag.authn.model.UserMsgResponse;
+import net.wapwag.authn.model.UserProfile;
+import net.wapwag.authn.model.UserView;
 
 @Component(scope=ServiceScope.SINGLETON)
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -377,9 +388,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		            //save pwdSalt
 		            user.setPasswordSalt(pwdSalt + "");
 		        }
-		        if(userRequest.getEnabled() != null){
-		        	user.setEnabled(userRequest.getEnabled());
-		        }
+		        user.setEnabled(userRequest.getEnabled());
 		        if(userRequest.getAvartarId() != null){
 		        	user.setAvartarId(userRequest.getAvartarId());
 		        }

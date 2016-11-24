@@ -33,7 +33,7 @@ public class UserInfoServletTest extends BaseServletTest {
     static {
         User user = new User();
         user.setId(1L);
-        user.setEnabled("1");
+        user.setEnabled(true);
         user.setName("test1");
         user.setUsername("test1");
         user.setPhone2("15850817392");

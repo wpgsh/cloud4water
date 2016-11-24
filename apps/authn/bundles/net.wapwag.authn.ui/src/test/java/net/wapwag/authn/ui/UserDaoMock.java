@@ -33,7 +33,7 @@ public class UserDaoMock {
 		image.setImage("test".getBytes());
 		
 		user.setId(1l);
-		user.setEnabled("1");
+		user.setEnabled(true);
         user.setName("test1");
         user.setUsername("test1");
         user.setPhone2("15850817392");
@@ -47,7 +47,7 @@ public class UserDaoMock {
 		user.setPasswordSalt("1478156919009");
 		
 		user_no_avatar.setId(10l);
-		user_no_avatar.setEnabled("1");
+		user_no_avatar.setEnabled(true);
 		user_no_avatar.setName("test1");
 		user_no_avatar.setUsername("test1");
 		user_no_avatar.setPhone2("15850817392");
