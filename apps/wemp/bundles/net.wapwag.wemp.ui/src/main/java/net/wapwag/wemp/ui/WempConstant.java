@@ -28,7 +28,7 @@ final class WempConstant {
 
     static final String WEMP_RETURN_PATH = "http://10.10.22.52:8181/wemp/return";
 
-    static final String WEMP_ERROR_PATH = "http://www.baidu.com";
+    static final String WEMP_ERROR_PATH = "http://10.10.22.52:8181/authn/error/503.html";
 
     /**
      * The path for /authorize.

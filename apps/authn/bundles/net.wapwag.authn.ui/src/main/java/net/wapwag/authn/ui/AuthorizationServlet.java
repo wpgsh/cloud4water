@@ -102,7 +102,7 @@ public class AuthorizationServlet extends HttpServlet {
                         oAuthResponse = OAuthASResponse
                                 .errorResponse(HttpServletResponse.SC_FOUND)
                                 .error((OAuthProblemException) e)
-                                .location(redirectURI == null ? "http://www.baidu.com" : redirectURI)
+                                .location(redirectURI == null ? "http://10.10.22.52:8181/authn/error/503.html" : redirectURI)
                                 .buildQueryMessage();
                     } catch (OAuthSystemException ex) {
                         if (logger.isErrorEnabled()) {
