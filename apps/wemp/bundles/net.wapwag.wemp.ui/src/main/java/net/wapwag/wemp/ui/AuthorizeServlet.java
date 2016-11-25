@@ -21,8 +21,10 @@ import java.io.IOException;
 import java.util.Set;
 
 import static javax.servlet.http.HttpServletResponse.SC_FOUND;
+import static net.wapwag.wemp.WempUtil.encodeBase64String;
 import static net.wapwag.wemp.WempUtil.encodeURL;
-import static net.wapwag.wemp.ui.WempConstant.*;
+import static net.wapwag.wemp.ui.WempConstant.AUTHORIZE_PATH;
+import static net.wapwag.wemp.ui.WempConstant.WEMP_ERROR_PATH;
 
 @WebServlet(urlPatterns = "/authorize", name = "WEMP_AuthorizeServlet")
 public class AuthorizeServlet extends HttpServlet {
@@ -50,13 +52,18 @@ public class AuthorizeServlet extends HttpServlet {
                 redirectURI = oauthRequest.getRedirectURI();
                 Set<String> scopes = oauthRequest.getScopes();
 
-                if (!SWM_STATE.equals(state)) {
-                    throw OAuthProblemException.error(OAuthError.CodeResponse.INVALID_REQUEST, "invalid state");
+                if (StringUtils.isBlank(state)) {
+                    throw OAuthProblemException.error(OAuthError.CodeResponse.INVALID_REQUEST, "require state field");
                 }
 
                 if (authenticated != null && authenticated) {
 
                     long userId = (Long) session.getAttribute("userId");
+                    String originalState = (String) session.getAttribute("oauthOriginalState");
+
+                    if (!state.equals(originalState)) {
+                        throw OAuthProblemException.error(OAuthError.CodeResponse.INVALID_REQUEST, "invalid state");
+                    }
 
                     //Get authorization code.
                     code = waterEquipmentService.getAuthorizationCode(userId, clientId, redirectURI, scopes);
@@ -69,10 +76,13 @@ public class AuthorizeServlet extends HttpServlet {
                     response.sendRedirect(oAuthResponse.getLocationUri());
 
                 } else {
+                    String requestState = encodeBase64String(session.getId() + System.nanoTime());
                     session.setAttribute("wempRedirect", request.getQueryString());
+                    session.setAttribute("oauthRequestState", requestState);
+                    session.setAttribute("oauthOriginalState", state);
 
                     //redirect to authn app if there is no security session
-                    redirectURI = AUTHORIZE_PATH + encodeURL(StringUtils.join(scopes, " "));
+                    redirectURI = AUTHORIZE_PATH + String.format("&state=%s&scope=%s", encodeURL(requestState), encodeURL(StringUtils.join(scopes, " ")));
 
                     response.sendRedirect(redirectURI);
                 }

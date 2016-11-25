@@ -37,8 +37,6 @@ public class AuthorizationServlet extends HttpServlet {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthorizationServlet.class);
 
-    private static final String AUTHN_STATE = "wpg/wemp";
-
     /**
      * The path for /authorize.
      */
@@ -64,13 +62,18 @@ public class AuthorizationServlet extends HttpServlet {
                 redirectURI = oauthRequest.getRedirectURI();
                 Set<String> scopes = oauthRequest.getScopes();
 
-                if (!AUTHN_STATE.equals(state)) {
-                    throw OAuthProblemException.error(OAuthError.CodeResponse.INVALID_REQUEST, "invalid state");
+                if (StringUtils.isBlank(state)) {
+                    throw OAuthProblemException.error(OAuthError.CodeResponse.INVALID_REQUEST, "require state field");
                 }
 
                 if (authenticated != null && authenticated) {
 
                     long userId = (Long) session.getAttribute("userId");
+                    String originalState = (String) session.getAttribute("oauthState");
+
+                    if (!state.equals(originalState)) {
+                        throw OAuthProblemException.error(OAuthError.CodeResponse.INVALID_REQUEST, "invalid state");
+                    }
 
                     //Get authorization code.
                     code = authnService.getAuthorizationCode(userId, clientId, redirectURI, scopes);
@@ -84,6 +87,8 @@ public class AuthorizationServlet extends HttpServlet {
 
                 } else {
                     String pathBuilder = request.getRequestURI() + "?" + request.getQueryString();
+
+                    session.setAttribute("oauthState", state);
 
                     //build return_to uri if not login.
                     redirectURI = String.format(AUTHORIZE_PATH, URLEncoder.encode(pathBuilder, "UTF-8"));

@@ -5,8 +5,8 @@ import org.apache.oltu.oauth2.common.OAuth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.net.URLEncoder.encode;
-import static net.wapwag.wemp.WempUtil.*;
+import static net.wapwag.wemp.WempUtil.encodeBase64String;
+import static net.wapwag.wemp.WempUtil.encodeURL;
 
 /**
  * Wemp constant
@@ -17,10 +17,6 @@ final class WempConstant {
     private static final Logger logger = LoggerFactory.getLogger(WempConstant.class);
 
     private static final String WEMP_ID = "wemp";
-
-    private static final String WEMP_STATE = "wpg/wemp";
-
-    static final String SWM_STATE = "wpg/swm";
 
     private static final String WEMP_SECRET = "wemp_secret";
 
@@ -38,7 +34,7 @@ final class WempConstant {
      * The path for /authorize.
      */
     static String AUTHORIZE_PATH;
-    private static final String AUTHORIZE_PATH_SUBSTITUE = "/authn/authorize?response_type=%s&redirect_uri=%s&client_id=%s&state=%s&scope=";
+    private static final String AUTHORIZE_PATH_SUBSTITUE = "/authn/authorize?response_type=%s&redirect_uri=%s&client_id=%s";
 
     static {
         try {
@@ -46,8 +42,7 @@ final class WempConstant {
             AUTHORIZE_PATH = String.format(AUTHORIZE_PATH_SUBSTITUE,
                     encodeURL(OAuth.OAUTH_CODE),
                     encodeURL(WEMP_RETURN_PATH),
-                    encodeURL(WEMP_ID),
-                    encodeURL(WEMP_STATE));
+                    encodeURL(WEMP_ID));
         } catch (Exception e) {
             if (logger.isErrorEnabled()) {
                 logger.error(ExceptionUtils.getStackTrace(e));
