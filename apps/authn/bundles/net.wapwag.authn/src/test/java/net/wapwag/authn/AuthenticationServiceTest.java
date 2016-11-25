@@ -10,6 +10,13 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+
+import static org.mockito.Mockito.eq;
+
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.junit.Assert;
 import org.junit.Before;
@@ -27,6 +34,8 @@ import net.wapwag.authn.dao.model.Image;
 import net.wapwag.authn.dao.model.RegisteredClient;
 import net.wapwag.authn.dao.model.User;
 import net.wapwag.authn.model.AccessTokenMapper;
+import net.wapwag.authn.model.ImageResponse;
+import net.wapwag.authn.model.UserMsgResponse;
 import net.wapwag.authn.model.UserProfile;
 import net.wapwag.authn.model.UserView;
 
@@ -179,7 +188,7 @@ public class AuthenticationServiceTest {
         when(userDao.getClientByRedirectURI(redirectURI)).thenReturn(wpgClient);
         when(userDao.getAccessTokenByUserIdAndClientId(userId, clientId)).thenReturn(accessToken);
         when(userDao.saveAccessToken(any(AccessToken.class))).thenReturn(1L);
-
+        when(userDao.getUser(eq(userId))).thenReturn(user);
         String resultCode = authenticationServiceImpl.getAuthorizationCode(userId, clientIdentity, redirectURI, scopes);
 
         verify(userDao).saveAccessToken(tokenArgumentCaptor.capture());
@@ -188,6 +197,13 @@ public class AuthenticationServiceTest {
         assertEquals(tokenArgumentCaptor.getValue().getAuthrizationCode(), resultCode);
     }
 
+    @Test(expected = OAuthProblemException.class)
+    public void testGetAuthorizationCode_null_client() throws Exception {
+        when(userDao.getClientByRedirectURI(redirectURI)).thenReturn(null);
+        when(userDao.getUser(eq(userId))).thenReturn(user);
+        authenticationServiceImpl.getAuthorizationCode(userId, clientIdentity, redirectURI, scopes);
+    }
+    
     @SuppressWarnings("Duplicates")
     @Test
     public void testGetAuthorizationCode_NonWPGClientWithAuthzedScope() throws Exception {
@@ -196,7 +212,7 @@ public class AuthenticationServiceTest {
         when(userDao.getClientByRedirectURI(redirectURI)).thenReturn(nonWPGclientWithAuthzedScope);
         when(userDao.getAccessTokenByUserIdAndClientId(userId, clientId)).thenReturn(accessToken_nonWPGclientWithAuthzedScope);
         when(userDao.saveAccessToken(any(AccessToken.class))).thenReturn(1L);
-
+        when(userDao.getUser(eq(userId))).thenReturn(user);
         String resultCode = authenticationServiceImpl.getAuthorizationCode(userId, clientIdentity, redirectURI, scopes);
 
         verify(userDao).saveAccessToken(tokenArgumentCaptor.capture());
@@ -209,7 +225,7 @@ public class AuthenticationServiceTest {
     public void testGetAuthorizationCode_NonWPGclientWithNoScope() throws Exception {
         when(userDao.getClientByRedirectURI(redirectURI)).thenReturn(nonWPGclientWithNoScope);
         when(userDao.getAccessTokenByUserIdAndClientId(userId, clientId)).thenReturn(accessToken_nonWPGclientWithNoScope);
-
+        when(userDao.getUser(eq(userId))).thenReturn(user);
         authenticationServiceImpl.getAuthorizationCode(userId, clientIdentity, redirectURI, null);
     }
 
@@ -219,15 +235,24 @@ public class AuthenticationServiceTest {
         ArgumentCaptor<AccessToken> tokenArgumentCaptor = ArgumentCaptor.forClass(AccessToken.class);
 
         when(userDao.getClientByRedirectURI(redirectURI)).thenReturn(nonWPGclientWithNonAuthzedScope);
-        when(userDao.getAccessTokenByUserIdAndClientId(userId, clientId)).thenReturn(accessToken_nonWPGclientWithNonAuthzedScope);
+        when(userDao.getAccessTokenByUserIdAndClientId(eq(userId), eq(clientId))).thenReturn(accessToken_nonWPGclientWithNonAuthzedScope);
         when(userDao.saveAccessToken(any(AccessToken.class))).thenReturn(1L);
-
+        when(userDao.getUser(eq(userId))).thenReturn(user);
+        
         String resultCode = authenticationServiceImpl.getAuthorizationCode(userId, clientIdentity, redirectURI, nonAuthzedscopes);
 
         verify(userDao).saveAccessToken(tokenArgumentCaptor.capture());
 
         assertNotNull(resultCode);
         assertEquals(tokenArgumentCaptor.getValue().getAuthrizationCode(), resultCode);
+    }
+    
+    @Test(expected = OAuthProblemException.class)
+    public void testGetAuthorizationCode_user_disabled() throws Exception {
+        when(userDao.getClientByRedirectURI(redirectURI)).thenReturn(nonWPGclientWithNonAuthzedScope);
+        when(userDao.getUser(eq(userId))).thenReturn(user_not_enabled);
+        
+        authenticationServiceImpl.getAuthorizationCode(userId, clientIdentity, redirectURI, nonAuthzedscopes);
     }
 
 
@@ -243,7 +268,7 @@ public class AuthenticationServiceTest {
         when(userDao.getClientByRedirectURI(redirectURI)).thenReturn(client);
 //        when(userDao.getAccessTokenByUserIdAndClientId(userId, clientId)).thenReturn(accessToken);
         when(userDao.saveAccessToken(any(AccessToken.class))).thenReturn(0L);
-
+        when(userDao.getUser(eq(userId))).thenReturn(user);
         authenticationServiceImpl.getAuthorizationCode(userId, clientIdentity, redirectURI, scopes);
     }
 
@@ -403,4 +428,185 @@ public class AuthenticationServiceTest {
 		authenticationServiceImpl.getAvatar("1");
 	}
 
+	@Test
+	public void testUpdateUserProfile_success() throws AuthenticationServiceException, UserDaoException{
+		when(userDao.getUser(userId)).thenReturn(user);
+		when(userDao.saveUser(any(User.class))).thenReturn(1);
+		
+		UserMsgResponse msgResponse = authenticationServiceImpl.updateUserProfile(user_request, userId);
+		
+		assertEquals(true, msgResponse.getFlag());
+	}
+	
+	@Test
+	public void testUpdateUserProfile_pwd() throws AuthenticationServiceException, UserDaoException{
+		when(userDao.getUser(userId)).thenReturn(user);
+		when(userDao.saveUser(any(User.class))).thenReturn(0);
+		
+		UserMsgResponse msgResponse = authenticationServiceImpl.updateUserProfile(user_request_pwd, userId);
+		
+		assertEquals(false, msgResponse.getFlag());
+	}
+	
+	@Test
+	public void testUpdateUserProfile_fail() throws AuthenticationServiceException, UserDaoException{
+		when(userDao.getUser(userId)).thenReturn(user);
+		when(userDao.saveUser(any(User.class))).thenReturn(0);
+		
+		UserMsgResponse msgResponse = authenticationServiceImpl.updateUserProfile(user_request, userId);
+		
+		assertEquals(false, msgResponse.getFlag());
+	}
+	
+	@Test(expected = AuthenticationServiceException.class)
+	public void testUpdateUserProfile_exception() throws AuthenticationServiceException, UserDaoException{
+		when(userDao.getUser(userId)).thenReturn(user);
+		when(userDao.saveUser(any(User.class))).thenThrow(UserDaoException.class);
+		authenticationServiceImpl.updateUserProfile(user_request, userId);
+	}
+	
+	@Test()
+	public void testCreateNewAvatar() throws AuthenticationServiceException, UserDaoException, FileNotFoundException{
+		when(userDao.saveImg(any(Image.class))).thenReturn(1);
+		when(userDao.getUser(userId)).thenReturn(user);
+		when(userDao.saveUser(user)).thenReturn(1);
+		InputStream inputStream = new FileInputStream("pom.xml");
+		UserMsgResponse msgResponse = authenticationServiceImpl.createNewAvatar(userId, inputStream);
+		assertEquals(true, msgResponse.getFlag());
+	}
+	
+	@Test()
+	public void testCreateNewAvatar_fail() throws AuthenticationServiceException, UserDaoException, FileNotFoundException{
+		when(userDao.saveImg(any(Image.class))).thenReturn(0);
+		InputStream inputStream = new FileInputStream("pom.xml");
+		UserMsgResponse msgResponse = authenticationServiceImpl.createNewAvatar(userId, inputStream);
+		assertEquals(false, msgResponse.getFlag());
+	}
+	
+	@Test(expected = AuthenticationServiceException.class)
+	public void testCreateNewAvatar_exception() throws AuthenticationServiceException, UserDaoException, FileNotFoundException{
+		when(userDao.saveImg(any(Image.class))).thenThrow(AuthenticationServiceException.class);
+		InputStream inputStream = new FileInputStream("pom.xml");
+		authenticationServiceImpl.createNewAvatar(userId, inputStream);
+	}
+	
+	@Test
+	public void testUpdateUserAvatar() throws AuthenticationServiceException, UserDaoException, FileNotFoundException{
+		when(userDao.saveImg(any(Image.class))).thenReturn(1);
+		when(userDao.getUser(userId)).thenReturn(user);
+		when(userDao.saveUser(user)).thenReturn(1);
+		InputStream inputStream = new FileInputStream("pom.xml");
+		UserMsgResponse msgResponse = authenticationServiceImpl.updateUserAvatar(userId, inputStream);
+		assertEquals(true, msgResponse.getFlag());
+	}
+	
+	@Test
+	public void testUpdateUserAvatar_fail() throws AuthenticationServiceException, UserDaoException, FileNotFoundException{
+		when(userDao.saveImg(any(Image.class))).thenReturn(0);
+		InputStream inputStream = new FileInputStream("pom.xml");
+		UserMsgResponse msgResponse = authenticationServiceImpl.updateUserAvatar(userId, inputStream);
+		assertEquals(false, msgResponse.getFlag());
+	}
+	
+	@Test(expected = AuthenticationServiceException.class)
+	public void testUpdateUserAvatar_exception() throws AuthenticationServiceException, UserDaoException, FileNotFoundException{
+		when(userDao.saveImg(any(Image.class))).thenThrow(AuthenticationServiceException.class);
+		InputStream inputStream = new FileInputStream("pom.xml");
+		authenticationServiceImpl.updateUserAvatar(userId, inputStream);
+	}
+	
+	@Test
+	public void testCreateNewUser() throws UserDaoException, AuthenticationServiceException{
+		when(userDao.saveUser(user_request)).thenReturn(1);
+		UserMsgResponse msgResponse = authenticationServiceImpl.createNewUser(user_request);
+		assertEquals(true, msgResponse.getFlag());
+	}
+	
+	@Test
+	public void testCreateNewUser_pwd() throws UserDaoException, AuthenticationServiceException{
+		when(userDao.saveUser(user_request_pwd)).thenReturn(1);
+		UserMsgResponse msgResponse = authenticationServiceImpl.createNewUser(user_request_pwd);
+		assertEquals(true, msgResponse.getFlag());
+	}
+	
+	@Test
+	public void testCreateNewUser_fail() throws UserDaoException, AuthenticationServiceException{
+		when(userDao.saveUser(user_request)).thenReturn(0);
+		UserMsgResponse msgResponse = authenticationServiceImpl.createNewUser(user_request);
+		assertEquals(false, msgResponse.getFlag());
+	}
+	
+	@Test(expected = AuthenticationServiceException.class)
+	public void testCreateNewUser_exception() throws UserDaoException, AuthenticationServiceException{
+		when(userDao.saveUser(user_request)).thenThrow(AuthenticationServiceException.class);
+		authenticationServiceImpl.createNewUser(user_request);
+	}
+	
+	@Test
+	public void testRemoveUserAvatar() throws UserDaoException, AuthenticationServiceException {
+		when(userDao.getUser(userId)).thenReturn(user);
+		when(userDao.deleteImg(user.getAvartarId())).thenReturn(1);
+		
+		UserMsgResponse msgResponse = authenticationServiceImpl.removeUserAvatar(userId);
+		assertEquals(true, msgResponse.getFlag());
+	}
+	
+	@Test
+	public void testRemoveUserAvatar_fail() throws UserDaoException, AuthenticationServiceException {
+		when(userDao.getUser(userId)).thenReturn(user);
+		when(userDao.deleteImg(user.getAvartarId())).thenReturn(0);
+		
+		UserMsgResponse msgResponse = authenticationServiceImpl.removeUserAvatar(userId);
+		assertEquals(false, msgResponse.getFlag());
+	}
+	
+	@Test(expected = AuthenticationServiceException.class)
+	public void testRemoveUserAvatar_exception() throws UserDaoException, AuthenticationServiceException {
+		when(userDao.getUser(userId)).thenReturn(user);
+		when(userDao.deleteImg(user.getAvartarId())).thenThrow(UserDaoException.class);
+		
+		authenticationServiceImpl.removeUserAvatar(userId);
+	}
+	
+	@Test
+	public void testRemoveUserProfile() throws UserDaoException, AuthenticationServiceException{
+		when(userDao.removeUser(userId)).thenReturn(1);
+		UserMsgResponse msgResponse = authenticationServiceImpl.removeUserProfile(userId);
+		assertEquals(true, msgResponse.getFlag());
+	}
+	
+	@Test
+	public void testRemoveUserProfile_fail() throws UserDaoException, AuthenticationServiceException{
+		when(userDao.removeUser(userId)).thenReturn(0);
+		UserMsgResponse msgResponse = authenticationServiceImpl.removeUserProfile(userId);
+		assertEquals(false, msgResponse.getFlag());
+	}
+	
+	@Test(expected = AuthenticationServiceException.class)
+	public void testRemoveUserProfile_exception() throws UserDaoException, AuthenticationServiceException{
+		when(userDao.removeUser(userId)).thenThrow(UserDaoException.class);
+		authenticationServiceImpl.removeUserProfile(userId);
+	}
+	
+	@Test
+	public void testGetUserAvatar() throws UserDaoException, AuthenticationServiceException{
+		when(userDao.getUser(userId)).thenReturn(user);
+		when(userDao.getAvatar(user.getAvartarId())).thenReturn(image);
+		ImageResponse imageResponse = authenticationServiceImpl.getUserAvatar(userId);
+		assertNotNull(imageResponse);
+	}
+	
+	@Test(expected = AuthenticationServiceException.class)
+	public void testGetUserAvatar_user_null() throws UserDaoException, AuthenticationServiceException{
+		when(userDao.getUser(userId)).thenReturn(null);
+		authenticationServiceImpl.getUserAvatar(userId);
+	}
+	
+	@Test(expected = AuthenticationServiceException.class)
+	public void testGetUserAvatar_image_null() throws UserDaoException, AuthenticationServiceException{
+		when(userDao.getUser(userId)).thenReturn(user);
+		when(userDao.getAvatar(user.getAvartarId())).thenReturn(null);
+		authenticationServiceImpl.getUserAvatar(userId);
+	}
+	
 }

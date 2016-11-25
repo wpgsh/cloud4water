@@ -47,6 +47,9 @@ class MockData {
 	
     static Image image = new Image();
     public static final User user = new User();
+    public static final User user_not_enabled = new User();
+    public static final User user_request = new User();
+    public static final User user_request_pwd = new User();
     static final User user_null = null;
 	static final AccessToken accessToken = new AccessToken();
 	static final AccessToken accessToken_expired = new AccessToken();
@@ -70,10 +73,42 @@ class MockData {
 		image.setId("qwe123");
 		image.setImage("testImage".getBytes());
 		
+		user_not_enabled.setId(userId);
+		user_not_enabled.setEnabled(false);
+		user_not_enabled.setName("test1");
+		user_not_enabled.setEmail(email);
+		user_not_enabled.setAvartarId("123");
 		
 		user.setId(userId);
+		user.setEnabled(true);
         user.setName("test1");
 		user.setEmail(email);
+		user.setAvartarId("123");
+		
+		user_request.setId(userId);
+		user_request.setEnabled(true);
+		user_request.setName("test1");
+		user_request.setUsername("test1");
+		user_request.setPhone2("15850817392");
+		user_request.setEmail(email);
+		user_request.setAvartarId("123");
+		user_request.setAvatar("avatar");
+		user_request.setEmail("jiangzehu@163.com");
+		user_request.setHomepage("http://www.baidu.com");
+		user_request.setPhone1("15850817392");
+		
+		user_request_pwd.setId(userId);
+		user_request_pwd.setEnabled(true);
+		user_request_pwd.setPasswordHash("dfdf");
+		user_request_pwd.setName("test1");
+		user_request_pwd.setUsername("test1");
+		user_request_pwd.setPhone2("15850817392");
+		user_request_pwd.setEmail(email);
+		user_request_pwd.setAvartarId("123");
+		user_request_pwd.setAvatar("avatar");
+		user_request_pwd.setEmail("jiangzehu@163.com");
+		user_request_pwd.setHomepage("http://www.baidu.com");
+		user_request_pwd.setPhone1("15850817392");
 		
         wpgClient.setId(clientId);
         wpgClient.setClientId(clientIdentity);
