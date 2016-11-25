@@ -52,7 +52,7 @@ public class AuthorizationServlet extends HttpServlet {
 
             HttpSession session = request.getSession();
 
-            boolean authenticated = Boolean.valueOf((String) session.getAttribute("authenticated"));
+            Boolean authenticated = (Boolean) session.getAttribute("authenticated");
 
 	        try {
 
@@ -68,9 +68,9 @@ public class AuthorizationServlet extends HttpServlet {
                     throw OAuthProblemException.error(OAuthError.CodeResponse.INVALID_REQUEST, "invalid state");
                 }
 
-                if (authenticated) {
+                if (authenticated != null && authenticated) {
 
-                    long userId = Long.valueOf((String) session.getAttribute("userId"));
+                    long userId = (Long) session.getAttribute("userId");
 
                     //Get authorization code.
                     code = authnService.getAuthorizationCode(userId, clientId, redirectURI, scopes);
@@ -83,9 +83,10 @@ public class AuthorizationServlet extends HttpServlet {
                     response.sendRedirect(oAuthResponse.getLocationUri());
 
                 } else {
+                    String pathBuilder = request.getRequestURI() + "?" + request.getQueryString();
+
                     //build return_to uri if not login.
-                    redirectURI = String.format(AUTHORIZE_PATH,
-                            URLEncoder.encode(request.getRequestURI() + request.getQueryString(), "UTF-8"));
+                    redirectURI = String.format(AUTHORIZE_PATH, URLEncoder.encode(pathBuilder, "UTF-8"));
                     response.sendRedirect(redirectURI);
                 }
                 oAuthResponse = null;

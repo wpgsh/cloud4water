@@ -8,7 +8,6 @@ import org.apache.aries.jpa.template.EmFunction;
 import org.osgi.service.component.annotations.*;
 
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
@@ -124,10 +123,6 @@ public class UserDaoImpl implements UserDao {
 					.orElse(null)
             );
         } catch (Exception e) {
-            if (e.getCause() instanceof NoResultException) {
-                //if no result found,return null.
-                return null;
-            }
             throw new UserDaoException("cannot find access token", e);
         }
 	}

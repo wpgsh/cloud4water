@@ -1,12 +1,12 @@
 package net.wapwag.wemp.ui;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.oltu.oauth2.common.OAuth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.net.URLEncoder.encode;
+import static net.wapwag.wemp.WempUtil.*;
 
 /**
  * Wemp constant
@@ -26,17 +26,13 @@ final class WempConstant {
 
     private static final String WEMP_BAISC_ORIGIN = String.format("%s:%s", WEMP_ID, WEMP_SECRET);
 
-    private static final String WEMP_BAISC_ENCODED_ORIGIN = Base64.encodeBase64String(WEMP_BAISC_ORIGIN.getBytes());
+    private static final String WEMP_BAISC_ENCODED_ORIGIN = encodeBase64String(WEMP_BAISC_ORIGIN);
 
     static final String WEMP_BASIC_ENCODED_CREDENTIAL = String.format("Basic %s", WEMP_BAISC_ENCODED_ORIGIN);
 
     static final String WEMP_RETURN_PATH = "http://10.10.22.52:8181/wemp/return";
 
     static final String WEMP_ERROR_PATH = "http://www.baidu.com";
-
-    static String encodeURL(String value) throws Exception {
-        return encode(value, "UTF-8");
-    }
 
     /**
      * The path for /authorize.

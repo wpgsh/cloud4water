@@ -21,6 +21,8 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static net.wapwag.wemp.WempUtil.encryptAES;
+
 @Component(scope=ServiceScope.SINGLETON)
 public class WaterEquipmentServiceImpl implements WaterEquipmentService {
 
@@ -56,15 +58,15 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
                 if (accessToken != null) {
                     AccessTokenId accessTokenId = accessToken.getAccessTokenId();
                     return new AccessTokenMapper(
-                            Long.toString(accessTokenId.getUser().getId()),
-                            accessToken.getExpiration(),
-                            accessTokenId.getRegisteredClient().getClientId(),
-                            accessToken.getHandle(),
-                            ImmutableSet.copyOf(
-                                    Optional.ofNullable(accessToken.getScope())
-                                            .map(String::trim)
-                                            .map(s -> s.split(" "))
-                                            .orElse(new String[0])));
+                        Long.toString(accessTokenId.getUser().getId()),
+                        accessToken.getExpiration(),
+                        accessTokenId.getRegisteredClient().getClientId(),
+                        accessToken.getHandle(),
+                        ImmutableSet.copyOf(
+                            Optional.ofNullable(accessToken.getScope())
+                                .map(String::trim)
+                                .map(s -> s.split(" "))
+                                .orElse(new String[0])));
                 } else {
                     return  null;
                 }
@@ -103,7 +105,7 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
                         && StringUtils.isNotBlank(cliendId)
                         && cliendId.equals(registeredClient.getClientId())) {
 
-                    String code = StringUtils.replace(new UUID().toString(), "-", "");
+                    String originalCode = StringUtils.replace(new UUID().toString(), "-", "");
 
                     //find accessToken by clientId and userId.
                     accessToken = waterEquipmentDao.getAccessTokenByUserIdAndClientId(userId, registeredClient.getId());
@@ -131,14 +133,15 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
 
                     //if accessToken isn't exist or exist but need new scope,refresh accessToken
                     if (!valid) {
+                        String originalToken = StringUtils.replace(new UUID().toString(), "-", "");
                         accessToken.setAccessTokenId(new AccessTokenId(waterEquipmentDao.getUser(userId), registeredClient));
-                        accessToken.setHandle(StringUtils.replace(new UUID().toString(), "-", ""));
+                        accessToken.setHandle(encryptAES(originalToken));
                     }
 
                     accessToken.setScope(StringUtils.join(defaultScope, " "));
 
                     //generate authorization code
-                    accessToken.setAuthrizationCode(code);
+                    accessToken.setAuthrizationCode(encryptAES(originalCode));
                     accessToken.setExpiration(Long.MAX_VALUE);
 
                     //update authorization code

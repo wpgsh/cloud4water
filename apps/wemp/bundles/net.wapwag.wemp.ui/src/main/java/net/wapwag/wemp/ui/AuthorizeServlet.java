@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.Set;
 
 import static javax.servlet.http.HttpServletResponse.SC_FOUND;
+import static net.wapwag.wemp.WempUtil.encodeURL;
 import static net.wapwag.wemp.ui.WempConstant.*;
 
 @WebServlet(urlPatterns = "/authorize", name = "WEMP_AuthorizeServlet")
@@ -37,7 +38,7 @@ public class AuthorizeServlet extends HttpServlet {
 
             HttpSession session = request.getSession();
 
-            boolean authenticated = Boolean.valueOf(String.valueOf(session.getAttribute("authenticated")));
+            Boolean authenticated = (Boolean) session.getAttribute("authenticated");
 
             try {
 
@@ -53,7 +54,7 @@ public class AuthorizeServlet extends HttpServlet {
                     throw OAuthProblemException.error(OAuthError.CodeResponse.INVALID_REQUEST, "invalid state");
                 }
 
-                if (authenticated) {
+                if (authenticated != null && authenticated) {
 
                     long userId = (Long) session.getAttribute("userId");
 

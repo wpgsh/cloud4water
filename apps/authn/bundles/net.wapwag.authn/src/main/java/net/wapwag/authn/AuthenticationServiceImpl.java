@@ -14,8 +14,6 @@ import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ServiceScope;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -24,10 +22,10 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import static net.wapwag.authn.AuthnUtil.encryptAES;
+
 @Component(scope=ServiceScope.SINGLETON)
 public class AuthenticationServiceImpl implements AuthenticationService {
-
-    private static final Logger logger = LoggerFactory.getLogger(AuthenticationServiceImpl.class);
 
 	@Reference
 	UserDao userDao;
@@ -156,7 +154,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         && StringUtils.isNotBlank(cliendId)
                         && cliendId.equals(registeredClient.getClientId())) {
 
-                    String code = StringUtils.replace(new UUID().toString(), "-", "");
+                    String originalCode = StringUtils.replace(new UUID().toString(), "-", "");
 
                     //find accessToken by clientId and userId.
                     accessToken = userDao.getAccessTokenByUserIdAndClientId(userId, registeredClient.getId());
@@ -183,14 +181,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
                     //if accessToken isn't exist or exist but need new scope,refresh accessToken
                     if (!valid) {
+                    	String originalToken = StringUtils.replace(new UUID().toString(), "-", "");
                         accessToken.setAccessTokenId(new AccessTokenId(user, registeredClient));
-                        accessToken.setHandle(StringUtils.replace(new UUID().toString(), "-", ""));
+                        accessToken.setHandle(encryptAES(originalToken));
                     }
 
                     accessToken.setScope(StringUtils.join(scope, " "));
 
                     //generate authorization code
-                    accessToken.setAuthrizationCode(code);
+                    accessToken.setAuthrizationCode(encryptAES(originalCode));
                     accessToken.setExpiration(Long.MAX_VALUE);
 
                     //update authorization code
