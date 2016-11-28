@@ -21,27 +21,22 @@ import javax.servlet.http.HttpSession;
  */
 @WebServlet(urlPatterns = "/login", name = "ThirdLoginServlet")
 public class ThirdLoginServlet extends HttpServlet {
+
+	private static final long serialVersionUID = 1194899719979790615L;
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		String clientId = req.getParameter("client_id");
 		String redirectUri = req.getParameter("redirect_uri");
+		String returnTo = req.getParameter("return_to");
 		HttpSession session = req.getSession();
-		String userName = (String)session.getAttribute("userName");
 		
-		/**
-		if (!StringUtil.isEmp(userName) && clientId.equals(session.getAttribute("client_id"))
-				&& redirectUri.equals((String)session.getAttribute("redirect_uri"))) {
-			
-			resp.sendRedirect(redirectUri);
-		}else {
-			session.setAttribute("client_id", clientId);
-			session.setAttribute("redirect_uri", redirectUri);
-			req.getRequestDispatcher("login.jsp").forward(req, resp);
-		}
-		**/
+		System.out.println("returnTo: " + returnTo);
+		
 		session.setAttribute("client_id", clientId);
 		session.setAttribute("redirect_uri", redirectUri);
+		session.setAttribute("return_to", returnTo);
 		req.getRequestDispatcher("login.jsp").forward(req, resp);
 	}
 

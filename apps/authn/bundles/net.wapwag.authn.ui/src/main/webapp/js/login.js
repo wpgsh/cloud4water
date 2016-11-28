@@ -10,7 +10,7 @@ jQuery(document).ready(function() {
 			showError("密码修改成功，请登录");
 		}
 		
-		$("#submit").click(function() {
+		$("#submitButton").click(function() {
 			$("#userNameMsg").html("");
 			var windowUrl = window.location.search;
 			var userName = $('input[name="userName"]').val();
@@ -25,13 +25,11 @@ jQuery(document).ready(function() {
 				showError("登录密码不可以为空");
 				return;
 			}
-//			if(isEncoded){
-//				var newPassWord = $.md5(passWord);
-//				$('input[name="passWord"]').val(newPassWord);
-//			}
-			$("#form").ajaxSubmit({
+			$.ajax({
+				url:"/authn/loginServlet",
 				type:'post',
-				dataType : 'json',  
+				dataType : 'json',
+				data:{"userName":userName,"passWord":passWord,"check":"1"},
 				success:function(data){
 					var errorCode = data.errorCode;
 					if("0" != errorCode){
@@ -40,15 +38,7 @@ jQuery(document).ready(function() {
 					}
 					if("0" == errorCode){
 						save();
-						if(!isEmp(windowUrl) && windowUrl.indexOf("client_id") > 0 
-								&& windowUrl.indexOf("redirect_uri") > 0 
-								&& windowUrl.indexOf("return_to") > 0){
-							var returnUrl = windowUrl.split("return_to=");
-							returnUrl = returnUrl[1];
-							window.location=returnUrl;
-						}else{
-							window.location="index.jsp";
-						}  
+						document.getElementById("form").submit();
 					}
 				},
 				error:function(data)
@@ -63,7 +53,7 @@ jQuery(document).ready(function() {
 	    $(document).keypress(function(e) {  
 	    // 回车键事件  
 	    	if(e.which == 13) {  
-	    	   $("#submit").click();  
+	    	   $("#submitButton").click();  
 	       }  
 	    }); 
 	});

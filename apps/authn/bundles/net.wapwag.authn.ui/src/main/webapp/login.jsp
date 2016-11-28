@@ -48,7 +48,7 @@
           </label>
           <a href="/authn/resetpassword/linkpwd.jsp" class="getpassword">Forgot password?</a>
         </div>
-        <button id="submit" class="btn btn-lg btn-success btn-block" type="button">Sign in</button>
+        <button id="submitButton" class="btn btn-lg btn-success btn-block" type="button">Sign in</button>
 <!--         <div class="checkbox"> -->
 <!--           <label> -->
 <!--             New to here? <a href="register.jsp">Create an account.</a> -->

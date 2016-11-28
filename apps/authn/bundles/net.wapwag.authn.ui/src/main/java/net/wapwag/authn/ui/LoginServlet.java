@@ -67,8 +67,12 @@ public class LoginServlet extends HttpServlet {
 				String passwd = req.getParameter("passWord");
 				String checkCode = req.getParameter("checkCode");
 				
+				String check = req.getParameter("check");
+				
 				ResultInfo info = new ResultInfo();
 				HttpSession session = req.getSession();
+				
+				String return_to = (String) session.getAttribute("return_to");
 				
 				User user = authnService.getUserByName(userName);
 
@@ -83,6 +87,22 @@ public class LoginServlet extends HttpServlet {
 						session.setAttribute("loginTime", getNowTime());
 						session.setMaxInactiveInterval(30 * 60);
 						info.setErrorCode("0");
+						
+						if(!"1".equals(check)){
+							if(return_to != null){
+								try {
+									resp.sendRedirect(return_to);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}else{
+								try {
+									resp.sendRedirect("index.jsp");
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}
+						}
 					} else {
 						logger.info("Error password");
 						info.setErrorCode("1");

@@ -1,7 +1,10 @@
 package net.wapwag.authn.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.util.Properties;
 
 import javax.mail.Message;
 import javax.mail.Session;
@@ -10,10 +13,9 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 发送邮件工具类
@@ -66,7 +68,7 @@ public class SendEmailUtil {
 		props.setProperty("mail.transport.protocol", confInfo.protocol);
 		props.setProperty("mail.smtp.auth", "true");
 
-		Session session = Session.getInstance(props);
+		Session session = Session.getDefaultInstance(props);
 		return session;
 
 	}
@@ -79,12 +81,12 @@ public class SendEmailUtil {
 				InternetAddress.parse(sendEmail));
 		message.setSubject(confInfo.head);
 
-		MimeMultipart multipart = new MimeMultipart("related");
+		MimeMultipart multipart = new MimeMultipart();
 		MimeBodyPart bodyPart = new MimeBodyPart();
 		String sendMsg = confInfo.body;
 		sendMsg = sendMsg.replace("RESET_PASSWD_URL", resetKey);
 		sendMsg = sendMsg.replace("HOST_URL", hostUrl);
-		bodyPart.setContent(sendMsg,"text/html;charset=gb2312");
+		bodyPart.setContent(sendMsg,"text/html;charset=utf-8");
 		multipart.addBodyPart(bodyPart);
 
 		message.setContent(multipart);
@@ -96,36 +98,30 @@ public class SendEmailUtil {
 		confInfo = new EmailConfInfo(); 
 		try {
 			StringBuffer emailMsg = new StringBuffer("");
+			StringBuffer emailall = new StringBuffer("");
 			BufferedReader br = 
-					new BufferedReader(new InputStreamReader(new FileInputStream("conf"+File.separator+"email.txt"),"UTF-8"));  
+					new BufferedReader(new InputStreamReader(new FileInputStream(PropertiesUtil.AUTHN_EMAIl_TXT),"UTF-8"));  
 			String str = null;
 			while ((str = br.readLine()) != null) {
 				if (str.indexOf("title") < 0) {
 					emailMsg.append(str);
-				}
-				else {
+				}else {
 					confInfo.head = str.substring(7,str.length()-8);
 				}
+				emailall.append(str);
 			}
-			br.close();
-			confInfo.body = emailMsg.toString();
-			
-			br = new BufferedReader(new InputStreamReader(new FileInputStream("conf"+File.separator+"email.properties"),"UTF-8"));  
-			Map<String,String> confMap = new HashMap<String,String>();
-			while ((str = br.readLine()) != null) {
-				confMap.put(str.split("=")[0], str.split("=")[1]);
-			}
+			confInfo.body = emailall.toString();
+			System.out.println(confInfo.body);
 			br.close();
 			
-			confInfo.from = confMap.get("email_user");
-			confInfo.protocol = confMap.get("email_protocol");
-			confInfo.server = confMap.get("email_server");
-			confInfo.pass = confMap.get("email_password");
+			confInfo.from = PropertiesUtil.EMAIL_USER.value();
+			confInfo.protocol = PropertiesUtil.EMAIL_PROTOCOL.value();
+			confInfo.server = PropertiesUtil.EMAIL_SERVER.value();
+			confInfo.pass = PropertiesUtil.EMAIL_PWD.value();
+			
 			return true;
 			
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return true;
