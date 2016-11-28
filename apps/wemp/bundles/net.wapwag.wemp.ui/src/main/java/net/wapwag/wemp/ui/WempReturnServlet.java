@@ -56,7 +56,7 @@ public class WempReturnServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String authzCode = request.getParameter("code");
-        String serverIp = request.getLocalAddr();
+        String serverIp = "localhost";
         int serverPort = request.getLocalPort();
 
         if (StringUtils.isNotBlank(authzCode)) {
