@@ -95,7 +95,7 @@ public class AuthorizeServlet extends HttpServlet {
                         oAuthResponse = OAuthASResponse
                                 .errorResponse(SC_FOUND)
                                 .error((OAuthProblemException) e)
-                                .location(redirectURI == null ? WEMP_ERROR_PATH : redirectURI)
+                                .location(redirectURI == null ? WEMP_ERROR_PATH.value() : redirectURI)
                                 .buildQueryMessage();
                     } catch (OAuthSystemException ex) {
                         if (logger.isErrorEnabled()) {

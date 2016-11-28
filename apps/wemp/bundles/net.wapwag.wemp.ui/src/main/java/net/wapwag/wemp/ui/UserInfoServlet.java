@@ -32,7 +32,7 @@ public class UserInfoServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         OSGIUtil.useWaterEquipmentService(waterEquipmentService -> {
             try {
-                String tokenHeader = request.getHeader("Authorization");
+                String tokenHeader = request.getHeader(OAuth.HeaderType.AUTHORIZATION);
                 if (StringUtils.isNotBlank(tokenHeader) && tokenHeader.contains("Bearer ")) {
                     String token = tokenHeader.replace("Bearer ", "");
 

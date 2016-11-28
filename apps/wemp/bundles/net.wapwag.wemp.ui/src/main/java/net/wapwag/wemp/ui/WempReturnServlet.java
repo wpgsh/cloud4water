@@ -6,6 +6,7 @@ import com.google.gson.JsonParser;
 import net.wapwag.wemp.WaterEquipmentServiceException;
 import net.wapwag.wemp.model.AuthnUser;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -16,6 +17,8 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.apache.oltu.oauth2.common.OAuth;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -29,8 +32,8 @@ import java.util.List;
 
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
-import static net.wapwag.wemp.ui.WempConstant.WEMP_BASIC_ENCODED_CREDENTIAL;
-import static net.wapwag.wemp.ui.WempConstant.WEMP_RETURN_PATH;
+import static net.wapwag.wemp.WempUtil.encodeBase64String;
+import static net.wapwag.wemp.ui.WempConstant.*;
 
 /**
  * WEMP return Servlet
@@ -38,6 +41,14 @@ import static net.wapwag.wemp.ui.WempConstant.WEMP_RETURN_PATH;
  */
 @WebServlet(urlPatterns = "/return", name = "WEMP_ReturnServlet")
 public class WempReturnServlet extends HttpServlet {
+
+    private static final Logger logger = LoggerFactory.getLogger(WempReturnServlet.class);
+
+    private static final String WEMP_BAISC_ORIGIN = String.format("%s:%s", WEMP_ID.value(), WEMP_SECRET.value());
+
+    private static final String WEMP_BAISC_ENCODED_ORIGIN = encodeBase64String(WEMP_BAISC_ORIGIN);
+
+    private final String WEMP_BASIC_ENCODED_CREDENTIAL = String.format("Basic %s", WEMP_BAISC_ENCODED_ORIGIN);
 
     private static final String AUTHN_GET_ACCESSTOKEN_PATH = "http://%s:%s/authn/access_token";
     private static final String AUTHN_USERINFO_PATH = "http://%s:%s/authn/userinfo";
@@ -86,7 +97,7 @@ public class WempReturnServlet extends HttpServlet {
     private AuthnUser getUserInfo(String token, String path) throws IOException, ServletException {
         HttpClient client = HttpClientBuilder.create().build();
         HttpGet get = new HttpGet(path);
-        get.setHeader("Authorization", "Bearer " + token);
+        get.setHeader(OAuth.HeaderType.AUTHORIZATION, "Bearer " + token);
         HttpResponse result = client.execute(get);
         if (result.getStatusLine().getStatusCode() == SC_OK) {
 
@@ -97,7 +108,9 @@ public class WempReturnServlet extends HttpServlet {
                 try {
                     waterEquipmentService.saveAuthnUser(authnUser);
                 } catch (WaterEquipmentServiceException e) {
-                    e.printStackTrace();
+                    if (logger.isErrorEnabled()) {
+                        logger.error(ExceptionUtils.getStackTrace(e));
+                    }
                 }
             }, TokenServlet.class);
 
@@ -110,11 +123,11 @@ public class WempReturnServlet extends HttpServlet {
     private String getAcessToken(String authzCode, String path) throws IOException {
         HttpClient client = HttpClientBuilder.create().build();
         HttpPost post = new HttpPost(path);
-        post.setHeader("authorization", WEMP_BASIC_ENCODED_CREDENTIAL);
+        post.setHeader(OAuth.HeaderType.AUTHORIZATION, WEMP_BASIC_ENCODED_CREDENTIAL);
         List<NameValuePair> forms = new ArrayList<>();
         forms.add(new BasicNameValuePair("code", authzCode));
         forms.add(new BasicNameValuePair(OAuth.OAUTH_GRANT_TYPE, "authorization_code"));
-        forms.add(new BasicNameValuePair("redirect_uri", WEMP_RETURN_PATH));
+        forms.add(new BasicNameValuePair("redirect_uri", WEMP_RETURN_PATH.value()));
 
         post.setEntity(new UrlEncodedFormEntity(forms));
         HttpResponse result = client.execute(post);
