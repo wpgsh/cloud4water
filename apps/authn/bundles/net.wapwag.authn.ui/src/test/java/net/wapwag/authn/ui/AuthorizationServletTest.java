@@ -41,6 +41,7 @@ public class AuthorizationServletTest extends BaseServletTest {
                     if (session != null && session.getAttribute("Authenticated") == null) {
                         session.setAttribute("userId", 1L);
                         session.setAttribute("authenticated", true);
+                        session.setAttribute("oauthState", "wpg/swm");
                     }
                 }
                 request.setCharacterEncoding("UTF-8");
@@ -75,6 +76,7 @@ public class AuthorizationServletTest extends BaseServletTest {
         missingResponseType();
         missingClientId();
         missingState();
+        illegalState();
     }
 
     private void emptyRequest() throws Exception {
@@ -82,12 +84,12 @@ public class AuthorizationServletTest extends BaseServletTest {
                 APPLICATION_X_WWW_FORM_URLENCODED);
         TestCase.assertEquals(SC_FOUND, response.responseCode);
         TestCase.assertEquals(
-                "http://www.baidu.com?error_description=Missing+response_type+parameter+value&error=invalid_request",
+                "http://localhost:8181/authn/error/401.html?error_description=Missing+response_type+parameter+value&error=invalid_request",
                 response.body.get("redirectURI"));
     }
 
     private void missingResponseType() throws Exception {
-        String path = AUTHORIZE_CONTEXT_PATH + "?client_id=client1&redirect_uri=http://www.baidu.com";
+        String path = AUTHORIZE_CONTEXT_PATH + "?client_id=client1&redirect_uri=http://www.baidu.com&state=wpg/swm";
         QueryComponentResponse response = getAcceptQueryComponent(path, APPLICATION_X_WWW_FORM_URLENCODED);
         TestCase.assertEquals(SC_FOUND, response.responseCode);
         TestCase.assertEquals(
@@ -96,7 +98,7 @@ public class AuthorizationServletTest extends BaseServletTest {
     }
 
     private void missingClientId() throws Exception {
-        String path = AUTHORIZE_CONTEXT_PATH + "?response_type=code&redirect_uri=http://www.baidu.com";
+        String path = AUTHORIZE_CONTEXT_PATH + "?response_type=code&redirect_uri=http://www.baidu.com&state=wpg/swm";
         QueryComponentResponse response = getAcceptQueryComponent(path, APPLICATION_X_WWW_FORM_URLENCODED);
         TestCase.assertEquals(SC_FOUND, response.responseCode);
         TestCase.assertEquals(
@@ -110,7 +112,17 @@ public class AuthorizationServletTest extends BaseServletTest {
                 APPLICATION_X_WWW_FORM_URLENCODED);
         TestCase.assertEquals(SC_FOUND, response.responseCode);
         TestCase.assertEquals(
-                "http://www.baidu.com/?error_description=invalid+state&error=invalid_request",
+                "http://www.baidu.com?error_description=require+state+field&error=invalid_request",
+                response.body.get("redirectURI"));
+    }
+
+    private void illegalState() throws Exception {
+        String path = AUTHORIZE_CONTEXT_PATH + "?response_type=code&client_id=swm&redirect_uri=http://www.baidu.com&scope=user:*&state=errorState";
+        QueryComponentResponse response = getAcceptQueryComponent(path,
+                APPLICATION_X_WWW_FORM_URLENCODED);
+        TestCase.assertEquals(SC_FOUND, response.responseCode);
+        TestCase.assertEquals(
+                "http://www.baidu.com?error_description=invalid+state&error=invalid_request",
                 response.body.get("redirectURI"));
     }
 
@@ -124,7 +136,7 @@ public class AuthorizationServletTest extends BaseServletTest {
 
     private void invalidClient() throws Exception {
         String path = AUTHORIZE_CONTEXT_PATH +
-                "?response_type=code&client_id=invalidClient&redirect_uri=http://www.baidu.com";
+                "?response_type=code&client_id=invalidClient&redirect_uri=http://www.baidu.com&state=wpg/swm";
         QueryComponentResponse response = getAcceptQueryComponent(path, APPLICATION_X_WWW_FORM_URLENCODED);
         TestCase.assertEquals(SC_FOUND, response.responseCode);
         TestCase.assertEquals(
@@ -134,11 +146,11 @@ public class AuthorizationServletTest extends BaseServletTest {
 
     private void invalidRedirectURI() throws Exception {
         String path = AUTHORIZE_CONTEXT_PATH +
-                "?response_type=code&client_id=invalidClient&redirect_uri=invalidRequestURI";
+                "?response_type=code&client_id=invalidClient&redirect_uri=http://invalidRequestURI&state=wpg/swm";
         QueryComponentResponse response = getAcceptQueryComponent(path, APPLICATION_X_WWW_FORM_URLENCODED);
         TestCase.assertEquals(SC_FOUND, response.responseCode);
         TestCase.assertEquals(
-                "http://www.baidu.com?error_description=error+client+credential&error=unauthorized_client",
+                "http://invalidRequestURI?error_description=error+client+credential&error=unauthorized_client",
                 response.body.get("redirectURI"));
     }
 
@@ -170,18 +182,6 @@ public class AuthorizationServletTest extends BaseServletTest {
 
     public void testError_TemporarilyUnavalible() throws Exception {
         //There is no scenario at this time
-    }
-
-    @Test
-    public void test() {
-        String uri = null;
-        try {
-            uri = "http://www.baidu.com?error_description=error+client+credential&error=unauthorized_client";
-            int a = 0;
-            a = 10 / a;
-        } catch (Exception e) {
-            System.out.println(uri);
-        }
     }
 
 }

@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Set;
 
+import static net.wapwag.authn.ui.AuthnConstant.AUTHN_ERROR_PATH;
+
 /**
  * http://localhost:8181/authn/authorize
  * ?response_type=code
@@ -102,7 +104,7 @@ public class AuthorizationServlet extends HttpServlet {
                         oAuthResponse = OAuthASResponse
                                 .errorResponse(HttpServletResponse.SC_FOUND)
                                 .error((OAuthProblemException) e)
-                                .location(redirectURI == null ? "http://10.10.22.52:8181/authn/error/401.html" : redirectURI)
+                                .location(redirectURI == null ? AUTHN_ERROR_PATH.value() : redirectURI)
                                 .buildQueryMessage();
                     } catch (OAuthSystemException ex) {
                         if (logger.isErrorEnabled()) {
