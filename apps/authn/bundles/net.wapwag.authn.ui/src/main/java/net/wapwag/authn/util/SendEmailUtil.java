@@ -1,7 +1,6 @@
 package net.wapwag.authn.util;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
@@ -98,20 +97,18 @@ public class SendEmailUtil {
 		confInfo = new EmailConfInfo(); 
 		try {
 			StringBuffer emailMsg = new StringBuffer("");
-			StringBuffer emailall = new StringBuffer("");
 			BufferedReader br = 
 					new BufferedReader(new InputStreamReader(new FileInputStream(PropertiesUtil.AUTHN_EMAIl_TXT),"UTF-8"));  
 			String str = null;
 			while ((str = br.readLine()) != null) {
 				if (str.indexOf("title") < 0) {
-					emailMsg.append(str);
+					emailMsg.append(str).append("<br/>");
 				}else {
 					confInfo.head = str.substring(7,str.length()-8);
 				}
-				emailall.append(str);
 			}
-			confInfo.body = emailall.toString();
-			System.out.println(confInfo.body);
+			confInfo.body = emailMsg.toString();
+			System.out.println("confInfo.body : " + confInfo.body);
 			br.close();
 			
 			confInfo.from = PropertiesUtil.EMAIL_USER.value();
