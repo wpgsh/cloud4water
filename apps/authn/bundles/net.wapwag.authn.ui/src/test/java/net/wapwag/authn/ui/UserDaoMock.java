@@ -6,6 +6,8 @@ import net.wapwag.authn.dao.model.AccessTokenId;
 import net.wapwag.authn.dao.model.Image;
 import net.wapwag.authn.dao.model.RegisteredClient;
 import net.wapwag.authn.dao.model.User;
+import net.wapwag.authn.util.SendEmailUtil;
+import net.wapwag.authn.util.SequenceKey;
 
 import static org.mockito.Mockito.*;
 
@@ -22,6 +24,7 @@ public class UserDaoMock {
 	static final String AUTHORIZATION_CODE = "d";
 	static final long EXPIRATION = 0;
 	static final String SCOPE = "scope";
+	static final String EMAIL = "328454552@qq.com";
 	
 	static final User user = new User();
 	
@@ -37,10 +40,9 @@ public class UserDaoMock {
         user.setName("test1");
         user.setUsername("test1");
         user.setPhone2("15850817392");
-		user.setEmail("jiangzehu@163.com");
+		user.setEmail("328454552@qq.com");
 		user.setAvartarId("1");
 		user.setAvatar("avatar");
-		user.setEmail("jiangzehu@163.com");
 		user.setHomepage("http://www.baidu.com");
 		user.setPhone1("15850817392");
 		user.setPasswordHash("bff5c1b718386f23ac472d983a02907671f8932d");
@@ -122,6 +124,8 @@ public class UserDaoMock {
 		when(dao.saveUser(any(User.class))).thenReturn(1);
 		when(dao.getAvatar(user1.getAvartarId())).thenReturn(image);
 		when(dao.saveImg(any(Image.class))).thenReturn(1);
+        when(dao.getUserByEmail(EMAIL)).thenReturn(user);
+        when(dao.updateUserPwd(user)).thenReturn(user);
         
 		mockTx(dao);
 		
