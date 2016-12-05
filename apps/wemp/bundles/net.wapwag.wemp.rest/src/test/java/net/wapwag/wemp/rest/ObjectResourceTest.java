@@ -28,7 +28,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
     @Test
     public void testGetObject_InvalidToken() throws WaterEquipmentServiceException {
-        path = String.format("/object/%s", objId);
+        path = String.format("/wemp/object/%s", objId);
 
         Response response = invalidToken(target(path)).get();
 
@@ -37,7 +37,7 @@ public class ObjectResourceTest extends BaseResourceTest {
     
     @Test
     public void testGetObject_NotAuthorized() throws WaterEquipmentServiceException {
-        path = String.format("/object/%s", invalidId);
+        path = String.format("/wemp/object/%s", invalidId);
 
         Response response = validToken(target(path)).get();
 
@@ -46,7 +46,7 @@ public class ObjectResourceTest extends BaseResourceTest {
     
     @Test
     public void testGetObject() throws WaterEquipmentServiceException {
-        path = String.format("/object/%s", objId);
+        path = String.format("/wemp/object/%s", objId);
 
         Response response = validToken(target(path)).get();
 
@@ -61,7 +61,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
     @Test
     public void testGetObject_InvalidObjectId_NonNumber() throws Exception {
-        path = String.format("/object/%s", "invalid_objId");
+        path = String.format("/wemp/object/%s", "invalid_objId");
 
         Response response = validToken(target(path)).get();
 
@@ -70,7 +70,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
     @Test
     public void testGetObject_InvalidObjectIdValue() throws Exception {
-        path = String.format("/object/%s", "99999");
+        path = String.format("/wemp/object/%s", "99999");
 
         Response response = validToken(target(path)).get();
 
@@ -79,7 +79,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
     @Test
     public void testGetUsersByObject_InvalidToken() throws Exception {
-        path = String.format("/object/%s/users", objId);
+        path = String.format("/wemp/object/%s/users", objId);
 
         Response response = invalidToken(target(path).queryParam("action", action)).get();
 
@@ -88,7 +88,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
     @Test
     public void testGetUsersByObject_NotAuthorized() throws Exception {
-        path = String.format("/object/%s/users", invalidId);
+        path = String.format("/wemp/object/%s/users", invalidId);
 
         Response response = validToken(target(path).queryParam("action", action)).get();
 
@@ -97,7 +97,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
     @Test
     public void testGetUsersByObject() throws Exception {
-        path = String.format("/object/%s/users", objId);
+        path = String.format("/wemp/object/%s/users", objId);
 
         Response response = validToken(target(path).queryParam("action", action)).get();
 
@@ -110,7 +110,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
     @Test
     public void testGetObjectByUser_InvalidToken() throws Exception {
-        path = String.format("/object/%s/user/%s", objId, userId);
+        path = String.format("/wemp/object/%s/user/%s", objId, userId);
 
         Response response = invalidToken(target(path)).get();
 
@@ -119,7 +119,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
     @Test
     public void testGetObjectByUser_NotAuthorized() throws Exception {
-        path = String.format("/object/%s/user/%s", invalidId, invalidId);
+        path = String.format("/wemp/object/%s/user/%s", invalidId, invalidId);
 
         Response response = validToken(target(path)).get();
 
@@ -128,7 +128,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
     @Test
     public void testGetObjectByUser() throws Exception {
-        path = String.format("/object/%s/user/%s", objId, userId);
+        path = String.format("/wemp/object/%s/user/%s", objId, userId);
 
         Response response = validToken(target(path)).get();
 
@@ -141,7 +141,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
     @Test
     public void testAddObjectByUser_InvalidToken() throws Exception {
-        path = String.format("/object/%s/user/%s", objId, userId);
+        path = String.format("/wemp/object/%s/user/%s", objId, userId);
 
         Response response = invalidToken(target(path)).post(null);
 
@@ -150,7 +150,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
     @Test
     public void testAddObjectByUser_NotAuthorized() throws Exception {
-        path = String.format("/object/%s/user/%s", invalidId, invalidId);
+        path = String.format("/wemp/object/%s/user/%s", invalidId, invalidId);
 
         Response response = validToken(target(path)).post(null);
 
@@ -159,7 +159,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
     @Test
     public void testAddObjectByUser() throws Exception {
-        path = String.format("/object/%s/user/%s", objId, userId);
+        path = String.format("/wemp/object/%s/user/%s", objId, userId);
 
         Response response = validToken(target(path)).post(null);
 
@@ -172,7 +172,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
     @Test
     public void testRemoveObjectByUser_InvalidToken() throws Exception {
-        path = String.format("/object/%s/user/%s", objId, userId);
+        path = String.format("/wemp/object/%s/user/%s", objId, userId);
 
         Response response = invalidToken(target(path).queryParam("action", action)).delete();
 
@@ -181,7 +181,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
     @Test
     public void testRemoveObjectByUser_NotAuthorized() throws Exception {
-        path = String.format("/object/%s/user/%s", invalidId, invalidId);
+        path = String.format("/wemp/object/%s/user/%s", invalidId, invalidId);
 
         Response response = validToken(target(path).queryParam("action", action)).delete();
 
@@ -190,7 +190,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
     @Test
     public void testRemoveObjectByUser() throws Exception {
-        path = String.format("/object/%s/user/%s", objId, userId);
+        path = String.format("/wemp/object/%s/user/%s", objId, userId);
 
         Response response = validToken(target(path).queryParam("action", action)).delete();
 
@@ -203,7 +203,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
     @Test
     public void testGetGroupsByObject_InvalidToken() throws Exception {
-        path = String.format("/object/%s/groups", objId);
+        path = String.format("/wemp/object/%s/groups", objId);
 
         Response response = invalidToken(target(path).queryParam("action", action)).get();
 
@@ -213,7 +213,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
     @Test
     public void testGetGroupsByObject_NotAuthorized() throws Exception {
-        path = String.format("/object/%s/groups", invalidId);
+        path = String.format("/wemp/object/%s/groups", invalidId);
 
         Response response = validToken(target(path).queryParam("action", action)).get();
 
@@ -223,7 +223,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
     @Test
     public void testGetGroupsByObject() throws Exception {
-        path = String.format("/object/%s/groups", objId);
+        path = String.format("/wemp/object/%s/groups", objId);
 
         Response response = validToken(target(path).queryParam("action", action)).get();
 
@@ -237,7 +237,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
     @Test
     public void testGetObjectByGroup_InvalidToken() throws Exception {
-        path = String.format("/object/%s/group/%s", objId, groupId);
+        path = String.format("/wemp/object/%s/group/%s", objId, groupId);
 
         Response response = invalidToken(target(path)).get();
 
@@ -246,7 +246,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
     @Test
     public void testGetObjectByGroup_NotAuthorized() throws Exception {
-        path = String.format("/object/%s/group/%s", invalidId, invalidId);
+        path = String.format("/wemp/object/%s/group/%s", invalidId, invalidId);
 
         Response response = validToken(target(path)).get();
 
@@ -255,7 +255,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
     @Test
     public void testGetObjectByGroup() throws Exception {
-        path = String.format("/object/%s/group/%s", objId, groupId);
+        path = String.format("/wemp/object/%s/group/%s", objId, groupId);
 
         Response response = validToken(target(path)).get();
 
@@ -270,7 +270,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
     @Test
     public void testAddObjectByGroup_InvalidToken() throws Exception {
-        path = String.format("/object/%s/group/%s", objId, groupId);
+        path = String.format("/wemp/object/%s/group/%s", objId, groupId);
 
         Response response = invalidToken(target(path)).post(null);
 
@@ -280,7 +280,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
     @Test
     public void testAddObjectByGroup_NotAuthorized() throws Exception {
-        path = String.format("/object/%s/group/%s", invalidId, invalidId);
+        path = String.format("/wemp/object/%s/group/%s", invalidId, invalidId);
 
         Response response = validToken(target(path)).post(null);
 
@@ -290,7 +290,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
     @Test
     public void testAddObjectByGroup() throws Exception {
-        path = String.format("/object/%s/group/%s", objId, groupId);
+        path = String.format("/wemp/object/%s/group/%s", objId, groupId);
 
         Response response = validToken(target(path)).post(null);
 
@@ -304,7 +304,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
     @Test
     public void testRemoveObjectByGroup_InvalidToken() throws Exception {
-        path = String.format("/object/%s/group/%s", objId, groupId);
+        path = String.format("/wemp/object/%s/group/%s", objId, groupId);
 
         Response response = invalidToken(target(path).queryParam("action", action)).delete();
 
@@ -313,7 +313,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
     @Test
     public void testRemoveObjectByGroup_NotAuthorized() throws Exception {
-        path = String.format("/object/%s/group/%s", invalidId, invalidId);
+        path = String.format("/wemp/object/%s/group/%s", invalidId, invalidId);
 
         Response response = validToken(target(path).queryParam("action", action)).delete();
 
@@ -322,7 +322,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
     @Test
     public void testRemoveObjectByGroup() throws Exception {
-        path = String.format("/object/%s/group/%s", objId, groupId);
+        path = String.format("/wemp/object/%s/group/%s", objId, groupId);
 
         Response response = validToken(target(path).queryParam("action", action)).delete();
 

@@ -21,7 +21,7 @@ import javax.ws.rs.core.MediaType;
 import java.util.List;
 
 @Component(service = OrgGroupResource.class)
-@Path("/organization/{oid}")
+@Path("/wemp/organization/{oid}")
 @OAuth2(tokenHandler = WempTokenHandler.NAME)
 public class OrgGroupResource {
 

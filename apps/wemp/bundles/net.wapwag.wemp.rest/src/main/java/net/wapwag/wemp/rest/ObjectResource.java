@@ -18,7 +18,7 @@ import javax.ws.rs.core.MediaType;
 import java.util.List;
 
 @Component(service = ObjectResource.class)
-@Path("/object/{oid}")
+@Path("/wemp/object/{oid}")
 @OAuth2(tokenHandler = WempTokenHandler.NAME)
 public class ObjectResource {
 
