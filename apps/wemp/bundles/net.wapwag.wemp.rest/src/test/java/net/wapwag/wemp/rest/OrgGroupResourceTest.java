@@ -1,5 +1,6 @@
 package net.wapwag.wemp.rest;
 
+import com.google.common.collect.Maps;
 import com.google.gson.reflect.TypeToken;
 import net.wapwag.wemp.WaterEquipmentServiceException;
 import net.wapwag.wemp.dao.model.ObjectData;
@@ -16,6 +17,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static net.wapwag.wemp.rest.MockData.*;
@@ -301,9 +303,9 @@ public class OrgGroupResourceTest extends BaseResourceTest {
 
     @Test
     public void testAddUserByGroup() throws Exception {
-        when(mockService.addUserByGroup(orgId, groupId, userId)).thenReturn(ResultView.newInstance(addCount));
+        when(mockService.addUserByGroup(eq(orgId), eq(groupId), any(User.class))).thenReturn(ResultView.newInstance(addCount));
 
-        path = String.format("/wemp/organization/%s/organizationGroup/%s/user/%s", orgId, groupId, userId);
+        path = String.format("/wemp/organization/%s/organizationGroup/%s/user/%s", orgId, groupId, user);
         Response response = validToken(target(path)).post(null);
         ResultView resultView = getResult(response, ResultView.class);
 
@@ -313,9 +315,9 @@ public class OrgGroupResourceTest extends BaseResourceTest {
 
     @Test
     public void testAddUserByGroup_Exception() throws Exception {
-        when(mockService.addUserByGroup(invalidId, invalidId, invalidId)).thenThrow(WaterEquipmentServiceException.class);
+        when(mockService.addUserByGroup(eq(invalidId), eq(invalidId), any(User.class))).thenThrow(WaterEquipmentServiceException.class);
 
-        path = String.format("/wemp/organization/%s/organizationGroup/%s/user/%s", invalidId, invalidId, invalidId);
+        path = String.format("/wemp/organization/%s/organizationGroup/%s/user/%s", invalidId, invalidId, user);
         Response response = validToken(target(path)).post(null);
 
         assertEquals(FORBIDDEN_403, response.getStatus());
@@ -405,7 +407,9 @@ public class OrgGroupResourceTest extends BaseResourceTest {
 
     @Test
     public void testGetObjectByGroupWithAction() throws Exception {
-        when(mockService.getObjectByGroup(orgId, groupId, objId, action)).thenReturn(ObjectView.newInstance(objectData));
+        Map<String, Boolean> resultMap = Maps.newHashMap();
+        resultMap.put("result", true);
+        when(mockService.getObjectByGroup(orgId, groupId, objId, action)).thenReturn(resultMap);
 
         path = String.format("/wemp/organization/%s/organizationGroup/%s/checkPermissions", orgId, groupId);
         Response response = validToken(target(path)

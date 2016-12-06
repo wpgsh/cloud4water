@@ -1,6 +1,5 @@
 package net.wapwag.wemp.rest;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.thingswise.appframework.jaxrs.utils.*;
@@ -19,6 +18,7 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
 import java.lang.reflect.Type;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import static net.wapwag.wemp.rest.MockData.*;
@@ -106,13 +106,9 @@ abstract class BaseResourceTest extends JerseyTest {
                         accessToken.getAccessTokenId().getRegisteredClient().getClientId(),
                         accessToken.getHandle(),
                         ImmutableSet.copyOf(
-                                Optional.fromNullable(accessToken.getScope()).
-                                        transform(String::trim).
-                                        transform(s -> {
-                                            assert s != null;
-                                            return s.split(" ");
-                                        }).
-                                        or(new String[0]))));
+                                Optional.ofNullable(accessToken.getScope())
+                                        .map(String::trim).map(s -> s.split(" "))
+                                        .orElse(new String[0]))));
 
         when(mockService.isAuthorized(anyString(), anyString(), anyString())).thenReturn(false);
         when(mockService.isAuthorized(userId + "", action, objId + "")).thenReturn(true);
