@@ -2,6 +2,7 @@ package net.wapwag.wemp;
 
 import com.eaio.uuid.UUID;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.wapwag.wemp.dao.WaterEquipmentDao;
 import net.wapwag.wemp.dao.WaterEquipmentDaoException;
@@ -245,21 +246,25 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
     }
 
     @Override
-    public ObjectView getObjectByUser(long objId, long userId) throws WaterEquipmentServiceException {
+    public Map<String, String> getUserPermissionByObject(long objId, long userId) throws WaterEquipmentServiceException {
         return waterEquipmentDao.txExpr(() -> {
+            Map<String, String> resultMap = Maps.newHashMap();
             try {
-                return ObjectView.newInstance(waterEquipmentDao.getObjectByUser(objId, userId));
+                String action = waterEquipmentDao.getUserPermissionByObject(objId, userId);
+                resultMap.put("action", action);
+                return resultMap;
             } catch (WaterEquipmentDaoException e) {
-                return null;
+                resultMap.put("action", "none");
+                return resultMap;
             }
         }, WaterEquipmentServiceException.class);
     }
 
     @Override
-    public ResultView addObjectByUser(long objId, long userId) throws WaterEquipmentServiceException {
+    public ResultView addObjectByUser(long objId, long userId, String action) throws WaterEquipmentServiceException {
         return waterEquipmentDao.txExpr(() -> {
             try {
-                return ResultView.newInstance(waterEquipmentDao.addObjectByUser(objId, userId));
+                return ResultView.newInstance(waterEquipmentDao.addObjectByUser(objId, userId, action));
             } catch (WaterEquipmentDaoException e) {
                 return null;
             }
@@ -391,10 +396,10 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
     }
 
     @Override
-    public ResultView addUserByGroup(long orgId, long groupId, long userId) throws WaterEquipmentServiceException {
+    public ResultView addUserByGroup(long orgId, long groupId, User user) throws WaterEquipmentServiceException {
         return waterEquipmentDao.txExpr(() -> {
             try {
-                return ResultView.newInstance(waterEquipmentDao.addUserByGroup(orgId, groupId, userId));
+                return ResultView.newInstance(waterEquipmentDao.addUserByGroup(orgId, groupId, user.getId()));
             } catch (WaterEquipmentDaoException e) {
                 return null;
             }
@@ -425,12 +430,16 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
     }
 
     @Override
-    public ObjectView getObjectByGroup(long orgId, long groupId, long objId, String action) throws WaterEquipmentServiceException {
+    public Map<String, Boolean> getObjectByGroup(long orgId, long groupId, long objId, String action) throws WaterEquipmentServiceException {
         return waterEquipmentDao.txExpr(() -> {
+            Map<String, Boolean> resultMap = Maps.newHashMap();
             try {
-                return ObjectView.newInstance(waterEquipmentDao.getObjectByGroup(orgId, groupId, objId, action));
+                Long resultId = waterEquipmentDao.getObjectByGroup(orgId, groupId, objId, action);
+                resultMap.put("result", resultId != null);
+                return resultMap;
             } catch (WaterEquipmentDaoException e) {
-                return null;
+                resultMap.put("result", false);
+                return resultMap;
             }
         }, WaterEquipmentServiceException.class);
     }
@@ -504,22 +513,23 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
     }
 
     @Override
-    public ResultView checkPermission(long userId, ObjectData objectData) throws WaterEquipmentServiceException {
+    public Map<String, Boolean> checkPermission(long userId, ObjectData objectData) throws WaterEquipmentServiceException {
         return waterEquipmentDao.txExpr(() -> {
+            Map<String, Boolean> resultMap = Maps.newHashMap();
             try {
-                return ResultView.newInstance(waterEquipmentDao.checkPermission(userId, objectData));
+                resultMap.put("result", waterEquipmentDao.checkPermission(userId, objectData));
+                return resultMap;
             } catch (WaterEquipmentDaoException e) {
-                return null;
+                return resultMap;
             }
         }, WaterEquipmentServiceException.class);
     }
 
     @Override
-    public Set<ObjectView> getObjectsByUser(long userId, String action) throws WaterEquipmentServiceException {
+    public Set<Long> getObjectsByUser(long userId, String action) throws WaterEquipmentServiceException {
         return waterEquipmentDao.txExpr(() -> {
             try {
-                Set<ObjectData> objSet = waterEquipmentDao.getObjectsByUser(userId, action);
-                return objSet.stream().map(ObjectView::newInstance).collect(Collectors.toSet());
+                return waterEquipmentDao.getObjectsByUser(userId, action);
             } catch (WaterEquipmentDaoException e) {
                 return null;
             }

@@ -1,5 +1,6 @@
 package net.wapwag.wemp;
 
+import com.google.common.collect.Maps;
 import net.wapwag.wemp.dao.WaterEquipmentDao;
 import net.wapwag.wemp.dao.WaterEquipmentDaoException;
 import net.wapwag.wemp.dao.model.ObjectData;
@@ -17,6 +18,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static net.wapwag.wemp.MockData.*;
@@ -279,29 +281,29 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testGetObjectByUser() throws Exception {
-        when(waterEquipmentDao.getObjectByUser(objId, userId)).thenReturn(objectData);
+        when(waterEquipmentDao.getUserPermissionByObject(objId, userId)).thenReturn(action);
 
-        ObjectView objectView = waterEquipmentService.getObjectByUser(objId, userId);
+        Map<String, String> resultMap = waterEquipmentService.getUserPermissionByObject(objId, userId);
 
-        assertNotNull(objectView);
-        assertEquals(objectData.getId(), objId);
-        assertEquals(objectData.getName(), objectView.name);
+        assertNotNull(resultMap);
+        assertEquals(action, resultMap.get("action"));
     }
 
     @Test
     public void testGetObjectByUser_Exception() throws Exception {
-        when(waterEquipmentDao.getObjectByUser(invalidId, invalidId)).thenThrow(WaterEquipmentDaoException.class);
+        when(waterEquipmentDao.getUserPermissionByObject(invalidId, invalidId)).thenThrow(WaterEquipmentDaoException.class);
 
-        ObjectView objectView = waterEquipmentService.getObjectByUser(invalidId, invalidId);
+        Map<String, String> resultMap = waterEquipmentService.getUserPermissionByObject(invalidId, invalidId);
 
-        assertNull(objectView);
+        assertNotNull(resultMap);
+        assertEquals("none", resultMap.get("action"));
     }
 
     @Test
     public void testAddObjectByUser() throws Exception {
-        when(waterEquipmentDao.addObjectByUser(objId, userId)).thenReturn(addCount);
+        when(waterEquipmentDao.addObjectByUser(objId, userId, action)).thenReturn(addCount);
 
-        ResultView resultView = waterEquipmentService.addObjectByUser(objId, userId);
+        ResultView resultView = waterEquipmentService.addObjectByUser(objId, userId, action);
 
         assertNotNull(resultView);
         assertEquals(addCount, resultView.count);
@@ -309,9 +311,9 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testAddObjectByUser_Exception() throws Exception {
-        when(waterEquipmentDao.addObjectByUser(invalidId, invalidId)).thenThrow(WaterEquipmentDaoException.class);
+        when(waterEquipmentDao.addObjectByUser(invalidId, invalidId, action)).thenThrow(WaterEquipmentDaoException.class);
 
-        ResultView resultView = waterEquipmentService.addObjectByUser(invalidId, invalidId);
+        ResultView resultView = waterEquipmentService.addObjectByUser(invalidId, invalidId, action);
 
         assertNull(resultView);
     }
@@ -533,7 +535,7 @@ public class WaterEquipmentServiceTest {
     public void testAddUserByGroup() throws Exception {
         when(waterEquipmentDao.addUserByGroup(orgId, groupId, userId)).thenReturn(addCount);
 
-        ResultView resultView = waterEquipmentService.addUserByGroup(orgId, groupId, userId);
+        ResultView resultView = waterEquipmentService.addUserByGroup(orgId, groupId, user);
 
         assertNotNull(resultView);
         assertEquals(addCount, resultView.count);
@@ -543,7 +545,7 @@ public class WaterEquipmentServiceTest {
     public void testAddUserByGroup_Exception() throws Exception {
         when(waterEquipmentDao.addUserByGroup(invalidId, invalidId, invalidId)).thenThrow(WaterEquipmentDaoException.class);
 
-        ResultView resultView = waterEquipmentService.addUserByGroup(invalidId, invalidId, invalidId);
+        ResultView resultView = waterEquipmentService.addUserByGroup(invalidId, invalidId, user);
 
         assertNull(resultView);
     }
@@ -588,23 +590,24 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testGetObjectByGroupWithAction() throws Exception {
-        when(waterEquipmentDao.getObjectByGroup(orgId, groupId, objId, action)).thenReturn(objectData);
+        when(waterEquipmentDao.getObjectByGroup(orgId, groupId, objId, action)).thenReturn(userId);
 
-        ObjectView objectView = waterEquipmentService.getObjectByGroup(orgId, groupId, objId, action);
+        Map<String, Boolean> resultMap = waterEquipmentService.getObjectByGroup(orgId, groupId, objId, action);
 
-        assertNotNull(objectView);
-        assertEquals(objectData.getId(), objectView.id);
-        assertEquals(objectData.getName(), objectView.name);
-        assertEquals(objectData.getType(), objectView.objectType);
+        assertNotNull(resultMap);
+        assertTrue(resultMap.get("result"));
     }
 
     @Test
     public void testGetObjectByGroupWithAction_Exception() throws Exception {
+        Map<String, Boolean> mockMap = Maps.newHashMap();
+        mockMap.put("result", false);
         when(waterEquipmentDao.getObjectByGroup(invalidId, invalidId, invalidId, action)).thenThrow(WaterEquipmentDaoException.class);
 
-        ObjectView objectView = waterEquipmentService.getObjectByGroup(invalidId, invalidId, invalidId, action);
+        Map<String, Boolean> resultMap = waterEquipmentService.getObjectByGroup(invalidId, invalidId, invalidId, action);
 
-        assertNull(objectView);
+        assertNotNull(resultMap);
+        assertFalse(resultMap.get("result"));
     }
 
     @Test
@@ -725,36 +728,37 @@ public class WaterEquipmentServiceTest {
     public void testCheckPermission_True() throws Exception {
         when(waterEquipmentDao.checkPermission(userId, objectData)).thenReturn(true);
 
-        ResultView resultView = waterEquipmentService.checkPermission(userId, objectData);
+        Map<String, Boolean> resultMap = waterEquipmentService.checkPermission(userId, objectData);
 
-        assertNotNull(resultView);
-        assertEquals(1, resultView.count);
+        assertNotNull(resultMap);
+        assertTrue(resultMap.get("result"));
     }
 
     @Test
     public void testCheckPermission_False() throws Exception {
         when(waterEquipmentDao.checkPermission(userId, objectData)).thenReturn(false);
 
-        ResultView resultView = waterEquipmentService.checkPermission(userId, objectData);
+        Map<String, Boolean> resultMap = waterEquipmentService.checkPermission(userId, objectData);
 
-        assertNotNull(resultView);
-        assertEquals(0, resultView.count);
+        assertNotNull(resultMap);
+        assertFalse(resultMap.get("result"));
     }
 
     @Test
     public void testCheckPermission_Exception() throws Exception {
         when(waterEquipmentDao.checkPermission(eq(invalidId), any(ObjectData.class))).thenThrow(WaterEquipmentDaoException.class);
 
-        ResultView resultView = waterEquipmentService.checkPermission(invalidId, objectData);
+        Map<String, Boolean> resultMap = waterEquipmentService.checkPermission(invalidId, objectData);
 
-        assertNull(resultView);
+        assertNotNull(resultMap);
+        assertFalse(resultMap.get("result"));
     }
 
     @Test
     public void testGetObjectsByUser() throws Exception {
-        when(waterEquipmentDao.getObjectsByUser(userId, "read")).thenReturn(new HashSet<>(objectDataList));
+        when(waterEquipmentDao.getObjectsByUser(userId, "read")).thenReturn(new HashSet<>());
 
-        Set<ObjectView> objectViews = waterEquipmentService.getObjectsByUser(userId, "read");
+        Set<Long> objectViews = waterEquipmentService.getObjectsByUser(userId, "read");
 
         assertNotNull(objectViews);
         assertEquals(objectDataList.size(), objectViews.size());
@@ -764,7 +768,7 @@ public class WaterEquipmentServiceTest {
     public void testGetObjectsByUser_Exception() throws Exception {
         when(waterEquipmentDao.getObjectsByUser(invalidId, "read")).thenThrow(WaterEquipmentDaoException.class);
 
-        Set<ObjectView> objectViews = waterEquipmentService.getObjectsByUser(invalidId, "read");
+        Set<Long> objectViews = waterEquipmentService.getObjectsByUser(invalidId, "read");
 
         assertNull(objectViews);
     }

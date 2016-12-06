@@ -55,41 +55,48 @@ public class WempReturnServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String authzCode = request.getParameter("code");
-        String serverIp = "localhost";
-        int serverPort = request.getLocalPort();
+        OSGIUtil.useWaterEquipmentService(waterEquipmentService -> {
+            try {
+                String authzCode = request.getParameter("code");
+                String serverIp = "localhost";
+                int serverPort = request.getLocalPort();
 
-        if (StringUtils.isNotBlank(authzCode)) {
-            String authnTokenPath = String.format(AUTHN_GET_ACCESSTOKEN_PATH, serverIp, serverPort);
-            String token = getAcessToken(authzCode, authnTokenPath);
+                if (StringUtils.isNotBlank(authzCode)) {
+                    String authnTokenPath = String.format(AUTHN_GET_ACCESSTOKEN_PATH, serverIp, serverPort);
+                    String token = getAcessToken(authzCode, authnTokenPath);
 
-            if (StringUtils.isNotBlank(token)) {
-                HttpSession session = request.getSession();
-                String authnUserInfoPath = String.format(AUTHN_USERINFO_PATH, serverIp, serverPort);
+                    if (StringUtils.isNotBlank(token)) {
+                        HttpSession session = request.getSession();
+                        String authnUserInfoPath = String.format(AUTHN_USERINFO_PATH, serverIp, serverPort);
 
-                AuthnUser authnUser = getUserInfo(token, authnUserInfoPath);
+                        AuthnUser authnUser = getUserInfo(token, authnUserInfoPath);
 
-                if (authnUser != null) {
-                    session.setAttribute("authnUser", authnUser);
-                    session.setAttribute("userId", authnUser.getId());
-                    session.setAttribute("authenticated", true);
+                        if (authnUser != null) {
 
-                    String wempRedirect = (String) session.getAttribute("wempRedirect");
+                            session.setAttribute("authnUser", authnUser);
+                            session.setAttribute("userId", authnUser.getId());
+                            session.setAttribute("authenticated", true);
 
-                    if (StringUtils.isNotBlank(wempRedirect)) {
-                        request.getRequestDispatcher(String.format("/authorize?%s", wempRedirect)).forward(request, response);
+                            String wempRedirect = (String) session.getAttribute("wempRedirect");
+
+                            if (StringUtils.isNotBlank(wempRedirect)) {
+                                response.sendRedirect(String.format("/authorize?%s", wempRedirect));
+                            } else {
+                                response.sendError(SC_UNAUTHORIZED);
+                            }
+                        } else {
+                            response.sendError(SC_UNAUTHORIZED);
+                        }
                     } else {
                         response.sendError(SC_UNAUTHORIZED);
                     }
                 } else {
                     response.sendError(SC_UNAUTHORIZED);
                 }
-            } else {
-                response.sendError(SC_UNAUTHORIZED);
+            } catch (Exception e) {
+                logger.error(ExceptionUtils.getStackTrace(e));
             }
-        } else {
-            response.sendError(SC_UNAUTHORIZED);
-        }
+        }, UserInfoServlet.class);
 
     }
 

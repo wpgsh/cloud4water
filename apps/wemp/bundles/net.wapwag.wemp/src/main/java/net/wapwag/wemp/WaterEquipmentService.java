@@ -7,6 +7,7 @@ import net.wapwag.wemp.model.*;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -61,9 +62,9 @@ public interface WaterEquipmentService {
 
     List<UserView> getUsersByObject(long objId, String action) throws WaterEquipmentServiceException;
 
-	ObjectView getObjectByUser(long objId, long userId) throws WaterEquipmentServiceException;
+	Map<String, String> getUserPermissionByObject(long objId, long userId) throws WaterEquipmentServiceException;
 
-	ResultView addObjectByUser(long objId, long userId) throws WaterEquipmentServiceException;
+	ResultView addObjectByUser(long objId, long userId, String action) throws WaterEquipmentServiceException;
 
 	ResultView removeObjectByUser(long objId, long userId, String action) throws WaterEquipmentServiceException;
 
@@ -87,13 +88,13 @@ public interface WaterEquipmentService {
 
 	List<UserView> getUsersByGroup(long orgId, long groupId) throws WaterEquipmentServiceException;
 
-	ResultView addUserByGroup(long orgId, long groupId, long userId) throws WaterEquipmentServiceException;
+	ResultView addUserByGroup(long orgId, long groupId, User user) throws WaterEquipmentServiceException;
 
 	ResultView removeUserByGroup(long orgId, long groupId, long userId) throws WaterEquipmentServiceException;
 
 	List<ObjectView> getObjectsByGroup(long orgId, long groupId) throws WaterEquipmentServiceException;
 
-	ObjectView getObjectByGroup(long orgId, long groupId, long objId, String action) throws WaterEquipmentServiceException;
+	Map<String, Boolean> getObjectByGroup(long orgId, long groupId, long objId, String action) throws WaterEquipmentServiceException;
 
     List<UserView> getUsersByOrg(long orgId) throws WaterEquipmentServiceException;
 
@@ -107,9 +108,9 @@ public interface WaterEquipmentService {
 
     ResultView removeObjectByOrg(long orgId, long objId) throws WaterEquipmentServiceException;
 
-    ResultView checkPermission(long userId, ObjectData objectData) throws WaterEquipmentServiceException;
+	Map<String, Boolean> checkPermission(long userId, ObjectData objectData) throws WaterEquipmentServiceException;
 
-    Set<ObjectView> getObjectsByUser(long userId, String action) throws WaterEquipmentServiceException;
+    Set<Long> getObjectsByUser(long userId, String action) throws WaterEquipmentServiceException;
 
 	int saveAuthnUser(AuthnUser authnUser) throws WaterEquipmentServiceException;
 }

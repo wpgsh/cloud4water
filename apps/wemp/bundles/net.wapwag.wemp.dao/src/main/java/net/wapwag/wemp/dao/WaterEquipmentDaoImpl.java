@@ -294,14 +294,16 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
     }
 
 	@Override
-	public ObjectData getObjectByUser(long objId, long userId) throws WaterEquipmentDaoException {
+	public String getUserPermissionByObject(long objId, long userId) throws WaterEquipmentDaoException {
         try {
             return entityManager.txExpr(em -> {
 
-                String hql = "select uo.userObjectId.objectData from UserObject uo " +
-                        "where uo.userObjectId.objectData.id = :objId and uo.userObjectId.user.id = :userId";
+                String hql = "select uo.actionId from UserObject uo " +
+                        "where uo.userObjectId.objectData.id = :objId " +
+                        "and uo.userObjectId.user.id = :userId " +
+                        "and uo.actionId = :actionId";
 
-                return em.createQuery(hql, ObjectData.class)
+                return em.createQuery(hql, String.class)
                         .setParameter("objId", objId)
                         .setParameter("userId", userId)
                         .getResultList()
@@ -316,7 +318,7 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
     }
 
 	@Override
-	public int addObjectByUser(long objId, long userId) throws WaterEquipmentDaoException {
+	public int addObjectByUser(long objId, long userId, String action) throws WaterEquipmentDaoException {
         try {
             return entityManager.txExpr(em -> {
 
@@ -328,6 +330,7 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
 
                 UserObject userObject = new UserObject();
                 userObject.setUserObjectId(new UserObjectId(user, objectData));
+                userObject.setActionId(action);
 
                 em.persist(userObject);
 
@@ -622,14 +625,14 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
 	}
 
 	@Override
-	public ObjectData getObjectByGroup(long orgId, long groupId, long objId, String action) throws WaterEquipmentDaoException {
-        final String hql = "select groupObject.groupObjectId.objectData from GroupObject  groupObject " +
+	public Long getObjectByGroup(long orgId, long groupId, long objId, String action) throws WaterEquipmentDaoException {
+        final String hql = "select groupObject.groupObjectId.objectData.id from GroupObject  groupObject " +
                 "where groupObject.groupObjectId.group.id = :groupId " +
                 "and groupObject.groupObjectId.group.organization.id = :orgId " +
                 "and groupObject.groupObjectId.objectData.id = :objId " +
                 "and groupObject.actionId = :action";
         try {
-            return entityManager.txExpr(em -> em.createQuery(hql, ObjectData.class)
+            return entityManager.txExpr(em -> em.createQuery(hql, Long.class)
                         .setParameter("groupId", groupId)
                         .setParameter("orgId", orgId)
                         .setParameter("objId", objId)
@@ -679,13 +682,26 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
 
 	@Override
 	public int removeUserByOrg(long orgId, long uid) throws WaterEquipmentDaoException {
-        final String hql = "delete from UserOrg userOrg " +
+        final String userOrgHql = "delete from UserOrg userOrg " +
                 "where userOrg.userOrgId.organization.id = :orgId " +
                 "and userOrg.userOrgId.user.id = :userId";
+
+        final String userGroupHql = "delete from UserGroup userGroup " +
+                "where userGroup.userGroupId.group.organization.id = :orgId " +
+                "and userGroup.userGroupId.user.id = :userId";
         try {
-            return entityManager.txExpr(em -> em.createQuery(hql)
-                    .setParameter("orgId", orgId)
-                    .setParameter("userId", uid).executeUpdate());
+            return entityManager.txExpr(em -> {
+                int removeCount = 0;
+                removeCount += em.createQuery(userOrgHql)
+                        .setParameter("orgId", orgId)
+                        .setParameter("userId", uid).executeUpdate();
+
+                removeCount += em.createQuery(userGroupHql)
+                        .setParameter("orgId", orgId)
+                        .setParameter("userId", uid).executeUpdate();
+
+                return removeCount;
+            });
         } catch (Exception e) {
             throw new WaterEquipmentDaoException("can't remove user by org", e);
         }
@@ -793,34 +809,34 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
 	}
 
 	@Override
-	public Set<ObjectData> getObjectsByUser(long userId, String action) throws WaterEquipmentDaoException {
-        final String userObjectHql = "select userObject.userObjectId.objectData " +
+	public Set<Long> getObjectsByUser(long userId, String action) throws WaterEquipmentDaoException {
+        final String userObjectHql = "select userObject.userObjectId.objectData.id " +
                 "from UserObject userObject " +
                 "where userObject.userObjectId.user.id = :userId " +
                 "and userObject.actionId = :action";
 
-        final String userGroupHql = "select groupObject.groupObjectId.objectData from UserGroup userGroup,GroupObject groupObject " +
+        final String userGroupHql = "select groupObject.groupObjectId.objectData.id from UserGroup userGroup,GroupObject groupObject " +
                 "where userGroup.userGroupId.user.id = :userId " +
                 "and userGroup.userGroupId.group = groupObject.groupObjectId.group " +
                 "and groupObject.actionId = :action";
 
-        final String userOrgHql = "select groupObject.groupObjectId.objectData from UserOrg userOrg,GroupObject groupObject " +
+        final String userOrgHql = "select groupObject.groupObjectId.objectData.id from UserOrg userOrg,GroupObject groupObject " +
                 "where userOrg.userOrgId.user.id = :userId " +
                 "and userOrg.userOrgId.organization = groupObject.groupObjectId.group.organization " +
                 "and groupObject.actionId = :action";
 		try {
             return entityManager.txExpr(em -> {
-                List<ObjectData> objList = new ArrayList<>();
+                List<Long> objList = new ArrayList<>();
 
-                objList.addAll(em.createQuery(userObjectHql, ObjectData.class)
+                objList.addAll(em.createQuery(userObjectHql, Long.class)
                         .setParameter("userId", userId)
                         .setParameter("action", action).getResultList());
 
-                objList.addAll(em.createQuery(userGroupHql, ObjectData.class)
+                objList.addAll(em.createQuery(userGroupHql, Long.class)
                         .setParameter("userId", userId)
                         .setParameter("action", action).getResultList());
 
-                objList.addAll(em.createQuery(userOrgHql, ObjectData.class)
+                objList.addAll(em.createQuery(userOrgHql, Long.class)
                         .setParameter("userId", userId)
                         .setParameter("action", action).getResultList());
 

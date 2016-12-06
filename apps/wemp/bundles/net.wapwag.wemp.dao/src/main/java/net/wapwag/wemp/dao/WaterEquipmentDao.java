@@ -38,9 +38,9 @@ public interface WaterEquipmentDao {
 
     List<User> getUsersByObject(long objId, String action) throws WaterEquipmentDaoException;
 
-	ObjectData getObjectByUser(long objId, long userId) throws WaterEquipmentDaoException;
+	String getUserPermissionByObject(long objId, long userId) throws WaterEquipmentDaoException;
 
-	int addObjectByUser(long objId, long userId) throws WaterEquipmentDaoException;
+	int addObjectByUser(long objId, long userId, String action) throws WaterEquipmentDaoException;
 
 	int removeObjectByUser(long objId, long userId, String action) throws WaterEquipmentDaoException;
 
@@ -70,7 +70,7 @@ public interface WaterEquipmentDao {
 
 	List<ObjectData> getObjectsByGroup(long orgId, long groupId) throws WaterEquipmentDaoException;
 
-	ObjectData getObjectByGroup(long orgId, long groupId, long objId, String action) throws WaterEquipmentDaoException;
+	Long getObjectByGroup(long orgId, long groupId, long objId, String action) throws WaterEquipmentDaoException;
 
 	List<User> getUsersByOrg(long orgId) throws WaterEquipmentDaoException;
 
@@ -86,7 +86,7 @@ public interface WaterEquipmentDao {
 
 	boolean checkPermission(long userId, ObjectData objectData) throws WaterEquipmentDaoException;
 
-	Set<ObjectData> getObjectsByUser(long userId, String action) throws WaterEquipmentDaoException;
+	Set<Long> getObjectsByUser(long userId, String action) throws WaterEquipmentDaoException;
 
 	/**
 	 * An action that consists of several steps to be performed
