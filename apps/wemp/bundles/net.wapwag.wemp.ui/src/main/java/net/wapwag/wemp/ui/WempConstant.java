@@ -13,13 +13,15 @@ import java.nio.file.Paths;
 import java.util.*;
 
 import static net.wapwag.wemp.WempUtil.encodeURL;
+import static net.wapwag.wemp.WempUtil.loadProperties;
+import static net.wapwag.wemp.WempUtil.readJVMProperties;
 
 /**
  * Wemp constant
  * Created by Administrator on 2016/11/14 0014.
  */
 @SuppressWarnings("Duplicates")
-enum WempConstant {
+public enum WempConstant {
 
     WEMP_ID("wemp_id"),
 
@@ -48,7 +50,7 @@ enum WempConstant {
     /**
      * The path for /authorize.
      */
-    static String AUTHORIZE_PATH;
+    public static String AUTHORIZE_PATH;
     private static final String AUTHORIZE_PATH_SUBSTITUE = "/authn/authorize?response_type=%s&redirect_uri=%s&client_id=%s";
 
     static {
@@ -68,69 +70,4 @@ enum WempConstant {
         }
     }
 
-
-    public static Set<String> readJVMProperties(String... paramNames) {
-        Set<String> preloadSet = new HashSet<>();
-        if (ArrayUtils.isNotEmpty(paramNames)) {
-
-            for (String paramName : paramNames) {
-                String configPath = System.getProperty(paramName);
-
-                if (StringUtils.isNotBlank(configPath)) {
-                    preloadSet.add(configPath);
-                }
-            }
-
-        } else {
-            throw new IllegalArgumentException("jvm param name couldn't be empty");
-        }
-
-        if (logger.isInfoEnabled()) {
-            logger.info("read {} params,\n{}", paramNames.length, preloadSet);
-        }
-
-        return preloadSet;
-    }
-
-    public static Map<String, String> loadProperties(Collection<String> paths) {
-        return loadProperties(paths.toArray(new String[paths.size()]));
-    }
-
-    public static Map<String, String> loadProperties(String... paths) {
-        Map<String, String> preloadMap = new HashMap<>();
-
-        if (ArrayUtils.isNotEmpty(paths)) {
-
-            Properties properties;
-            for (String path : paths) {
-                if (StringUtils.isNotBlank(path)) {
-
-                    properties = new Properties();
-                    try {
-                        properties.load(Files.newBufferedReader(Paths.get(path)));
-
-                        Set<String> keySet = properties.stringPropertyNames();
-                        if (!keySet.isEmpty()) {
-                            for (String key : properties.stringPropertyNames()) {
-                                preloadMap.put(key, properties.getProperty(key));
-                            }
-                        }
-
-                    } catch (IOException e) {
-                        throw new IllegalArgumentException("couldn't load the config file");
-                    } finally {
-                        properties.clear();
-                    }
-                }
-            }
-        } else {
-            throw new IllegalArgumentException("the path of the config file couldn't be empty");
-        }
-
-        if (logger.isInfoEnabled()) {
-            logger.info("Load {} config,\n{}", paths.length, preloadMap);
-        }
-
-        return preloadMap;
-    }
 }
