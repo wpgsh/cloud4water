@@ -9,10 +9,8 @@ import net.wapwag.wemp.dao.model.org.WaterManageAuth;
 import net.wapwag.wemp.dao.model.permission.*;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static net.wapwag.wemp.mysql.hibernate.PrepareContext.transactionManager;
@@ -24,6 +22,7 @@ import static org.junit.Assert.assertTrue;
  * <p>Use {@link org.junit.Assert} instead of .{@link junit.framework.TestCase} which suggested for the junit4</p>
  * Created by Administrator on 2016/10/31 0031.
  */
+@SuppressWarnings("Duplicates")
 class DataInsert {
 
     private static final long orgId = 4L;

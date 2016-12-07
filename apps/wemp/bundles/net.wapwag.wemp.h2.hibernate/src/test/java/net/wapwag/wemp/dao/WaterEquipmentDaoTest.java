@@ -132,17 +132,18 @@ public class WaterEquipmentDaoTest extends BaseTestConfig {
         long objectId = 1L;
         long userId = 1L;
 
-        ObjectData objectData = waterEquipmentDao.getObjectByUser(objectId, userId);
+        String resultAction = waterEquipmentDao.getUserPermissionByObject(objectId, userId);
 
-        assertTrue(objectData != null);
+        assertEquals("read", resultAction);
     }
 
     @Test
     public void testAddObjectByUser() throws WaterEquipmentDaoException {
         long objectId = 12L;
         long userId = 2L;
+        String action = "read";
 
-        count = waterEquipmentDao.addObjectByUser(objectId, userId);
+        count = waterEquipmentDao.addObjectByUser(objectId, userId, action);
 
         assertEquals(addCount, count);
     }
@@ -287,9 +288,9 @@ public class WaterEquipmentDaoTest extends BaseTestConfig {
         long objId = 1L;
         String action = "read";
 
-        ObjectData objectData = waterEquipmentDao.getObjectByGroup(orgId, groupId, objId, action);
+        Long resultId = waterEquipmentDao.getObjectByGroup(orgId, groupId, objId, action);
 
-        assertTrue(objectData != null);
+        assertTrue(Long.compare(objId, resultId) == 0);
     }
 
     @Test
@@ -343,7 +344,7 @@ public class WaterEquipmentDaoTest extends BaseTestConfig {
 
         count = waterEquipmentDao.removeObjectByOrg(orgId, objId);
 
-        assertEquals(removeCount, count);
+        assertEquals(3, count);
     }
 
     @Test
@@ -362,9 +363,9 @@ public class WaterEquipmentDaoTest extends BaseTestConfig {
         long userId = 1L;
         String action = "read";
 
-        Set<ObjectData> objectDataSet = waterEquipmentDao.getObjectsByUser(userId, action);
+        Set<Long> objectIdSet = waterEquipmentDao.getObjectsByUser(userId, action);
 
-        assertNotNull(objectDataSet);
-        assertTrue(objectDataSet.size() > 0);
+        assertNotNull(objectIdSet);
+        assertTrue(objectIdSet.size() > 0);
     }
 }

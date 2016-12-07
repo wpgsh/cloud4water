@@ -687,7 +687,7 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
                 "and userOrg.userOrgId.user.id = :userId";
 
         final String userGroupHql = "delete from UserGroup userGroup " +
-                "where userGroup.userGroupId.group.organization.id = :orgId " +
+                "where userGroup.userGroupId.group.id in (select group.id from Group group where organization.id = :orgId )" +
                 "and userGroup.userGroupId.user.id = :userId";
         try {
             return entityManager.txExpr(em -> {

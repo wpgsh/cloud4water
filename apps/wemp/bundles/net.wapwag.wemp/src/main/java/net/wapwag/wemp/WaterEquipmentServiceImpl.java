@@ -69,7 +69,7 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
                                 .map(s -> s.split(" "))
                                 .orElse(new String[0])));
                 } else {
-                    return  null;
+                    return null;
                 }
             } catch (WaterEquipmentDaoException e) {
                 return null;

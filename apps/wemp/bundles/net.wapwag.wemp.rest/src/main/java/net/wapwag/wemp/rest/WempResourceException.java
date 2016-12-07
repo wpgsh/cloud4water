@@ -1,25 +1,22 @@
 package net.wapwag.wemp.rest;
 
+import javax.ws.rs.core.Response;
+
 public class WempResourceException extends Exception {
 
 	public WempResourceException() {
-		super();
-		// TODO Auto-generated constructor stub
 	}
 
-	public WempResourceException(String arg0, Throwable arg1) {
-		super(arg0, arg1);
-		// TODO Auto-generated constructor stub
+	public WempResourceException(String msg) {
+		super(msg);
 	}
 
-	public WempResourceException(String arg0) {
-		super(arg0);
-		// TODO Auto-generated constructor stub
+	public WempResourceException(Throwable cause) {
+		super(cause);
 	}
 
-	public WempResourceException(Throwable arg0) {
-		super(arg0);
-		// TODO Auto-generated constructor stub
-	}
+    public WempResourceException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
 
 }
