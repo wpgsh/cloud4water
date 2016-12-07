@@ -1,9 +1,9 @@
 package net.wapwag.wemp.mysql.hibernate;
 
 import net.wapwag.wemp.dao.model.org.Organization;
-import net.wapwag.wemp.dao.model.org.WaterManageAuth;
 import net.wapwag.wemp.dao.model.org.WaterManageCompany;
 import net.wapwag.wemp.dao.model.permission.User;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.persistence.EntityManager;
@@ -16,6 +16,7 @@ import static net.wapwag.wemp.mysql.hibernate.PrepareContext.transactionManager;
  * Created by Administrator on 2016/10/31 0031.
  */
 @SuppressWarnings("Duplicates")
+@Ignore
 public class DataInsertTool {
 
     private static EntityManager em;
