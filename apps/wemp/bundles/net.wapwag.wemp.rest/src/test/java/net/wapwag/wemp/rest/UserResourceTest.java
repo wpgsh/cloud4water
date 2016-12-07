@@ -4,7 +4,6 @@ import com.google.common.collect.Maps;
 import com.google.gson.reflect.TypeToken;
 import net.wapwag.wemp.WaterEquipmentServiceException;
 import net.wapwag.wemp.dao.model.ObjectData;
-import net.wapwag.wemp.model.ObjectView;
 import net.wapwag.wemp.model.ResultView;
 import org.junit.Test;
 
@@ -12,6 +11,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -19,7 +19,8 @@ import java.util.Set;
 import static net.wapwag.wemp.rest.MockData.*;
 import static net.wapwag.wemp.rest.UserResourceMock.mockService;
 import static org.eclipse.jetty.http.HttpStatus.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -62,10 +63,11 @@ public class UserResourceTest extends BaseResourceTest {
 
         Response response = validToken(target(path)).post(entity);
 
-        boolean result = getResult(response, Boolean.class);
+        Type resultType = new TypeToken<Map<String, Boolean>>() {}.getType();
+        Map<String, Boolean> resultMap = getResult(response, resultType);
 
         assertEquals(OK_200, response.getStatus());
-        assertTrue(result);
+        assertEquals(mockMap, resultMap);
     }
 
     @Test
@@ -120,17 +122,18 @@ public class UserResourceTest extends BaseResourceTest {
 
     @Test
     public void testGetObjectsByUser() throws Exception {
-        when(mockService.getObjectsByUser(userId, "read")).thenReturn(new HashSet<>());
+        Set<Long> mockSet = new HashSet<>();
+        Collections.addAll(mockSet, 1L, 2L, 3L, 4L, 5L);
+        when(mockService.getObjectsByUser(userId, "read")).thenReturn(mockSet);
 
         path = String.format("/wemp/user/%s/objects", userId);
 
         Response response = validToken(target(path).queryParam("action", action)).get();
-        Type type = new TypeToken<Set<ObjectView>>(){}.getType();
-        Set<ObjectView> objectViews = getResult(response, type);
+        Type type = new TypeToken<Set<Long>>(){}.getType();
+        Set<Long> objectViews = getResult(response, type);
 
         assertEquals(OK_200, response.getStatus());
-        assertNotNull(objectViews);
-        assertEquals(objectDataList.size(), objectViews.size());
+        assertEquals(mockSet, objectViews);
     }
 
     @Test

@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import static net.wapwag.wemp.rest.MockData.*;
 import static net.wapwag.wemp.rest.OrgGroupResourceMock.mockService;
 import static org.eclipse.jetty.http.HttpStatus.FORBIDDEN_403;
+import static org.eclipse.jetty.http.HttpStatus.NO_CONTENT_204;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.*;
@@ -224,10 +225,8 @@ public class OrgGroupResourceTest extends BaseResourceTest {
 
         path = String.format("/wemp/organization/%s/organizationGroup/%s", orgId, groupId);
         Response response = validToken(target(path)).delete();
-        ResultView resultView = getResult(response, ResultView.class);
 
-        assertNotNull(resultView);
-        assertEquals(removeCount, resultView.count);
+        assertEquals(NO_CONTENT_204, response.getStatus());
     }
 
     @Test
@@ -285,7 +284,7 @@ public class OrgGroupResourceTest extends BaseResourceTest {
 
     @Test
     public void testAddUserByGroup_InvalidToken() throws Exception {
-        path = String.format("/wemp/organization/%s/organizationGroup/%s/user/%s", orgId, groupId, userId);
+        path = String.format("/wemp/organization/%s/organizationGroup/%s/users", orgId, groupId);
 
         Response response = invalidToken(target(path)).post(null);
 
@@ -294,7 +293,7 @@ public class OrgGroupResourceTest extends BaseResourceTest {
 
     @Test
     public void testAddUserByGroup_NotAuthorized() throws Exception {
-        path = String.format("/wemp/organization/%s/organizationGroup/%s/user/%s", invalidId, invalidId, invalidId);
+        path = String.format("/wemp/organization/%s/organizationGroup/%s/users", invalidId, invalidId);
 
         Response response = validToken(target(path)).post(null);
 
@@ -305,8 +304,8 @@ public class OrgGroupResourceTest extends BaseResourceTest {
     public void testAddUserByGroup() throws Exception {
         when(mockService.addUserByGroup(eq(orgId), eq(groupId), any(User.class))).thenReturn(ResultView.newInstance(addCount));
 
-        path = String.format("/wemp/organization/%s/organizationGroup/%s/user/%s", orgId, groupId, user);
-        Response response = validToken(target(path)).post(null);
+        path = String.format("/wemp/organization/%s/organizationGroup/%s/users", orgId, groupId);
+        Response response = validToken(target(path)).post(Entity.entity(user, MediaType.APPLICATION_JSON));
         ResultView resultView = getResult(response, ResultView.class);
 
         assertNotNull(resultView);
@@ -317,8 +316,8 @@ public class OrgGroupResourceTest extends BaseResourceTest {
     public void testAddUserByGroup_Exception() throws Exception {
         when(mockService.addUserByGroup(eq(invalidId), eq(invalidId), any(User.class))).thenThrow(WaterEquipmentServiceException.class);
 
-        path = String.format("/wemp/organization/%s/organizationGroup/%s/user/%s", invalidId, invalidId, user);
-        Response response = validToken(target(path)).post(null);
+        path = String.format("/wemp/organization/%s/organizationGroup/%s/users", invalidId, invalidId);
+        Response response = validToken(target(path)).post(Entity.entity(user, MediaType.APPLICATION_JSON));
 
         assertEquals(FORBIDDEN_403, response.getStatus());
     }
@@ -347,10 +346,8 @@ public class OrgGroupResourceTest extends BaseResourceTest {
 
         path = String.format("/wemp/organization/%s/organizationGroup/%s/user/%s", orgId, groupId, userId);
         Response response = validToken(target(path)).delete();
-        ResultView resultView = getResult(response, ResultView.class);
 
-        assertNotNull(resultView);
-        assertEquals(removeCount, resultView.count);
+        assertEquals(NO_CONTENT_204, response.getStatus());
     }
 
     @Test
@@ -407,20 +404,21 @@ public class OrgGroupResourceTest extends BaseResourceTest {
 
     @Test
     public void testGetObjectByGroupWithAction() throws Exception {
-        Map<String, Boolean> resultMap = Maps.newHashMap();
-        resultMap.put("result", true);
-        when(mockService.getObjectByGroup(orgId, groupId, objId, action)).thenReturn(resultMap);
+        Map<String, Boolean> mockMap = Maps.newHashMap();
+        mockMap.put("result", true);
+        when(mockService.getObjectByGroup(orgId, groupId, objId, action)).thenReturn(mockMap);
 
         path = String.format("/wemp/organization/%s/organizationGroup/%s/checkPermissions", orgId, groupId);
         Response response = validToken(target(path)
                 .queryParam("objId", objId)
                 .queryParam("action", action)).get();
-        ObjectView objectView = getResult(response, ObjectView.class);
 
-        assertNotNull(objectView);
-        assertEquals(objectData.getId(), objectView.id);
-        assertEquals(objectData.getName(), objectView.name);
-        assertEquals(objectData.getType(), objectView.objectType);
+        Type resultType = new TypeToken<Map<String, Boolean>>() {}.getType();
+
+        Map<String, Boolean> resultMap = getResult(response, resultType);
+
+        assertNotNull(resultMap);
+        assertEquals(mockMap, resultMap);
     }
 
     @Test
@@ -549,10 +547,8 @@ public class OrgGroupResourceTest extends BaseResourceTest {
 
         path = String.format("/wemp/organization/%s/organizationUser/%s", orgId, userId);
         Response response = validToken(target(path)).delete();
-        ResultView resultView = getResult(response, ResultView.class);
 
-        assertNotNull(resultView);
-        assertEquals(removeCount, resultView.count);
+        assertEquals(NO_CONTENT_204, response.getStatus());
     }
 
     @Test
@@ -671,10 +667,8 @@ public class OrgGroupResourceTest extends BaseResourceTest {
 
         path = String.format("/wemp/organization/%s/object/%s", orgId, objId);
         Response response = validToken(target(path)).delete();
-        ResultView resultView = getResult(response, ResultView.class);
 
-        assertNotNull(resultView);
-        assertEquals(removeCount, resultView.count);
+        assertEquals(NO_CONTENT_204, response.getStatus());
     }
 
     @Test

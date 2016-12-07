@@ -57,7 +57,7 @@ public class ObjectResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Authorization
     @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
-    public ResultView addObjectByUser(@PathParam("oid") long objId, @PathParam("uid") long userId, @QueryParam("action") String action) throws Exception {
+    public ResultView addObjectByUser(@PathParam("oid") long objId, @PathParam("uid") long userId, String action) throws Exception {
         return waterEquipmentService.addObjectByUser(objId, userId, action);
     }
 

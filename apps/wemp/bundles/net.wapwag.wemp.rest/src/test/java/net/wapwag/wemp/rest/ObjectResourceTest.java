@@ -8,13 +8,15 @@ import net.wapwag.wemp.model.ResultView;
 import net.wapwag.wemp.model.UserView;
 import org.junit.Test;
 
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Map;
 
 import static net.wapwag.wemp.rest.MockData.*;
-import static org.eclipse.jetty.http.HttpStatus.FORBIDDEN_403;
-import static org.eclipse.jetty.http.HttpStatus.OK_200;
+import static org.eclipse.jetty.http.HttpStatus.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -131,12 +133,12 @@ public class ObjectResourceTest extends BaseResourceTest {
         path = String.format("/wemp/object/%s/user/%s", objId, userId);
 
         Response response = validToken(target(path)).get();
+        Type type = new TypeToken<Map<String, String>>(){}.getType();
 
-        ObjectView objectView = getResult(response, ObjectView.class);
+        Map<String, String> resultMap = getResult(response, type);
 
-        assertNotNull(objectView);
-        assertEquals(objectData.getId(), objId);
-        assertEquals(objectData.getName(), objectView.name);
+        assertNotNull(resultMap);
+        assertEquals(action, resultMap.get("result"));
     }
 
     @Test
@@ -161,7 +163,7 @@ public class ObjectResourceTest extends BaseResourceTest {
     public void testAddObjectByUser() throws Exception {
         path = String.format("/wemp/object/%s/user/%s", objId, userId);
 
-        Response response = validToken(target(path)).post(null);
+        Response response = validToken(target(path)).post(Entity.entity(action, MediaType.APPLICATION_JSON));
 
         ResultView resultView = getResult(response, ResultView.class);
 
@@ -194,11 +196,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
         Response response = validToken(target(path).queryParam("action", action)).delete();
 
-        ResultView resultView = getResult(response, ResultView.class);
-
-        assertEquals(OK_200, response.getStatus());
-        assertNotNull(resultView);
-        assertEquals(removeCount, resultView.count);
+        assertEquals(NO_CONTENT_204, response.getStatus());
     }
 
     @Test
@@ -326,11 +324,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
         Response response = validToken(target(path).queryParam("action", action)).delete();
 
-        ResultView resultView = getResult(response, ResultView.class);
-
-        assertEquals(OK_200, response.getStatus());
-        assertNotNull(resultView);
-        assertEquals(removeCount, resultView.count);
+        assertEquals(NO_CONTENT_204, response.getStatus());
     }
 
 }
