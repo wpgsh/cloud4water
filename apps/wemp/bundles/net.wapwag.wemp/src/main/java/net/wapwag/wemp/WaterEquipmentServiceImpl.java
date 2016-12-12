@@ -520,6 +520,7 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
                 resultMap.put("result", waterEquipmentDao.checkPermission(userId, objectData));
                 return resultMap;
             } catch (WaterEquipmentDaoException e) {
+                resultMap.put("result", false);
                 return resultMap;
             }
         }, WaterEquipmentServiceException.class);

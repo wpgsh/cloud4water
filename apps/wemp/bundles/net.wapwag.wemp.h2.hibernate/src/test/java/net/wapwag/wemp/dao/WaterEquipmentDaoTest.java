@@ -265,7 +265,7 @@ public class WaterEquipmentDaoTest extends BaseTestConfig {
     public void testRemoveUserByGroup() throws WaterEquipmentDaoException {
         long groupId = 2L;
         long userId = 1L;
-        long orgId = 5L;
+        long orgId = 6L;
 
         count = waterEquipmentDao.removeUserByGroup(orgId, groupId, userId);
 
@@ -344,7 +344,7 @@ public class WaterEquipmentDaoTest extends BaseTestConfig {
 
         count = waterEquipmentDao.removeObjectByOrg(orgId, objId);
 
-        assertEquals(3, count);
+        assertEquals(removeCount, count);
     }
 
     @Test

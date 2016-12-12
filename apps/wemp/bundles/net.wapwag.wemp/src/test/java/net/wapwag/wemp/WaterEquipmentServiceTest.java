@@ -16,10 +16,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static net.wapwag.wemp.MockData.*;
 import static org.junit.Assert.*;
@@ -543,7 +543,7 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testAddUserByGroup_Exception() throws Exception {
-        when(waterEquipmentDao.addUserByGroup(invalidId, invalidId, invalidId)).thenThrow(WaterEquipmentDaoException.class);
+        when(waterEquipmentDao.addUserByGroup(eq(invalidId), eq(invalidId), any(Long.class))).thenThrow(WaterEquipmentDaoException.class);
 
         ResultView resultView = waterEquipmentService.addUserByGroup(invalidId, invalidId, user);
 
@@ -756,12 +756,13 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testGetObjectsByUser() throws Exception {
-        when(waterEquipmentDao.getObjectsByUser(userId, "read")).thenReturn(new HashSet<>());
+        Set<Long> objIdSet = objectDataList.stream().map(ObjectData::getId).collect(Collectors.toSet());
+        when(waterEquipmentDao.getObjectsByUser(userId, "read")).thenReturn(objIdSet);
 
         Set<Long> objectViews = waterEquipmentService.getObjectsByUser(userId, "read");
 
         assertNotNull(objectViews);
-        assertEquals(objectDataList.size(), objectViews.size());
+        assertEquals(objIdSet, objectViews);
     }
 
     @Test

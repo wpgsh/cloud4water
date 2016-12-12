@@ -22,6 +22,7 @@ import static org.junit.Assert.assertTrue;
  * <p>Use {@link org.junit.Assert} instead of .{@link junit.framework.TestCase} which suggested for the junit4</p>
  * Created by Administrator on 2016/10/31 0031.
  */
+@SuppressWarnings("Duplicates")
 class DataInsert {
 
     private static final long orgId = 4L;
@@ -250,8 +251,12 @@ class DataInsert {
         Query query2 = em.createQuery("update Group g set g.organization.id = :orgId where g.id <= 11")
                 .setParameter("orgId", 5L);
 
+        Query query3 = em.createQuery("update Group g set g.organization.id = :orgId where g.id <= 5")
+                .setParameter("orgId", 6L);
+
         query1.executeUpdate();
         query2.executeUpdate();
+        query3.executeUpdate();
     }
 
     private static void testAddUsersByGroup() {

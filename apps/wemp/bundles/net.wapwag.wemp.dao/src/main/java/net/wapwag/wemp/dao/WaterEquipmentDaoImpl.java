@@ -300,8 +300,7 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
 
                 String hql = "select uo.actionId from UserObject uo " +
                         "where uo.userObjectId.objectData.id = :objId " +
-                        "and uo.userObjectId.user.id = :userId " +
-                        "and uo.actionId = :actionId";
+                        "and uo.userObjectId.user.id = :userId";
 
                 return em.createQuery(hql, String.class)
                         .setParameter("objId", objId)
