@@ -53,7 +53,9 @@ public final class WempUtil {
         try {
             KeyGenerator keyGen;
             keyGen = KeyGenerator.getInstance("AES");
-            keyGen.init(128, new SecureRandom(WEMP_SECRET_KEY_BYTES));
+            SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");
+            secureRandom.setSeed(WEMP_SECRET_KEY_BYTES);
+            keyGen.init(128, secureRandom);
             SecretKey secretKey = keyGen.generateKey();
             SecretKeySpec resultKey = new SecretKeySpec(secretKey.getEncoded(), "AES");
 
