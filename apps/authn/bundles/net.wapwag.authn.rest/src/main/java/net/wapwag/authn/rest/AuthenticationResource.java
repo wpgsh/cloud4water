@@ -38,8 +38,8 @@ public class AuthenticationResource {
 	@Path("/{userId}/public")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Authorization @AnyAuthenticatedUser
-	public UserResponse getPublicUserProfile(@PathParam("userId") String uid) throws Exception {
-		User user = authnService.getUser(Long.valueOf(uid));
+	public UserResponse getPublicUserProfile(@PathParam("userId") long uid) throws Exception {
+		User user = authnService.getUser(uid);
 		UserResponse userResponse = new UserResponse();
 		if (user == null) {
 			return userResponse;
