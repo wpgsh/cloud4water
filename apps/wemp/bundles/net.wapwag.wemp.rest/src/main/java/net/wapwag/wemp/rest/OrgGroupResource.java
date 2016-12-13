@@ -4,7 +4,6 @@ import com.thingswise.appframework.jaxrs.utils.Authorization;
 import com.thingswise.appframework.jaxrs.utils.OAuth2;
 import net.wapwag.wemp.WaterEquipmentService;
 import net.wapwag.wemp.dao.model.ObjectData;
-import net.wapwag.wemp.dao.model.permission.Group;
 import net.wapwag.wemp.dao.model.permission.User;
 import net.wapwag.wemp.model.GroupView;
 import net.wapwag.wemp.model.ObjectView;
@@ -12,6 +11,7 @@ import net.wapwag.wemp.model.ResultView;
 import net.wapwag.wemp.model.UserView;
 import net.wapwag.wemp.rest.authz.FineGrainedAuthorization;
 import net.wapwag.wemp.rest.authz.Permission;
+import net.wapwag.wemp.rest.bindings.GroupRequest;
 import net.wapwag.wemp.rest.oauth2.WempTokenHandler;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -43,8 +43,8 @@ public class OrgGroupResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Authorization
     @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
-    public ResultView addGroupByOrg(@PathParam("oid") long orgId, Group group) throws Exception {
-        return waterEquipmentService.addGroupByOrg(orgId, group);
+    public ResultView addGroupByOrg(@PathParam("oid") long orgId, GroupRequest groupRequest) throws Exception {
+        return waterEquipmentService.addGroupByOrg(orgId, groupRequest.toGroup());
     }
 
     @Path("/organizationGroup/{gid}")
@@ -61,8 +61,8 @@ public class OrgGroupResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Authorization
     @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
-    public ResultView updateGroupByOrg(@PathParam("oid") long orgId, @PathParam("gid") long groupId, Group group) throws Exception {
-        return waterEquipmentService.updateGroupByOrg(orgId, groupId, group);
+    public ResultView updateGroupByOrg(@PathParam("oid") long orgId, @PathParam("gid") long groupId, GroupRequest groupRequest) throws Exception {
+        return waterEquipmentService.updateGroupByOrg(orgId, groupId, groupRequest.toGroup());
     }
 
     @Path("/organizationGroup/{gid}")

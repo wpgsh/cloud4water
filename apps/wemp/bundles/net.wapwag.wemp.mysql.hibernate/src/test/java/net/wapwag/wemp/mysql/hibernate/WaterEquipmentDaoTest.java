@@ -1,5 +1,6 @@
 package net.wapwag.wemp.mysql.hibernate;
 
+import com.google.common.collect.Lists;
 import net.wapwag.wemp.dao.WaterEquipmentDaoException;
 import net.wapwag.wemp.dao.model.ObjectData;
 import net.wapwag.wemp.dao.model.ObjectType;
@@ -118,12 +119,14 @@ public class WaterEquipmentDaoTest extends BaseTestConfig {
 
     @Test
     public void testGetObjectByUser() throws WaterEquipmentDaoException {
+        List<String> mockList = Lists.newArrayList();
+        mockList.add("read");
         long objectId = 1L;
         long userId = 1L;
 
-        String action = waterEquipmentDao.getUserPermissionByObject(objectId, userId);
+        List<String> resultList = waterEquipmentDao.getUserPermissionByObject(objectId, userId);
 
-        assertEquals("read", action);
+        assertEquals(mockList, resultList);
     }
 
     @Test

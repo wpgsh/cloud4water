@@ -23,8 +23,7 @@ import java.util.Set;
 
 import static net.wapwag.wemp.rest.MockData.*;
 import static net.wapwag.wemp.rest.UserResourceMock.mockService;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 /**
@@ -110,10 +109,10 @@ abstract class BaseResourceTest extends JerseyTest {
                                         .map(String::trim).map(s -> s.split(" "))
                                         .orElse(new String[0]))));
 
-        when(mockService.isAuthorized(anyString(), anyString(), anyString())).thenReturn(false);
-        when(mockService.isAuthorized(userId + "", action, objId + "")).thenReturn(true);
-        when(mockService.isAuthorized(userId + "", "write", objId + "")).thenReturn(true);
-        when(mockService.isAuthorized(userId + "", action, exceptionId + "")).thenReturn(true);
+        when(mockService.isAuthorized(anyLong(), anyString(), anyLong())).thenReturn(false);
+        when(mockService.isAuthorized(userId, action, objId)).thenReturn(true);
+        when(mockService.isAuthorized(userId, "write", objId)).thenReturn(true);
+        when(mockService.isAuthorized(userId, action, exceptionId)).thenReturn(true);
 
         WempTokenHandler tokenHandler = new WempTokenHandler();
         tokenHandler.setWaterEquipmentService(mockService);

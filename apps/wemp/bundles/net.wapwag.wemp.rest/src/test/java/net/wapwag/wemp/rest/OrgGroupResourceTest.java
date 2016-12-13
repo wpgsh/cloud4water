@@ -104,7 +104,7 @@ public class OrgGroupResourceTest extends BaseResourceTest {
         when(mockService.addGroupByOrg(anyLong(), any(Group.class))).thenReturn(ResultView.newInstance(addCount));
 
         path = String.format("/wemp/organization/%s/organizationGroups", orgId);
-        Response response = validToken(target(path)).post(Entity.entity(group, MediaType.APPLICATION_JSON));
+        Response response = validToken(target(path)).post(Entity.entity(groupRequest, MediaType.APPLICATION_JSON));
         ResultView resultView = getResult(response, ResultView.class);
 
         assertNotNull(resultView);
@@ -116,7 +116,7 @@ public class OrgGroupResourceTest extends BaseResourceTest {
         when(mockService.addGroupByOrg(eq(invalidId), any(Group.class))).thenThrow(WaterEquipmentServiceException.class);
 
         path = String.format("/wemp/organization/%s/organizationGroups", invalidId);
-        Response response = validToken(target(path)).post(Entity.entity(group, MediaType.APPLICATION_JSON));
+        Response response = validToken(target(path)).post(Entity.entity(groupRequest, MediaType.APPLICATION_JSON));
 
         assertEquals(FORBIDDEN_403, response.getStatus());
     }
@@ -185,7 +185,7 @@ public class OrgGroupResourceTest extends BaseResourceTest {
         when(mockService.updateGroupByOrg(eq(orgId), eq(groupId), any(Group.class))).thenReturn(ResultView.newInstance(updateCount));
 
         path = String.format("/wemp/organization/%s/organizationGroup/%s", orgId, groupId);
-        Response response = validToken(target(path)).put(Entity.entity(group, MediaType.APPLICATION_JSON));
+        Response response = validToken(target(path)).put(Entity.entity(groupRequest, MediaType.APPLICATION_JSON));
         ResultView resultView = getResult(response, ResultView.class);
 
         assertNotNull(resultView);
@@ -197,7 +197,7 @@ public class OrgGroupResourceTest extends BaseResourceTest {
         when(mockService.updateGroupByOrg(eq(invalidId), eq(invalidId), any(Group.class))).thenThrow(WaterEquipmentServiceException.class);
 
         path = String.format("/wemp/organization/%s/organizationGroup/%s", invalidId, invalidId);
-        Response response = validToken(target(path)).put(Entity.entity(group, MediaType.APPLICATION_JSON));
+        Response response = validToken(target(path)).put(Entity.entity(groupRequest, MediaType.APPLICATION_JSON));
 
         assertEquals(FORBIDDEN_403, response.getStatus());
     }

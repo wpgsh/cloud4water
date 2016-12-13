@@ -4,6 +4,7 @@ import net.wapwag.wemp.dao.model.ObjectData;
 import net.wapwag.wemp.dao.model.ObjectType;
 import net.wapwag.wemp.dao.model.org.Organization;
 import net.wapwag.wemp.dao.model.permission.*;
+import net.wapwag.wemp.rest.bindings.GroupRequest;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -23,7 +24,7 @@ class MockData {
     static final long groupId = 1L;
     static final long orgId = 1L;
     static final long invalidId = 0;
-    static final long exceptionId = -1;
+    static final long exceptionId = 100;
 
     static final int count = 5;
     static final int addCount = 1;
@@ -58,6 +59,7 @@ class MockData {
     static final ObjectData objectData = new ObjectData();
 
     static final Group group = new Group();
+    static final GroupRequest groupRequest = new GroupRequest();
     static final Organization org = new Organization();
 
     static final Set<String> scopes = new HashSet<>();
@@ -131,6 +133,8 @@ class MockData {
 
         group.setId(groupId);
         group.setName("groupName0");
+        groupRequest.setId(groupId);
+        groupRequest.setName("groupName0");
 
         org.setId(orgId);
         org.setName("orgName0");

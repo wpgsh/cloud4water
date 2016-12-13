@@ -16,8 +16,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 import static net.wapwag.wemp.rest.MockData.*;
-import static org.eclipse.jetty.http.HttpStatus.FORBIDDEN_403;
-import static org.eclipse.jetty.http.HttpStatus.OK_200;
+import static org.eclipse.jetty.http.HttpStatus.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -36,8 +35,8 @@ public class ObjectResourceTest extends BaseResourceTest {
         Response response = invalidToken(target(path)).get();
 
         assertEquals(FORBIDDEN_403, response.getStatus());
-    }    
-    
+    }
+
     @Test
     public void testGetObject_NotAuthorized() throws WaterEquipmentServiceException {
         path = String.format("/wemp/object/%s", invalidId);
@@ -46,7 +45,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
         assertEquals(FORBIDDEN_403, response.getStatus());
     }
-    
+
     @Test
     public void testGetObject() throws WaterEquipmentServiceException {
         path = String.format("/wemp/object/%s", objId);
@@ -68,7 +67,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
         Response response = validToken(target(path)).get();
 
-        assertEquals(FORBIDDEN_403, response.getStatus());
+        assertEquals(INTERNAL_SERVER_ERROR_500, response.getStatus());
     }
 
     @Test
@@ -104,7 +103,8 @@ public class ObjectResourceTest extends BaseResourceTest {
 
         Response response = validToken(target(path).queryParam("action", action)).get();
 
-        Type listType = new TypeToken<List<UserView>>(){}.getType();
+        Type listType = new TypeToken<List<UserView>>() {
+        }.getType();
         List<UserView> userViewList = getResult(response, listType);
 
         assertNotNull(userViewList);
@@ -136,7 +136,8 @@ public class ObjectResourceTest extends BaseResourceTest {
         path = String.format("/wemp/object/%s/user/%s", objId, userId);
 
         Response response = validToken(target(path)).get();
-        Type type = new TypeToken<List<String>>(){}.getType();
+        Type type = new TypeToken<List<String>>() {
+        }.getType();
 
         List<String> resultList = getResult(response, type);
 
@@ -228,7 +229,8 @@ public class ObjectResourceTest extends BaseResourceTest {
 
         Response response = validToken(target(path).queryParam("action", action)).get();
 
-        Type listType = new TypeToken<List<GroupView>>(){}.getType();
+        Type listType = new TypeToken<List<GroupView>>() {
+        }.getType();
         List<GroupView> groupViews = getResult(response, listType);
 
         assertNotNull(groupViews);
