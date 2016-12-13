@@ -62,11 +62,11 @@ public interface WaterEquipmentService {
 
     List<UserView> getUsersByObject(long objId, String action) throws WaterEquipmentServiceException;
 
-	Map<String, String> getUserPermissionByObject(long objId, long userId) throws WaterEquipmentServiceException;
+	List<String> getUserPermissionByObject(long objId, long userId) throws WaterEquipmentServiceException;
 
 	ResultView addObjectByUser(long objId, long userId, String action) throws WaterEquipmentServiceException;
 
-	ResultView removeObjectByUser(long objId, long userId, String action) throws WaterEquipmentServiceException;
+	String removeObjectByUser(long objId, long userId, String action) throws WaterEquipmentServiceException;
 
 	List<GroupView> getGroupsByObject(long objId, String action) throws WaterEquipmentServiceException;
 
@@ -74,7 +74,7 @@ public interface WaterEquipmentService {
 
 	ResultView addObjectByGroup(long objId, long groupId) throws WaterEquipmentServiceException;
 
-	ResultView removeObjectByGroup(long objId, long groupId, String action) throws WaterEquipmentServiceException;
+	String removeObjectByGroup(long objId, long groupId, String action) throws WaterEquipmentServiceException;
 
 	List<GroupView> getGroupsByOrg(long orgId) throws WaterEquipmentServiceException;
 
@@ -84,13 +84,13 @@ public interface WaterEquipmentService {
 
 	ResultView updateGroupByOrg(long orgId, long groupId, Group group) throws WaterEquipmentServiceException;
 
-	ResultView removeGroupByOrg(long orgId, long groupId) throws WaterEquipmentServiceException;
+	String removeGroupByOrg(long orgId, long groupId) throws WaterEquipmentServiceException;
 
 	List<UserView> getUsersByGroup(long orgId, long groupId) throws WaterEquipmentServiceException;
 
 	ResultView addUserByGroup(long orgId, long groupId, User user) throws WaterEquipmentServiceException;
 
-	ResultView removeUserByGroup(long orgId, long groupId, long userId) throws WaterEquipmentServiceException;
+	String removeUserByGroup(long orgId, long groupId, long userId) throws WaterEquipmentServiceException;
 
 	List<ObjectView> getObjectsByGroup(long orgId, long groupId) throws WaterEquipmentServiceException;
 
@@ -100,13 +100,13 @@ public interface WaterEquipmentService {
 
     ResultView addUserByOrg(long orgId, User user) throws WaterEquipmentServiceException;
 
-	ResultView removeUserByOrg(long orgId, long uid) throws WaterEquipmentServiceException;
+	String removeUserByOrg(long orgId, long uid) throws WaterEquipmentServiceException;
 
     List<ObjectView> getObjectsByOrg(long orgId) throws WaterEquipmentServiceException;
 
     ResultView addObjectByOrg(long orgId, ObjectData objectData) throws WaterEquipmentServiceException;
 
-    ResultView removeObjectByOrg(long orgId, long objId) throws WaterEquipmentServiceException;
+    String removeObjectByOrg(long orgId, long objId) throws WaterEquipmentServiceException;
 
 	Map<String, Boolean> checkPermission(long userId, ObjectData objectData) throws WaterEquipmentServiceException;
 

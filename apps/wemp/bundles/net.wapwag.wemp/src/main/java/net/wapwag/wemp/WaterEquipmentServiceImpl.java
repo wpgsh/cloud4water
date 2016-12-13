@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static net.wapwag.wemp.WempUtil.EMPTY_RETURN;
 import static net.wapwag.wemp.WempUtil.encryptAES;
 
 @Component(scope=ServiceScope.SINGLETON)
@@ -246,16 +247,12 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
     }
 
     @Override
-    public Map<String, String> getUserPermissionByObject(long objId, long userId) throws WaterEquipmentServiceException {
+    public List<String> getUserPermissionByObject(long objId, long userId) throws WaterEquipmentServiceException {
         return waterEquipmentDao.txExpr(() -> {
-            Map<String, String> resultMap = Maps.newHashMap();
             try {
-                String action = waterEquipmentDao.getUserPermissionByObject(objId, userId);
-                resultMap.put("action", action);
-                return resultMap;
+                return waterEquipmentDao.getUserPermissionByObject(objId, userId);
             } catch (WaterEquipmentDaoException e) {
-                resultMap.put("action", "none");
-                return resultMap;
+                return null;
             }
         }, WaterEquipmentServiceException.class);
     }
@@ -272,10 +269,11 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
     }
 
     @Override
-    public ResultView removeObjectByUser(long objId, long userId, String action) throws WaterEquipmentServiceException {
+    public String removeObjectByUser(long objId, long userId, String action) throws WaterEquipmentServiceException {
         return waterEquipmentDao.txExpr(() -> {
             try {
-                return ResultView.newInstance(waterEquipmentDao.removeObjectByUser(objId, userId, action));
+                waterEquipmentDao.removeObjectByUser(objId, userId, action);
+                return EMPTY_RETURN;
             } catch (WaterEquipmentDaoException e) {
                 return null;
             }
@@ -317,10 +315,11 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
     }
 
     @Override
-    public ResultView removeObjectByGroup(long objId, long groupId, String action) throws WaterEquipmentServiceException {
+    public String removeObjectByGroup(long objId, long groupId, String action) throws WaterEquipmentServiceException {
         return waterEquipmentDao.txExpr(() -> {
             try {
-                return ResultView.newInstance(waterEquipmentDao.removeObjectByGroup(objId, groupId, action));
+                waterEquipmentDao.removeObjectByGroup(objId, groupId, action);
+                return EMPTY_RETURN;
             } catch (WaterEquipmentDaoException e) {
                 return null;
             }
@@ -373,10 +372,11 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
     }
 
     @Override
-    public ResultView removeGroupByOrg(long orgId, long groupId) throws WaterEquipmentServiceException {
+    public String removeGroupByOrg(long orgId, long groupId) throws WaterEquipmentServiceException {
         return waterEquipmentDao.txExpr(() -> {
             try {
-                return ResultView.newInstance(waterEquipmentDao.removeGroupByOrg(orgId, groupId));
+                waterEquipmentDao.removeGroupByOrg(orgId, groupId);
+                return EMPTY_RETURN;
             } catch (WaterEquipmentDaoException e) {
                 return null;
             }
@@ -407,10 +407,11 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
     }
 
     @Override
-    public ResultView removeUserByGroup(long orgId, long groupId, long userId) throws WaterEquipmentServiceException {
+    public String removeUserByGroup(long orgId, long groupId, long userId) throws WaterEquipmentServiceException {
         return waterEquipmentDao.txExpr(() -> {
             try {
-                return ResultView.newInstance(waterEquipmentDao.removeUserByGroup(orgId, groupId, userId));
+                waterEquipmentDao.removeUserByGroup(orgId, groupId, userId);
+                return EMPTY_RETURN;
             } catch (WaterEquipmentDaoException e) {
                 return null;
             }
@@ -468,10 +469,11 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
     }
 
     @Override
-    public ResultView removeUserByOrg(long orgId, long uid) throws WaterEquipmentServiceException {
+    public String removeUserByOrg(long orgId, long uid) throws WaterEquipmentServiceException {
         return waterEquipmentDao.txExpr(() -> {
             try {
-                return ResultView.newInstance(waterEquipmentDao.removeUserByOrg(orgId, uid));
+                waterEquipmentDao.removeUserByOrg(orgId, uid);
+                return EMPTY_RETURN;
             } catch (WaterEquipmentDaoException e) {
                 return null;
             }
@@ -502,10 +504,11 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
     }
 
     @Override
-    public ResultView removeObjectByOrg(long orgId, long objId) throws WaterEquipmentServiceException {
+    public String removeObjectByOrg(long orgId, long objId) throws WaterEquipmentServiceException {
         return waterEquipmentDao.txExpr(() -> {
             try {
-                return ResultView.newInstance(waterEquipmentDao.removeObjectByOrg(orgId, objId));
+                waterEquipmentDao.removeObjectByOrg(orgId, objId);
+                return EMPTY_RETURN;
             } catch (WaterEquipmentDaoException e) {
                 return null;
             }

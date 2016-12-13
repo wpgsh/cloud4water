@@ -69,8 +69,8 @@ public class OrgGroupResource {
     @DELETE
     @Authorization
     @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
-    public void removeGroupByOrg(@PathParam("oid") long orgId, @PathParam("gid") long groupId) throws Exception {
-        waterEquipmentService.removeGroupByOrg(orgId, groupId);
+    public String removeGroupByOrg(@PathParam("oid") long orgId, @PathParam("gid") long groupId) throws Exception {
+        return waterEquipmentService.removeGroupByOrg(orgId, groupId);
     }
 
     @Path("/organizationGroup/{gid}/users")
@@ -95,8 +95,8 @@ public class OrgGroupResource {
     @DELETE
     @Authorization
     @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
-    public void removeUserByGroup(@PathParam("oid") long orgId, @PathParam("gid") long groupId, @PathParam("uid") long userId) throws Exception {
-        waterEquipmentService.removeUserByGroup(orgId, groupId, userId);
+    public String removeUserByGroup(@PathParam("oid") long orgId, @PathParam("gid") long groupId, @PathParam("uid") long userId) throws Exception {
+        return waterEquipmentService.removeUserByGroup(orgId, groupId, userId);
     }
 
     @Path("/organizationGroup/{gid}/objects")
@@ -140,8 +140,8 @@ public class OrgGroupResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Authorization
     @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
-    public void removeUserByOrg(@PathParam("oid") long orgId, @PathParam("uid") long uid) throws Exception {
-        waterEquipmentService.removeUserByOrg(orgId, uid);
+    public String removeUserByOrg(@PathParam("oid") long orgId, @PathParam("uid") long uid) throws Exception {
+        return waterEquipmentService.removeUserByOrg(orgId, uid);
     }
 
     @Path("/objects")
@@ -167,8 +167,8 @@ public class OrgGroupResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Authorization
     @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
-    public void removeObjectByOrg(@PathParam("oid") long orgId, @PathParam("objId") long objId) throws Exception {
-        waterEquipmentService.removeObjectByOrg(orgId, objId);
+    public String removeObjectByOrg(@PathParam("oid") long orgId, @PathParam("objId") long objId) throws Exception {
+        return waterEquipmentService.removeObjectByOrg(orgId, objId);
     }
 
 }

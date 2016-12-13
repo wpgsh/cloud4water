@@ -16,7 +16,6 @@ import org.osgi.service.component.annotations.Reference;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
-import java.util.Map;
 
 @Component(service = ObjectResource.class)
 @Path("/wemp/object/{oid}")
@@ -48,7 +47,7 @@ public class ObjectResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Authorization
     @FineGrainedAuthorization(permission = Permission.READ, target = "{oid}")
-    public Map<String, String> getUserPermissionByObject(@PathParam("oid") long objId, @PathParam("uid") long userId) throws Exception {
+    public List<String> getUserPermissionByObject(@PathParam("oid") long objId, @PathParam("uid") long userId) throws Exception {
         return waterEquipmentService.getUserPermissionByObject(objId, userId);
     }
 
@@ -65,8 +64,8 @@ public class ObjectResource {
     @DELETE
     @Authorization
     @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
-    public void removeObjectByUser(@PathParam("oid") long objId, @PathParam("uid") long userId, @QueryParam("action") String action) throws Exception {
-        waterEquipmentService.removeObjectByUser(objId, userId, action);
+    public String removeObjectByUser(@PathParam("oid") long objId, @PathParam("uid") long userId, @QueryParam("action") String action) throws Exception {
+        return waterEquipmentService.removeObjectByUser(objId, userId, action);
     }
 
     @Path("/groups")
@@ -100,8 +99,8 @@ public class ObjectResource {
     @DELETE
     @Authorization
     @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
-    public void removeObjectByGroup(@PathParam("oid") long objId, @PathParam("gid") long gid, @QueryParam("action") String action) throws Exception {
-        waterEquipmentService.removeObjectByGroup(objId, gid, action);
+    public String removeObjectByGroup(@PathParam("oid") long objId, @PathParam("gid") long gid, @QueryParam("action") String action) throws Exception {
+        return waterEquipmentService.removeObjectByGroup(objId, gid, action);
     }
 
 }

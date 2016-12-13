@@ -32,6 +32,8 @@ public final class WempUtil {
     private static byte[] WEMP_SECRET_KEY_BYTES;
     private static final Base64.Encoder base64Encoder = Base64.getEncoder().withoutPadding();
 
+    public static final String EMPTY_RETURN = "";
+
     static {
         try {
             Map<String, String> constantMap = loadProperties(readJVMProperties(WEMP_CONFIG));

@@ -38,7 +38,7 @@ public interface WaterEquipmentDao {
 
     List<User> getUsersByObject(long objId, String action) throws WaterEquipmentDaoException;
 
-	String getUserPermissionByObject(long objId, long userId) throws WaterEquipmentDaoException;
+	List<String> getUserPermissionByObject(long objId, long userId) throws WaterEquipmentDaoException;
 
 	int addObjectByUser(long objId, long userId, String action) throws WaterEquipmentDaoException;
 

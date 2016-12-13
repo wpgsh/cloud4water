@@ -294,7 +294,7 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
     }
 
 	@Override
-	public String getUserPermissionByObject(long objId, long userId) throws WaterEquipmentDaoException {
+	public List<String> getUserPermissionByObject(long objId, long userId) throws WaterEquipmentDaoException {
         try {
             return entityManager.txExpr(em -> {
 
@@ -305,10 +305,7 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
                 return em.createQuery(hql, String.class)
                         .setParameter("objId", objId)
                         .setParameter("userId", userId)
-                        .getResultList()
-                        .stream()
-                        .findFirst()
-                        .orElse(null);
+                        .getResultList();
 
             });
         } catch (Exception e) {

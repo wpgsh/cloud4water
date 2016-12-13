@@ -20,10 +20,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static net.wapwag.wemp.WempUtil.EMPTY_RETURN;
 import static net.wapwag.wemp.rest.MockData.*;
 import static net.wapwag.wemp.rest.OrgGroupResourceMock.mockService;
 import static org.eclipse.jetty.http.HttpStatus.FORBIDDEN_403;
-import static org.eclipse.jetty.http.HttpStatus.NO_CONTENT_204;
+import static org.eclipse.jetty.http.HttpStatus.OK_200;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.*;
@@ -221,12 +222,12 @@ public class OrgGroupResourceTest extends BaseResourceTest {
 
     @Test
     public void removeGroupByOrg() throws Exception {
-        when(mockService.removeGroupByOrg(orgId, groupId)).thenReturn(ResultView.newInstance(removeCount));
+        when(mockService.removeGroupByOrg(orgId, groupId)).thenReturn(EMPTY_RETURN);
 
         path = String.format("/wemp/organization/%s/organizationGroup/%s", orgId, groupId);
         Response response = validToken(target(path)).delete();
 
-        assertEquals(NO_CONTENT_204, response.getStatus());
+        assertEquals(OK_200, response.getStatus());
     }
 
     @Test
@@ -342,12 +343,12 @@ public class OrgGroupResourceTest extends BaseResourceTest {
 
     @Test
     public void testRemoveUserByGroup() throws Exception {
-        when(mockService.removeUserByGroup(orgId, groupId, userId)).thenReturn(ResultView.newInstance(removeCount));
+        when(mockService.removeUserByGroup(orgId, groupId, userId)).thenReturn(EMPTY_RETURN);
 
         path = String.format("/wemp/organization/%s/organizationGroup/%s/user/%s", orgId, groupId, userId);
         Response response = validToken(target(path)).delete();
 
-        assertEquals(NO_CONTENT_204, response.getStatus());
+        assertEquals(OK_200, response.getStatus());
     }
 
     @Test
@@ -543,12 +544,12 @@ public class OrgGroupResourceTest extends BaseResourceTest {
 
     @Test
     public void testRemoveUserByOrg() throws Exception {
-        when(mockService.removeUserByOrg(orgId, userId)).thenReturn(ResultView.newInstance(removeCount));
+        when(mockService.removeUserByOrg(orgId, userId)).thenReturn(EMPTY_RETURN);
 
         path = String.format("/wemp/organization/%s/organizationUser/%s", orgId, userId);
         Response response = validToken(target(path)).delete();
 
-        assertEquals(NO_CONTENT_204, response.getStatus());
+        assertEquals(OK_200, response.getStatus());
     }
 
     @Test
@@ -663,12 +664,12 @@ public class OrgGroupResourceTest extends BaseResourceTest {
 
     @Test
     public void testRemoveObjectByOrg() throws Exception {
-        when(mockService.removeObjectByOrg(orgId, objId)).thenReturn(ResultView.newInstance(removeCount));
+        when(mockService.removeObjectByOrg(orgId, objId)).thenReturn(EMPTY_RETURN);
 
         path = String.format("/wemp/organization/%s/object/%s", orgId, objId);
         Response response = validToken(target(path)).delete();
 
-        assertEquals(NO_CONTENT_204, response.getStatus());
+        assertEquals(OK_200, response.getStatus());
     }
 
     @Test

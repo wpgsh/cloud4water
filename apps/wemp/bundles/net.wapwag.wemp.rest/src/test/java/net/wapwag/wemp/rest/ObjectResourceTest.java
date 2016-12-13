@@ -1,5 +1,6 @@
 package net.wapwag.wemp.rest;
 
+import com.google.common.collect.Lists;
 import com.google.gson.reflect.TypeToken;
 import net.wapwag.wemp.WaterEquipmentServiceException;
 import net.wapwag.wemp.model.GroupView;
@@ -13,10 +14,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.lang.reflect.Type;
 import java.util.List;
-import java.util.Map;
 
 import static net.wapwag.wemp.rest.MockData.*;
-import static org.eclipse.jetty.http.HttpStatus.*;
+import static org.eclipse.jetty.http.HttpStatus.FORBIDDEN_403;
+import static org.eclipse.jetty.http.HttpStatus.OK_200;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -130,15 +131,17 @@ public class ObjectResourceTest extends BaseResourceTest {
 
     @Test
     public void testGetObjectByUser() throws Exception {
+        List<String> mockList = Lists.newArrayList();
+        mockList.add(action);
         path = String.format("/wemp/object/%s/user/%s", objId, userId);
 
         Response response = validToken(target(path)).get();
-        Type type = new TypeToken<Map<String, String>>(){}.getType();
+        Type type = new TypeToken<List<String>>(){}.getType();
 
-        Map<String, String> resultMap = getResult(response, type);
+        List<String> resultList = getResult(response, type);
 
-        assertNotNull(resultMap);
-        assertEquals(action, resultMap.get("result"));
+        assertNotNull(resultList);
+        assertEquals(mockList, resultList);
     }
 
     @Test
@@ -196,7 +199,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
         Response response = validToken(target(path).queryParam("action", action)).delete();
 
-        assertEquals(NO_CONTENT_204, response.getStatus());
+        assertEquals(OK_200, response.getStatus());
     }
 
     @Test
@@ -324,7 +327,7 @@ public class ObjectResourceTest extends BaseResourceTest {
 
         Response response = validToken(target(path).queryParam("action", action)).delete();
 
-        assertEquals(NO_CONTENT_204, response.getStatus());
+        assertEquals(OK_200, response.getStatus());
     }
 
 }

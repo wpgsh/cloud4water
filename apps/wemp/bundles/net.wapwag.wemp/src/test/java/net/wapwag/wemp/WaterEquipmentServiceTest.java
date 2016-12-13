@@ -16,12 +16,14 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static net.wapwag.wemp.MockData.*;
+import static net.wapwag.wemp.WempUtil.EMPTY_RETURN;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -281,22 +283,23 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testGetObjectByUser() throws Exception {
-        when(waterEquipmentDao.getUserPermissionByObject(objId, userId)).thenReturn(action);
+        List<String> mockList = new ArrayList<>();
+        mockList.add(action);
+        when(waterEquipmentDao.getUserPermissionByObject(objId, userId)).thenReturn(mockList);
 
-        Map<String, String> resultMap = waterEquipmentService.getUserPermissionByObject(objId, userId);
+        List<String> resultList = waterEquipmentService.getUserPermissionByObject(objId, userId);
 
-        assertNotNull(resultMap);
-        assertEquals(action, resultMap.get("action"));
+        assertNotNull(resultList);
+        assertEquals(mockList, resultList);
     }
 
     @Test
     public void testGetObjectByUser_Exception() throws Exception {
         when(waterEquipmentDao.getUserPermissionByObject(invalidId, invalidId)).thenThrow(WaterEquipmentDaoException.class);
 
-        Map<String, String> resultMap = waterEquipmentService.getUserPermissionByObject(invalidId, invalidId);
+        List<String> resultList = waterEquipmentService.getUserPermissionByObject(invalidId, invalidId);
 
-        assertNotNull(resultMap);
-        assertEquals("none", resultMap.get("action"));
+        assertNull(resultList);
     }
 
     @Test
@@ -322,19 +325,18 @@ public class WaterEquipmentServiceTest {
     public void testRemoveObjectByUser() throws Exception {
         when(waterEquipmentDao.removeObjectByUser(objId, userId, action)).thenReturn(removeCount);
 
-        ResultView resultView = waterEquipmentService.removeObjectByUser(objId, userId, action);
+        String result = waterEquipmentService.removeObjectByUser(objId, userId, action);
 
-        assertNotNull(resultView);
-        assertEquals(removeCount, resultView.count);
+        assertEquals(EMPTY_RETURN, result);
     }
 
     @Test
     public void testRemoveObjectByUser_Exception() throws Exception {
         when(waterEquipmentDao.removeObjectByUser(invalidId, invalidId, action)).thenThrow(WaterEquipmentDaoException.class);
 
-        ResultView resultView = waterEquipmentService.removeObjectByUser(invalidId, invalidId, action);
+        String result = waterEquipmentService.removeObjectByUser(invalidId, invalidId, action);
 
-        assertNull(resultView);
+        assertNull(result);
     }
 
     @Test
@@ -401,19 +403,19 @@ public class WaterEquipmentServiceTest {
         when(waterEquipmentDao.removeObjectByGroup(objId, groupId, action)).thenReturn(removeCount);
 
 
-        ResultView resultView = waterEquipmentService.removeObjectByGroup(objId, groupId, action);
+        String result = waterEquipmentService.removeObjectByGroup(objId, groupId, action);
 
-        assertNotNull(resultView);
-        assertEquals(removeCount, resultView.count);
+        assertNotNull(result);
+        assertEquals(EMPTY_RETURN, result);
     }
 
     @Test
     public void testRemoveObjectByGroup_Exception() throws Exception {
         when(waterEquipmentDao.removeObjectByGroup(invalidId, invalidId, action)).thenThrow(WaterEquipmentDaoException.class);
 
-        ResultView resultView = waterEquipmentService.removeObjectByGroup(invalidId, invalidId, action);
-        
-        assertNull(resultView);
+        String result = waterEquipmentService.removeObjectByGroup(invalidId, invalidId, action);
+
+        assertNull(result);
     }
 
     @Test
@@ -497,19 +499,19 @@ public class WaterEquipmentServiceTest {
     public void removeGroupByOrg() throws Exception {
         when(waterEquipmentDao.removeGroupByOrg(orgId, groupId)).thenReturn(removeCount);
 
-        ResultView resultView = waterEquipmentService.removeGroupByOrg(orgId, groupId);
+        String result = waterEquipmentService.removeGroupByOrg(orgId, groupId);
 
-        assertNotNull(resultView);
-        assertEquals(removeCount, resultView.count);
+        assertNotNull(result);
+        assertEquals(EMPTY_RETURN, result);
     }
 
     @Test
     public void removeGroupByOrg_Exception() throws Exception {
         when(waterEquipmentDao.removeGroupByOrg(invalidId, invalidId)).thenThrow(WaterEquipmentDaoException.class);
 
-        ResultView resultView = waterEquipmentService.removeGroupByOrg(invalidId, invalidId);
+        String result = waterEquipmentService.removeGroupByOrg(invalidId, invalidId);
 
-        assertNull(resultView);
+        assertNull(result);
     }
 
     @Test
@@ -554,19 +556,19 @@ public class WaterEquipmentServiceTest {
     public void testRemoveUserByGroup() throws Exception {
         when(waterEquipmentDao.removeUserByGroup(orgId, groupId, userId)).thenReturn(removeCount);
 
-        ResultView resultView = waterEquipmentService.removeUserByGroup(orgId, groupId, userId);
+        String result = waterEquipmentService.removeUserByGroup(orgId, groupId, userId);
 
-        assertNotNull(resultView);
-        assertEquals(removeCount, resultView.count);
+        assertNotNull(result);
+        assertEquals(EMPTY_RETURN, result);
     }
 
     @Test
     public void testRemoveUserByGroup_Exception() throws Exception {
         when(waterEquipmentDao.removeUserByGroup(invalidId, invalidId, invalidId)).thenThrow(WaterEquipmentDaoException.class);
 
-        ResultView resultView = waterEquipmentService.removeUserByGroup(invalidId, invalidId, invalidId);
+        String result = waterEquipmentService.removeUserByGroup(invalidId, invalidId, invalidId);
 
-        assertNull(resultView);
+        assertNull(result);
     }
 
     @Test
@@ -652,19 +654,19 @@ public class WaterEquipmentServiceTest {
     public void testRemoveUserByOrg() throws Exception {
         when(waterEquipmentDao.removeUserByOrg(orgId, userId)).thenReturn(removeCount);
 
-        ResultView resultView = waterEquipmentService.removeUserByOrg(orgId, userId);
+        String result = waterEquipmentService.removeUserByOrg(orgId, userId);
 
-        assertNotNull(resultView);
-        assertEquals(addCount, resultView.count);
+        assertNotNull(result);
+        assertEquals(EMPTY_RETURN, result);
     }
 
     @Test
     public void testRemoveUserByOrg_Exception() throws Exception {
         when(waterEquipmentDao.removeUserByOrg(invalidId, invalidId)).thenThrow(WaterEquipmentDaoException.class);
 
-        ResultView resultView = waterEquipmentService.removeUserByOrg(invalidId, invalidId);
+        String result = waterEquipmentService.removeUserByOrg(invalidId, invalidId);
 
-        assertNull(resultView);
+        assertNull(result);
     }
 
     @Test
@@ -709,19 +711,19 @@ public class WaterEquipmentServiceTest {
     public void testRemoveObjectByOrg() throws Exception {
         when(waterEquipmentDao.removeObjectByOrg(orgId, objId)).thenReturn(removeCount);
 
-        ResultView resultView = waterEquipmentService.removeObjectByOrg(orgId, objId);
+        String result = waterEquipmentService.removeObjectByOrg(orgId, objId);
 
-        assertNotNull(resultView);
-        assertEquals(removeCount, resultView.count);
+        assertNotNull(result);
+        assertEquals(EMPTY_RETURN, result);
     }
 
     @Test
     public void testRemoveObjectByOrg_Exception() throws Exception {
         when(waterEquipmentDao.removeObjectByOrg(invalidId, invalidId)).thenThrow(WaterEquipmentDaoException.class);
 
-        ResultView resultView = waterEquipmentService.removeObjectByOrg(invalidId, invalidId);
+        String result = waterEquipmentService.removeObjectByOrg(invalidId, invalidId);
 
-        assertNull(resultView);
+        assertNull(result);
     }
 
     @Test
