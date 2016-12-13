@@ -28,7 +28,7 @@ public class ForgetPassWDServletTest extends BaseServletTest{
 
     private static final int acceptQueueSize = 1;
 
-    private static final String FORGETPWD_CONTEXT_PATH = "http://localhost:" + port + "/authn/password_reset?email=328454552@qq.com";
+    private static final String FORGETPWD_CONTEXT_PATH = "http://localhost:" + port + "/authn/password_reset?email=gongll_wpg@sina.com";
     
     private static final String FORGETPWD_CONTEXT_PATH_EMAIL = "http://localhost:" + port + "/authn/password_reset?email=jiangzehu@163.com";
     
