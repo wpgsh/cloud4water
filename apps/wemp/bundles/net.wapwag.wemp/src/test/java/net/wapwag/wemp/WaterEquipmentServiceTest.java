@@ -55,7 +55,7 @@ public class WaterEquipmentServiceTest {
     public void testIsAuthorized() throws Exception {
         when(waterEquipmentDao.isAuthorized(userId, action, objId)).thenReturn(true);
 
-        boolean isAuthorized = waterEquipmentService.isAuthorized(userId + "", action, objId + "");
+        boolean isAuthorized = waterEquipmentService.isAuthorized(userId, action, objId);
 
         assertEquals(true, isAuthorized);
     }
@@ -64,7 +64,7 @@ public class WaterEquipmentServiceTest {
     public void testIsAuthorized_UnAuthorize() throws Exception {
         when(waterEquipmentDao.isAuthorized(userId, "write", objId)).thenReturn(false);
 
-        boolean isAuthorized = waterEquipmentService.isAuthorized(userId + "", "write", objId + "");
+        boolean isAuthorized = waterEquipmentService.isAuthorized(userId, "write", objId);
 
         assertEquals(false, isAuthorized);
     }
@@ -73,7 +73,7 @@ public class WaterEquipmentServiceTest {
     public void testIsAuthorized_Exception() throws Exception {
         when(waterEquipmentDao.isAuthorized(invalidId, invalidString, invalidId)).thenThrow(WaterEquipmentDaoException.class);
 
-        boolean isAuthorized = waterEquipmentService.isAuthorized(invalidId + "", invalidString, invalidId + "");
+        boolean isAuthorized = waterEquipmentService.isAuthorized(invalidId, invalidString, invalidId);
 
         assertEquals(false, isAuthorized);
     }

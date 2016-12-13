@@ -90,7 +90,18 @@ public class FineGrainedAuthorizationScheme implements AuthorizationScheme {
 		
 		// Check that user has required permission for the given target
 		try {
-			if (!waterEquipmentService.isAuthorized(userPrincipal.getName(), config.permission(), target)) {
+			long userId = Long.valueOf(userPrincipal.getName());
+			long targetId = Long.valueOf(target);
+
+			if (!(userId > 0 && targetId > 0)) {
+                throw new AuthorizationException(
+                        Response.status(Response.Status.FORBIDDEN).
+                                type(MediaType.APPLICATION_JSON).
+                                entity(ErrorResponse.newErrorResponse().
+                                        setErrorMessage("Illegal arguments").build()).build());
+            }
+
+			if (!waterEquipmentService.isAuthorized(userId, config.permission(), targetId)) {
 				throw new AuthorizationException(
 						Response.status(Response.Status.FORBIDDEN).
 							type(MediaType.APPLICATION_JSON).

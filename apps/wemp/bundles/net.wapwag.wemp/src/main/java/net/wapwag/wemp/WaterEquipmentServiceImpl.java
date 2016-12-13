@@ -38,10 +38,7 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
     }
 
 	@Override
-	public boolean isAuthorized(String userName, String action, String objId) throws WaterEquipmentServiceException {
-        long userId = Long.valueOf(userName);
-        long targetId = Long.valueOf(objId);
-
+	public boolean isAuthorized(long userId, String action, long targetId) throws WaterEquipmentServiceException {
         return waterEquipmentDao.txExpr(() -> {
             try {
                 return waterEquipmentDao.isAuthorized(userId, action, targetId);

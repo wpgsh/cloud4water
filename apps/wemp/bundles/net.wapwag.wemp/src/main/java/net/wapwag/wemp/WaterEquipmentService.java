@@ -21,12 +21,12 @@ public interface WaterEquipmentService {
 	 * Check if the given user has the provided permission for the
 	 * specified target.
 	 * 
-	 * @param user
+	 * @param userId
 	 * @param permission
-	 * @param target
+	 * @param targetId
 	 * @return
 	 */
-	boolean isAuthorized(String user, String permission, String target) throws WaterEquipmentServiceException;
+	boolean isAuthorized(long userId, String permission, long targetId) throws WaterEquipmentServiceException;
 
 	/**
 	 * Lookup access token by a handle
