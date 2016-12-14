@@ -19,6 +19,7 @@ public class MockUserInfoServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         AuthnUser authnUser = new AuthnUser();
         authnUser.setId(1L);
+        authnUser.setSub("wemp");
         authnUser.setEnabled("1");
         authnUser.setName("test1");
         authnUser.setUsername("test1");

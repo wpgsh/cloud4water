@@ -690,9 +690,9 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testAddObjectByOrg() throws Exception {
-        when(waterEquipmentDao.addObjectByOrg(orgId, objectData)).thenReturn(addCount);
+        when(waterEquipmentDao.addObjectByOrg(orgId, objId)).thenReturn(addCount);
 
-        ResultView resultView = waterEquipmentService.addObjectByOrg(orgId, objectData);
+        ResultView resultView = waterEquipmentService.addObjectByOrg(orgId, objId);
 
         assertNotNull(resultView);
         assertEquals(addCount, resultView.count);
@@ -700,9 +700,9 @@ public class WaterEquipmentServiceTest {
 
     @Test
     public void testAddObjectByOrg_Exception() throws Exception {
-        when(waterEquipmentDao.addObjectByOrg(eq(invalidId), any(ObjectData.class))).thenThrow(WaterEquipmentDaoException.class);
+        when(waterEquipmentDao.addObjectByOrg(invalidId, invalidId)).thenThrow(WaterEquipmentDaoException.class);
 
-        ResultView resultView = waterEquipmentService.addObjectByOrg(invalidId, objectData);
+        ResultView resultView = waterEquipmentService.addObjectByOrg(invalidId, invalidId);
 
         assertNull(resultView);
     }

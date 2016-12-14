@@ -201,7 +201,7 @@ public abstract class BaseServletTest {
         StringBuffer contentBody = new StringBuffer("--" + BOUNDARY);  
         String endBoundary = "\r\n--" + boundary + "--\r\n";  
         OutputStream out = connection.getOutputStream();  
-        for (FormFieldKeyValuePair ffkvp : generalFormFields)  
+        for (FormFieldKeyValuePair ffkvp : generalFormFields)
         {  
             contentBody.append("\r\n")  
             .append("Content-Disposition: form-data; name=\"")  

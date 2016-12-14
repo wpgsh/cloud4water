@@ -20,7 +20,7 @@ import java.util.*;
 @Component(scope=ServiceScope.SINGLETON)
 public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
 
-	private static Logger logger = LoggerFactory.getLogger(WaterEquipmentDaoImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(WaterEquipmentDaoImpl.class);
 
 	@Reference(target = "(osgi.name=waterequipment)")
 	protected TxAwareEntityManager entityManager;
@@ -676,6 +676,33 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
         }
 	}
 
+    @Override
+    public int removeUsersByOrg(long orgId) throws WaterEquipmentDaoException {
+        final String userOrgHql = "delete from UserOrg userOrg " +
+                "where userOrg.userOrgId.organization.id = :orgId";
+
+        final String userGroupHql = "delete from UserGroup userGroup " +
+                "where userGroup.userGroupId.group.id in " +
+                "(select group.id from Group group where organization.id = :orgId)";
+        try {
+            return entityManager.txExpr(em -> {
+                int removeCount = 0;
+
+                removeCount += em.createQuery(userOrgHql)
+                        .setParameter("orgId", orgId)
+                        .executeUpdate();
+
+                removeCount += em.createQuery(userGroupHql)
+                        .setParameter("orgId", orgId)
+                        .executeUpdate();
+
+                return removeCount;
+            });
+        } catch (Exception e) {
+            throw new WaterEquipmentDaoException("can't remove users by org", e);
+        }
+    }
+
 	@Override
 	public int removeUserByOrg(long orgId, long uid) throws WaterEquipmentDaoException {
         final String userOrgHql = "delete from UserOrg userOrg " +
@@ -717,17 +744,18 @@ public class WaterEquipmentDaoImpl implements WaterEquipmentDao {
 	}
 
 	@Override
-	public int addObjectByOrg(long orgId, ObjectData objectData) throws WaterEquipmentDaoException {
+	public int addObjectByOrg(long orgId, long objId) throws WaterEquipmentDaoException {
         try {
             return entityManager.txExpr(em -> {
                 Organization organization = new Organization();
                 organization.setId(orgId);
 
-                em.persist(objectData);
+                ObjectData objectData = new ObjectData();
+                objectData.setId(objId);
 
                 OrgObject orgObject = new OrgObject();
-
                 orgObject.setOrgObjectId(new OrgObjectId(organization, objectData));
+
                 em.persist(orgObject);
 
                 return 1;

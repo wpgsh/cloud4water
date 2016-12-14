@@ -1,10 +1,13 @@
 package net.wapwag.authn.model;
 
+import net.wapwag.authn.dao.model.RegisteredClient;
 import net.wapwag.authn.dao.model.User;
 
 public class UserView {
 
     public final long id;
+
+    public final String sub;
 
     public final String username;
 
@@ -24,7 +27,8 @@ public class UserView {
 
     public final String email;
 
-    private UserView(User user) {
+    private UserView(User user, RegisteredClient client) {
+        this.sub = client.getClientId();
         this.id = user.getId();
         this.username = user.getUsername();
         this.homepage = user.getHomepage();
@@ -38,8 +42,8 @@ public class UserView {
     }
 
 
-    public static UserView newInstance(User user) {
-		return new UserView(user);
+    public static UserView newInstance(User user, RegisteredClient client) {
+		return new UserView(user, client);
 	}
 
 }

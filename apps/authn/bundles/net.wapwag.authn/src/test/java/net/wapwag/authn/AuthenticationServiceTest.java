@@ -1,22 +1,13 @@
 package net.wapwag.authn;
 
-import static net.wapwag.authn.MockData.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-
-import static org.mockito.Mockito.eq;
-
+import net.wapwag.authn.Ids.UserId;
+import net.wapwag.authn.dao.UserDao;
+import net.wapwag.authn.dao.UserDaoException;
+import net.wapwag.authn.dao.model.AccessToken;
+import net.wapwag.authn.dao.model.Image;
+import net.wapwag.authn.dao.model.RegisteredClient;
+import net.wapwag.authn.dao.model.User;
+import net.wapwag.authn.model.*;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.junit.Assert;
 import org.junit.Before;
@@ -26,19 +17,17 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import net.wapwag.authn.Ids.UserId;
-import net.wapwag.authn.dao.UserDao;
-import net.wapwag.authn.dao.UserDaoException;
-import net.wapwag.authn.dao.model.AccessToken;
-import net.wapwag.authn.dao.model.Image;
-import net.wapwag.authn.dao.model.RegisteredClient;
-import net.wapwag.authn.dao.model.User;
-import net.wapwag.authn.model.AccessTokenMapper;
-import net.wapwag.authn.model.ImageResponse;
-import net.wapwag.authn.model.UserMsgResponse;
-import net.wapwag.authn.model.UserProfile;
-import net.wapwag.authn.model.UserView;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
+import static net.wapwag.authn.MockData.*;
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
+
+@SuppressWarnings("Duplicates")
 @RunWith(MockitoJUnitRunner.class)
 public class AuthenticationServiceTest {
 
@@ -163,22 +152,21 @@ public class AuthenticationServiceTest {
     
     @Test
     public void testGetUserInfo() throws Exception{
-    	when(userDao.getUserByAccessToken(handle)).thenReturn(user);
+    	when(userDao.lookupAccessToken(handle)).thenReturn(accessToken);
     	UserView userView = authenticationServiceImpl.getUserInfo(handle);
     	assertNotNull(userView);
     }
     
     @Test
     public void testGetUserInfo_null() throws Exception{
-//    	when(userDao.getUserByAccessToken(handle_null)).thenReturn(user);
     	UserView userView = authenticationServiceImpl.getUserInfo(handle_null);
     	assertNull(userView);
     }
     
     @Test(expected = OAuthProblemException.class)
     public void testGetUserInfo_exception() throws Exception{
-    	when(userDao.getUserByAccessToken(handle)).thenThrow(UserDaoException.class);
-    	UserView userView = authenticationServiceImpl.getUserInfo(handle);
+    	when(userDao.lookupAccessToken(handle)).thenThrow(UserDaoException.class);
+    	authenticationServiceImpl.getUserInfo(handle);
     }
     
     @Test

@@ -71,7 +71,7 @@ public class WempReturnServlet extends HttpServlet {
 
                         AuthnUser authnUser = getUserInfo(token, authnUserInfoPath);
 
-                        if (authnUser != null) {
+                        if (authnUser != null && WEMP_ID.value().equals(authnUser.getSub())) {
 
                             session.setAttribute("authnUser", authnUser);
                             session.setAttribute("userId", authnUser.getId());

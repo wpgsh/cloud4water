@@ -76,11 +76,13 @@ public interface WaterEquipmentDao {
 
 	int addUserByOrg(long orgId, User user) throws WaterEquipmentDaoException;
 
+	int removeUsersByOrg(long orgId) throws WaterEquipmentDaoException;
+
 	int removeUserByOrg(long orgId, long uid) throws WaterEquipmentDaoException;
 
 	List<ObjectData> getObjectsByOrg(long orgId) throws WaterEquipmentDaoException;
 
-	int addObjectByOrg(long orgId, ObjectData objectData) throws WaterEquipmentDaoException;
+	int addObjectByOrg(long orgId, long objId) throws WaterEquipmentDaoException;
 
 	int removeObjectByOrg(long orgId, long objId) throws WaterEquipmentDaoException;
 

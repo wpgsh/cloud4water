@@ -3,6 +3,7 @@ package net.wapwag.authn.ui;
 import com.google.gson.reflect.TypeToken;
 import net.wapwag.authn.AuthenticationServiceImpl;
 import net.wapwag.authn.dao.UserDao;
+import net.wapwag.authn.dao.model.RegisteredClient;
 import net.wapwag.authn.dao.model.User;
 import net.wapwag.authn.model.UserView;
 import net.wapwag.authn.util.OSGIUtil;
@@ -41,7 +42,10 @@ public class UserInfoServletTest extends BaseServletTest {
         user.setEmail("jiangzehu@163.com");
         user.setHomepage("http://www.baidu.com");
         user.setPhone1("15850817392");
-        userView = UserView.newInstance(user);
+
+        RegisteredClient client = new RegisteredClient();
+        client.setId(1L);
+        userView = UserView.newInstance(user, client);
     }
 
     private  AuthenticationServiceImpl authnService = mock(AuthenticationServiceImpl.class);

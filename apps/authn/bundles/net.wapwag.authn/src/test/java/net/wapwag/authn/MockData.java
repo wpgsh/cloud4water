@@ -60,7 +60,7 @@ class MockData {
     static final RegisteredClient nonWPGclientWithNonAuthzedScope = new RegisteredClient();
 	static final AccessTokenId accessTokenId = new AccessTokenId(user, client);
 	
-	static final UserView userView = UserView.newInstance(user);
+	static final UserView userView = UserView.newInstance(user, client);
 	
 	static final AccessToken accessToken_nonWPGclientWithNoScope = new AccessToken();
     static final AccessToken accessToken_nonWPGclientWithAuthzedScope = new AccessToken();
@@ -114,7 +114,7 @@ class MockData {
         wpgClient.setClientId(clientIdentity);
         wpgClient.setClientVendor("wapwag");
         
-		client.setId(3l);
+		client.setId(3L);
         client.setClientId(clientIdentity);
         client.setClientSecret(clientSecret);
 		

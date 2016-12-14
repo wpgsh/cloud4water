@@ -3,7 +3,6 @@ package net.wapwag.wemp.rest;
 import com.google.common.collect.Maps;
 import com.google.gson.reflect.TypeToken;
 import net.wapwag.wemp.WaterEquipmentServiceException;
-import net.wapwag.wemp.dao.model.ObjectData;
 import net.wapwag.wemp.dao.model.permission.Group;
 import net.wapwag.wemp.dao.model.permission.User;
 import net.wapwag.wemp.model.GroupView;
@@ -624,10 +623,10 @@ public class OrgGroupResourceTest extends BaseResourceTest {
 
     @Test
     public void testAddObjectByOrg() throws Exception {
-        when(mockService.addObjectByOrg(eq(orgId), any(ObjectData.class))).thenReturn(ResultView.newInstance(addCount));
+        when(mockService.addObjectByOrg(orgId, objId)).thenReturn(ResultView.newInstance(addCount));
 
         path = String.format("/wemp/organization/%s/objects", orgId);
-        Response response = validToken(target(path)).post(Entity.entity(objectData, MediaType.APPLICATION_JSON));
+        Response response = validToken(target(path)).post(Entity.entity(objId, MediaType.APPLICATION_JSON));
         ResultView resultView = getResult(response, ResultView.class);
 
         assertNotNull(resultView);
@@ -636,10 +635,10 @@ public class OrgGroupResourceTest extends BaseResourceTest {
 
     @Test
     public void testAddObjectByOrg_Exception() throws Exception {
-        when(mockService.addObjectByOrg(eq(invalidId), any(ObjectData.class))).thenThrow(WaterEquipmentServiceException.class);
+        when(mockService.addObjectByOrg(invalidId, invalidId)).thenThrow(WaterEquipmentServiceException.class);
 
         path = String.format("/wemp/organization/%s/objects", invalidId);
-        Response response = validToken(target(path)).post(Entity.entity(objectData, MediaType.APPLICATION_JSON));
+        Response response = validToken(target(path)).post(Entity.entity(invalidId, MediaType.APPLICATION_JSON));
 
         assertEquals(FORBIDDEN_403, response.getStatus());
     }

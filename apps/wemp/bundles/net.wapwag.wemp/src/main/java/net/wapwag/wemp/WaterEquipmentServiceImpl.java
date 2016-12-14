@@ -466,6 +466,18 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
     }
 
     @Override
+    public String removeUsersByOrg(long orgId) throws WaterEquipmentServiceException {
+        return waterEquipmentDao.txExpr(() -> {
+            try {
+                waterEquipmentDao.removeUsersByOrg(orgId);
+                return EMPTY_RETURN;
+            } catch (WaterEquipmentDaoException e) {
+                return null;
+            }
+        }, WaterEquipmentServiceException.class);
+    }
+
+    @Override
     public String removeUserByOrg(long orgId, long uid) throws WaterEquipmentServiceException {
         return waterEquipmentDao.txExpr(() -> {
             try {
@@ -490,10 +502,10 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
     }
 
     @Override
-    public ResultView addObjectByOrg(long orgId, ObjectData objectData) throws WaterEquipmentServiceException {
+    public ResultView addObjectByOrg(long orgId, long objId) throws WaterEquipmentServiceException {
         return waterEquipmentDao.txExpr(() -> {
             try {
-                return ResultView.newInstance(waterEquipmentDao.addObjectByOrg(orgId, objectData));
+                return ResultView.newInstance(waterEquipmentDao.addObjectByOrg(orgId, objId));
             } catch (WaterEquipmentDaoException e) {
                 return null;
             }

@@ -1,20 +1,13 @@
 package net.wapwag.authn.rest;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
-import static net.wapwag.authn.rest.MockData.*;
-import static net.wapwag.authn.rest.AuthenticationResourceMock.*;
-
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.container.DynamicFeature;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.Response;
-
+import com.google.common.collect.ImmutableSet;
+import com.google.gson.Gson;
+import com.thingswise.appframework.jaxrs.utils.*;
+import net.wapwag.authn.model.AccessTokenMapper;
+import net.wapwag.authn.model.UserView;
+import net.wapwag.authn.rest.authz.AnyAuthenticatedUserScheme;
+import net.wapwag.authn.rest.authz.AuthorizationOnlyUserIdScheme;
+import net.wapwag.authn.rest.oauth2.UsersTokenHandler;
 import org.apache.oltu.oauth2.common.OAuth;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -22,24 +15,20 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableSet;
-import com.google.gson.Gson;
-import com.thingswise.appframework.jaxrs.utils.AnnotationProcessor;
-import com.thingswise.appframework.jaxrs.utils.AppframeworkDynamicFeature;
-import com.thingswise.appframework.jaxrs.utils.AuthorizationAnnotationProcessor;
-import com.thingswise.appframework.jaxrs.utils.AuthorizationScheme;
-import com.thingswise.appframework.jaxrs.utils.AuthorizationSchemes;
-import com.thingswise.appframework.jaxrs.utils.OAuth2AnnotationProcessor;
-import com.thingswise.appframework.jaxrs.utils.TokenHandler;
-import com.thingswise.appframework.jaxrs.utils.TokenHandlers;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.container.DynamicFeature;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.Response;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
-import net.wapwag.authn.model.AccessTokenMapper;
-import net.wapwag.authn.model.UserView;
-import net.wapwag.authn.rest.authz.AnyAuthenticatedUserScheme;
-import net.wapwag.authn.rest.authz.AuthorizationOnlyUserId;
-import net.wapwag.authn.rest.authz.AuthorizationOnlyUserIdScheme;
-import net.wapwag.authn.rest.oauth2.UsersTokenHandler;
+import static net.wapwag.authn.rest.AuthenticationResourceMock.mockService;
+import static net.wapwag.authn.rest.MockData.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.when;
 
 /**
  * Base resource test
@@ -128,16 +117,10 @@ abstract class BaseResourceTest extends JerseyTest {
                         accessToken.getAccessTokenId().getRegisteredClient().getClientId(),
                         accessToken.getHandle(),
                         ImmutableSet.copyOf(
-                                Optional.fromNullable(accessToken.getScope()).
-                                        transform(String::trim).
-                                        transform(s -> {
-                                            assert s != null;
-                                            return s.split(" ");
-                                        }).
-                                        or(new String[0]))));
+                                Optional.ofNullable(accessToken.getScope()).map(String::trim).map(s -> s.split(" ")).orElse(new String[0]))));
 
         when(mockService.getUserInfo(eq("token2_ivalid"))).thenReturn(null);
-        when(mockService.getUserInfo(eq("token2"))).thenReturn(UserView.newInstance(user));
+        when(mockService.getUserInfo(eq("token2"))).thenReturn(UserView.newInstance(user, client));
 
         UsersTokenHandler tokenHandler = new UsersTokenHandler();
         tokenHandler.setService(mockService);

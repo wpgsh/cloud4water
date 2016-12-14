@@ -8,6 +8,8 @@ public class AuthnUser {
 
 	private long id;
 
+    private String sub;
+
     private String enabled;
 
     private String username;
@@ -34,6 +36,14 @@ public class AuthnUser {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getSub() {
+        return sub;
+    }
+
+    public void setSub(String sub) {
+        this.sub = sub;
     }
 
     public String getEnabled() {

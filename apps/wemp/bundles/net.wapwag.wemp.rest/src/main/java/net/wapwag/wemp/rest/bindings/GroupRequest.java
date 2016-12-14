@@ -24,7 +24,13 @@ public class GroupRequest {
         this.name = name;
     }
 
-    public Group toGroup() {
+    public Group toAddGroup() {
+        Group group = new Group();
+        group.setName(name);
+        return group;
+    }
+
+    public Group toUpdateGroup() {
         Group group = new Group();
         group.setName(name);
         group.setId(id);

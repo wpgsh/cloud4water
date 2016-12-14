@@ -40,6 +40,7 @@ public class UserInfoServletTest extends BaseServletTest {
 
     static {
         authnUser = new AuthnUser();
+        authnUser.setSub("wemp");
         authnUser.setId(1L);
         authnUser.setEnabled("1");
         authnUser.setName("test1");

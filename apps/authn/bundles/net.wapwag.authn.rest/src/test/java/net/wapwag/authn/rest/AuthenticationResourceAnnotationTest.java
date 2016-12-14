@@ -89,7 +89,7 @@ public class AuthenticationResourceAnnotationTest extends BaseResourceTest{
         
         assertEquals(OK_200, response.getStatus());
         
-        assertEquals(1l, response2.getId());
+        assertEquals(1L, response2.getId());
 	}
 	
 	@Test

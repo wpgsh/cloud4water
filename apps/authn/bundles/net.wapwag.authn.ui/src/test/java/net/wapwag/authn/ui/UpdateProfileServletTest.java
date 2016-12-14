@@ -1,8 +1,10 @@
 package net.wapwag.authn.ui;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import javax.servlet.Filter;
@@ -30,6 +32,7 @@ public class UpdateProfileServletTest extends BaseServletTest{
 
     private static final String UPDATEPROFILE_CONTEXT_PATH = "http://localhost:" + port + "/authn/updateProfileServlet";
     
+    private static final URL path = UpdateProfileServletNoSessionTest.class.getClassLoader().getResource("123.png");
 
 	public UpdateProfileServletTest() {
 		super(port, maxServerThreads, acceptQueueSize);
@@ -45,8 +48,9 @@ public class UpdateProfileServletTest extends BaseServletTest{
         ffkvp.add(new FormFieldKeyValuePair("inputHomePage", "http://www.baidu.com"));
         ffkvp.add(new FormFieldKeyValuePair("type", "png"));
   
-        ArrayList<UploadFileItem> ufi = new ArrayList<UploadFileItem>();  
-        ufi.add(new UploadFileItem("image", System.getProperty("user.dir") + "/src/test/resources/123.png"));
+        ArrayList<UploadFileItem> ufi = new ArrayList<UploadFileItem>();
+        assertNotNull(path);
+        ufi.add(new UploadFileItem("image", path.getPath()));
 		
 		QueryComponentResponse resqponse =  sendHttpPostRequest(UPDATEPROFILE_CONTEXT_PATH, ffkvp, ufi);
 		assertEquals(HttpServletResponse.SC_OK, resqponse.responseCode);
@@ -63,8 +67,9 @@ public class UpdateProfileServletTest extends BaseServletTest{
         ffkvp.add(new FormFieldKeyValuePair("inputHomePage", "http://www.baidu.com"));
         ffkvp.add(new FormFieldKeyValuePair("type", "png"));
   
-        ArrayList<UploadFileItem> ufi = new ArrayList<UploadFileItem>();  
-        ufi.add(new UploadFileItem("image", System.getProperty("user.dir") + "/src/test/resources/123.png"));
+        ArrayList<UploadFileItem> ufi = new ArrayList<UploadFileItem>();
+        assertNotNull(path);
+        ufi.add(new UploadFileItem("image", path.getPath()));
 		
 		QueryComponentResponse resqponse =  sendHttpPostRequest(UPDATEPROFILE_CONTEXT_PATH, ffkvp, ufi);
 		assertEquals(HttpServletResponse.SC_OK, resqponse.responseCode);
@@ -81,8 +86,10 @@ public class UpdateProfileServletTest extends BaseServletTest{
         ffkvp.add(new FormFieldKeyValuePair("inputHomePage", "http://www.baidu.com"));
         ffkvp.add(new FormFieldKeyValuePair("type", "jpg"));
   
-        ArrayList<UploadFileItem> ufi = new ArrayList<UploadFileItem>();  
-        ufi.add(new UploadFileItem("image", System.getProperty("user.dir") + "/src/test/resources/222.jpg"));
+        ArrayList<UploadFileItem> ufi = new ArrayList<UploadFileItem>();
+        URL path = UpdateProfileServletNoSessionTest.class.getClassLoader().getResource("222.jpg");
+        assertNotNull(path);
+        ufi.add(new UploadFileItem("image", path.getPath()));
 		
 		QueryComponentResponse resqponse =  sendHttpPostRequest(UPDATEPROFILE_CONTEXT_PATH, ffkvp, ufi);
 		assertEquals(HttpServletResponse.SC_OK, resqponse.responseCode);

@@ -1,8 +1,10 @@
 package net.wapwag.authn.ui;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import javax.servlet.Filter;
@@ -45,8 +47,11 @@ public class UpdateProfileServletNoSessionTest extends BaseServletTest{
         ffkvp.add(new FormFieldKeyValuePair("inputHomePage", "http://www.baidu.com"));
         ffkvp.add(new FormFieldKeyValuePair("type", "png"));
   
-        ArrayList<UploadFileItem> ufi = new ArrayList<UploadFileItem>();  
-        ufi.add(new UploadFileItem("image", System.getProperty("user.dir") + "/src/test/resources/123.png"));
+        ArrayList<UploadFileItem> ufi = new ArrayList<UploadFileItem>();
+        URL path = UpdateProfileServletNoSessionTest.class.getClassLoader().getResource("123.png");
+
+        assertNotNull(path);
+        ufi.add(new UploadFileItem("image", path.getPath()));
 		
 		QueryComponentResponse resqponse =  sendHttpPostRequest(UPDATEPROFILE_CONTEXT_PATH, ffkvp, ufi);
 		assertEquals(HttpServletResponse.SC_OK, resqponse.responseCode);

@@ -2,7 +2,6 @@ package net.wapwag.wemp.dao;
 
 import com.google.common.collect.Lists;
 import net.wapwag.wemp.dao.model.ObjectData;
-import net.wapwag.wemp.dao.model.ObjectType;
 import net.wapwag.wemp.dao.model.permission.*;
 import org.junit.Test;
 
@@ -332,11 +331,9 @@ public class WaterEquipmentDaoTest extends BaseTestConfig {
 
     @Test
     public void testAddObjectByOrg() throws WaterEquipmentDaoException {
-        ObjectData objectData = new ObjectData();
-        objectData.setName("ShangHai");
-        objectData.setType(ObjectType.PROVINCE);
+        long objId = 1L;
 
-        count = waterEquipmentDao.addObjectByOrg(orgId, objectData);
+        count = waterEquipmentDao.addObjectByOrg(orgId, objId);
 
         assertEquals(addCount, count);
     }

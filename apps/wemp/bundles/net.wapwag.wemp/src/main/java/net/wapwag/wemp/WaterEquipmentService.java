@@ -100,11 +100,13 @@ public interface WaterEquipmentService {
 
     ResultView addUserByOrg(long orgId, User user) throws WaterEquipmentServiceException;
 
+	String removeUsersByOrg(long orgId) throws WaterEquipmentServiceException;
+
 	String removeUserByOrg(long orgId, long uid) throws WaterEquipmentServiceException;
 
     List<ObjectView> getObjectsByOrg(long orgId) throws WaterEquipmentServiceException;
 
-    ResultView addObjectByOrg(long orgId, ObjectData objectData) throws WaterEquipmentServiceException;
+    ResultView addObjectByOrg(long orgId, long objId) throws WaterEquipmentServiceException;
 
     String removeObjectByOrg(long orgId, long objId) throws WaterEquipmentServiceException;
 

@@ -216,7 +216,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		return userDao.txExpr(() -> {
             try {
                 if (StringUtils.isNotBlank(token)) {
-                    return UserView.newInstance(userDao.getUserByAccessToken(token));
+                    AccessToken accessToken = userDao.lookupAccessToken(token);
+
+                    if (accessToken != null) {
+                        AccessTokenId accessTokenId = accessToken.getAccessTokenId();
+                        return UserView.newInstance(accessTokenId.getUser(), accessTokenId.getRegisteredClient());
+                    } else {
+                        return null;
+                    }
                 } else {
                     return null;
                 }

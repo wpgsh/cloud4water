@@ -44,7 +44,7 @@ public class OrgGroupResource {
     @Authorization
     @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
     public ResultView addGroupByOrg(@PathParam("oid") long orgId, GroupRequest groupRequest) throws Exception {
-        return waterEquipmentService.addGroupByOrg(orgId, groupRequest.toGroup());
+        return waterEquipmentService.addGroupByOrg(orgId, groupRequest.toAddGroup());
     }
 
     @Path("/organizationGroup/{gid}")
@@ -62,7 +62,7 @@ public class OrgGroupResource {
     @Authorization
     @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
     public ResultView updateGroupByOrg(@PathParam("oid") long orgId, @PathParam("gid") long groupId, GroupRequest groupRequest) throws Exception {
-        return waterEquipmentService.updateGroupByOrg(orgId, groupId, groupRequest.toGroup());
+        return waterEquipmentService.updateGroupByOrg(orgId, groupId, groupRequest.toUpdateGroup());
     }
 
     @Path("/organizationGroup/{gid}")
@@ -135,6 +135,15 @@ public class OrgGroupResource {
         return waterEquipmentService.addUserByOrg(orgId, user);
     }
 
+    @Path("/organizationUsers")
+    @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
+    @Authorization
+    @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
+    public String removeUsersByOrg(@PathParam("oid") long orgId) throws Exception {
+        return waterEquipmentService.removeUsersByOrg(orgId);
+    }
+
     @Path("/organizationUser/{uid}")
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
@@ -158,8 +167,8 @@ public class OrgGroupResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Authorization
     @FineGrainedAuthorization(permission = Permission.WRITE, target = "{oid}")
-    public ResultView addObjectByOrg(@PathParam("oid") long orgId, ObjectData objectData) throws Exception {
-        return waterEquipmentService.addObjectByOrg(orgId, objectData);
+    public ResultView addObjectByOrg(@PathParam("oid") long orgId, long objId) throws Exception {
+        return waterEquipmentService.addObjectByOrg(orgId, objId);
     }
 
     @Path("/object/{objId}")
