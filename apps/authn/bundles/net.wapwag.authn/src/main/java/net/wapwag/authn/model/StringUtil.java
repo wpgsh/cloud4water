@@ -42,12 +42,6 @@ public class StringUtil {
 		}
 	}
 	
-	public static void main(String[] args) {
-		long time = System.currentTimeMillis();
-		System.out.println(strSHA1(strMd5("dfdf1231231231231qweqweqweqweq") + time).length());
-		System.out.println(time);
-	}
-	
 	/**
 	 * 字符串SHA1加密
 	 * @param passWord

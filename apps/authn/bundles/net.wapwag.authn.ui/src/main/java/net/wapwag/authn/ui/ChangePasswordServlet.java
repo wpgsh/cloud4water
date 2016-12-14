@@ -36,18 +36,19 @@ public class ChangePasswordServlet extends HttpServlet{
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		PrintWriter out = null;
-		ResultInfo info = new ResultInfo();
-		Gson gson = new Gson();
-		info.setErrorCode("11");
-		info.setErrorMsg("Do not support GET method");
 		try {
+			PrintWriter out = null;
+			ResultInfo info = new ResultInfo();
+			Gson gson = new Gson();
+			info.setErrorCode("11");
+			info.setErrorMsg("Do not support GET method");
+			
 			out = resp.getWriter();
+			out.println(gson.toJson(info));
+			out.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		out.println(gson.toJson(info));
-		out.close();
 	}
 	
 	
@@ -73,7 +74,7 @@ public class ChangePasswordServlet extends HttpServlet{
 						info.setErrorCode("1");
 						info.setErrorMsg("old password Incorrect");
 						flag = false;
-					};
+					}
 					if(flag){
 						user.setPasswordHash(StringUtil.strSHA1(StringUtil.strMd5(inputNewPassword) + user.getPasswordSalt()));
 						int result = authnService.saveUser(user);

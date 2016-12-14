@@ -41,7 +41,7 @@ public class UpdateProfileServlet extends HttpServlet{
 	private static final long serialVersionUID = 1386135190838528237L;
 	
 	// fileMaxSize 2M
-	public static final long maxSize = 1024 * 1024 * 2;
+	public static final long maxSize = 1024 * 1024 * 2l;
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -112,7 +112,7 @@ public class UpdateProfileServlet extends HttpServlet{
 				                    	flagImage = true;
 				                    	if(fis.getName() != null){
 				                    		System.out.println("user.getAvartarId :" + user.getAvartarId());
-				                    		if(user.getAvartarId() != null && !user.getAvartarId().trim().equals("")){
+				                    		if(user.getAvartarId() != null && !("").equals(user.getAvartarId().trim())){
 				                    			image.setId(user.getAvartarId());
 				                    		}else{
 				                    			String avartarId = StringUtil.getUUID();
