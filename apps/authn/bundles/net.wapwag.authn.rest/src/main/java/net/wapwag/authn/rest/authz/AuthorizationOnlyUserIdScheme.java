@@ -93,12 +93,12 @@ public class AuthorizationOnlyUserIdScheme implements AuthorizationScheme {
 		
 		String tokenHeader = requestContext.getHeaderString("authorization");
 		
-		long userId = Long.valueOf(target);
+		long userId = Long.parseLong(target);
 		if (StringUtils.isNotBlank(tokenHeader) && tokenHeader.contains("Bearer ")) {
             String token = tokenHeader.replace("Bearer ", "");
             try {
 				UserView user = authnService.getUserInfo(token);
-				if(user == null || (user != null && user.id != userId)){
+				if(user == null || user.id != userId){
 					throw new AuthorizationException(
 							Response.status(Response.Status.FORBIDDEN).
 								type(MediaType.APPLICATION_JSON).

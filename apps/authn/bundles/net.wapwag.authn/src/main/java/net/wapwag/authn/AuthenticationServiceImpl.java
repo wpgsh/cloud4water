@@ -381,7 +381,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		            //save passwordHash,rule -> SHA1(pwd + pwdSalt)
 		            user.setPasswordHash(StringUtil.strSHA1(StringUtil.strMd5(userRequest.getPasswordHash()) + pwdSalt));
 		            //save pwdSalt
-		            user.setPasswordSalt(pwdSalt + "");
+		            user.setPasswordSalt(Long.toString(pwdSalt));
 		        }
 		        user.setEnabled(userRequest.getEnabled());
 		        if(userRequest.getAvartarId() != null){
@@ -501,7 +501,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		            //save passwordHash,rule -> SHA1(pwd + pwdSalt)
 		            userRequest.setPasswordHash(StringUtil.strSHA1(StringUtil.strMd5(userRequest.getPasswordHash()) + pwdSalt));
 		            //save pwdSalt
-		            userRequest.setPasswordSalt(pwdSalt + "");
+		            userRequest.setPasswordSalt(Long.toString(pwdSalt));
 		        }
 		    	int result = userDao.saveUser(userRequest);
 		    	String msg = (result == 1 ? "add success" : "add fail");

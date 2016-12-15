@@ -56,7 +56,7 @@ public class ResetPassWDServlet extends HttpServlet {
 						User user = new User();
 						long passwordSalt = System.currentTimeMillis();
 						user.setId(Long.parseLong(SequenceKey.getUserId(key)));
-						user.setPasswordSalt(passwordSalt + "");
+						user.setPasswordSalt(Long.toString(passwordSalt));
 						user.setPasswordHash(StringUtil.strSHA1(StringUtil.strMd5(passWord) + passwordSalt));
 						user = authnService.updateUserPwd(user);
 						if (null != user) {
