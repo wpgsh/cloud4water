@@ -80,7 +80,7 @@ public class WempReturnServlet extends HttpServlet {
                             String wempRedirect = (String) session.getAttribute("wempRedirect");
 
                             if (StringUtils.isNotBlank(wempRedirect)) {
-                                response.sendRedirect(String.format("/authorize?%s", wempRedirect));
+                                response.sendRedirect(String.format("/wemp/authorize?%s", wempRedirect));
                             } else {
                                 response.sendError(SC_UNAUTHORIZED);
                             }
