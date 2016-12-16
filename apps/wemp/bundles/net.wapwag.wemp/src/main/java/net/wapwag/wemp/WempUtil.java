@@ -83,7 +83,11 @@ public final class WempUtil {
 
     public static String encodeBase64String(String originalText) {
         if (StringUtils.isNotBlank(originalText)) {
-            return encodeBase64Byte(originalText.getBytes());
+            try {
+                return encodeBase64Byte(originalText.getBytes(UTF8));
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException(e);
+            }
         } else {
             throw new IllegalArgumentException();
         }
