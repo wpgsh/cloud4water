@@ -22,21 +22,17 @@
     <bundle start-level="70">mvn:javax.ws.rs/javax.ws.rs-api/2.0</bundle>
   </feature>
   <feature name="jax-rs-connector" version="5.3.1" install="auto">
-    <bundle dependency="true" start-level="70">mvn:com.eclipsesource.jaxrs/jersey-min/2.22.2</bundle>
-    <bundle dependency="true" start-level="70">mvn:com.eclipsesource.jaxrs/consumer/5.3.1</bundle>
+    <bundle start-level="70">mvn:com.eclipsesource.jaxrs/jersey-min/2.22.2</bundle>
+    <bundle start-level="70">mvn:com.eclipsesource.jaxrs/consumer/5.3.1</bundle>
     <bundle start-level="70">mvn:com.eclipsesource.jaxrs/publisher/5.3.1</bundle>
   </feature>
   <feature name="jax-rs-provider-moxy" version="2.2" install="auto">
-    <bundle dependency="true" start-level="70">
-     mvn:org.eclipse.persistence/org.eclipse.persistence.core/2.5.2
-    </bundle>
-    <bundle dependency="true" start-level="70">
-     mvn:org.eclipse.persistence/org.eclipse.persistence.moxy/2.5.2
-    </bundle>
+    <bundle start-level="70">mvn:org.eclipse.persistence/org.eclipse.persistence.core/2.5.2</bundle>
+    <bundle start-level="70">mvn:org.eclipse.persistence/org.eclipse.persistence.moxy/2.5.2</bundle>
     <bundle start-level="70">mvn:com.eclipsesource.jaxrs/provider-moxy/2.2</bundle>
   </feature>
   <feature name="jax-rs-provider-gson" version="2.3" install="auto">
-    <bundle dependency="true" start-level="70">mvn:com.google.code.gson/gson/2.3</bundle>
+    <bundle start-level="70">mvn:com.google.code.gson/gson/2.3</bundle>
     <bundle start-level="70">mvn:com.eclipsesource.jaxrs/provider-gson/2.3</bundle>
   </feature>
   <feature name="jax-rs-provider-multipart" version="2.2" install="auto">
@@ -54,7 +50,7 @@
 
   <feature name="pax-jdbc-mysql" description="Provides JDBC MySQL DataSourceFactory" version="0.7.0.wpg" install="auto">
     <feature version="0.7.0.wpg">pax-jdbc-spec</feature>
-    <bundle start-level="40" dependency="true">mvn:mysql/mysql-connector-java/5.1.34</bundle>
+    <bundle start-level="40">mvn:mysql/mysql-connector-java/5.1.34</bundle>
     <bundle start-level="40">mvn:org.ops4j.pax.jdbc/pax-jdbc-mysql/0.7.0</bundle>
   </feature>
 
@@ -69,7 +65,7 @@
        aries.transaction.howl.bufferSize = 4
     </config>
     <feature version="1.1.1">transaction-api</feature>
-    <bundle start-level="55" dependency="true">mvn:org.apache.aries/org.apache.aries.util/1.1.1</bundle>
+    <bundle start-level="55">mvn:org.apache.aries/org.apache.aries.util/1.1.1</bundle>
     <bundle start-level="55">mvn:org.apache.aries.transaction/org.apache.aries.transaction.manager/1.3.0</bundle>
     <capability>
        transaction-manager;provider:=geronimo
@@ -84,17 +80,14 @@
   <feature name="jpa" description="OSGi Persistence Container" version="2.3.0.wpg">
     <details>JPA implementation provided by Apache Aries JPA 2.x. NB: this feature doesn't provide the JPA engine, you have to install one by yourself (OpenJPA for instance)</details>
     <feature version="1.1.1">transaction-api</feature>
-	  <bundle start-level="56" dependency="true">mvn:org.apache.geronimo.specs/geronimo-jpa_2.0_spec/1.1</bundle>
-    <bundle start-level="56" dependency="true">mvn:org.apache.felix/org.apache.felix.coordinator/1.0.2</bundle>
-    <bundle start-level="56" dependency="true">mvn:org.osgi/org.osgi.service.jpa/1.0.0</bundle>
-    <bundle start-level="56" dependency="true">mvn:org.osgi/org.osgi.service.jdbc/1.0.0</bundle>
+	  <bundle start-level="56">mvn:org.apache.geronimo.specs/geronimo-jpa_2.0_spec/1.1</bundle>
+    <bundle start-level="56">mvn:org.apache.felix/org.apache.felix.coordinator/1.0.2</bundle>
+    <bundle start-level="56">mvn:org.osgi/org.osgi.service.jpa/1.0.0</bundle>
+    <bundle start-level="56">mvn:org.osgi/org.osgi.service.jdbc/1.0.0</bundle>
     <bundle start-level="56">mvn:org.apache.aries.jpa/org.apache.aries.jpa.api/2.3.0</bundle>
     <bundle start-level="56">mvn:org.apache.aries.jpa/org.apache.aries.jpa.container/2.3.0</bundle>
     <bundle start-level="56">mvn:org.apache.aries.jpa/org.apache.aries.jpa.support/2.3.0</bundle>
-    <conditional>
-      <condition>aries-blueprint</condition>
-      <bundle start-level="56">mvn:org.apache.aries.jpa/org.apache.aries.jpa.blueprint/2.3.0</bundle>
-    </conditional>
+    <bundle start-level="56">mvn:org.apache.aries.jpa/org.apache.aries.jpa.blueprint/2.3.0</bundle>
   </feature>
 
   <feature name="net.wapwag.base">
