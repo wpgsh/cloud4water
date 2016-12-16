@@ -76,7 +76,7 @@ public class AuthorizeServlet extends HttpServlet {
                     response.sendRedirect(oAuthResponse.getLocationUri());
 
                 } else {
-                    String requestState = encodeBase64String(session.getId() + System.nanoTime());
+                    String requestState = encodeBase64String(session.getId());
                     session.setAttribute("wempRedirect", request.getQueryString());
                     session.setAttribute("oauthRequestState", requestState);
                     session.setAttribute("oauthOriginalState", state);
