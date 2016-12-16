@@ -8,11 +8,11 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Set new password</title>
+    <title>Reset password</title>
     <!-- Bootstrap core CSS -->
-    <link href="/authn/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom styles for this template -->
-    <link href="/authn/css/sign/sign.css" rel="stylesheet">
+    <link href="css/sign/sign.css" rel="stylesheet">
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -24,66 +24,51 @@
   <body>
 
     <div class="container">
-      <form class="form-signin" id="form" action="/authn/passwordreset" method="post">
+      <form id="form" class="form-signin" action="password_reset" method="post">
         <div class="logo-div">
-            <img src="/authn/images/wpg.png">
+            <img src="images/wpg.png">
         </div>
-        <h2 class="form-signin-heading logo-title">Set your new password</h2>
-        <span class="link-span">Enter the new password and confirm, click the button, you will reset your password.</span>
-        <label for="inputNewPwd" class="sr-only">New password</label>
-        <input type="password" name="passWord" class="form-control" placeholder="new password" required autofocus>
-        <label for="inputConfirmPwd" class="sr-only">Confirm password</label>
-        <input type="password" name="confirmPwd" class="form-control" placeholder="confirm password" required>
-        <input type="hidden" name="resetkey">
-        <button class="btn btn-lg btn-success btn-block link-btn" type="button" id="submit">Change password</button>
-        </div>
+        <h2 class="form-signin-heading logo-title">Reset your password</h2>
+        <span class="link-span">Enter your email address and we will send you a link to reset your password.</span>
+        <label for="inputEmail" class="sr-only">Email address</label>
+        <input type="email" name="email" id="inputEmail" class="form-control" placeholder="email address" required autofocus>
+        <button class="btn btn-lg btn-success btn-block link-btn" type="button" id="submit">Send password reset email</button>
       </form>
       <div class="bottom-content">
         Copyright Â© 2016.Wei Pai Ge All rights reserved
       </div>
     </div> <!-- /container -->
 
+
     <!-- Javascript for login -->
-    <script src="/authn/js/jquery-1.11.1.min.js"></script>
-    <script src="/authn/scripts/jquery-form.js"></script>
+    <script src="js/jquery-1.11.1.min.js"></script>
+    <script src="scripts/jquery-form.js"></script>
     <script>
     jQuery(document).ready(function() {
-    	var windowUrl = window.location.search;
-    	if(windowUrl.indexOf("resetkey") > 0 
-    			&& windowUrl.split("resetkey=").length > 1 
-    			&& !isEmp(windowUrl.split("resetkey=")[1])){
-    		 
-    	}else{
-    		window.location="/authn/resetpassword/linkpwd.jsp";
-    	}
     	$("#submit").click(function() {
-    		var resetkey = windowUrl.split("resetkey=")[1];
-    		var passWord = $('input[name="passWord"]').val();
-    		var confirmPwd = $('input[name="confirmPwd"]').val();
-    		if(isEmp(passWord) || isEmp(confirmPwd)){
-    			var message = "密码不可以为空";
+    		var email = $('input[name="email"]').val();
+    		if(!CheckMail(email)){
+    			var message = "邮箱格式错误";
     			showError($(".logo-title"), message);
-    			return;
+    			return false;
     		}
-    		
-    		if(passWord != confirmPwd){
-    			var message = "验证码和确认密码不相同";
-    			showError($(".logo-title"), message);
-    			return;
-    		}
-    		$('input[name="resetkey"]').val(resetkey);
     		$("#form").ajaxSubmit({
     			type:'post',
     			dataType : 'json',  
     			success:function(data){
     				var errorCode = data.errorCode;
     				if("1" == errorCode){
-    					var message = "回话已经超时";
+    					var message = "你的邮箱还未注册";
+    	    			showError($(".logo-title"), message);
+    	    			return;
+    				}
+    				if("2" == errorCode){
+    					var message = "系统繁忙，发送邮件失败，请稍候再试";
     	    			showError($(".logo-title"), message);
     	    			return;
     				}
     				if("0" == errorCode){
-    					window.location="/authn/login.jsp?reset=success";
+    					window.location="sendsuccess.jsp";
     				}
     			},
     			error:function(data)
@@ -103,16 +88,6 @@
 	    }); 
     });
     
-    function isEmp(str){
-    	if(undefined == str || null == str || "" == str){
-    		return true;
-    	}
-    	str = str.trim();
-    	if(undefined == str || null == str || "" == str){
-    		return true;
-    	}
-    	return false;
-    }
     function CheckMail(mail){
     	var check = /^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/; 
     	if(check.test(mail))
@@ -124,7 +99,7 @@
     }
     /* 消息提示模板 */
 	var showError = function(obj, msg){
-    	$("#errorMsg").remove();
+		$("#errorMsg").remove();
 		var model = "<div id='errorMsg' class='errMesage'><span>"+msg+"</span><label>x</label></div>";
 		obj.after(model);
 

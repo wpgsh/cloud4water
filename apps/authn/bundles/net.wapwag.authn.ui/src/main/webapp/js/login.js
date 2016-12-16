@@ -26,7 +26,7 @@ jQuery(document).ready(function() {
 				return;
 			}
 			$.ajax({
-				url:"/authn/loginServlet",
+				url:"loginServlet",
 				type:'post',
 				dataType : 'json',
 				data:{"userName":userName,"passWord":passWord,"check":"1"},
@@ -84,7 +84,7 @@ jQuery(document).ready(function() {
 		return false;
 	}
 	function refulsCodeImg(){
-		$("#codeImg").attr("src","/authn/checkCode?" + Math.random());
+		$("#codeImg").attr("src","checkCode?" + Math.random());
 	}
 	//记住用户信息
 	function save() { 

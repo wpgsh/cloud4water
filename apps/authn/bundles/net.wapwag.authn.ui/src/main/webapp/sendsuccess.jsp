@@ -9,9 +9,9 @@
     <meta name="author" content="">
     <title>Reset password</title>
     <!-- Bootstrap core CSS -->
-    <link href="/authn/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom styles for this template -->
-    <link href="/authn/css/sign/sign.css" rel="stylesheet">
+    <link href="css/sign/sign.css" rel="stylesheet">
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -23,9 +23,9 @@
   <body>
 
     <div class="container">
-      <form class="form-signin" action="/authn/login.jsp">
+      <form class="form-signin" action="login.jsp">
         <div class="logo-div">
-            <img src="/authn/images/wpg.png">
+            <img src="images/wpg.png">
         </div>
         <h2 class="form-signin-heading logo-title">Reset your password</h2>
         <span class="link-span">Links have been successfully sent to your mailbox, please view and modify your password in a timely manner.</span>
@@ -38,7 +38,7 @@
 
 
     <!-- Javascript for login -->
-    <script src="/authn/js/jquery-1.11.1.min.js"></script>
-    <script src="/authn/js/main/index.js"></script>
+    <script src="js/jquery-1.11.1.min.js"></script>
+    <script src="js/main/index.js"></script>
   </body>
 </html>

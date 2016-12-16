@@ -32,7 +32,7 @@
   <body>
 
     <div class="container">
-      <form class="form-signin" id="form" action="/authn/loginServlet" method="post">
+      <form class="form-signin" id="form" action="loginServlet" method="post">
         <div class="logo-div">
             <img src="images/wpg.png">
         </div>
@@ -46,7 +46,7 @@
           <label>
             <input type="checkbox" id="ck_rmbUser" value="remember-me"> Remember me
           </label>
-          <a href="/authn/resetpassword/linkpwd.jsp" class="getpassword">Forgot password?</a>
+          <a href="linkpwd.jsp" class="getpassword">Forgot password?</a>
         </div>
         <button id="submitButton" class="btn btn-lg btn-success btn-block" type="button">Sign in</button>
 <!--         <div class="checkbox"> -->

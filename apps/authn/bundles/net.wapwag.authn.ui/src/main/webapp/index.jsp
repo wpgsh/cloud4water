@@ -42,7 +42,7 @@
               </div>
               <div class="panel-body">
                 <div class="col-sm-3">
-                    <img id="upload-profile-imgShow" src="/authn/getAvatarByUserIdServlet?userId=<%=session.getAttribute("userId")%>" class="uploadImg" />
+                    <img id="upload-profile-imgShow" src="getAvatarByUserIdServlet?userId=<%=session.getAttribute("userId")%>" class="uploadImg" />
                 </div>
                 <div class="col-sm-9">
                     <form class="form-horizontal">
@@ -82,7 +82,7 @@
                     If you want to modify your basic information, click on the button below.
                 </div>
                 <div class="col-sm-12 margin-top">
-                    <a href="settings/profile.jsp" type="submit" class="btn btn-success">Edit profile</a>
+                    <a href="profile.jsp" type="submit" class="btn btn-success">Edit profile</a>
                 </div>
               </div>
             </div><!-- panel -->

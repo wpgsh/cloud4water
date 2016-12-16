@@ -9,18 +9,18 @@
     <meta name="author" content="">
     <title>Settings</title>
     <!-- Bootstrap core CSS -->
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
     <style type="text/css">
         .list-group-item {
             padding: 8px 15px;
         }
     </style>
     <!-- Custom styles for this template -->
-    <link href="../css/offcanvas.css" rel="stylesheet">
+    <link href="css/offcanvas.css" rel="stylesheet">
     <!-- Styles for form -->
-    <link rel="stylesheet" type="text/css" href="../css/docs.min.css">
+    <link rel="stylesheet" type="text/css" href="css/docs.min.css">
     <!-- Personal profile choose -->
-    <link rel="stylesheet" type="text/css" href="../css/settings/style.css">
+    <link rel="stylesheet" type="text/css" href="css/settings/style.css">
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
@@ -29,7 +29,7 @@
   </head>
 
   <body>
-    <jsp:include page="../main.jsp" />
+    <jsp:include page="main.jsp" />
     <div class="container max-width">
 
       <div class="row row-offcanvas row-offcanvas-right">
@@ -79,8 +79,8 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="../js/jquery-1.11.1.min.js"></script>
-    <script src="../js/bootstrap.min.js"></script>
-    <script src="../js/offcanvas.js"></script>
+    <script src="js/jquery-1.11.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/offcanvas.js"></script>
   </body>
 </html>
