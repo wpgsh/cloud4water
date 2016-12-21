@@ -1,6 +1,5 @@
 package net.wapwag.wemp.ui;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.reflect.TypeToken;
 import net.wapwag.wemp.WaterEquipmentServiceImpl;
@@ -19,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -55,6 +55,7 @@ public class UserInfoServletTest extends BaseServletTest {
         user.setId(1L);
         RegisteredClient client = new RegisteredClient();
         client.setId(1L);
+        client.setClientId("clientId");
         AccessTokenId accessTokenId = new AccessTokenId(user, client);
 
         accessToken.setAccessTokenId(accessTokenId);
@@ -131,21 +132,15 @@ public class UserInfoServletTest extends BaseServletTest {
     }
 
     @Test
-    public void misMatchUserId() throws Exception {
+    public void noClientId() throws Exception {
         when(waterEquipmentService.lookupToken(token)).thenReturn(
                 new AccessTokenMapper(
                         Long.toString(0L),
                         accessToken.getExpiration(),
-                        accessToken.getAccessTokenId().getRegisteredClient().getClientId(),
+                        "",
                         accessToken.getHandle(),
                         ImmutableSet.copyOf(
-                                Optional.fromNullable(accessToken.getScope()).
-                                        transform(String::trim).
-                                        transform(s -> {
-                                            assert s != null;
-                                            return s.split(" ");
-                                        }).
-                                        or(new String[0]))));
+                                Optional.ofNullable(accessToken.getScope()).map(String::trim).map(s -> s.split(" ")).orElse(new String[0]))));
 
         Type type = new TypeToken<AuthnUser>(){}.getType();
         QueryComponentResponse response = getAcceptQueryComponent(USER_INFO_PATH, true, token, APPLICATION_X_WWW_FORM_URLENCODED, type);
@@ -162,13 +157,7 @@ public class UserInfoServletTest extends BaseServletTest {
                         accessToken.getAccessTokenId().getRegisteredClient().getClientId(),
                         accessToken.getHandle(),
                         ImmutableSet.copyOf(
-                                Optional.fromNullable(accessToken.getScope()).
-                                        transform(String::trim).
-                                        transform(s -> {
-                                            assert s != null;
-                                            return s.split(" ");
-                                        }).
-                                        or(new String[0]))));
+                                Optional.ofNullable(accessToken.getScope()).map(String::trim).map(s -> s.split(" ")).orElse(new String[0]))));
 
         Type type = new TypeToken<AuthnUser>(){}.getType();
         QueryComponentResponse response = getAcceptQueryComponent(USER_INFO_PATH, true, token, APPLICATION_X_WWW_FORM_URLENCODED, type);
