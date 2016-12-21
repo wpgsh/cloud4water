@@ -43,7 +43,8 @@ public class UserInfoServlet extends HttpServlet {
 
                     if (authnUser != null
                             && accessTokenMapper != null
-                            && authnUser.getId() == Long.valueOf(accessTokenMapper.userId)) {
+                            && StringUtils.isNotBlank(accessTokenMapper.clientId)) {
+                        authnUser.setSub(accessTokenMapper.clientId);
                         response.setContentType("application/json");
                         PrintWriter writer = response.getWriter();
                         writer.write(new Gson().toJson(authnUser));
