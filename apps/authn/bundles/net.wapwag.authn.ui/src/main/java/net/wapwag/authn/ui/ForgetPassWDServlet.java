@@ -32,6 +32,8 @@ import com.google.gson.Gson;
 @WebServlet(urlPatterns="/password_reset", name="ForgetPassWDServlet")
 public class ForgetPassWDServlet extends HttpServlet {
 
+	private static final long serialVersionUID = -4026159133625327458L;
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String email = req.getParameter("email");
@@ -56,7 +58,6 @@ public class ForgetPassWDServlet extends HttpServlet {
 				try {
 					out = resp.getWriter();
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				out.println(gson.toJson(info));

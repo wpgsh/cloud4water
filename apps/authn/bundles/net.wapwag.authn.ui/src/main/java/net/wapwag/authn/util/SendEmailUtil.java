@@ -56,6 +56,10 @@ public class SendEmailUtil {
 		Thread.currentThread().setContextClassLoader(javax.mail.Message.class.getClassLoader());
 		try {
 			Session session = createSession();
+			
+			//nginx no set header message, so get host from properties.
+			hostUrl = PropertiesUtil.RESET_HOST.value();
+			System.out.println("hostUrl :" + hostUrl);
 			MimeMessage message = createMessage(session, resetKey, sendEmail,
 					hostUrl);
 
@@ -69,10 +73,7 @@ public class SendEmailUtil {
 			logger.error(e.toString());
 			return false;
 		}
-		if(logger.isInfoEnabled()){
-		       MailcapCommandMap mcm = (MailcapCommandMap) CommandMap.getDefaultCommandMap();
-		       logger.info("mail mimetypes:'{}' multipart/mixed:'{}' ", mcm.getMimeTypes(), mcm.getAllCommands("multipart/mixed"));
-		}
+		
 		logger.debug("Exit SendEmailUtil sendEmail()");
 		return true;
 	}

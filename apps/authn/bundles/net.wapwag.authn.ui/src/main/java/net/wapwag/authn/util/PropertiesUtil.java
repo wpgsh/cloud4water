@@ -23,7 +23,9 @@ enum PropertiesUtil {
 
     EMAIL_PWD("email_password"),
 
-    EMAIL_SERVER("email_server");
+    EMAIL_SERVER("email_server"),
+	
+	RESET_HOST("reset_host");
 
 	PropertiesUtil(String key) {
         this.key = key;
