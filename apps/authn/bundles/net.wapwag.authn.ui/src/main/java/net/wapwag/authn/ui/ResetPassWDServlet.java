@@ -41,6 +41,8 @@ import com.google.gson.Gson;
 @WebServlet(urlPatterns = "/passwordreset", name = "ResetPassWDServlet")
 public class ResetPassWDServlet extends HttpServlet {
 
+	private static final long serialVersionUID = -3407407156894338763L;
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -69,7 +71,6 @@ public class ResetPassWDServlet extends HttpServlet {
 						try {
 							out = resp.getWriter();
 						} catch (Exception e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 						out.println(gson.toJson(info));
@@ -81,13 +82,13 @@ public class ResetPassWDServlet extends HttpServlet {
 			} else {
 				info.setErrorCode("1");
 			}
-			req.getRequestDispatcher("authn/password_reset").forward(req, resp);
+			req.getRequestDispatcher("password_reset").forward(req, resp);
 		} else {
 			if (StringUtil.isEmp(key) || !SequenceKey.isExit(key)) {
-				req.getRequestDispatcher("resetpassword/linkpwd.jsp").forward(
+				req.getRequestDispatcher("linkpwd.jsp").forward(
 						req, resp);
 			}
-			req.getRequestDispatcher("resetpassword/resetpwd.jsp").forward(req,
+			req.getRequestDispatcher("resetpwd.jsp").forward(req,
 					resp);
 		}
 	}
