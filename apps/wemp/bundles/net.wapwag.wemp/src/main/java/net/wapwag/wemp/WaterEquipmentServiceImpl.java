@@ -58,7 +58,7 @@ public class WaterEquipmentServiceImpl implements WaterEquipmentService {
                     AccessTokenId accessTokenId = accessToken.getAccessTokenId();
                     return new AccessTokenMapper(
                         Long.toString(accessTokenId.getUser().getId()),
-                        accessToken.getExpiration(),
+                        Long.MAX_VALUE,
                         accessTokenId.getRegisteredClient().getClientId(),
                         accessToken.getHandle(),
                         ImmutableSet.copyOf(
