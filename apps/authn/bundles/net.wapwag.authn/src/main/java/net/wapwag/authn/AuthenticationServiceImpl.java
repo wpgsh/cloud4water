@@ -496,16 +496,28 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	public UserMsgResponse createNewUser(User userRequest) throws AuthenticationServiceException {
 		return userDao.txExpr(() -> {
 			try{
-		        if(userRequest.getPasswordHash() != null){
-		            long pwdSalt = System.currentTimeMillis();
-		            //save passwordHash,rule -> SHA1(pwd + pwdSalt)
-		            userRequest.setPasswordHash(StringUtil.strSHA1(StringUtil.strMd5(userRequest.getPasswordHash()) + pwdSalt));
-		            //save pwdSalt
-		            userRequest.setPasswordSalt(Long.toString(pwdSalt));
-		        }
-		    	int result = userDao.saveUser(userRequest);
-		    	String msg = (result == 1 ? "add success" : "add fail");
-		        return new UserMsgResponse(result == 1, msg);
+				if(userRequest != null){
+			        if(userRequest.getPasswordHash() != null){
+			            long pwdSalt = System.currentTimeMillis();
+			            //save passwordHash,rule -> SHA1(pwd + pwdSalt)
+			            userRequest.setPasswordHash(StringUtil.strSHA1(StringUtil.strMd5(userRequest.getPasswordHash()) + pwdSalt));
+			            //save pwdSalt
+			            userRequest.setPasswordSalt(Long.toString(pwdSalt));
+			        }
+			        if(userRequest.getUsername() != null){
+			        	User user = userDao.getUserByName(userRequest.getUsername());
+			        	if(user != null){
+			        		String msg = ("add fail, userName is exists");
+					        return new UserMsgResponse(false, msg);
+			        	}
+			        }
+			        int result = userDao.saveUser(userRequest);
+			    	String msg = (result == 1 ? "add success" : "add fail");
+			        return new UserMsgResponse(result == 1, msg);
+				}else{
+					String msg = ("add fail, parameter can not be null");
+			        return new UserMsgResponse(false, msg);
+				}
 			}catch(Exception e){
 				throw new AuthenticationServiceException("Cannot createNewUser", e);
 			}
